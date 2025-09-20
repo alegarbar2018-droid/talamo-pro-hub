@@ -47,6 +47,8 @@ export const ValidateStep = ({
   onShowPartnerModal,
   onUserExists
 }: ValidateStepProps) => {
+  console.log("=== VALIDATE STEP RENDER ===", { isNotAffiliated, email });
+  
   const { 
     loading, 
     error, 
