@@ -10,7 +10,7 @@ import {
   X
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ValidateCTA } from "@/components/ValidateCTA";
+import { PARTNER_ID } from "@/lib/constants";
 import WhyWeDoIt from "@/components/WhyWeDoIt";
 import HowItWorks from "@/components/HowItWorks";
 import ModulesWithDetails from "@/components/ModulesWithDetails";
@@ -45,7 +45,7 @@ const Index = () => {
                 Iniciar Sesión
               </Button>
               <Button 
-                onClick={() => navigate("/access")}
+                onClick={() => navigate("/onboarding?step=choose")}
                 className="bg-gradient-primary hover:shadow-glow"
                 data-event="cta-solicitar-acceso-header"
               >
@@ -76,19 +76,23 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => navigate("/access")}
+              onClick={() => window.open("https://one.exnesstrack.org/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank")}
               className="bg-gradient-primary hover:shadow-glow"
-              data-event="cta-solicitar-acceso-hero"
+              data-event="cta-abrir-cuenta-exness"
             >
-              Solicitar acceso
+              Abrir cuenta en Exness
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
-            <ValidateCTA 
-              onOpenChangePartner={() => setShowPartnerModal(true)}
-              variant="outline"
+            <Button 
               size="lg"
-              className="mb-6"
-            />
+              variant="outline"
+              onClick={() => navigate("/onboarding?step=validate")}
+              className="border-primary text-primary hover:bg-primary/5"
+              data-event="cta-ya-tengo-cuenta"
+            >
+              <Target className="h-5 w-5 mr-2" />
+              Ya tengo cuenta en Exness
+            </Button>
           </div>
 
           {/* Principles */}
@@ -120,7 +124,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
-              ¿Por qué es gratis?
+              ¿Por qué el acceso sin membresía?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Nuestro modelo es simple y transparente: ganamos cuando tú ganas
@@ -156,11 +160,15 @@ const Index = () => {
               </div>
               
               <div className="pt-4">
-                <ValidateCTA 
-                  onOpenChangePartner={() => setShowPartnerModal(true)}
+                <Button 
                   variant="outline"
-                  className="mb-6"
-                />
+                  onClick={() => navigate("/onboarding?step=validate")}
+                  className="border-primary text-primary hover:bg-primary/5"
+                  data-event="cta-validar-acceso-modelo"
+                >
+                  <Target className="h-5 w-5 mr-2" />
+                  Validar acceso
+                </Button>
               </div>
             </div>
           </div>
@@ -189,19 +197,23 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
-                onClick={() => navigate("/access")}
+                onClick={() => navigate("/onboarding?step=choose")}
                 className="bg-white text-primary hover:bg-white/90"
                 data-event="cta-solicitar-acceso-final"
               >
                 Solicitar acceso
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
-              <ValidateCTA 
-                onOpenChangePartner={() => setShowPartnerModal(true)}
-                variant="outline"
+              <Button 
                 size="lg"
-                className="mb-6 [&>button]:border-white [&>button]:text-white [&>button]:hover:bg-white/10"
-              />
+                variant="outline"
+                onClick={() => navigate("/onboarding?step=validate")}
+                className="border-white text-white hover:bg-white/10"
+                data-event="cta-validar-acceso-final"
+              >
+                <Target className="h-5 w-5 mr-2" />
+                Ya tengo cuenta en Exness
+              </Button>
             </div>
           </div>
         </div>
@@ -257,7 +269,7 @@ const Index = () => {
 
               <ol className="mt-4 space-y-3 text-sm text-white/80 list-decimal list-inside">
                 <li>Escribe al soporte de Exness y solicita <strong>cambio de partner</strong>.</li>
-                <li>Indica este <strong>ID</strong>: <code className="px-1.5 py-0.5 rounded bg-white/10">1141465940423171000</code> (Tálamo).</li>
+                <li>Indica este <strong>ID</strong>: <code className="px-1.5 py-0.5 rounded bg-white/10">{PARTNER_ID}</code> (Tálamo).</li>
                 <li>Una vez confirmado, regresa y toca <em>Validar acceso</em>.</li>
               </ol>
               <p className="mt-4 text-xs text-white/60">
@@ -266,7 +278,7 @@ const Index = () => {
               <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-end">
                 <button 
                   onClick={() => {
-                    navigator.clipboard.writeText("1141465940423171000");
+                    navigator.clipboard.writeText(PARTNER_ID);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }} 

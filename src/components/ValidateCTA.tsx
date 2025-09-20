@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Target, ArrowRight, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { PARTNER_ID } from "@/lib/constants";
 
 interface ValidateCTAProps {
   onOpenChangePartner: () => void;
@@ -13,7 +14,7 @@ interface ValidateCTAProps {
 
 export const ValidateCTA = ({ 
   onOpenChangePartner, 
-  href = "/auth/validate",
+  href = "/onboarding?step=validate",
   variant = "outline",
   size = "default",
   className = ""
@@ -36,7 +37,7 @@ export const ValidateCTA = ({
     {
       label: "Crear cuenta nueva", 
       action: () => {
-        navigate("/auth/exness?flow=create");
+        navigate("/onboarding?step=choose");
         setIsOpen(false);
       },
       event: "cta_not_affiliated_create_account"
@@ -190,7 +191,7 @@ export const ValidateCTA = ({
                 >
                   {item.label}
                   {index === 0 && <span className="text-xs text-muted-foreground block mt-1">
-                    (ID: 1141465940423171000)
+                    (ID: {PARTNER_ID})
                   </span>}
                 </button>
               ))}
