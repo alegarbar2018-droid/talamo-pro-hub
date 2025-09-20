@@ -44,7 +44,7 @@ const Index = () => {
               <Badge variant="outline" className="border-teal text-teal">MVP</Badge>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/login")}>
+              <Button variant="outline" onClick={() => navigate("/auth/signin")}>
                 Iniciar Sesión
               </Button>
               <Button 
@@ -209,7 +209,7 @@ const Index = () => {
                   </Button>
                   <Button 
                     variant="link"
-                    onClick={() => navigate("/onboarding?step=blocked")}
+                    onClick={() => navigate("/onboarding?step=validate")}
                     className="text-muted-foreground hover:text-foreground text-sm h-auto p-1"
                     data-event="cta-no-afiliado-modelo"
                   >
@@ -308,7 +308,7 @@ const Index = () => {
                 </Button>
                 <Button 
                   variant="link"
-                  onClick={() => navigate("/onboarding?step=blocked")}
+                  onClick={() => navigate("/onboarding?step=validate")}
                   className="text-muted-foreground hover:text-foreground"
                   data-event="cta-no-afiliado-exness"
                 >
@@ -362,7 +362,7 @@ const Index = () => {
             <div className="mt-4">
               <Button 
                 variant="link"
-                onClick={() => navigate("/onboarding?step=blocked")}
+                onClick={() => navigate("/onboarding?step=validate")}
                 className="text-white/70 hover:text-white text-sm"
                 data-event="cta-no-afiliado-final"
               >
