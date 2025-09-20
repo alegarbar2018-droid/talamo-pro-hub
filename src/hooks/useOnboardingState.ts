@@ -1,15 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export type OnboardingStep = "choose" | "validate" | "eligible" | "create-password" | "profile" | "done";
-
-interface WizardState {
-  step: OnboardingStep;
-  email: string;
-  uid: string;
-  isDemoMode: boolean;
-  isNotAffiliated: boolean;
-}
 
 interface ProfileData {
   language: string;
@@ -21,11 +13,13 @@ interface ProfileData {
 
 export const useOnboardingState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const urlStep = searchParams.get("step") as OnboardingStep;
+  
+  // Initialize from URL or default to "choose"
+  const initialStep = (searchParams.get("step") as OnboardingStep) || "choose";
   const initialEmail = searchParams.get("email") || "";
   
-  // Always start with "choose" unless we have saved state or explicit URL navigation
-  const [step, setStep] = useState<OnboardingStep>("choose");
+  // State
+  const [step, setStepInternal] = useState<OnboardingStep>(initialStep);
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,60 +37,12 @@ export const useOnboardingState = () => {
   const [copiedText, setCopiedText] = useState("");
   const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
 
-  // Load state from localStorage or URL
-  useEffect(() => {
-    const savedState = localStorage.getItem('talamo.wizard.state');
-    
-    if (savedState) {
-      const parsed: WizardState = JSON.parse(savedState);
-      // If there's saved state and it's different from current step, ask user
-      if (parsed.step !== "choose") {
-        const shouldResume = window.confirm('Tienes un proceso de acceso iniciado. ¿Quieres continuarlo?');
-        if (shouldResume) {
-          setStep(parsed.step);
-          setEmail(parsed.email);
-          setUid(parsed.uid);
-          setIsDemoMode(parsed.isDemoMode);
-          setIsNotAffiliated(parsed.isNotAffiliated || false);
-          setSearchParams({ step: parsed.step });
-          return;
-        } else {
-          localStorage.removeItem('talamo.wizard.state');
-        }
-      }
-    }
-    
-    // If no saved state but URL has a step, use it (direct navigation)
-    if (urlStep && urlStep !== "choose") {
-      setStep(urlStep);
-    } else {
-      // Clear URL parameters and start fresh
-      setSearchParams({});
-    }
-    
-    if (initialEmail && !email) {
-      setEmail(initialEmail);
-    }
-  }, [urlStep, initialEmail, setSearchParams]);
-
-  // Save state to localStorage
-  const saveWizardState = (newStep: OnboardingStep) => {
-    const state: WizardState = {
-      step: newStep,
-      email,
-      uid,
-      isDemoMode,
-      isNotAffiliated
-    };
-    localStorage.setItem('talamo.wizard.state', JSON.stringify(state));
-  };
-
-  // Update URL when step changes
-  useEffect(() => {
-    setSearchParams({ step });
-    saveWizardState(step);
-    console.info(`onboarding_view`, { step });
-  }, [step, setSearchParams]);
+  // Step setter that updates URL
+  const setStep = useCallback((newStep: OnboardingStep) => {
+    setStepInternal(newStep);
+    setSearchParams({ step: newStep });
+    console.info(`onboarding_step_change`, { step: newStep });
+  }, [setSearchParams]);
 
   const getStepNumber = () => {
     const stepMap = {
@@ -110,9 +56,27 @@ export const useOnboardingState = () => {
     return stepMap[step];
   };
 
-  const clearWizardState = () => {
-    localStorage.removeItem('talamo.wizard.state');
-  };
+  // Reset all state
+  const resetState = useCallback(() => {
+    setStepInternal("choose");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setProfile({
+      language: "español",
+      level: "",
+      objective: "",
+      riskTolerance: "",
+      interests: []
+    });
+    setUid("");
+    setIsDemoMode(false);
+    setIsNotAffiliated(false);
+    setShowPartnerModal(false);
+    setCopiedText("");
+    setShowNewAccountCreated(false);
+    setSearchParams({});
+  }, [setSearchParams]);
 
   return {
     // State
@@ -146,6 +110,6 @@ export const useOnboardingState = () => {
     progress: (getStepNumber() / 5) * 100,
     
     // Actions
-    clearWizardState
+    resetState
   };
 };

@@ -38,34 +38,46 @@ const OnboardingNew = () => {
     progress,
     
     // Actions
-    clearWizardState
+    resetState
   } = useOnboardingState();
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Clear errors when step changes
+  const clearErrors = () => {
+    setError("");
+    setLoading(false);
+  };
+
   // Step handlers
   const handleChooseCreateAccount = () => {
-    // Just log the action, user will come back to validate after creating account
     console.info('user_chose_create_account');
+    // User opens partner link, stays on choose step
   };
 
   const handleChooseValidateExisting = () => {
+    clearErrors();
     setStep("validate");
   };
 
   const handleValidationSuccess = (clientUid?: string) => {
+    clearErrors();
     setUid(clientUid || "");
     setIsNotAffiliated(false);
+    setIsDemoMode(false);
     setStep("eligible");
   };
 
   const handleNotAffiliated = () => {
     setIsNotAffiliated(true);
+    // Stay on validate step to show options
   };
 
   const handleDemoMode = () => {
+    clearErrors();
     setIsDemoMode(true);
+    setIsNotAffiliated(false);
     setStep("eligible");
     toast({
       title: "Modo Demo Activado",
@@ -74,16 +86,24 @@ const OnboardingNew = () => {
   };
 
   const handleRetryValidation = () => {
-    setError("");
+    clearErrors();
     setIsNotAffiliated(false);
+    setShowPartnerModal(false);
+    // Stay on validate step for retry
   };
 
   const handlePasswordSuccess = () => {
+    clearErrors();
     setStep("profile");
   };
 
   const handleProfileComplete = () => {
+    clearErrors();
     setStep("done");
+  };
+
+  const handleRestart = () => {
+    resetState();
   };
 
   // Render current step
@@ -143,12 +163,19 @@ const OnboardingNew = () => {
       case "done":
         return (
           <DoneStep
-            onClearState={clearWizardState}
+            onClearState={handleRestart}
           />
         );
       
       default:
-        return null;
+        return (
+          <div className="text-center">
+            <p className="text-muted-foreground">Paso no reconocido</p>
+            <button onClick={handleRestart} className="text-primary underline mt-2">
+              Reiniciar proceso
+            </button>
+          </div>
+        );
     }
   };
 
