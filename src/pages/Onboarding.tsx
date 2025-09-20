@@ -144,16 +144,21 @@ const Onboarding = () => {
         console.info(`exness_validate_success`, { email: targetEmail, uid: data.client_uid });
       } else {
         // User is not affiliated - this is not an error, it's an expected flow
+        console.info(`Setting isNotAffiliated to true for email: ${targetEmail}`);
         setIsNotAffiliated(true);
         setError(""); // Clear any previous errors
-        console.info(`exness_validate_blocked`, { email: targetEmail });
+        console.info(`exness_validate_blocked`, { email: targetEmail, isNotAffiliated: true });
         // Scroll to Block B after a brief delay
         setTimeout(() => {
+          console.info(`Attempting to scroll to Block B`);
           const blockB = document.getElementById('block-b-not-affiliated');
           if (blockB) {
+            console.info(`Block B found, scrolling to it`);
             blockB.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else {
+            console.warn(`Block B not found in DOM`);
           }
-        }, 300);
+        }, 500);
       }
     } catch (err: any) {
       if (err?.status === 401) {
@@ -410,6 +415,13 @@ const Onboarding = () => {
               )}
             </Button>
           </form>
+
+          {/* Debug state information */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="p-2 bg-gray-100 rounded text-xs font-mono">
+              Debug: isNotAffiliated={String(isNotAffiliated)}, error="{error}", step="{step}"
+            </div>
+          )}
 
           {/* Results for not affiliated - PROMINENT DISPLAY */}
           {isNotAffiliated && (
