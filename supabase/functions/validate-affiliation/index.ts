@@ -136,6 +136,16 @@ const handler = async (req: Request): Promise<Response> => {
   console.log("URL:", req.url);
 
   try {
+    // Initialize Supabase Client
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
     let email: string;
 
     // Handle both POST and GET requests
@@ -171,6 +181,50 @@ const handler = async (req: Request): Promise<Response> => {
 
     email = email.trim().toLowerCase();
     console.log("Processing email:", email);
+
+    // Check if user already exists by looking at profiles table
+    // We need to join with auth.users to get the email since profiles doesn't store email directly
+    // But we can't access auth.users directly, so we'll use a different approach
+    // We'll look for profiles that might belong to this email through user metadata
+    
+    // First check if this email exists in any user's metadata
+    const { data: existingProfiles, error: profileError } = await supabase
+      .from('profiles')
+      .select('user_id')
+      .limit(1);
+    
+    if (!profileError && existingProfiles) {
+      console.log("Checking for existing user with email:", email);
+      
+      // We'll check by trying to sign in with a dummy password
+      // If the user exists, we'll get a specific error
+      try {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: 'dummy_password_check_123456'
+        });
+        
+        // If we get "Invalid login credentials", the user exists but password is wrong
+        // If we get "Invalid email" or similar, the user doesn't exist
+        if (signInError && signInError.message === 'Invalid login credentials') {
+          console.log("User already exists, redirecting to login");
+          return new Response(
+            JSON.stringify({ 
+              code: "UserExists", 
+              message: "Ya tienes una cuenta registrada. Inicia sesión con tu contraseña.",
+              user_exists: true
+            }),
+            { 
+              status: 409, 
+              headers: { "Content-Type": "application/json", ...corsHeaders } 
+            }
+          );
+        }
+      } catch (authCheckError) {
+        console.log("Error checking user existence, continuing with validation:", authCheckError);
+        // If there's an error checking, continue with normal validation
+      }
+    }
 
     // Environment variables check
     const usePartnerAPI = Deno.env.get("USE_PARTNER_API");
