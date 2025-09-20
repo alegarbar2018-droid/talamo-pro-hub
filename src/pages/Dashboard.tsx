@@ -18,42 +18,21 @@ import {
   BarChart3
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import AffiliationGate from "@/components/AffiliationGate";
 
 const Dashboard = () => {
-  const [user, setUser] = useState<any>(null);
-  const [isValidated, setIsValidated] = useState(false);
+  const { user, isValidated, signOut } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    const isValidated = localStorage.getItem("isValidated");
-    
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser({
-        ...parsedUser,
-        isAffiliated: isValidated === 'true'
-      });
-    } else {
-      // For MVP, create a demo user if none exists
-      const demoUser = {
-        id: 'demo-user',
-        name: 'Usuario Demo',
-        email: 'demo@email.com',
-        isAffiliated: isValidated === 'true'
-      };
-      setUser(demoUser);
-      localStorage.setItem("user", JSON.stringify(demoUser));
-    }
-  }, [navigate]);
-
+  // If not authenticated, redirect to login
   if (!user) {
+    navigate("/login");
     return null;
   }
 
+  // If not validated/affiliated, redirect to onboarding
   if (!isValidated && !user.isAffiliated) {
-    // Redirect to onboarding for affiliation validation
     navigate("/onboarding");
     return null;
   }
@@ -157,10 +136,7 @@ const Dashboard = () => {
               </Badge>
               <Button 
                 variant="ghost" 
-                onClick={() => {
-                  localStorage.removeItem("user");
-                  navigate("/login");
-                }}
+                onClick={signOut}
               >
                 Cerrar sesión
               </Button>
@@ -173,7 +149,7 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">
-            Bienvenido, {user.name}
+            Bienvenido, {user.profile?.first_name ? `${user.profile.first_name} ${user.profile.last_name || ''}`.trim() : user.email?.split('@')[0] || 'Usuario'}
           </h2>
           <p className="text-muted-foreground">
             Aquí tienes un resumen de tu progreso y actividades recientes
