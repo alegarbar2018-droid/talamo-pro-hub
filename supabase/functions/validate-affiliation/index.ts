@@ -237,6 +237,15 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  console.log("Function called with method:", req.method);
+  console.log("Environment variables check:", {
+    USE_PARTNER_API: Deno.env.get("USE_PARTNER_API"),
+    PARTNER_API_BASE: !!Deno.env.get("PARTNER_API_BASE"),
+    PARTNER_API_USER: !!Deno.env.get("PARTNER_API_USER"),
+    PARTNER_API_PASSWORD: !!Deno.env.get("PARTNER_API_PASSWORD"),
+    EXNESS_PARTNER_ID: !!Deno.env.get("EXNESS_PARTNER_ID")
+  });
+
   try {
     let email: string;
     let uid: string | undefined;
