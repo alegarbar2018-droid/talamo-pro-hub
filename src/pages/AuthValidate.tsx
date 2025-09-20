@@ -109,6 +109,45 @@ export default function AuthValidatePage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Not Affiliated Callout */}
+        <Alert className="mb-8 border-amber-500/20 bg-amber-500/5">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <AlertDescription>
+            <div className="space-y-3">
+              <p className="font-semibold text-amber-800">¿Tu cuenta no está afiliada a Tálamo?</p>
+              <p className="text-sm text-amber-700">
+                Si tu cuenta Exness no está bajo nuestra afiliación, elige una opción para acceder a Tálamo:
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 mt-3">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate("/guide/change-partner")}
+                  className="border-amber-500 text-amber-700 hover:bg-amber-500/10"
+                >
+                  Solicitar cambio de partner
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.open("https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank")}
+                  className="border-amber-500 text-amber-700 hover:bg-amber-500/10"
+                >
+                  Crear cuenta nueva
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.location.reload()}
+                  className="border-amber-500 text-amber-700 hover:bg-amber-500/10"
+                >
+                  Volver a validar
+                </Button>
+              </div>
+            </div>
+          </AlertDescription>
+        </Alert>
+
         {/* Validation Form */}
         <Card className="border-line bg-surface mb-8">
           <CardHeader>
