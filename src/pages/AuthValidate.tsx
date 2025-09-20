@@ -1,15 +1,29 @@
-"use client";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle, AlertTriangle, ExternalLink, Copy } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
+import { 
+  BookOpen, 
+  TrendingUp, 
+  Users, 
+  Calculator,
+  AlertTriangle,
+  CheckCircle,
+  Copy,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Shield,
+  Target,
+  Activity,
+  BarChart3
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ValidationResult {
   isAffiliated: boolean;
@@ -19,222 +33,328 @@ interface ValidationResult {
   accounts?: string[];
 }
 
-const ChangePartnerModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { toast } = useToast();
-  const partnerId = process.env.NEXT_PUBLIC_EXNESS_PARTNER_ID || "1141465940423171000";
-
-  const copyPartnerId = () => {
-    navigator.clipboard.writeText(partnerId);
-    toast({
-      title: "ID copiado",
-      description: "Partner ID copiado al portapapeles"
-    });
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface border border-line rounded-2xl p-6 max-w-lg w-full">
-        <h3 className="text-xl font-bold text-foreground mb-4">
-          Cambio de Partner en Exness
-        </h3>
-        <p className="text-muted-foreground mb-4">
-          Para acceder a Tálamo, necesitas cambiar tu Partner ID en Exness:
-        </p>
-        
-        <ol className="mt-4 space-y-3 text-sm text-white/80 list-decimal list-inside">
-          <li>Inicia sesión en tu Área Personal de Exness</li>
-          <li>Ve a "Configuración" → "Cambiar Partner"</li>
-          <li>Introduce este Partner ID: 
-            <div className="flex items-center gap-2 mt-2 p-3 bg-background rounded-lg border border-line">
-              <code className="text-teal font-mono">{partnerId}</code>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={copyPartnerId}
-                className="h-8 w-8 p-0"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
-          </li>
-        </ol>
-        
-        <p className="mt-4 text-xs text-white/60">
-          Nota: El acceso gratuito a Tálamo depende de que tu cuenta esté afiliada a nuestro partner.
-        </p>
-        
-        <div className="mt-5 flex justify-end">
-          <button 
-            onClick={onClose} 
-            className="px-4 py-2 text-sm rounded-xl bg-white/5 hover:bg-white/10 border border-white/10"
-          >
-            Cerrar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default function ValidatePage() {
-  const [email, setEmail] = useState("");
-  const [uid, setUid] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+export default function AuthValidatePage() {
+  const [email, setEmail] = useState('');
+  const [uid, setUid] = useState('');
+  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ValidationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleValidate = async () => {
+  const handleValidation = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!email.trim()) {
-      setError("El email es requerido");
+      toast({
+        title: "Email requerido",
+        description: "Por favor introduce tu email de Exness",
+        variant: "destructive"
+      });
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
-    
+    setLoading(true);
+
     try {
-      // Use mock API for MVP
+      // Use mock API that simulates real validation
       const { mockValidateAffiliation } = await import('@/lib/mockApi');
       const data = await mockValidateAffiliation(email.trim(), uid.trim() || undefined);
-
-      // Remove this block since we're using mock data above
 
       setResult(data);
 
       if (data.isAffiliated && data.partnerIdMatch) {
-        // Store affiliation in localStorage for MVP
-        const { setUserValidation } = await import('@/lib/auth');
-        // For now use localStorage until auth context is properly integrated
+        // Store validation status
         localStorage.setItem("isValidated", "true");
         
         toast({
-          title: "✅ Acceso desbloqueado",
-          description: "Tu cuenta está verificada con nuestro partner"
+          title: "✅ ¡Validación exitosa!",
+          description: "Tu cuenta está correctamente afiliada a nuestro partner.",
+        });
+
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else {
+        toast({
+          title: "Cuenta no afiliada",
+          description: "Tu cuenta no está afiliada a nuestro partner. Sigue las instrucciones para cambiarla.",
+          variant: "destructive"
         });
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+    } catch (error) {
+      console.error('Validation error:', error);
+      toast({
+        title: "Error de validación",
+        description: "Ha ocurrido un error. Inténtalo de nuevo.",
+        variant: "destructive"
+      });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const goToDashboard = () => {
-    navigate('/dashboard');
-  };
-
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-line bg-surface">
-        <CardHeader>
-          <CardTitle className="text-center text-foreground">
-            Validar Acceso a Tálamo
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="email" className="text-foreground">
-              Email de tu cuenta Exness *
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
-              className="mt-1"
-              disabled={isLoading}
-            />
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b border-line bg-surface">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center py-4">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Tálamo</h1>
+              <p className="text-muted-foreground">Validación de afiliación con Exness</p>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div>
-            <Label htmlFor="uid" className="text-foreground">
-              UID de cuenta (opcional)
-            </Label>
-            <Input
-              id="uid"
-              value={uid}
-              onChange={(e) => setUid(e.target.value)}
-              placeholder="12345678"
-              className="mt-1"
-              disabled={isLoading}
-            />
-          </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Validation Form */}
+        <Card className="border-line bg-surface mb-8">
+          <CardHeader>
+            <CardTitle className="text-foreground">
+              Validar tu cuenta de Exness
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Introduce los datos de tu cuenta para verificar la afiliación con nuestro partner
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleValidation} className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-foreground">
+                    Email de tu cuenta Exness *
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tu@email.com"
+                    required
+                    className="bg-background border-line text-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    El mismo email que usas para acceder a tu área personal de Exness
+                  </p>
+                </div>
 
-          {error && (
-            <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+                <div className="space-y-2">
+                  <Label htmlFor="uid" className="text-foreground">
+                    UID de cliente (opcional)
+                  </Label>
+                  <Input
+                    id="uid"
+                    type="text"
+                    value={uid}
+                    onChange={(e) => setUid(e.target.value)}
+                    placeholder="123456789"
+                    className="bg-background border-line text-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Puedes encontrar tu UID en tu área personal de Exness
+                  </p>
+                </div>
+              </div>
 
-          {result && (
-            <Alert variant={result.isAffiliated && result.partnerIdMatch ? "default" : "destructive"}>
-              {result.isAffiliated && result.partnerIdMatch ? (
-                <CheckCircle className="h-4 w-4" />
-              ) : (
-                <AlertTriangle className="h-4 w-4" />
-              )}
-              <AlertDescription>
-                {result.isAffiliated && result.partnerIdMatch
-                  ? "✅ Tu cuenta está afiliada a nuestro partner. Acceso desbloqueado."
-                  : "❌ Tu cuenta no está afiliada a nuestro partner o no se encontró."}
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={loading}
+              >
+                {loading ? "Validando..." : "Validar afiliación"}
+              </Button>
+            </form>
+
+            {/* Demo hint */}
+            <Alert className="mt-6 border-teal/20 bg-teal/5">
+              <CheckCircle className="h-4 w-4 text-teal" />
+              <AlertDescription className="text-sm">
+                <strong>Para demo:</strong> Usa demo@email.com o cualquier email que contenga "exness" o "demo"
               </AlertDescription>
             </Alert>
-          )}
+          </CardContent>
+        </Card>
 
-          <Button
-            onClick={handleValidate}
-            disabled={isLoading}
-            className="w-full"
-          >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Validar Acceso
-          </Button>
+        {/* Validation Result */}
+        {result && (
+          <Card className={`border-line bg-surface mb-8 ${
+            result.isAffiliated && result.partnerIdMatch 
+              ? 'border-green-500/20 bg-green-500/5' 
+              : 'border-red-500/20 bg-red-500/5'
+          }`}>
+            <CardHeader>
+              <CardTitle className={`flex items-center gap-2 ${
+                result.isAffiliated && result.partnerIdMatch ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {result.isAffiliated && result.partnerIdMatch ? (
+                  <CheckCircle className="h-5 w-5" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5" />
+                )}
+                {result.isAffiliated && result.partnerIdMatch 
+                  ? '¡Validación exitosa!' 
+                  : 'Cuenta no afiliada'
+                }
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {result.isAffiliated && result.partnerIdMatch ? (
+                <div className="space-y-4">
+                  <p className="text-foreground">
+                    Tu cuenta está correctamente afiliada a nuestro partner. Ahora tienes acceso completo a Tálamo.
+                  </p>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Partner ID:</span>
+                      <p className="font-mono text-teal">{result.partnerId}</p>
+                    </div>
+                    {result.clientUid && (
+                      <div>
+                        <span className="text-muted-foreground">Client UID:</span>
+                        <p className="font-mono">{result.clientUid}</p>
+                      </div>
+                    )}
+                  </div>
+                  <Button onClick={() => navigate('/dashboard')} className="w-full">
+                    Ir al Panel de Control
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-foreground">
+                    Tu cuenta no está afiliada a nuestro partner. Para acceder a Tálamo de forma gratuita, 
+                    necesitas cambiar tu Partner ID.
+                  </p>
+                  <div className="flex gap-4">
+                    <Button 
+                      onClick={() => window.open('/auth/exness?flow=create', '_blank')}
+                      className="flex-1"
+                    >
+                      Crear cuenta en Exness
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowModal(true)}
+                      className="flex-1"
+                    >
+                      Cambiar partner ID
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
-          {result && result.isAffiliated && result.partnerIdMatch && (
-            <Button onClick={goToDashboard} className="w-full" variant="outline">
-              Ir al Panel
-            </Button>
-          )}
-
-          {result && (!result.isAffiliated || !result.partnerIdMatch) && (
-            <div className="space-y-2">
-              <Button asChild className="w-full" variant="outline">
-                <a href="/auth/exness?flow=create" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Crear Cuenta en Exness
-                </a>
-              </Button>
-              <Button
-                onClick={() => setShowModal(true)}
-                className="w-full"
-                variant="secondary"
-              >
-                Cambio de Partner
-              </Button>
+        {/* Instructions */}
+        <Card className="border-line bg-surface">
+          <CardHeader>
+            <CardTitle className="text-foreground">
+              ¿Cómo funciona la validación?
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-teal/10 text-teal rounded-full flex items-center justify-center font-bold text-sm">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Verificación</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Verificamos si tu cuenta Exness está afiliada a nuestro partner
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-teal/10 text-teal rounded-full flex items-center justify-center font-bold text-sm">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Activación</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Si está afiliada, activamos tu acceso completo a Tálamo
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-teal/10 text-teal rounded-full flex items-center justify-center font-bold text-sm">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Acceso total</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Disfruta de todas las herramientas y contenidos sin restricciones
+                  </p>
+                </div>
+              </div>
             </div>
-          )}
+          </CardContent>
+        </Card>
 
-          <div className="text-center">
-            <Button variant="link" asChild>
-              <a href="/guide/change-partner">
-                Guía de cambio de partner
-              </a>
-            </Button>
+        {/* Change Partner Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-surface border border-line rounded-2xl p-6 max-w-lg w-full">
+              <h3 className="text-xl font-bold text-foreground mb-4">
+                Cambio de Partner en Exness
+              </h3>
+              
+              <div className="space-y-4 mb-6">
+                <p className="text-muted-foreground">
+                  Para cambiar tu Partner ID y acceder a Tálamo gratuitamente:
+                </p>
+                
+                <ol className="space-y-3 text-sm">
+                  <li className="flex gap-3">
+                    <span className="w-6 h-6 bg-teal text-background rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <span>Accede a tu área personal de Exness en my.exness.com</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="w-6 h-6 bg-teal text-background rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <span>Ve a Configuración → Cambiar Partner</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="w-6 h-6 bg-teal text-background rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                    <div>
+                      <span>Introduce nuestro Partner ID:</span>
+                      <div className="flex items-center gap-2 mt-2 p-2 bg-background rounded border">
+                        <code className="text-teal font-mono flex-1">1141465940423171000</code>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            navigator.clipboard.writeText("1141465940423171000");
+                            toast({
+                              title: "ID copiado",
+                              description: "Partner ID copiado al portapapeles"
+                            });
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+              
+              <div className="flex gap-3">
+                <Button onClick={() => setShowModal(false)} variant="outline" className="flex-1">
+                  Cerrar
+                </Button>
+                <Button onClick={() => navigate('/guide/change-partner')} className="flex-1">
+                  Ver guía completa
+                </Button>
+              </div>
+            </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <ChangePartnerModal 
-        isOpen={showModal} 
-        onClose={() => setShowModal(false)} 
-      />
+        )}
+      </div>
     </div>
   );
 }
