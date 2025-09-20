@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["admin_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["admin_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["admin_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       affiliation_reports: {
         Row: {
           created_at: string
@@ -71,6 +95,275 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          meta: Json | null
+          resource: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          resource?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          resource?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      competitions: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          name: string
+          rules: string
+          starts_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          name: string
+          rules: string
+          starts_at: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          name?: string
+          rules?: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      course_events: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          meta: Json | null
+          user_id: string
+          value: number | null
+          verb: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          user_id: string
+          value?: number | null
+          verb: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          user_id?: string
+          value?: number | null
+          verb?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_events_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "course_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_items: {
+        Row: {
+          created_at: string
+          duration_min: number | null
+          external_url: string | null
+          id: string
+          kind: string
+          mapping: Json | null
+          provider: string
+          status: string
+          storage_key: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duration_min?: number | null
+          external_url?: string | null
+          id?: string
+          kind: string
+          mapping?: Json | null
+          provider?: string
+          status?: string
+          storage_key?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duration_min?: number | null
+          external_url?: string | null
+          id?: string
+          kind?: string
+          mapping?: Json | null
+          provider?: string
+          status?: string
+          storage_key?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      eas: {
+        Row: {
+          created_at: string
+          description: string
+          download_url: string | null
+          id: string
+          name: string
+          params: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          download_url?: string | null
+          id?: string
+          name: string
+          params?: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          download_url?: string | null
+          id?: string
+          name?: string
+          params?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      integrations: {
+        Row: {
+          config: Json
+          created_at: string
+          enabled: boolean
+          id: string
+          name: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      permissions: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          resource: string
+          role: Database["public"]["Enums"]["admin_role"]
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          resource: string
+          role: Database["public"]["Enums"]["admin_role"]
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          resource?: string
+          role?: Database["public"]["Enums"]["admin_role"]
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          moderation: Json | null
+          section: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          moderation?: Json | null
+          section: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          moderation?: Json | null
+          section?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -110,6 +403,168 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          active: boolean
+          clicks: number
+          code: string
+          created_at: string
+          id: string
+          signups: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          clicks?: number
+          code: string
+          created_at?: string
+          id?: string
+          signups?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          clicks?: number
+          code?: string
+          created_at?: string
+          id?: string
+          signups?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      signals: {
+        Row: {
+          audit_trail: Json | null
+          author_id: string
+          created_at: string
+          id: string
+          instrument: string
+          invalidation: string
+          logic: string
+          media_urls: string[] | null
+          published_at: string | null
+          reviewer_id: string | null
+          rr: number
+          scheduled_at: string | null
+          status: string
+          timeframe: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          audit_trail?: Json | null
+          author_id: string
+          created_at?: string
+          id?: string
+          instrument: string
+          invalidation: string
+          logic: string
+          media_urls?: string[] | null
+          published_at?: string | null
+          reviewer_id?: string | null
+          rr: number
+          scheduled_at?: string | null
+          status?: string
+          timeframe: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          audit_trail?: Json | null
+          author_id?: string
+          created_at?: string
+          id?: string
+          instrument?: string
+          invalidation?: string
+          logic?: string
+          media_urls?: string[] | null
+          published_at?: string | null
+          reviewer_id?: string | null
+          rr?: number
+          scheduled_at?: string | null
+          status?: string
+          timeframe?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      strategies: {
+        Row: {
+          created_at: string
+          description: string
+          green_months_pct: number
+          id: string
+          max_dd: number
+          name: string
+          pf: number
+          risk_tier: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          green_months_pct: number
+          id?: string
+          max_dd: number
+          name: string
+          pf: number
+          risk_tier: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          green_months_pct?: number
+          id?: string
+          max_dd?: number
+          name?: string
+          pf?: number
+          risk_tier?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tools: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          status: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -136,9 +591,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_admin_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      has_admin_permission: {
+        Args: { _action: string; _resource: string }
+        Returns: boolean
       }
       has_role: {
         Args: {
@@ -149,6 +612,7 @@ export type Database = {
       }
     }
     Enums: {
+      admin_role: "ADMIN" | "ANALYST" | "CONTENT" | "SUPPORT" | "USER"
       app_role: "admin" | "trader" | "partner"
     }
     CompositeTypes: {
@@ -277,6 +741,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_role: ["ADMIN", "ANALYST", "CONTENT", "SUPPORT", "USER"],
       app_role: ["admin", "trader", "partner"],
     },
   },

@@ -18,6 +18,9 @@ import Tools from "./pages/Tools";
 import AuthValidate from "./pages/AuthValidate";
 import ChangePartnerGuide from "./pages/ChangePartnerGuide";
 import ExnessRedirect from "./pages/ExnessRedirect";
+import { AdminLayout } from "./components/admin/AdminLayout";
+import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { AdminUsers } from "./pages/admin/Users";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +51,10 @@ const App = () => (
             <Route path="/auth/validate" element={<AuthValidate />} />
             <Route path="/auth/exness" element={<ExnessRedirect />} />
             <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
+            <Route path="/admin/*" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="users" element={<AdminUsers />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
