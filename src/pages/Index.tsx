@@ -54,7 +54,7 @@ const Index = () => {
         <div className="text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-              Trading Profesional
+              Trading serio. Sin vende humos.
               <br />
               <span className="bg-gradient-primary bg-clip-text text-transparent">
                 Sin Promesas Vacías
