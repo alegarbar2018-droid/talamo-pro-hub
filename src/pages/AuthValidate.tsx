@@ -77,7 +77,7 @@ export default function AuthValidatePage() {
 
       setResult(result);
 
-      if (data.isAffiliated && data.partnerIdMatch) {
+      if (result.isAffiliated && result.partnerIdMatch) {
         // Store validation status
         localStorage.setItem("isValidated", "true");
         
