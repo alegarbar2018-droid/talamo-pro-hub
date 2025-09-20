@@ -21,10 +21,11 @@ interface ProfileData {
 
 export const useOnboardingState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialStep = (searchParams.get("step") as OnboardingStep) || "choose";
+  const urlStep = searchParams.get("step") as OnboardingStep;
   const initialEmail = searchParams.get("email") || "";
   
-  const [step, setStep] = useState<OnboardingStep>(initialStep);
+  // Always start with "choose" unless we have saved state or explicit URL navigation
+  const [step, setStep] = useState<OnboardingStep>("choose");
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,12 +43,14 @@ export const useOnboardingState = () => {
   const [copiedText, setCopiedText] = useState("");
   const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
 
-  // Load state from localStorage
+  // Load state from localStorage or URL
   useEffect(() => {
     const savedState = localStorage.getItem('talamo.wizard.state');
+    
     if (savedState) {
       const parsed: WizardState = JSON.parse(savedState);
-      if (parsed.step !== initialStep) {
+      // If there's saved state and it's different from current step, ask user
+      if (parsed.step !== "choose") {
         const shouldResume = window.confirm('Tienes un proceso de acceso iniciado. ¿Quieres continuarlo?');
         if (shouldResume) {
           setStep(parsed.step);
@@ -56,16 +59,25 @@ export const useOnboardingState = () => {
           setIsDemoMode(parsed.isDemoMode);
           setIsNotAffiliated(parsed.isNotAffiliated || false);
           setSearchParams({ step: parsed.step });
+          return;
         } else {
           localStorage.removeItem('talamo.wizard.state');
         }
       }
     }
     
+    // If no saved state but URL has a step, use it (direct navigation)
+    if (urlStep && urlStep !== "choose") {
+      setStep(urlStep);
+    } else {
+      // Clear URL parameters and start fresh
+      setSearchParams({});
+    }
+    
     if (initialEmail && !email) {
       setEmail(initialEmail);
     }
-  }, [initialStep, initialEmail, setSearchParams, email]);
+  }, [urlStep, initialEmail, setSearchParams]);
 
   // Save state to localStorage
   const saveWizardState = (newStep: OnboardingStep) => {
