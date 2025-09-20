@@ -348,15 +348,22 @@ const Onboarding = () => {
         </CardHeader>
         
         <CardContent className="space-y-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-950 dark:border-blue-800">
-            <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0 dark:text-blue-400" />
-              <div className="space-y-2">
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100">Validar afiliación</h3>
-                <p className="text-sm text-blue-800 dark:text-blue-200">
-                  Consultaremos la API oficial de Exness para verificar que tu cuenta esté 
-                  registrada bajo nuestro partner ID ({PARTNER_ID}). Este proceso es seguro y automático.
+          <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 rounded-xl p-6 shadow-glow-subtle backdrop-blur-sm">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
+                <Info className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="font-bold text-foreground text-lg">Validación segura con API oficial</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Consultaremos directamente la API de Exness para verificar que tu cuenta esté 
+                  registrada bajo nuestro partner oficial (<code className="bg-primary/10 text-primary px-2 py-1 rounded font-mono text-sm">{PARTNER_ID}</code>). 
+                  Este proceso es completamente seguro, automático y no requiere credenciales.
                 </p>
+                <div className="flex items-center gap-2 text-sm text-primary">
+                  <Shield className="h-4 w-4" />
+                  <span className="font-medium">Proceso encriptado y privado</span>
+                </div>
               </div>
             </div>
           </div>
