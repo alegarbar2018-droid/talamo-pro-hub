@@ -35,22 +35,39 @@ export const useAffiliationValidation = () => {
         body: { email }
       });
 
-      // Handle 403 as "not affiliated" instead of error
-      if (error && error.message?.includes('FunctionsHttpError: 403')) {
-        console.info(`User not affiliated (403 response)`, { email });
-        onNotAffiliated();
-        return;
+      console.log('Supabase response:', { data, error, hasError: !!error });
+
+      // Check for 403 responses specifically for "NotAffiliated" users
+      if (error) {
+        // Handle different ways Supabase wraps 403 responses
+        const is403Response = 
+          error.message?.includes('FunctionsHttpError: 403') ||
+          error.message?.includes('FunctionsRelayError: 403') ||
+          error.message?.includes('NotAffiliated') ||
+          error.context?.status === 403 ||
+          error.status === 403;
+
+        if (is403Response) {
+          console.info(`User not affiliated (403 response)`, { email, errorMessage: error.message });
+          onNotAffiliated();
+          return;
+        }
+        
+        // If it's any other error, throw it
+        throw error;
       }
 
-      if (error) throw error;
-
+      // Handle successful response
       if (data?.affiliation === true) {
         onSuccess(data.client_uid || "");
         console.info(`exness_validate_success`, { email, uid: data.client_uid });
-      } else {
-        console.info(`User not affiliated, showing options`);
+      } else if (data?.affiliation === false) {
+        // This shouldn't happen if edge function returns 403 for non-affiliated, but just in case
+        console.info(`User not affiliated (data response)`, { email });
         onNotAffiliated();
-        console.info(`exness_validate_blocked`, { email });
+      } else {
+        console.info(`Unexpected response format`, { data });
+        onNotAffiliated();
       }
     } catch (err: any) {
       // Handle 403 specifically for non-affiliated users (backup)
