@@ -36,7 +36,7 @@ async function getExnessToken(): Promise<string> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email: apiUser,
+      login: apiUser,
       password: apiPassword,
     }),
   });
