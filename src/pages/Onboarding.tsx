@@ -143,8 +143,9 @@ const Onboarding = () => {
         setStep("eligible");
         console.info(`exness_validate_success`, { email: targetEmail, uid: data.client_uid });
       } else {
+        // User is not affiliated - this is not an error, it's an expected flow
         setIsNotAffiliated(true);
-        setError("Tu cuenta no está afiliada a Tálamo");
+        setError(""); // Clear any previous errors
         console.info(`exness_validate_blocked`, { email: targetEmail });
         // Scroll to Block B after a brief delay
         setTimeout(() => {
@@ -152,7 +153,7 @@ const Onboarding = () => {
           if (blockB) {
             blockB.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }, 100);
+        }, 300);
       }
     } catch (err: any) {
       if (err?.status === 401) {
@@ -410,24 +411,26 @@ const Onboarding = () => {
             </Button>
           </form>
 
-          {/* Results for not affiliated */}
+          {/* Results for not affiliated - PROMINENT DISPLAY */}
           {isNotAffiliated && (
             <div className="space-y-4">
-              <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg dark:from-amber-950 dark:to-orange-950 dark:border-amber-800 shadow-lg">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="h-4 w-4 text-white" />
+              <div className="p-6 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-200 border-2 border-amber-300 rounded-xl dark:from-amber-900 dark:via-orange-900 dark:to-amber-800 dark:border-amber-600 shadow-xl">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
+                    <AlertTriangle className="h-6 w-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-amber-900 dark:text-amber-100 mb-2">
+                    <h3 className="text-xl font-bold text-amber-900 dark:text-amber-100 mb-3">
                       Tu cuenta no está afiliada a Tálamo
                     </h3>
-                    <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
-                      No te preocupes, tienes opciones para continuar. Ve las soluciones disponibles abajo.
+                    <p className="text-base text-amber-800 dark:text-amber-200 mb-4 leading-relaxed">
+                      No hay problema. Tienes dos opciones claras para continuar y acceder a la plataforma premium de Tálamo.
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
-                      <ArrowRight className="h-3 w-3" />
-                      <span className="font-medium">Opciones disponibles más abajo</span>
+                    <div className="flex items-center gap-3 text-amber-700 dark:text-amber-300">
+                      <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center">
+                        <ArrowRight className="h-4 w-4 text-amber-900" />
+                      </div>
+                      <span className="font-semibold text-lg">Ve las opciones disponibles abajo</span>
                     </div>
                   </div>
                 </div>
