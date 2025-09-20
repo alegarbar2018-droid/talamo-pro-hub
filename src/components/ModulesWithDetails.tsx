@@ -91,56 +91,96 @@ const ModulesWithDetails = () => {
   ];
 
   return (
-    <section id="modulos" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-foreground mb-4">
-          Ecosistema Completo de Trading
-        </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Todo lo que necesitas para desarrollarte como trader profesional, 
-          en una sola plataforma transparente y gratuita.
-        </p>
-      </div>
+    <section id="modulos" className="relative py-24 overflow-hidden">
+      {/* Premium background with gradients */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/50 to-background" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--teal)_0%,_transparent_70%)] opacity-5" />
+      
+      {/* Floating orbs */}
+      <div className="absolute top-20 left-1/4 w-32 h-32 bg-gradient-to-r from-teal/20 to-accent/20 rounded-full blur-xl animate-pulse" />
+      <div className="absolute bottom-20 right-1/4 w-48 h-48 bg-gradient-to-r from-accent/15 to-primary/15 rounded-full blur-2xl animate-pulse delay-1000" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-foreground via-teal to-accent bg-clip-text text-transparent">
+              Ecosistema Completo
+            </span>
+            <br />
+            <span className="text-foreground">de Trading</span>
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Todo lo que necesitas para desarrollarte como trader profesional, 
+            en una sola plataforma transparente y gratuita.
+          </p>
+          <div className="w-24 h-1 bg-gradient-to-r from-teal to-accent mx-auto mt-6 rounded-full" />
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {features.map((feature, index) => (
-          <Card key={index} className="border-line bg-surface hover:shadow-glow-subtle transition-all">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <feature.icon className="h-8 w-8 text-teal" />
-                <div>
-                  <CardTitle className="text-foreground">{feature.title}</CardTitle>
-                </div>
-              </div>
-              <CardDescription className="text-muted-foreground">
-                {feature.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 mb-4">
-                {feature.highlights.map((highlight, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-                    {highlight}
-                  </li>
-                ))}
-              </ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <Card 
+              key={index} 
+              className="group relative border-line/50 bg-gradient-to-b from-surface/80 to-surface/40 backdrop-blur-sm hover:shadow-glow-elegant hover:border-teal/30 transition-all duration-500 hover:-translate-y-2"
+            >
+              {/* Card glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-accent/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
-              <details className="group">
-                <summary className="cursor-pointer text-sm font-medium text-teal hover:text-teal/80 transition-colors">
-                  Ver detalles técnicos
-                </summary>
-                <div className="mt-3 space-y-2 border-t border-line pt-3">
-                  {feature.details.map((detail, idx) => (
-                    <p key={idx} className="text-xs text-muted-foreground leading-relaxed">
-                      • {detail}
-                    </p>
-                  ))}
+              <CardHeader className="relative">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-accent/20 group-hover:from-teal/30 group-hover:to-accent/30 transition-colors duration-300">
+                    <feature.icon className="h-7 w-7 text-teal group-hover:text-teal-bright transition-colors duration-300" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-foreground group-hover:text-teal transition-colors duration-300">
+                      {feature.title}
+                    </CardTitle>
+                  </div>
                 </div>
-              </details>
-            </CardContent>
-          </Card>
-        ))}
+                <CardDescription className="text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent className="relative">
+                <ul className="space-y-3 mb-6">
+                  {feature.highlights.map((highlight, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-sm">
+                      <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal to-accent flex-shrink-0" />
+                      <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                        {highlight}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <details className="group/details">
+                  <summary className="cursor-pointer text-sm font-medium text-teal hover:text-teal-bright transition-colors duration-300 flex items-center gap-2">
+                    <span>Ver detalles técnicos</span>
+                    <div className="w-4 h-4 rounded-full bg-teal/20 flex items-center justify-center group-hover/details:bg-teal/30 transition-colors duration-300">
+                      <div className="w-1.5 h-1.5 rounded-full bg-teal" />
+                    </div>
+                  </summary>
+                  <div className="mt-4 space-y-3 border-t border-gradient-to-r from-transparent via-line to-transparent pt-4">
+                    {feature.details.map((detail, idx) => (
+                      <p key={idx} className="text-xs text-muted-foreground leading-relaxed pl-4 border-l-2 border-teal/20 hover:border-teal/40 transition-colors duration-300">
+                        {detail}
+                      </p>
+                    ))}
+                  </div>
+                </details>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        {/* Bottom decoration */}
+        <div className="flex justify-center mt-16">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-teal/60" />
+            <div className="w-8 h-0.5 bg-gradient-to-r from-teal/60 to-accent/60" />
+            <div className="w-2 h-2 rounded-full bg-accent/60" />
+          </div>
+        </div>
       </div>
     </section>
   );
