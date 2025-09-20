@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.access-finalize]
 verify_jwt = false
+
+[functions.partner-link]
+verify_jwt = false
