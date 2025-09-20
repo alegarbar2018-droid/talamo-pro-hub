@@ -35,7 +35,6 @@ interface ValidationResult {
 
 export default function AuthValidatePage() {
   const [email, setEmail] = useState('');
-  const [uid, setUid] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -58,7 +57,7 @@ export default function AuthValidatePage() {
     try {
       // Use mock API that simulates real validation
       const { mockValidateAffiliation } = await import('@/lib/mockApi');
-      const data = await mockValidateAffiliation(email.trim(), uid.trim() || undefined);
+      const data = await mockValidateAffiliation(email.trim());
 
       setResult(data);
 
@@ -179,22 +178,6 @@ export default function AuthValidatePage() {
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="uid" className="text-foreground">
-                    UID de cliente (opcional)
-                  </Label>
-                  <Input
-                    id="uid"
-                    type="text"
-                    value={uid}
-                    onChange={(e) => setUid(e.target.value)}
-                    placeholder="123456789"
-                    className="bg-background border-line text-foreground"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Puedes encontrar tu UID en tu área personal de Exness
-                  </p>
-                </div>
               </div>
 
               <Button 
