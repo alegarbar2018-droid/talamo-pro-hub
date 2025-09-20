@@ -22,18 +22,34 @@ import { useAuth } from "@/contexts/AuthContext";
 import AffiliationGate from "@/components/AffiliationGate";
 
 const Dashboard = () => {
-  const { user, isValidated, signOut } = useAuth();
+  const { user, isValidated, signOut, loading } = useAuth();
   const navigate = useNavigate();
 
-  // If not authenticated, redirect to login
-  if (!user) {
-    navigate("/login");
-    return null;
+  useEffect(() => {
+    // If not authenticated, redirect to login
+    if (!loading && !user) {
+      navigate("/login");
+      return;
+    }
+
+    // If not validated/affiliated, redirect to onboarding
+    if (!loading && user && !isValidated && !user.isAffiliated) {
+      navigate("/onboarding");
+      return;
+    }
+  }, [user, isValidated, loading, navigate]);
+
+  // Show loading state while auth is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-foreground">Cargando...</div>
+      </div>
+    );
   }
 
-  // If not validated/affiliated, redirect to onboarding
-  if (!isValidated && !user.isAffiliated) {
-    navigate("/onboarding");
+  // Don't render anything while redirecting
+  if (!user || (!isValidated && !user.isAffiliated)) {
     return null;
   }
 
