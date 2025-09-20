@@ -298,9 +298,22 @@ export default function AuthValidatePage() {
 
         {/* Change Partner Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-            <div className="bg-surface border border-line rounded-2xl p-6 max-w-lg w-full">
-              <h3 className="text-xl font-bold text-foreground mb-4">
+          <div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
+          >
+            <div 
+              className="bg-surface border border-line rounded-2xl p-6 max-w-lg w-full"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="change-partner-title"
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setShowModal(false);
+                }
+              }}
+            >
+              <h3 id="change-partner-title" className="text-xl font-bold text-foreground mb-4">
                 Cambio de Partner en Exness
               </h3>
               
@@ -309,7 +322,7 @@ export default function AuthValidatePage() {
                   Para cambiar tu Partner ID y acceder a Tálamo gratuitamente:
                 </p>
                 
-                <ol className="space-y-3 text-sm">
+                <ol className="list-decimal list-inside space-y-3 text-sm">
                   <li className="flex gap-3">
                     <span className="w-6 h-6 bg-teal text-background rounded-full flex items-center justify-center text-xs font-bold">1</span>
                     <span>Accede a tu área personal de Exness en my.exness.com</span>
@@ -325,6 +338,11 @@ export default function AuthValidatePage() {
                       <div className="flex items-center gap-2 mt-2 p-2 bg-background rounded border">
                         <code className="text-teal font-mono flex-1">1141465940423171000</code>
                         <Button
+                          ref={(el) => {
+                            if (el && showModal) {
+                              setTimeout(() => el.focus(), 100);
+                            }
+                          }}
                           size="sm"
                           variant="ghost"
                           onClick={() => {
@@ -334,6 +352,7 @@ export default function AuthValidatePage() {
                               description: "Partner ID copiado al portapapeles"
                             });
                           }}
+                          data-event="copy-partner-id"
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
@@ -341,6 +360,11 @@ export default function AuthValidatePage() {
                     </div>
                   </li>
                 </ol>
+                
+                <p className="text-xs text-muted-foreground">
+                  El cambio puede tardar algunas horas en procesarse. Una vez completado, 
+                  podrás validar tu acceso aquí.
+                </p>
               </div>
               
               <div className="flex gap-3">
