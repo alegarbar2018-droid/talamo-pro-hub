@@ -16,8 +16,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+// Temporalmente comentamos recharts hasta resolver dependencias
+// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+// import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 // Mock data for charts
 const signalsData = [
@@ -163,67 +164,39 @@ export const AdminDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Charts Row */}
+      {/* Charts Row - Temporalmente simplificado */}
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Signals Chart */}
+        {/* Signals Chart Placeholder */}
         <Card>
           <CardHeader>
             <CardTitle>Señales y Rentabilidad</CardTitle>
             <CardDescription>Señales publicadas y rentabilidad promedio por mes</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{
-              signals: { label: "Señales", color: "hsl(var(--teal))" },
-              profit: { label: "Rentabilidad %", color: "hsl(var(--teal-foreground))" }
-            }}>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={signalsData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="signals" fill="hsl(var(--teal))" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <div className="h-[300px] flex items-center justify-center bg-muted/50 rounded-lg">
+              <div className="text-center">
+                <TrendingUp className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-sm text-muted-foreground">Gráfico de señales</p>
+                <p className="text-xs text-muted-foreground">Próximamente disponible</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Course Completion */}
+        {/* Course Completion Placeholder */}
         <Card>
           <CardHeader>
             <CardTitle>Completación de Cursos</CardTitle>
             <CardDescription>Distribución por nivel de dificultad</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{
-              basic: { label: "Básico", color: COLORS[0] },
-              intermediate: { label: "Intermedio", color: COLORS[1] },
-              advanced: { label: "Avanzado", color: COLORS[2] }
-            }}>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={courseCompletionData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={(props: any) => {
-                      const { name = '', percent = 0 } = props;
-                      const percentValue = typeof percent === 'number' ? percent : 0;
-                      return `${name} ${(percentValue * 100).toFixed(0)}%`;
-                    }}
-                  >
-                    {courseCompletionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <div className="h-[300px] flex items-center justify-center bg-muted/50 rounded-lg">
+              <div className="text-center">
+                <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-sm text-muted-foreground">Estadísticas de cursos</p>
+                <p className="text-xs text-muted-foreground">Próximamente disponible</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
