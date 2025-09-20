@@ -32,13 +32,14 @@ import { PARTNER_ID, PARTNER_LINK } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import ChangePartnerModal from "@/components/access/ChangePartnerModal";
 
-type OnboardingStep = "choose" | "validate" | "eligible" | "blocked" | "create-password" | "profile" | "done";
+type OnboardingStep = "choose" | "validate" | "eligible" | "create-password" | "profile" | "done";
 
 interface WizardState {
   step: OnboardingStep;
   email: string;
   uid: string;
   isDemoMode: boolean;
+  isNotAffiliated: boolean;
 }
 
 const Onboarding = () => {
@@ -60,8 +61,10 @@ const Onboarding = () => {
   const [error, setError] = useState("");
   const [uid, setUid] = useState("");
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isNotAffiliated, setIsNotAffiliated] = useState(false);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [copiedText, setCopiedText] = useState("");
+  const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -79,6 +82,7 @@ const Onboarding = () => {
           setEmail(parsed.email);
           setUid(parsed.uid);
           setIsDemoMode(parsed.isDemoMode);
+          setIsNotAffiliated(parsed.isNotAffiliated || false);
           setSearchParams({ step: parsed.step });
         } else {
           localStorage.removeItem('talamo.wizard.state');
@@ -93,7 +97,8 @@ const Onboarding = () => {
       step: newStep,
       email,
       uid,
-      isDemoMode
+      isDemoMode,
+      isNotAffiliated
     };
     localStorage.setItem('talamo.wizard.state', JSON.stringify(state));
   };
@@ -105,7 +110,7 @@ const Onboarding = () => {
     
     // Analytics tracking
     console.info(`onboarding_view`, { step });
-  }, [step, setSearchParams, email, uid, isDemoMode]);
+  }, [step, setSearchParams, email, uid, isDemoMode, isNotAffiliated]);
 
   const submitValidate = async (targetEmail: string) => {
     setError("");
@@ -134,20 +139,30 @@ const Onboarding = () => {
 
       if (data?.affiliation === true) {
         setUid(data.client_uid || "");
+        setIsNotAffiliated(false);
         setStep("eligible");
         console.info(`exness_validate_success`, { email: targetEmail, uid: data.client_uid });
       } else {
-        setStep("blocked");
-        setError("Tu correo no está afiliado a nuestro partner en Exness.");
+        setIsNotAffiliated(true);
+        setError("Tu cuenta no está afiliada a Tálamo");
         console.info(`exness_validate_blocked`, { email: targetEmail });
+        // Scroll to Block B after a brief delay
+        setTimeout(() => {
+          const blockB = document.getElementById('block-b-not-affiliated');
+          if (blockB) {
+            blockB.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
       }
     } catch (err: any) {
       if (err?.status === 401) {
-        setError("No autenticado (401)");
+        setError("No pudimos autenticarnos con el bróker. Intenta nuevamente en unos minutos.");
       } else if (err?.status === 429) {
-        setError("Muchas solicitudes (429)");
+        setError("Demasiadas solicitudes. Espera 1–2 minutos y reintenta.");
       } else if (err?.status === 400) {
-        setError("Solicitud inválida (400)");
+        setError("Solicitud inválida. Revisa tu correo e inténtalo de nuevo.");
+      } else if (err?.status >= 500) {
+        setError("Servicio del bróker con incidencias. Intentaremos de nuevo pronto.");
       } else {
         setError("No pudimos validar tu afiliación.");
       }
@@ -158,8 +173,20 @@ const Onboarding = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep("validate"); // Force validation state
     await submitValidate(email); // Execute validation
+  };
+
+  const handleRetryValidation = () => {
+    setError("");
+    setIsNotAffiliated(false);
+    setShowNewAccountCreated(false);
+    // Focus on email input
+    setTimeout(() => {
+      const emailInput = document.getElementById('email');
+      if (emailInput) {
+        emailInput.focus();
+      }
+    }, 100);
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -226,6 +253,8 @@ const Onboarding = () => {
 
   const handleCreateExnessAccount = () => {
     window.open(PARTNER_LINK, "_blank");
+    setShowNewAccountCreated(true);
+    console.info(`open_partner_link`);
   };
 
   const renderChooseStep = () => (
@@ -306,11 +335,12 @@ const Onboarding = () => {
 
   const renderValidateStep = () => (
     <div className="space-y-6">
+      {/* Block A: Validar afiliación */}
       <Card className="border-line bg-surface shadow-glow-subtle">
         <CardHeader>
           <CardTitle className="text-xl text-foreground flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            Validar Acceso
+            Ya tengo cuenta en Exness
           </CardTitle>
           <CardDescription>
             Verificaremos que tu cuenta esté afiliada con nuestro partner oficial
@@ -322,7 +352,7 @@ const Onboarding = () => {
             <div className="flex items-start gap-3">
               <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0 dark:text-blue-400" />
               <div className="space-y-2">
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100">Proceso de validación</h3>
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100">Validar afiliación</h3>
                 <p className="text-sm text-blue-800 dark:text-blue-200">
                   Consultaremos la API oficial de Exness para verificar que tu cuenta esté 
                   registrada bajo nuestro partner ID ({PARTNER_ID}). Este proceso es seguro y automático.
@@ -350,7 +380,7 @@ const Onboarding = () => {
               </p>
             </div>
             
-            {error && (
+            {error && !isNotAffiliated && (
               <div className="flex items-center gap-2 text-destructive text-sm p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                 <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                 <span>{error}</span>
@@ -373,13 +403,26 @@ const Onboarding = () => {
             </Button>
           </form>
 
+          {/* Results for not affiliated */}
+          {isNotAffiliated && (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg dark:bg-amber-950 dark:border-amber-800">
+              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
+                <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium">Tu cuenta no está afiliada a Tálamo</span>
+              </div>
+              <p className="text-sm text-amber-700 dark:text-amber-300 mt-2">
+                ¿Tu validación indicó que no estás afiliado a Tálamo? → <span className="font-medium">Ver opciones para continuar abajo</span>
+              </p>
+            </div>
+          )}
+
           {/* Explainer Accordion */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="why-affiliation" className="border-line">
               <AccordionTrigger className="text-left font-medium">
                 <div className="flex items-center gap-2">
                   <Info className="h-4 w-4 text-primary" />
-                  ¿Por qué pedimos afiliación?
+                  Acceso por afiliación: por qué lo pedimos
                 </div>
               </AccordionTrigger>
               <AccordionContent className="space-y-4 pt-2">
@@ -391,12 +434,12 @@ const Onboarding = () => {
                   
                   <div className="space-y-3 text-sm text-muted-foreground">
                     <p>
-                      El acceso a Tálamo es sin membresía porque nuestro modelo se sostiene con rebates 
-                      de spread cuando operas con tu cuenta Exness afiliada a Tálamo. No hay costos extra para ti.
+                      Tálamo no cobra membresía. Nuestro modelo se sostiene con rebates de spread 
+                      cuando operas con tu cuenta Exness afiliada a Tálamo. No hay costos extra para ti.
                     </p>
                     <p>
-                      Así evitamos vender promesas y cursos vacíos: solo ganamos si tú operas con disciplina 
-                      a largo plazo. Nuestro foco es ejecución con estructura, métricas y control de riesgo.
+                      Esto alinea incentivos: solo ganamos si tú operas con estructura a largo plazo. 
+                      Nuestra prioridad es ejecución con datos y control de riesgo, no vender promesas.
                     </p>
                   </div>
 
@@ -411,15 +454,15 @@ const Onboarding = () => {
                     <div className="flex items-start gap-2">
                       <Eye className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium text-foreground text-sm">Validación por API</p>
-                        <p className="text-xs text-muted-foreground">Solo email/UID, proceso seguro</p>
+                        <p className="font-medium text-foreground text-sm">Validamos únicamente tu afiliación</p>
+                        <p className="text-xs text-muted-foreground">Email/UID por API, proceso seguro</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <Users className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium text-foreground text-sm">Cambio de partner</p>
-                        <p className="text-xs text-muted-foreground">Disponible si no estás afiliado</p>
+                        <p className="font-medium text-foreground text-sm">Cuenta no afiliada</p>
+                        <p className="text-xs text-muted-foreground">Puedes crear nueva o solicitar cambio</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
@@ -436,6 +479,134 @@ const Onboarding = () => {
           </Accordion>
         </CardContent>
       </Card>
+
+      {/* Block B: Sub-flow for non-affiliated users */}
+      {isNotAffiliated && (
+        <Card id="block-b-not-affiliated" className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
+          <CardHeader>
+            <CardTitle className="text-xl text-foreground flex items-center gap-2">
+              <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              Tengo cuenta, pero no estoy afiliado a Tálamo
+            </CardTitle>
+            <CardDescription className="text-amber-800 dark:text-amber-200">
+              Tienes dos opciones para continuar y acceder a Tálamo
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Option 1: Create new account */}
+              <Card className="border-line bg-surface">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <ExternalLink className="h-5 w-5 text-primary" />
+                    Crear cuenta nueva con nuestro enlace
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Puedes abrir una cuenta Exness bajo nuestra afiliación conservando tus mismos datos personales, 
+                    pero con email distinto (Exness no permite dos cuentas con el mismo correo).
+                  </p>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 dark:bg-blue-950 dark:border-blue-800">
+                    <h4 className="font-medium text-blue-900 dark:text-blue-100 text-sm mb-2">
+                      Cómo usar un email alternativo:
+                    </h4>
+                    <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                      <li>• <strong>Gmail:</strong> tunombre+talamo@gmail.com (alias)</li>
+                      <li>• <strong>Outlook/Yahoo/otros:</strong> usar un correo distinto o alias</li>
+                    </ul>
+                  </div>
+                  
+                  <Button
+                    onClick={handleCreateExnessAccount}
+                    className="w-full bg-gradient-primary hover:shadow-glow"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Abrir cuenta en Exness
+                  </Button>
+                  
+                  {showNewAccountCreated && (
+                    <div className="space-y-3">
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 dark:bg-green-950 dark:border-green-800">
+                        <p className="text-sm text-green-800 dark:text-green-200">
+                          ¡Perfecto! Cuando termines de crear tu cuenta, vuelve aquí para validar.
+                        </p>
+                      </div>
+                      <Button
+                        onClick={handleRetryValidation}
+                        variant="outline"
+                        className="w-full border-green-500 text-green-700 hover:bg-green-50"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Ya la creé, volver a validar
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Option 2: Request partner change */}
+              <Card className="border-line bg-surface">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    Solicitar cambio de partner
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Solicita a Exness que cambie tu cuenta actual al partner de Tálamo. 
+                    Tu historial y fondos no se verán afectados.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => {
+                        setShowPartnerModal(true);
+                        console.info(`partner_change_modal_open`);
+                      }}
+                      className="w-full bg-gradient-primary hover:shadow-glow"
+                    >
+                      Solicitar cambio de partner
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                    
+                    <Button
+                      onClick={() => handleCopyText(PARTNER_ID, "Partner ID")}
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                    >
+                      {copiedText === "Partner ID" ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                          ¡Partner ID copiado!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copiar Partner ID
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  
+                  <Button
+                    onClick={handleRetryValidation}
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-muted-foreground"
+                  >
+                    Volver a validar
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 
@@ -837,7 +1008,6 @@ const Onboarding = () => {
       choose: 1,
       validate: 2,
       eligible: 3,
-      blocked: 3,
       "create-password": 3,
       profile: 4,
       done: 5
@@ -882,16 +1052,16 @@ const Onboarding = () => {
         {step === "choose" && renderChooseStep()}
         {step === "validate" && renderValidateStep()}
         {step === "eligible" && renderEligibleStep()}
-        {step === "blocked" && renderBlockedStep()}
         {step === "create-password" && renderEligibleStep()}
         {step === "profile" && renderProfileStep()}
         {step === "done" && renderDoneStep()}
       </div>
       
       {/* Change Partner Modal */}
-      <ChangePartnerModal
-        isOpen={showPartnerModal}
+      <ChangePartnerModal 
+        isOpen={showPartnerModal} 
         onClose={() => setShowPartnerModal(false)}
+        onRetryValidation={handleRetryValidation}
       />
     </div>
   );

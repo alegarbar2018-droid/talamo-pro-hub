@@ -5,9 +5,10 @@ import { X, Copy, CheckCircle } from "lucide-react";
 interface ChangePartnerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onRetryValidation?: () => void;
 }
 
-const ChangePartnerModal = ({ isOpen, onClose }: ChangePartnerModalProps) => {
+const ChangePartnerModal = ({ isOpen, onClose, onRetryValidation }: ChangePartnerModalProps) => {
   const [copiedText, setCopiedText] = useState("");
   const [copiedId, setCopiedId] = useState(false);
   const partnerId = "1141465940423171000";
@@ -192,6 +193,18 @@ const ChangePartnerModal = ({ isOpen, onClose }: ChangePartnerModalProps) => {
                 <Copy className="h-4 w-4 ml-2" />
               )}
             </Button>
+            {onRetryValidation && (
+              <Button
+                onClick={() => {
+                  handleClose();
+                  onRetryValidation();
+                }}
+                variant="outline"
+                className="border-cyan-500/20 text-cyan-300 hover:bg-cyan-500/10"
+              >
+                Volver a validar
+              </Button>
+            )}
             <Button 
               onClick={handleClose}
               className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold"
