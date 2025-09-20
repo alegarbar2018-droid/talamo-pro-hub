@@ -40,22 +40,17 @@ const Index = () => {
               <h1 className="text-2xl font-bold text-foreground">Tálamo</h1>
               <Badge variant="outline" className="border-teal text-teal">MVP</Badge>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/login")}>
-                Iniciar Sesión
-              </Button>
-              <ValidateCTA 
-                onOpenChangePartner={() => setShowPartnerModal(true)}
-                variant="outline"
-                className="mb-6"
-              />
-              <Button 
-                onClick={() => navigate("/register")}
-                className="bg-gradient-primary hover:shadow-glow"
-              >
-                Registrarse
-              </Button>
-            </div>
+             <div className="flex gap-2">
+               <Button variant="outline" onClick={() => navigate("/login")}>
+                 Iniciar Sesión
+               </Button>
+               <Button 
+                 onClick={() => navigate("/register")}
+                 className="bg-gradient-primary hover:shadow-glow"
+               >
+                 Registrarse
+               </Button>
+             </div>
           </div>
         </div>
       </div>
