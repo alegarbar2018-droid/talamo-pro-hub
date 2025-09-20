@@ -445,89 +445,81 @@ const Onboarding = () => {
             </div>
           )}
 
-          {/* Results for not affiliated - PROMINENT DISPLAY */}
+          {/* Tengo cuenta pero NO estoy afiliado - Opciones directas */}
           {isNotAffiliated && (
-            <div className="space-y-6" id="block-b-not-affiliated">
-              <div className="p-6 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-200 border-2 border-amber-300 rounded-xl dark:from-amber-900 dark:via-orange-900 dark:to-amber-800 dark:border-amber-600 shadow-xl">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
-                    <AlertTriangle className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-amber-900 dark:text-amber-100 mb-3">
-                      Tu cuenta no está afiliada a Tálamo
-                    </h3>
-                    <p className="text-base text-amber-800 dark:text-amber-200 mb-4 leading-relaxed">
-                      No hay problema. Tienes dos opciones claras para continuar y acceder a la plataforma premium de Tálamo.
-                    </p>
-                  </div>
+            <div className="space-y-4" id="block-b-not-affiliated">
+              <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg dark:bg-amber-950 dark:border-amber-800">
+                <div className="flex items-center gap-3">
+                  <Info className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                    Tengo cuenta en Exness pero NO estoy afiliado a Tálamo
+                  </p>
                 </div>
               </div>
 
-              {/* Options for non-affiliated users */}
-              <div className="grid gap-4 md:gap-6">
-                {/* Option 1: Create new account */}
-                <Card className="border-primary/20 bg-primary/5">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
-                        <Users className="h-6 w-6 text-primary-foreground" />
+              {/* Opciones directas */}
+              <div className="grid gap-4">
+                {/* Opción 1: Crear cuenta nueva */}
+                <Card className="border-line bg-surface">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
+                        <ExternalLink className="h-5 w-5 text-primary-foreground" />
                       </div>
-                      <div className="flex-1 space-y-3">
-                        <h4 className="text-lg font-bold text-foreground">Crear cuenta nueva en Exness</h4>
-                        <p className="text-muted-foreground">
+                      <div className="flex-1 space-y-2">
+                        <h4 className="font-semibold text-foreground">Crear cuenta nueva</h4>
+                        <p className="text-sm text-muted-foreground">
                           Mismos datos personales, email distinto.
                         </p>
-                        <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-                          <p className="text-sm text-foreground font-medium mb-2">💡 Sugerencia Gmail:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Si usas Gmail, puedes usar: <code className="bg-background px-2 py-1 rounded text-primary">tunombre+talamo@gmail.com</code>
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Llegará al mismo buzón pero será reconocido como email diferente
+                        <div className="bg-blue-50 border border-blue-200 rounded p-2 dark:bg-blue-950 dark:border-blue-800">
+                          <p className="text-xs text-blue-800 dark:text-blue-200">
+                            <strong>Gmail tip:</strong> tunombre+talamo@gmail.com
                           </p>
                         </div>
                         <Button 
                           onClick={handleCreateExnessAccount}
+                          size="sm"
                           className="w-full bg-gradient-primary hover:shadow-glow"
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
-                          Abrir cuenta nueva en Exness
+                          Abrir cuenta nueva
                         </Button>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Option 2: Request partner change */}
+                {/* Opción 2: Solicitar cambio de partner */}
                 <Card className="border-line bg-surface">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
-                        <Copy className="h-6 w-6 text-secondary" />
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
+                        <Copy className="h-5 w-5 text-secondary" />
                       </div>
-                      <div className="flex-1 space-y-3">
-                        <h4 className="text-lg font-bold text-foreground">Solicitar cambio de partner</h4>
-                        <p className="text-muted-foreground">
-                          Si prefieres mantener tu cuenta actual, puedes solicitar el cambio de partner a Exness.
+                      <div className="flex-1 space-y-2">
+                        <h4 className="font-semibold text-foreground">Solicitar cambio de partner</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Mantén tu cuenta actual, solicita el cambio a Exness.
                         </p>
                         <Button 
                           variant="outline"
+                          size="sm"
                           onClick={() => setShowPartnerModal(true)}
                           className="w-full border-primary text-primary hover:bg-primary/5"
                         >
                           <Copy className="h-4 w-4 mr-2" />
-                          Solicitar cambio de partner
+                          Solicitar cambio
                         </Button>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Retry validation */}
-                <div className="text-center pt-4">
+                {/* Volver a validar */}
+                <div className="text-center">
                   <Button 
                     variant="ghost"
+                    size="sm"
                     onClick={handleRetryValidation}
                     className="text-muted-foreground hover:text-foreground"
                   >
