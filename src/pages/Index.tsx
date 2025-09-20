@@ -110,20 +110,20 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/auth/exness?flow=create")}
               className="bg-gradient-primary hover:shadow-glow"
             >
-              Comenzar Gratis
+              Crear Cuenta Exness
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/auth/validate")}
               className="border-teal text-teal hover:bg-teal/10"
             >
               <Target className="h-5 w-5 mr-2" />
-              Demo (demo@email.com)
+              Validar Acceso
             </Button>
           </div>
 

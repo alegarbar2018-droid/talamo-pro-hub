@@ -27,10 +27,24 @@ const Dashboard = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+    const isValidated = localStorage.getItem("isValidated");
+    
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      setUser({
+        ...parsedUser,
+        isAffiliated: isValidated === 'true'
+      });
     } else {
-      navigate("/login");
+      // For MVP, create a demo user if none exists
+      const demoUser = {
+        id: 'demo-user',
+        name: 'Usuario Demo',
+        email: 'demo@email.com',
+        isAffiliated: isValidated === 'true'
+      };
+      setUser(demoUser);
+      localStorage.setItem("user", JSON.stringify(demoUser));
     }
   }, [navigate]);
 
@@ -39,7 +53,9 @@ const Dashboard = () => {
   }
 
   if (!isValidated && !user.isAffiliated) {
-    return <AffiliationGate user={user} onValidated={() => setIsValidated(true)} />;
+    // Redirect to validation page instead of showing gate
+    navigate("/auth/validate");
+    return null;
   }
 
   const academyProgress = 25; // Mock progress

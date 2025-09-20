@@ -13,6 +13,9 @@ import Academy from "./pages/Academy";
 import Signals from "./pages/Signals";
 import CopyTrading from "./pages/CopyTrading";
 import Tools from "./pages/Tools";
+import AuthValidate from "./pages/AuthValidate";
+import ChangePartnerGuide from "./pages/ChangePartnerGuide";
+import ExnessRedirect from "./pages/ExnessRedirect";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +35,9 @@ const App = () => (
           <Route path="/signals" element={<Signals />} />
           <Route path="/copy-trading" element={<CopyTrading />} />
           <Route path="/tools" element={<Tools />} />
+          <Route path="/auth/validate" element={<AuthValidate />} />
+          <Route path="/auth/exness" element={<ExnessRedirect />} />
+          <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
