@@ -47,8 +47,6 @@ export const ValidateStep = ({
   onShowPartnerModal,
   onUserExists
 }: ValidateStepProps) => {
-  console.log("=== VALIDATE STEP RENDER ===", { isNotAffiliated, email });
-  
   const { 
     loading, 
     error, 
@@ -62,49 +60,22 @@ export const ValidateStep = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("=== HANDLE SUBMIT START ===", { email, loading, cooldownSeconds });
-    
-    if (!email) {
-      console.log("No email provided, stopping");
-      return;
-    }
-    
-    if (loading) {
-      console.log("Already loading, stopping");
-      return;
-    }
-    
-    if (cooldownSeconds > 0) {
-      console.log("Cooldown active, stopping");
-      return;
-    }
-    
-    console.log("About to call validateAffiliation...");
-    
-    try {
-      await validateAffiliation(
-        email,
-        onValidationSuccess,
-        () => {
-          console.log("onNotAffiliated callback executed");
-          onNotAffiliated();
-          // Scroll to options after state update
-          setTimeout(() => {
-            const blockB = document.getElementById('block-b-not-affiliated');
-            if (blockB) {
-              blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }, 100);
-        },
-        onDemoMode,
-        onUserExists
-      );
-      console.log("validateAffiliation completed");
-    } catch (submitError) {
-      console.error("Error in handleSubmit:", submitError);
-    }
-    
-    console.log("=== HANDLE SUBMIT END ===");
+    await validateAffiliation(
+      email,
+      onValidationSuccess,
+      () => {
+        onNotAffiliated();
+        // Scroll to options after state update
+        setTimeout(() => {
+          const blockB = document.getElementById('block-b-not-affiliated');
+          if (blockB) {
+            blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+      },
+      onDemoMode,
+      onUserExists
+    );
   };
 
   const handleCreateAccount = () => {
@@ -224,20 +195,13 @@ export const ValidateStep = ({
           </form>
 
           {/* Opciones para usuarios no afiliados */}
-          {(() => {
-            console.log("Checking isNotAffiliated condition:", isNotAffiliated);
-            if (isNotAffiliated) {
-              console.log("Rendering NotAffiliatedOptions");
-              return (
-                <NotAffiliatedOptions
-                  onCreateAccount={handleCreateAccount}
-                  onRequestPartnerChange={() => onShowPartnerModal(true)}
-                  onRetryValidation={handleRetryWithConfirmation}
-                />
-              );
-            }
-            return null;
-          })()}
+          {isNotAffiliated && (
+            <NotAffiliatedOptions
+              onCreateAccount={handleCreateAccount}
+              onRequestPartnerChange={() => onShowPartnerModal(true)}
+              onRetryValidation={handleRetryWithConfirmation}
+            />
+          )}
 
           {/* Mostrar mensaje de nueva cuenta creada */}
           {showNewAccountCreated && (
