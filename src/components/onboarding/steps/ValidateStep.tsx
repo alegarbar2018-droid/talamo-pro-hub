@@ -60,22 +60,49 @@ export const ValidateStep = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await validateAffiliation(
-      email,
-      onValidationSuccess,
-      () => {
-        onNotAffiliated();
-        // Scroll to options after state update
-        setTimeout(() => {
-          const blockB = document.getElementById('block-b-not-affiliated');
-          if (blockB) {
-            blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }, 100);
-      },
-      onDemoMode,
-      onUserExists
-    );
+    console.log("=== HANDLE SUBMIT START ===", { email, loading, cooldownSeconds });
+    
+    if (!email) {
+      console.log("No email provided, stopping");
+      return;
+    }
+    
+    if (loading) {
+      console.log("Already loading, stopping");
+      return;
+    }
+    
+    if (cooldownSeconds > 0) {
+      console.log("Cooldown active, stopping");
+      return;
+    }
+    
+    console.log("About to call validateAffiliation...");
+    
+    try {
+      await validateAffiliation(
+        email,
+        onValidationSuccess,
+        () => {
+          console.log("onNotAffiliated callback executed");
+          onNotAffiliated();
+          // Scroll to options after state update
+          setTimeout(() => {
+            const blockB = document.getElementById('block-b-not-affiliated');
+            if (blockB) {
+              blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 100);
+        },
+        onDemoMode,
+        onUserExists
+      );
+      console.log("validateAffiliation completed");
+    } catch (submitError) {
+      console.error("Error in handleSubmit:", submitError);
+    }
+    
+    console.log("=== HANDLE SUBMIT END ===");
   };
 
   const handleCreateAccount = () => {
