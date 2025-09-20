@@ -1,1 +1,4 @@
 project_id = "xogbavprnnbfamcjrsel"
+
+[functions.validate-affiliation]
+verify_jwt = false

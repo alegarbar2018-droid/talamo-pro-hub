@@ -55,11 +55,27 @@ export default function AuthValidatePage() {
     setLoading(true);
 
     try {
-      // Use mock API that simulates real validation
-      const { mockValidateAffiliation } = await import('@/lib/mockApi');
-      const data = await mockValidateAffiliation(email.trim());
+      // Call the real Supabase edge function
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      const { data, error } = await supabase.functions.invoke('validate-affiliation', {
+        body: { email: email.trim() }
+      });
 
-      setResult(data);
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Transform the response to match the expected format
+      const result = {
+        isAffiliated: data.affiliation || false,
+        partnerId: data.partnerId,
+        partnerIdMatch: data.affiliation || false,
+        clientUid: data.client_uid,
+        accounts: data.accounts || []
+      };
+
+      setResult(result);
 
       if (data.isAffiliated && data.partnerIdMatch) {
         // Store validation status
