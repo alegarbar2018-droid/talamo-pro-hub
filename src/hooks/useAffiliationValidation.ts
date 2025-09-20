@@ -52,27 +52,8 @@ export const useAffiliationValidation = () => {
     try {
       console.log("Starting validation process for:", email);
       
-      // Check user existence in parallel
-      const userExistsPromise = checkUserExists(email);
-      
-      // Validate affiliation with Exness
-      const { data, error: functionError } = await supabase.functions.invoke(
-        "validate-affiliation",
-        {
-          body: { email: email.trim().toLowerCase() }
-        }
-      );
-
-      if (functionError) {
-        console.error("Function error:", functionError);
-        setError("Error de conexión con el servidor");
-        return;
-      }
-
-      console.log("Validation response:", data);
-
-      // Check user existence result
-      const exists = await userExistsPromise;
+      // Check user existence first - independent operation
+      const exists = await checkUserExists(email);
       setUserExists(exists);
       
       if (exists && onUserExists) {
@@ -81,29 +62,61 @@ export const useAffiliationValidation = () => {
         // The UI will show the login option
       }
 
+      // Check for demo mode before calling API
+      if (email.toLowerCase().includes("demo") || email.toLowerCase().includes("exness")) {
+        console.log("Demo mode activated");
+        onDemo();
+        return;
+      }
+      
+      // Validate affiliation with Exness - separate try/catch with timeout
+      let affiliationData;
+      try {
+        console.log("Calling validate-affiliation function...");
+        const { data, error: functionError } = await supabase.functions.invoke(
+          "validate-affiliation",
+          {
+            body: { email: email.trim().toLowerCase() }
+          }
+        );
+
+        if (functionError) {
+          console.error("Function error:", functionError);
+          setError("Error de conexión con el servidor");
+          return;
+        }
+
+        affiliationData = data;
+        console.log("Validation response:", affiliationData);
+      } catch (affiliationError: any) {
+        console.error("Affiliation validation error:", affiliationError);
+        setError("Error al validar afiliación con el bróker");
+        return;
+      }
+
       // Handle demo mode
-      if (data?.source === "demo-bypass") {
+      if (affiliationData?.source === "demo-bypass") {
         console.log("Demo mode activated");
         onDemo();
         return;
       }
 
       // Handle successful affiliation
-      if (data?.affiliation === true) {
-        console.log("User is affiliated, calling onSuccess with uid:", data.client_uid);
-        onSuccess(data.client_uid);
+      if (affiliationData?.affiliation === true) {
+        console.log("User is affiliated, calling onSuccess with uid:", affiliationData.client_uid);
+        onSuccess(affiliationData.client_uid);
         return;
       }
 
       // Handle not affiliated
-      if (data?.code === "NotAffiliated" || data?.affiliation === false) {
+      if (affiliationData?.code === "NotAffiliated" || affiliationData?.affiliation === false) {
         console.log("User not affiliated");
         onNotAffiliated();
         return;
       }
 
       // Handle error responses with proper mapping
-      if (data?.code) {
+      if (affiliationData?.code) {
         const errorMessages: Record<string, string> = {
           "timeout": "El bróker tardó demasiado. Intenta de nuevo.",
           "rate_limited": "Demasiadas solicitudes. Espera un momento e intenta de nuevo.",
@@ -114,11 +127,11 @@ export const useAffiliationValidation = () => {
           "ServerError": "Error interno del servidor"
         };
         
-        const message = errorMessages[data.code] || data.message || "Error desconocido";
+        const message = errorMessages[affiliationData.code] || affiliationData.message || "Error desconocido";
         setError(message);
         
         // Set cooldown for rate limiting
-        if (data.code === "rate_limited") {
+        if (affiliationData.code === "rate_limited") {
           setCooldownSeconds(60);
           const interval = setInterval(() => {
             setCooldownSeconds(prev => {
@@ -135,7 +148,7 @@ export const useAffiliationValidation = () => {
       }
 
     } catch (err: any) {
-      console.error("Validation error:", err);
+      console.error("General validation error:", err);
       setError("Error de conexión. Verifica tu internet.");
     } finally {
       setLoading(false);
