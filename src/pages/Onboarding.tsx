@@ -234,7 +234,7 @@ const Onboarding = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-foreground flex items-center justify-center gap-2">
             <Target className="h-6 w-6 text-primary" />
-            Acceso a Tálamo
+            Solicitar Acceso a Tálamo
           </CardTitle>
           <CardDescription className="text-base">
             Plataforma premium de análisis y herramientas de trading para traders de Exness
@@ -258,22 +258,25 @@ const Onboarding = () => {
           <div className="space-y-3">
             <Button
               size="lg"
-              onClick={() => setStep("validate")}
+              onClick={handleCreateExnessAccount}
               className="w-full bg-gradient-primary hover:shadow-glow h-12"
             >
-              <Shield className="h-5 w-5 mr-2" />
-              Ya tengo cuenta en Exness
+              <ExternalLink className="h-5 w-5 mr-2" />
+              Abrir cuenta en Exness
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
+            <p className="text-xs text-center text-muted-foreground">
+              Al terminar, vuelve para validar tu afiliación y continuar
+            </p>
             
             <Button
               size="lg"
               variant="outline"
-              onClick={handleCreateExnessAccount}
+              onClick={() => setStep("validate")}
               className="w-full border-primary text-primary hover:bg-primary/5 h-12"
             >
-              <ExternalLink className="h-5 w-5 mr-2" />
-              Crear cuenta nueva en Exness
+              <Shield className="h-5 w-5 mr-2" />
+              Ya tengo cuenta en Exness
             </Button>
           </div>
           
@@ -290,7 +293,7 @@ const Onboarding = () => {
           <div className="flex items-start gap-3">
             <Lightbulb className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-medium text-foreground">Acceso sin costo</p>
+              <p className="font-medium text-foreground">Acceso sin membresía</p>
               <p className="text-muted-foreground mt-1">
                 Tálamo es completamente gratuito para cuentas afiliadas. No hay tarifas ni membresías.
               </p>

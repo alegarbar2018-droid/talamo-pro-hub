@@ -9,7 +9,8 @@ import {
   Copy,
   X,
   TrendingUp,
-  Shield
+  Shield,
+  Users
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PARTNER_ID } from "@/lib/constants";
@@ -78,11 +79,11 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => window.open("https://one.exnesstrack.org/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank")}
+              onClick={() => navigate("/onboarding?step=choose")}
               className="bg-gradient-primary hover:shadow-glow"
-              data-event="cta-abrir-cuenta-exness"
+              data-event="cta-solicitar-acceso-hero"
             >
-              Abrir cuenta en Exness
+              Solicitar acceso
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
             <Button 
@@ -90,10 +91,23 @@ const Index = () => {
               variant="outline"
               onClick={() => navigate("/onboarding?step=validate")}
               className="border-primary text-primary hover:bg-primary/5"
-              data-event="cta-ya-tengo-cuenta"
+              data-event="cta-ya-tengo-cuenta-hero"
             >
               <Target className="h-5 w-5 mr-2" />
               Ya tengo cuenta en Exness
+            </Button>
+          </div>
+
+          {/* New option for non-affiliated users */}
+          <div className="mt-4">
+            <Button 
+              variant="link"
+              onClick={() => navigate("/onboarding?step=blocked")}
+              className="text-muted-foreground hover:text-foreground text-sm"
+              data-event="cta-no-afiliado-hero"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Tengo cuenta pero no estoy afiliado a Tálamo
             </Button>
           </div>
 
@@ -162,15 +176,26 @@ const Index = () => {
               </div>
               
               <div className="pt-4">
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate("/onboarding?step=validate")}
-                  className="border-primary text-primary hover:bg-primary/5"
-                  data-event="cta-validar-acceso-modelo"
-                >
-                  <Target className="h-5 w-5 mr-2" />
-                  Validar acceso
-                </Button>
+                <div className="flex flex-col gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => navigate("/onboarding?step=validate")}
+                    className="border-primary text-primary hover:bg-primary/5"
+                    data-event="cta-validar-acceso-modelo"
+                  >
+                    <Target className="h-5 w-5 mr-2" />
+                    Ya tengo cuenta, validar ahora
+                  </Button>
+                  <Button 
+                    variant="link"
+                    onClick={() => navigate("/onboarding?step=blocked")}
+                    className="text-muted-foreground hover:text-foreground text-sm h-auto p-1"
+                    data-event="cta-no-afiliado-modelo"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Tengo cuenta pero no estoy afiliado
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -241,14 +266,35 @@ const Index = () => {
           </div>
           
           <div className="flex justify-center mt-8">
-            <Button 
-              onClick={() => navigate("/onboarding?step=choose")}
-              className="bg-gradient-primary hover:shadow-glow"
-              data-event="cta-solicitar-acceso-exness"
-            >
-              Solicitar acceso
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
+            <div className="flex flex-col gap-3 items-center">
+              <Button 
+                onClick={() => navigate("/onboarding?step=choose")}
+                className="bg-gradient-primary hover:shadow-glow"
+                data-event="cta-solicitar-acceso-exness"
+              >
+                Solicitar acceso
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+              
+              <div className="flex gap-4 text-sm">
+                <Button 
+                  variant="link"
+                  onClick={() => navigate("/onboarding?step=validate")}
+                  className="text-muted-foreground hover:text-foreground"
+                  data-event="cta-ya-tengo-cuenta-exness"
+                >
+                  Ya tengo cuenta
+                </Button>
+                <Button 
+                  variant="link"
+                  onClick={() => navigate("/onboarding?step=blocked")}
+                  className="text-muted-foreground hover:text-foreground"
+                  data-event="cta-no-afiliado-exness"
+                >
+                  No estoy afiliado
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -288,6 +334,19 @@ const Index = () => {
               >
                 <Target className="h-5 w-5 mr-2" />
                 Ya tengo cuenta en Exness
+              </Button>
+            </div>
+            
+            {/* Additional option for non-affiliated users */}
+            <div className="mt-4">
+              <Button 
+                variant="link"
+                onClick={() => navigate("/onboarding?step=blocked")}
+                className="text-white/70 hover:text-white text-sm"
+                data-event="cta-no-afiliado-final"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Tengo cuenta pero no estoy afiliado a Tálamo
               </Button>
             </div>
           </div>
