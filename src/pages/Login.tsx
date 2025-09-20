@@ -43,7 +43,14 @@ export default function LoginPage() {
           title: "¡Bienvenido!",
           description: "Has iniciado sesión correctamente."
         });
-        navigate('/dashboard');
+        
+        // Check if user is validated, if not redirect to gate
+        const isValidated = localStorage.getItem("isValidated") === 'true';
+        if (!isValidated) {
+          navigate('/auth/gate');
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -188,7 +195,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => setShowResetForm(true)}
+                onClick={() => navigate('/auth/forgot')}
                 className="text-sm text-teal hover:underline"
               >
                 ¿Olvidaste tu contraseña?
@@ -207,8 +214,8 @@ export default function LoginPage() {
           <div className="mt-6 pt-4 border-t border-line">
             <p className="text-center text-sm text-muted-foreground">
               ¿No tienes cuenta?{' '}
-              <Link to="/register" className="text-teal hover:underline">
-                Crear cuenta
+              <Link to="/onboarding?step=choose" className="text-teal hover:underline">
+                Solicitar acceso
               </Link>
             </p>
           </div>

@@ -45,9 +45,10 @@ interface WizardState {
 const Onboarding = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialStep = (searchParams.get("step") as OnboardingStep) || "choose";
+  const initialEmail = searchParams.get("email") || "";
   
   const [step, setStep] = useState<OnboardingStep>(initialStep);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profile, setProfile] = useState({
@@ -65,6 +66,7 @@ const Onboarding = () => {
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [copiedText, setCopiedText] = useState("");
   const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -89,7 +91,12 @@ const Onboarding = () => {
         }
       }
     }
-  }, [initialStep, setSearchParams]);
+    
+    // Set initial email from URL if provided
+    if (initialEmail && !email) {
+      setEmail(initialEmail);
+    }
+  }, [initialStep, initialEmail, setSearchParams, email]);
 
   // Save state to localStorage
   const saveWizardState = (newStep: OnboardingStep) => {
@@ -162,7 +169,18 @@ const Onboarding = () => {
       if (err?.status === 401) {
         setError("No pudimos autenticarnos con el bróker. Intenta nuevamente en unos minutos.");
       } else if (err?.status === 429) {
-        setError("Demasiadas solicitudes. Espera 1–2 minutos y reintenta.");
+        setError("Demasiadas solicitudes. Espera y vuelve a intentar.");
+        // Start 60 second cooldown
+        setCooldownSeconds(60);
+        const interval = setInterval(() => {
+          setCooldownSeconds((prev) => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
       } else if (err?.status === 400) {
         setError("Solicitud inválida. Revisa tu correo e inténtalo de nuevo.");
       } else if (err?.status >= 500) {
@@ -326,9 +344,9 @@ const Onboarding = () => {
           <div className="flex items-start gap-3">
             <Lightbulb className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-medium text-foreground">Acceso sin membresía</p>
+              <p className="font-medium text-foreground">Acceso por afiliación</p>
               <p className="text-muted-foreground mt-1">
-                Tálamo es completamente gratuito para cuentas afiliadas. No hay tarifas ni membresías.
+                Tálamo es completamente accesible para cuentas afiliadas. Sin tarifas ni membresías.
               </p>
             </div>
           </div>
@@ -352,25 +370,29 @@ const Onboarding = () => {
         </CardHeader>
         
         <CardContent className="space-y-6">
-          <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 rounded-xl p-6 shadow-glow-subtle backdrop-blur-sm">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
-                <Info className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div className="space-y-3">
-                <h3 className="font-bold text-foreground text-lg">Validación segura con API oficial</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Consultaremos directamente la API de Exness para verificar que tu cuenta esté 
-                  registrada bajo nuestro partner oficial (<code className="bg-primary/10 text-primary px-2 py-1 rounded font-mono text-sm">{PARTNER_ID}</code>). 
-                  Este proceso es completamente seguro, automático y no requiere credenciales.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-primary">
-                  <Shield className="h-4 w-4" />
-                  <span className="font-medium">Proceso encriptado y privado</span>
+                <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 rounded-xl p-6 shadow-glow-subtle backdrop-blur-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
+                      <Info className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="font-bold text-foreground text-lg">Acceso por afiliación premium</h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        Tálamo no cobra membresía; nuestro modelo se sostiene con rebates de spread cuando operas 
+                        con tu cuenta Exness afiliada a Tálamo (sin costo extra para ti). Así alineamos incentivos: 
+                        solo ganamos si tú operas con estructura. Validamos solo la afiliación (email/UID), 
+                        nunca accedemos a tus fondos.
+                      </p>
+                      <div className="bg-primary/10 text-primary px-3 py-2 rounded font-mono text-sm">
+                        Partner ID: {PARTNER_ID}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-primary">
+                        <Shield className="h-4 w-4" />
+                        <span className="font-medium">Proceso encriptado y privado</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -400,7 +422,7 @@ const Onboarding = () => {
             
             <Button
               type="submit"
-              disabled={!email || loading}
+              disabled={!email || loading || cooldownSeconds > 0}
               className="w-full bg-gradient-primary hover:shadow-glow h-11"
             >
               {loading ? (
@@ -408,6 +430,8 @@ const Onboarding = () => {
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Validando con API de Exness...
                 </div>
+              ) : cooldownSeconds > 0 ? (
+                `Espera ${cooldownSeconds}s antes de reintentar`
               ) : (
                 "Validar afiliación"
               )}
@@ -423,7 +447,7 @@ const Onboarding = () => {
 
           {/* Results for not affiliated - PROMINENT DISPLAY */}
           {isNotAffiliated && (
-            <div className="space-y-4">
+            <div className="space-y-6" id="block-b-not-affiliated">
               <div className="p-6 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-200 border-2 border-amber-300 rounded-xl dark:from-amber-900 dark:via-orange-900 dark:to-amber-800 dark:border-amber-600 shadow-xl">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
@@ -436,13 +460,80 @@ const Onboarding = () => {
                     <p className="text-base text-amber-800 dark:text-amber-200 mb-4 leading-relaxed">
                       No hay problema. Tienes dos opciones claras para continuar y acceder a la plataforma premium de Tálamo.
                     </p>
-                    <div className="flex items-center gap-3 text-amber-700 dark:text-amber-300">
-                      <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center">
-                        <ArrowRight className="h-4 w-4 text-amber-900" />
-                      </div>
-                      <span className="font-semibold text-lg">Ve las opciones disponibles abajo</span>
-                    </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Options for non-affiliated users */}
+              <div className="grid gap-4 md:gap-6">
+                {/* Option 1: Create new account */}
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
+                        <Users className="h-6 w-6 text-primary-foreground" />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <h4 className="text-lg font-bold text-foreground">Crear cuenta nueva en Exness</h4>
+                        <p className="text-muted-foreground">
+                          Mismos datos personales, email distinto.
+                        </p>
+                        <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+                          <p className="text-sm text-foreground font-medium mb-2">💡 Sugerencia Gmail:</p>
+                          <p className="text-sm text-muted-foreground">
+                            Si usas Gmail, puedes usar: <code className="bg-background px-2 py-1 rounded text-primary">tunombre+talamo@gmail.com</code>
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Llegará al mismo buzón pero será reconocido como email diferente
+                          </p>
+                        </div>
+                        <Button 
+                          onClick={handleCreateExnessAccount}
+                          className="w-full bg-gradient-primary hover:shadow-glow"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Abrir cuenta nueva en Exness
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Option 2: Request partner change */}
+                <Card className="border-line bg-surface">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+                        <Copy className="h-6 w-6 text-secondary" />
+                      </div>
+                      <div className="flex-1 space-y-3">
+                        <h4 className="text-lg font-bold text-foreground">Solicitar cambio de partner</h4>
+                        <p className="text-muted-foreground">
+                          Si prefieres mantener tu cuenta actual, puedes solicitar el cambio de partner a Exness.
+                        </p>
+                        <Button 
+                          variant="outline"
+                          onClick={() => setShowPartnerModal(true)}
+                          className="w-full border-primary text-primary hover:bg-primary/5"
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Solicitar cambio de partner
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Retry validation */}
+                <div className="text-center pt-4">
+                  <Button 
+                    variant="ghost"
+                    onClick={handleRetryValidation}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Volver a validar con otro email
+                  </Button>
                 </div>
               </div>
             </div>

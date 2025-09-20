@@ -3,12 +3,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AuthGate from "./pages/AuthGate";
+import AuthForgot from "./pages/AuthForgot";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Academy from "./pages/Academy";
@@ -43,6 +45,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/auth/gate" element={<AuthGate />} />
+            <Route path="/auth/forgot" element={<AuthForgot />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/academy" element={<Academy />} />
@@ -50,7 +54,13 @@ const App = () => (
             <Route path="/copy-trading" element={<CopyTrading />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/access" element={<AccessWizard />} />
-            <Route path="/auth/validate" element={<AuthValidate />} />
+            
+            {/* Legacy redirects */}
+            <Route path="/auth/validate" element={<Navigate to="/onboarding?step=validate" replace />} />
+            <Route path="/auth/register" element={<Navigate to="/onboarding?step=choose" replace />} />
+            <Route path="/signup" element={<Navigate to="/onboarding?step=choose" replace />} />
+            <Route path="/access-wizard" element={<Navigate to="/onboarding?step=choose" replace />} />
+            
             <Route path="/auth/exness" element={<ExnessRedirect />} />
             <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
             <Route path="/admin/*" element={<AdminLayout />}>
