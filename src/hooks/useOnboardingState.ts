@@ -84,7 +84,7 @@ export const useOnboardingState = () => {
     setSearchParams({ step });
     saveWizardState(step);
     console.info(`onboarding_view`, { step });
-  }, [step, setSearchParams, email, uid, isDemoMode, isNotAffiliated]);
+  }, [step, setSearchParams]);
 
   const getStepNumber = () => {
     const stepMap = {
