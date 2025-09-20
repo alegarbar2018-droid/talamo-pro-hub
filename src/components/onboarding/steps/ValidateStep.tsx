@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Shield, 
   Info, 
@@ -12,7 +13,9 @@ import {
   Lock,
   Eye,
   Users,
-  Globe
+  Globe,
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { PARTNER_ID } from "@/lib/constants";
 import { useAffiliationValidation } from "@/hooks/useAffiliationValidation";
@@ -44,7 +47,15 @@ export const ValidateStep = ({
   onShowPartnerModal,
   onUserExists
 }: ValidateStepProps) => {
-  const { loading, error, cooldownSeconds, validateAffiliation } = useAffiliationValidation();
+  const { 
+    loading, 
+    error, 
+    cooldownSeconds, 
+    checkingUser, 
+    userExists,
+    validateAffiliation, 
+    resetValidation 
+  } = useAffiliationValidation();
   const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,22 +151,40 @@ export const ValidateStep = ({
               </p>
             </div>
             
-            {error && !isNotAffiliated && (
-              <div className="flex items-center gap-2 text-destructive text-sm p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-                <span>{error}</span>
-              </div>
+            
+            {error && (
+              <Alert className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {userExists && (
+              <Alert className="mb-4 border-blue-200 bg-blue-50">
+                <Info className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-800">
+                  Ya tienes una cuenta en Tálamo. 
+                  <a 
+                    href={`/login?email=${encodeURIComponent(email)}`}
+                    className="ml-1 underline hover:no-underline font-medium"
+                  >
+                    Inicia sesión para continuar
+                  </a>
+                </AlertDescription>
+              </Alert>
             )}
             
             <Button
               type="submit"
-              disabled={!email || loading || cooldownSeconds > 0}
+              disabled={!email || loading || checkingUser || cooldownSeconds > 0}
               className="w-full bg-gradient-primary hover:shadow-glow h-11"
             >
-              {loading ? (
+              {(loading || checkingUser) ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Validando con API de Exness...
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {loading ? "Validando con API de Exness..." : "Verificando usuario..."}
                 </div>
               ) : cooldownSeconds > 0 ? (
                 `Espera ${cooldownSeconds}s antes de reintentar`

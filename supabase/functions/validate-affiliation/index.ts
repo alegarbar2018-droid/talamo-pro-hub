@@ -1,4 +1,4 @@
-// Edge function for Exness affiliation validation
+// Edge function for Exness affiliation validation - ultra minimal with timeout
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
@@ -9,6 +9,9 @@ const corsHeaders = {
 // JWT token cache
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
+
+// Timeout for all external API calls
+const API_TIMEOUT = 8000; // 8 seconds
 
 // Get JWT token from Exness API
 async function getExnessToken(): Promise<string> {
@@ -61,13 +64,17 @@ async function getExnessToken(): Promise<string> {
   return cachedToken;
 }
 
-// Check affiliation with Exness API
+// Check affiliation with Exness API with timeout
 async function checkExnessAffiliation(email: string, retryCount = 0): Promise<any> {
   const apiBase = Deno.env.get("PARTNER_API_BASE");
   
   if (!apiBase) {
     throw new Error("PARTNER_API_BASE not configured");
   }
+
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
 
   try {
     const token = await getExnessToken();
@@ -81,7 +88,10 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
         "Authorization": `JWT ${token}`,
       },
       body: JSON.stringify({ email }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     // Handle token expiry with retry
     if (response.status === 401 && retryCount === 0) {
@@ -98,15 +108,15 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
     });
 
     if (!response.ok) {
-      // Handle specific error codes
+      // Map specific error codes
       if (response.status === 401) {
-        throw new Error("Unauthorized - Invalid credentials");
+        throw new Error("unauthorized_broker");
       } else if (response.status === 429) {
-        throw new Error("Rate limited - Too many requests");
+        throw new Error("rate_limited");
       } else if (response.status >= 500) {
-        throw new Error(`Upstream error: ${response.status}`);
+        throw new Error("broker_down");
       } else {
-        throw new Error(`API error: ${response.status} ${responseText}`);
+        throw new Error("bad_broker_response");
       }
     }
 
@@ -115,11 +125,18 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
       data = JSON.parse(responseText);
     } catch (e) {
       console.error("Failed to parse JSON response:", responseText);
-      throw new Error("Invalid JSON response from API");
+      throw new Error("bad_broker_response");
     }
 
     return data;
-  } catch (error) {
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    
+    if (error.name === 'AbortError') {
+      console.error("Request timed out");
+      throw new Error("timeout");
+    }
+    
     console.error("Error in checkExnessAffiliation:", error);
     throw error;
   }
@@ -135,17 +152,7 @@ const handler = async (req: Request): Promise<Response> => {
   console.log("Method:", req.method);
   console.log("URL:", req.url);
 
-  try {
-    // Initialize Supabase Client
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+  try {      
     let email: string;
 
     // Handle both POST and GET requests
@@ -266,53 +273,45 @@ const handler = async (req: Request): Promise<Response> => {
     } catch (apiError: any) {
       console.error("API Error:", apiError.message);
       
-      // Handle different error types
-      if (apiError.message.includes("Unauthorized")) {
-        return new Response(
-          JSON.stringify({ 
-            code: "Unauthorized", 
-            message: "Error de autenticación con Exness" 
-          }),
-          { 
-            status: 401, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
-      } else if (apiError.message.includes("Rate limited")) {
-        return new Response(
-          JSON.stringify({ 
-            code: "Throttled", 
-            message: "Demasiadas solicitudes, intenta más tarde" 
-          }),
-          { 
-            status: 429, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
-      } else if (apiError.message.includes("Upstream error")) {
-        return new Response(
-          JSON.stringify({ 
-            code: "UpstreamError", 
-            message: "Error en el servidor de Exness, intenta más tarde" 
-          }),
-          { 
-            status: 502, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
-      } else {
-        // Generic server error
-        return new Response(
-          JSON.stringify({ 
-            code: "ServerError", 
-            message: "Error interno del servidor" 
-          }),
-          { 
-            status: 500, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
-      }
+      // Map error codes to user-friendly messages
+      const errorMap: Record<string, { status: number; message: string }> = {
+        timeout: { 
+          status: 504, 
+          message: "El bróker tardó demasiado. Intenta de nuevo." 
+        },
+        rate_limited: { 
+          status: 429, 
+          message: "Demasiadas solicitudes. Espera un momento e intenta de nuevo." 
+        },
+        broker_down: { 
+          status: 502, 
+          message: "Servicio del bróker con incidencias. Intenta más tarde." 
+        },
+        unauthorized_broker: { 
+          status: 401, 
+          message: "No autenticado con el bróker. Reintenta en unos minutos." 
+        },
+        bad_broker_response: { 
+          status: 500, 
+          message: "Respuesta inválida del bróker. Contacta soporte." 
+        }
+      };
+
+      const errorInfo = errorMap[apiError.message] || {
+        status: 500,
+        message: "Error interno del servidor"
+      };
+
+      return new Response(
+        JSON.stringify({ 
+          code: apiError.message,
+          message: errorInfo.message
+        }),
+        { 
+          status: errorInfo.status, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        }
+      );
     }
 
   } catch (error: any) {

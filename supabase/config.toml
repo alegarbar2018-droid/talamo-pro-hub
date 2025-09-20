@@ -36,6 +36,9 @@ port = 54329
 [functions.validate-affiliation]
 verify_jwt = false
 
+[functions.check-user-exists]
+verify_jwt = false
+
 [functions.access-start]
 verify_jwt = false
 
