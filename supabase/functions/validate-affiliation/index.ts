@@ -182,31 +182,23 @@ const handler = async (req: Request): Promise<Response> => {
     email = email.trim().toLowerCase();
     console.log("Processing email:", email);
 
-    // Check if user already exists by looking at profiles table
-    // We need to join with auth.users to get the email since profiles doesn't store email directly
-    // But we can't access auth.users directly, so we'll use a different approach
-    // We'll look for profiles that might belong to this email through user metadata
+    // Check if user already exists using admin API
+    console.log("Checking for existing user with email:", email);
     
-    // First check if this email exists in any user's metadata
-    const { data: existingProfiles, error: profileError } = await supabase
-      .from('profiles')
-      .select('user_id')
-      .limit(1);
-    
-    if (!profileError && existingProfiles) {
-      console.log("Checking for existing user with email:", email);
+    try {
+      // Use admin API to check if user exists
+      const { data: existingUser, error: userError } = await supabase.auth.admin.listUsers({
+        page: 1,
+        perPage: 1
+      });
       
-      // We'll check by trying to sign in with a dummy password
-      // If the user exists, we'll get a specific error
-      try {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: 'dummy_password_check_123456'
-        });
+      if (!userError && existingUser?.users) {
+        // Check if any user has this email
+        const userExists = existingUser.users.some(user => 
+          user.email?.toLowerCase() === email.toLowerCase()
+        );
         
-        // If we get "Invalid login credentials", the user exists but password is wrong
-        // If we get "Invalid email" or similar, the user doesn't exist
-        if (signInError && signInError.message === 'Invalid login credentials') {
+        if (userExists) {
           console.log("User already exists, redirecting to login");
           return new Response(
             JSON.stringify({ 
@@ -220,9 +212,34 @@ const handler = async (req: Request): Promise<Response> => {
             }
           );
         }
-      } catch (authCheckError) {
-        console.log("Error checking user existence, continuing with validation:", authCheckError);
-        // If there's an error checking, continue with normal validation
+      }
+    } catch (adminError) {
+      console.log("Admin API not available, using fallback method:", adminError.message);
+      
+      // Fallback: try to sign in with dummy password
+      try {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: 'dummy_password_check_for_existing_user_' + Date.now()
+        });
+        
+        // If we get "Invalid login credentials", the user exists but password is wrong
+        if (signInError && signInError.message === 'Invalid login credentials') {
+          console.log("User already exists (fallback method), redirecting to login");
+          return new Response(
+            JSON.stringify({ 
+              code: "UserExists", 
+              message: "Ya tienes una cuenta registrada. Inicia sesión con tu contraseña.",
+              user_exists: true
+            }),
+            { 
+              status: 409, 
+              headers: { "Content-Type": "application/json", ...corsHeaders } 
+            }
+          );
+        }
+      } catch (fallbackError) {
+        console.log("Fallback user check failed, continuing with validation:", fallbackError.message);
       }
     }
 
@@ -278,23 +295,27 @@ const handler = async (req: Request): Promise<Response> => {
       console.log("Calling real Exness API for:", email);
       const affiliationData = await checkExnessAffiliation(email);
       
-      console.log("Affiliation data received:", affiliationData);
+      console.log("Raw affiliation data received:", JSON.stringify(affiliationData, null, 2));
 
-      if (affiliationData.affiliation === true) {
+      // Handle successful affiliation
+      if (affiliationData && affiliationData.affiliation === true) {
         const result = {
           affiliation: true,
           accounts: affiliationData.accounts || [],
-          client_uid: affiliationData.client_uid || null,
+          client_uid: affiliationData.client_uid || affiliationData.clientUid || null,
           partnerId: partnerId,
           source: "exness-api",
         };
-        console.log("Affiliation successful:", result);
+        console.log("✅ Affiliation validated successfully:", result);
         return new Response(JSON.stringify(result), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
-      } else {
-        console.log("User not affiliated");
+      } 
+      
+      // Handle explicit non-affiliation
+      if (affiliationData && affiliationData.affiliation === false) {
+        console.log("❌ User explicitly not affiliated");
         return new Response(
           JSON.stringify({ 
             code: "NotAffiliated", 
@@ -307,22 +328,45 @@ const handler = async (req: Request): Promise<Response> => {
           }
         );
       }
+
+      // Handle unexpected response format
+      console.log("⚠️ Unexpected API response format:", affiliationData);
+      return new Response(
+        JSON.stringify({ 
+          code: "NotAffiliated", 
+          affiliation: false,
+          message: "Formato de respuesta inesperado de la API" 
+        }),
+        { 
+          status: 403, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        }
+      );
+
     } catch (apiError: any) {
-      console.error("API Error:", apiError.message);
+      console.error("🚨 API Error:", {
+        message: apiError.message,
+        stack: apiError.stack,
+        name: apiError.name
+      });
       
-      // Handle different error types
-      if (apiError.message.includes("Unauthorized")) {
+      // Handle specific HTTP errors
+      if (apiError.message.includes("401") || apiError.message.includes("Unauthorized")) {
+        console.log("🔐 Authentication error with Exness API");
         return new Response(
           JSON.stringify({ 
             code: "Unauthorized", 
-            message: "Error de autenticación con Exness" 
+            message: "Error de autenticación con Exness API" 
           }),
           { 
             status: 401, 
             headers: { "Content-Type": "application/json", ...corsHeaders } 
           }
         );
-      } else if (apiError.message.includes("Rate limited")) {
+      } 
+      
+      if (apiError.message.includes("429") || apiError.message.includes("Rate limited")) {
+        console.log("🚫 Rate limit hit");
         return new Response(
           JSON.stringify({ 
             code: "Throttled", 
@@ -333,30 +377,35 @@ const handler = async (req: Request): Promise<Response> => {
             headers: { "Content-Type": "application/json", ...corsHeaders } 
           }
         );
-      } else if (apiError.message.includes("Upstream error")) {
+      } 
+      
+      if (apiError.message.includes("500") || apiError.message.includes("502") || apiError.message.includes("Upstream error")) {
+        console.log("🌐 Upstream server error");
         return new Response(
           JSON.stringify({ 
             code: "UpstreamError", 
-            message: "Error en el servidor de Exness, intenta más tarde" 
+            message: "Servidor de Exness temporalmente no disponible" 
           }),
           { 
             status: 502, 
             headers: { "Content-Type": "application/json", ...corsHeaders } 
           }
         );
-      } else {
-        // Generic server error
-        return new Response(
-          JSON.stringify({ 
-            code: "ServerError", 
-            message: "Error interno del servidor" 
-          }),
-          { 
-            status: 500, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
       }
+
+      // For any other error, treat as "not affiliated" to give user options
+      console.log("🔄 Generic error, treating as not affiliated to show user options");
+      return new Response(
+        JSON.stringify({ 
+          code: "NotAffiliated", 
+          affiliation: false,
+          message: "No se pudo validar la afiliación en este momento" 
+        }),
+        { 
+          status: 403, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        }
+      );
     }
 
   } catch (error: any) {
