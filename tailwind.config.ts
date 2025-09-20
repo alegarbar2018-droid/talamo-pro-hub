@@ -78,6 +78,8 @@ export default {
       boxShadow: {
         glow: "var(--glow-primary)",
         "glow-subtle": "var(--glow-subtle)",
+        "glow-intense": "var(--glow-intense)",
+        "shadow-glow-subtle": "var(--shadow-glow-subtle)",
       },
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",
