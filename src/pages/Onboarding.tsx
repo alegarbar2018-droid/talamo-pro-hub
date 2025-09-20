@@ -417,7 +417,7 @@ const Onboarding = () => {
           {/* Debug state information */}
           {process.env.NODE_ENV === 'development' && (
             <div className="p-2 bg-gray-100 rounded text-xs font-mono">
-              Debug: isNotAffiliated={String(isNotAffiliated)}, error="{error}", step="{step}"
+              Debug: isNotAffiliated={String(isNotAffiliated)}, error="{error}", step="{step}", email="{email}"
             </div>
           )}
 
