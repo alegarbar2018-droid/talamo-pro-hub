@@ -109,7 +109,8 @@ export default function ValidatePage() {
       if (data.isAffiliated && data.partnerIdMatch) {
         // Store affiliation in localStorage for MVP
         const { setUserValidation } = await import('@/lib/auth');
-        setUserValidation(true);
+        // For now use localStorage until auth context is properly integrated
+        localStorage.setItem("isValidated", "true");
         
         toast({
           title: "✅ Acceso desbloqueado",

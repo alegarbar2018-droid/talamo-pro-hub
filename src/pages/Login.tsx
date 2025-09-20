@@ -1,139 +1,225 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { signIn, resetPassword } from '@/lib/auth';
+import { useToast } from '@/hooks/use-toast';
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [showResetForm, setShowResetForm] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Mock authentication
-    setTimeout(() => {
-      if (email && password) {
-        localStorage.setItem("user", JSON.stringify({ 
-          email, 
-          id: "1", 
-          name: "Usuario Demo",
-          role: "USER",
-          isAffiliated: email.includes("demo") 
-        }));
-        navigate("/dashboard");
+    setLoading(true);
+
+    try {
+      const { data, error } = await signIn(email, password);
+      
+      if (error) {
+        toast({
+          title: "Error de inicio de sesión",
+          description: error.message === 'Invalid login credentials' 
+            ? "Credenciales incorrectas. Verifica tu email y contraseña."
+            : error.message,
+          variant: "destructive"
+        });
+        return;
       }
-      setIsLoading(false);
-    }, 1000);
+
+      if (data.user) {
+        toast({
+          title: "¡Bienvenido!",
+          description: "Has iniciado sesión correctamente."
+        });
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        title: "Error inesperado",
+        description: "Ha ocurrido un error. Inténtalo de nuevo.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Tálamo</h1>
-          <p className="text-muted-foreground">Trading profesional, sin promesas vacías</p>
-        </div>
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetLoading(true);
 
-        <Card className="border-line bg-surface shadow-glow-subtle">
-          <CardHeader>
-            <CardTitle className="text-foreground">Iniciar Sesión</CardTitle>
+    try {
+      const { error } = await resetPassword(resetEmail);
+      
+      if (error) {
+        toast({
+          title: "Error al enviar el enlace",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Enlace enviado",
+        description: "Revisa tu email para restablecer tu contraseña."
+      });
+      setShowResetForm(false);
+      setResetEmail('');
+    } catch (error) {
+      console.error('Reset password error:', error);
+      toast({
+        title: "Error inesperado",
+        description: "Ha ocurrido un error. Inténtalo de nuevo.",
+        variant: "destructive"
+      });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  if (showResetForm) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md border-line bg-surface">
+          <CardHeader className="space-y-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowResetForm(false)}
+              className="w-fit p-0 h-auto text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver al inicio de sesión
+            </Button>
+            <CardTitle className="text-2xl text-foreground">Restablecer contraseña</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Accede a tu plataforma de trading profesional
+              Introduce tu email para recibir un enlace de restablecimiento
             </CardDescription>
           </CardHeader>
-          
-          <form onSubmit={handleLogin}>
-            <CardContent className="space-y-4">
+          <CardContent>
+            <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Email
-                </label>
+                <Label htmlFor="reset-email" className="text-foreground">Email</Label>
                 <Input
-                  id="email"
+                  id="reset-email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@email.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
                   required
-                  className="bg-input border-line focus:border-teal focus:ring-teal"
+                  className="bg-background border-line text-foreground"
                 />
               </div>
               
-              <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-foreground">
-                  Contraseña
-                </label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    className="bg-input border-line focus:border-teal focus:ring-teal pr-10"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <Alert className="border-warning/20 bg-warning/10">
-                <AlertTriangle className="h-4 w-4 text-warning" />
-                <AlertDescription className="text-sm text-foreground">
-                  Para acceso completo, tu cuenta debe estar afiliada con nuestro partner Exness.
-                  <br />
-                  <span className="text-xs text-muted-foreground">
-                    Usa "demo@email.com" para simular usuario validado.
-                  </span>
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-            
-            <CardFooter className="space-y-4">
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-primary hover:shadow-glow"
-                disabled={isLoading}
+                className="w-full" 
+                disabled={resetLoading || !resetEmail.trim()}
               >
-                {isLoading ? "Validando..." : "Iniciar Sesión"}
+                {resetLoading ? "Enviando..." : "Enviar enlace"}
               </Button>
-              
-              <div className="text-center">
-                <Button
-                  type="button"
-                  variant="link"
-                  className="text-teal hover:text-teal-ink"
-                  onClick={() => navigate("/register")}
-                >
-                  ¿No tienes cuenta? Regístrate
-                </Button>
-              </div>
-            </CardFooter>
-          </form>
+            </form>
+          </CardContent>
         </Card>
-
-        <div className="text-xs text-muted-foreground text-center space-y-1">
-          <p>El trading de CFDs conlleva un alto riesgo de pérdida</p>
-          <p>Entre el 74-89% de cuentas minoristas pierden dinero</p>
-        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-line bg-surface">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-2xl text-foreground">Iniciar sesión</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Accede a tu cuenta de Tálamo
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-foreground">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-background border-line text-foreground"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-foreground">Contraseña</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="bg-background border-line text-foreground pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowResetForm(true)}
+                className="text-sm text-teal hover:underline"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={loading || !email.trim() || !password.trim()}
+            >
+              {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+            </Button>
+          </form>
+
+          <div className="mt-6 pt-4 border-t border-line">
+            <p className="text-center text-sm text-muted-foreground">
+              ¿No tienes cuenta?{' '}
+              <Link to="/register" className="text-teal hover:underline">
+                Crear cuenta
+              </Link>
+            </p>
+          </div>
+
+          <Alert className="mt-4 border-warning/20 bg-warning/5">
+            <AlertDescription className="text-sm text-muted-foreground">
+              <strong>Prueba con:</strong> demo@email.com para acceso rápido
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default Login;
+}
