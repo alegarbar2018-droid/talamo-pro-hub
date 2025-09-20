@@ -224,13 +224,20 @@ export const ValidateStep = ({
           </form>
 
           {/* Opciones para usuarios no afiliados */}
-          {isNotAffiliated && (
-            <NotAffiliatedOptions
-              onCreateAccount={handleCreateAccount}
-              onRequestPartnerChange={() => onShowPartnerModal(true)}
-              onRetryValidation={handleRetryWithConfirmation}
-            />
-          )}
+          {(() => {
+            console.log("Checking isNotAffiliated condition:", isNotAffiliated);
+            if (isNotAffiliated) {
+              console.log("Rendering NotAffiliatedOptions");
+              return (
+                <NotAffiliatedOptions
+                  onCreateAccount={handleCreateAccount}
+                  onRequestPartnerChange={() => onShowPartnerModal(true)}
+                  onRetryValidation={handleRetryWithConfirmation}
+                />
+              );
+            }
+            return null;
+          })()}
 
           {/* Mostrar mensaje de nueva cuenta creada */}
           {showNewAccountCreated && (
