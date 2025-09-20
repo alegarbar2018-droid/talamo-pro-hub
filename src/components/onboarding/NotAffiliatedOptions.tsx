@@ -43,20 +43,15 @@ export const NotAffiliatedOptions = ({
               <div className="flex-1 space-y-2">
                 <h4 className="font-semibold text-foreground">Crear cuenta nueva</h4>
                 <p className="text-sm text-muted-foreground">
-                  Mismos datos personales, email distinto.
+                  Mismos datos personales, email distinto. Sugerencia Gmail: tunombre+talamo@gmail.com
                 </p>
-                <div className="bg-blue-50 border border-blue-200 rounded p-2 dark:bg-blue-950 dark:border-blue-800">
-                  <p className="text-xs text-blue-800 dark:text-blue-200">
-                    <strong>Gmail tip:</strong> tunombre+talamo@gmail.com
-                  </p>
-                </div>
                 <Button 
                   onClick={handleCreateExnessAccount}
                   size="sm"
                   className="w-full bg-gradient-primary hover:shadow-glow"
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Abrir cuenta nueva
+                  Crear cuenta nueva
                 </Button>
               </div>
             </div>
@@ -72,9 +67,6 @@ export const NotAffiliatedOptions = ({
               </div>
               <div className="flex-1 space-y-2">
                 <h4 className="font-semibold text-foreground">Solicitar cambio de partner</h4>
-                <p className="text-sm text-muted-foreground">
-                  Mantén tu cuenta actual, solicita el cambio a Exness.
-                </p>
                 <Button 
                   variant="outline"
                   size="sm"
@@ -82,7 +74,7 @@ export const NotAffiliatedOptions = ({
                   className="w-full border-primary text-primary hover:bg-primary/5"
                 >
                   <Copy className="h-4 w-4 mr-2" />
-                  Solicitar cambio
+                  Solicitar cambio de partner
                 </Button>
               </div>
             </div>
@@ -98,7 +90,7 @@ export const NotAffiliatedOptions = ({
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver a validar con otro email
+            Volver a validar
           </Button>
         </div>
       </div>
