@@ -40,17 +40,18 @@ const Index = () => {
               <h1 className="text-2xl font-bold text-foreground">Tálamo</h1>
               <Badge variant="outline" className="border-teal text-teal">MVP</Badge>
             </div>
-             <div className="flex gap-2">
-               <Button variant="outline" onClick={() => navigate("/login")}>
-                 Iniciar Sesión
-               </Button>
-               <Button 
-                 onClick={() => navigate("/register")}
-                 className="bg-gradient-primary hover:shadow-glow"
-               >
-                 Registrarse
-               </Button>
-             </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate("/login")}>
+                Iniciar Sesión
+              </Button>
+              <Button 
+                onClick={() => navigate("/access")}
+                className="bg-gradient-primary hover:shadow-glow"
+                data-event="cta-solicitar-acceso-header"
+              >
+                Solicitar acceso
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -75,14 +76,11 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => {
-                console.info('CTA: Crear Cuenta Exness');
-                window.open("https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank");
-              }}
+              onClick={() => navigate("/access")}
               className="bg-gradient-primary hover:shadow-glow"
-              data-event="cta-crear-cuenta-hero"
+              data-event="cta-solicitar-acceso-hero"
             >
-              Crear Cuenta Exness
+              Solicitar acceso
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
             <ValidateCTA 
@@ -191,14 +189,11 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 size="lg" 
-                onClick={() => {
-                  console.info('CTA: Crear Cuenta Exness - Final');
-                  window.open("https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank");
-                }}
+                onClick={() => navigate("/access")}
                 className="bg-white text-primary hover:bg-white/90"
-                data-event="cta-crear-cuenta-final"
+                data-event="cta-solicitar-acceso-final"
               >
-                Crear Cuenta Exness
+                Solicitar acceso
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
               <ValidateCTA 

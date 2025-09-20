@@ -18,6 +18,7 @@ import Tools from "./pages/Tools";
 import AuthValidate from "./pages/AuthValidate";
 import ChangePartnerGuide from "./pages/ChangePartnerGuide";
 import ExnessRedirect from "./pages/ExnessRedirect";
+import AccessWizard from "./pages/AccessWizard";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminUsers } from "./pages/admin/Users";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/signals" element={<Signals />} />
             <Route path="/copy-trading" element={<CopyTrading />} />
             <Route path="/tools" element={<Tools />} />
+            <Route path="/access" element={<AccessWizard />} />
             <Route path="/auth/validate" element={<AuthValidate />} />
             <Route path="/auth/exness" element={<ExnessRedirect />} />
             <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
