@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_leads: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -370,10 +394,15 @@ export type Database = {
           bio: string | null
           created_at: string
           first_name: string | null
+          goal: string | null
           id: string
+          interested_assets: string[] | null
+          language: string | null
           last_name: string | null
+          level: string | null
           notification_preferences: Json | null
           phone: string | null
+          risk_tolerance: string | null
           updated_at: string
           user_id: string
         }
@@ -382,10 +411,15 @@ export type Database = {
           bio?: string | null
           created_at?: string
           first_name?: string | null
+          goal?: string | null
           id?: string
+          interested_assets?: string[] | null
+          language?: string | null
           last_name?: string | null
+          level?: string | null
           notification_preferences?: Json | null
           phone?: string | null
+          risk_tolerance?: string | null
           updated_at?: string
           user_id: string
         }
@@ -394,10 +428,15 @@ export type Database = {
           bio?: string | null
           created_at?: string
           first_name?: string | null
+          goal?: string | null
           id?: string
+          interested_assets?: string[] | null
+          language?: string | null
           last_name?: string | null
+          level?: string | null
           notification_preferences?: Json | null
           phone?: string | null
+          risk_tolerance?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -583,6 +622,42 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_validations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_validated: boolean | null
+          partner_id: string | null
+          updated_at: string
+          user_id: string
+          validated_at: string | null
+          validation_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_validated?: boolean | null
+          partner_id?: string | null
+          updated_at?: string
+          user_id: string
+          validated_at?: string | null
+          validation_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_validated?: boolean | null
+          partner_id?: string | null
+          updated_at?: string
+          user_id?: string
+          validated_at?: string | null
+          validation_source?: string | null
         }
         Relationships: []
       }

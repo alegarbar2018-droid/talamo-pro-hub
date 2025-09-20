@@ -64,9 +64,12 @@ const Step3Validate = ({ data, onUpdate, onNext, onOpenChangePartner }: Step3Val
         gtag("event", "access.validation.requested", { email });
       }
 
-      const response = await fetch("/supabase/functions/v1/validate-affiliation", {
+      const response = await fetch(`https://xogbavprnnbfamcjrsel.supabase.co/functions/v1/validate-affiliation`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZ2JhdnBybm5iZmFtY2pyc2VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzNDM3ODQsImV4cCI6MjA3MzkxOTc4NH0.6l1XCkopeKxOPzj9vfYcslB-H-Q-w7F8tPLhGYu-rYw`
+        },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
 

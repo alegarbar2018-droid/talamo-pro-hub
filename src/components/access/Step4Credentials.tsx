@@ -104,9 +104,12 @@ const Step4Credentials = ({ data, onComplete }: Step4CredentialsProps) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/access/finalize", {
+      const response = await fetch(`https://xogbavprnnbfamcjrsel.supabase.co/functions/v1/access-finalize`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZ2JhdnBybm5iZmFtY2pyc2VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzNDM3ODQsImV4cCI6MjA3MzkxOTc4NH0.6l1XCkopeKxOPzj9vfYcslB-H-Q-w7F8tPLhGYu-rYw`
+        },
         body: JSON.stringify({
           email: data.email,
           password: formData.password,

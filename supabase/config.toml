@@ -1,4 +1,43 @@
 project_id = "xogbavprnnbfamcjrsel"
 
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+port = 54327
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+port = 54328
+
+[edge_functions]
+enabled = true
+port = 54329
+
 [functions.validate-affiliation]
+verify_jwt = false
+
+[functions.access-start]
+verify_jwt = false
+
+[functions.access-finalize]
 verify_jwt = false
