@@ -143,6 +143,21 @@ const Onboarding = () => {
         body: { email: targetEmail }
       });
 
+      // Handle 403 as "not affiliated" instead of error
+      if (error && error.message?.includes('FunctionsHttpError: 403')) {
+        console.info(`User not affiliated (403 response)`, { email: targetEmail });
+        setIsNotAffiliated(true);
+        
+        // Force re-render and scroll after state update
+        setTimeout(() => {
+          const blockB = document.getElementById('block-b-not-affiliated');
+          if (blockB) {
+            blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+        return;
+      }
+
       if (error) throw error;
 
       if (data?.affiliation === true) {
@@ -166,6 +181,21 @@ const Onboarding = () => {
       }
     } catch (err: any) {
       setIsNotAffiliated(false); // Reset on error
+      
+      // Handle 403 specifically for non-affiliated users (backup)
+      if (err?.message?.includes('403') || err?.status === 403) {
+        console.info(`User not affiliated (caught 403)`, { email: targetEmail });
+        setIsNotAffiliated(true);
+        
+        setTimeout(() => {
+          const blockB = document.getElementById('block-b-not-affiliated');
+          if (blockB) {
+            blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+        return;
+      }
+      
       if (err?.status === 401) {
         setError("No pudimos autenticarnos con el bróker. Intenta nuevamente en unos minutos.");
       } else if (err?.status === 429) {
