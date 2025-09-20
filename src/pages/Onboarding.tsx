@@ -114,6 +114,7 @@ const Onboarding = () => {
 
   const submitValidate = async (targetEmail: string) => {
     setError("");
+    setIsNotAffiliated(false); // Reset state first
     setLoading(true);
     
     console.info(`exness_validate_attempt`, { email: targetEmail });
@@ -143,24 +144,21 @@ const Onboarding = () => {
         setStep("eligible");
         console.info(`exness_validate_success`, { email: targetEmail, uid: data.client_uid });
       } else {
-        // User is not affiliated - this is not an error, it's an expected flow
-        console.info(`Setting isNotAffiliated to true for email: ${targetEmail}`);
+        // User is not affiliated - show options immediately
+        console.info(`User not affiliated, showing options`);
         setIsNotAffiliated(true);
-        setError(""); // Clear any previous errors
-        console.info(`exness_validate_blocked`, { email: targetEmail, isNotAffiliated: true });
-        // Scroll to Block B after a brief delay
+        console.info(`exness_validate_blocked`, { email: targetEmail });
+        
+        // Force re-render and scroll after state update
         setTimeout(() => {
-          console.info(`Attempting to scroll to Block B`);
           const blockB = document.getElementById('block-b-not-affiliated');
           if (blockB) {
-            console.info(`Block B found, scrolling to it`);
-            blockB.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } else {
-            console.warn(`Block B not found in DOM`);
+            blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
-        }, 500);
+        }, 100);
       }
     } catch (err: any) {
+      setIsNotAffiliated(false); // Reset on error
       if (err?.status === 401) {
         setError("No pudimos autenticarnos con el bróker. Intenta nuevamente en unos minutos.");
       } else if (err?.status === 429) {
@@ -514,30 +512,25 @@ const Onboarding = () => {
         </CardContent>
       </Card>
 
-      {/* Block B: Sub-flow for non-affiliated users - ALWAYS VISIBLE WHEN NOT AFFILIATED */}
+      {/* Block B: OPCIONES PARA CUENTAS NO AFILIADAS */}
       {isNotAffiliated && (
-        <Card id="block-b-not-affiliated" className="border-amber-300 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 dark:border-amber-700 dark:from-amber-950 dark:via-orange-950 dark:to-amber-900 shadow-xl">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
-                <HelpCircle className="h-5 w-5 text-white" />
+        <div className="mt-8">
+          <Card id="block-b-not-affiliated" className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 dark:border-amber-600 dark:from-amber-950 dark:via-orange-950 dark:to-amber-900 shadow-2xl">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
+                  <HelpCircle className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-2xl text-foreground">
+                    🚀 Opciones para continuar
+                  </CardTitle>
+                  <CardDescription className="text-amber-800 dark:text-amber-200 mt-1 text-lg">
+                    Tu cuenta no está afiliada con Tálamo. Elige una opción:
+                  </CardDescription>
+                </div>
               </div>
-              <div className="flex-1">
-                <CardTitle className="text-xl text-foreground flex items-center gap-2">
-                  Opciones para cuentas no afiliadas
-                </CardTitle>
-                <CardDescription className="text-amber-800 dark:text-amber-200 mt-1">
-                  Tienes dos opciones claras para continuar y acceder a Tálamo
-                </CardDescription>
-              </div>
-            </div>
-            
-            <div className="bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 rounded-lg p-3">
-              <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
-                💡 <strong>No hay problema:</strong> Puedes crear una cuenta nueva con nuestro enlace o solicitar cambio de partner en tu cuenta actual.
-              </p>
-            </div>
-          </CardHeader>
+            </CardHeader>
           
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -651,7 +644,8 @@ const Onboarding = () => {
               </Card>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       )}
     </div>
   );
