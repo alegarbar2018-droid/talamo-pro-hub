@@ -44,7 +44,7 @@ const Index = () => {
               <Badge variant="outline" className="border-teal text-teal">MVP</Badge>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/auth/signin")}>
+              <Button variant="outline" onClick={() => navigate("/login")}>
                 Iniciar Sesión
               </Button>
               <Button 
