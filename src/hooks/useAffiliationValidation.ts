@@ -36,16 +36,21 @@ export const useAffiliationValidation = () => {
         return;
       }
 
-      console.info(`📡 Calling validate-affiliation function...`);
+      console.info(`📡 Calling validate-affiliation function with email:`, email);
+      const startTime = performance.now();
+      
       const { data, error } = await supabase.functions.invoke('validate-affiliation', {
         body: { email }
       });
 
-      console.info('📋 Supabase response:', { 
+      const endTime = performance.now();
+      console.info('📋 Supabase response received in', Math.round(endTime - startTime), 'ms');
+      console.info('📋 Response details:', { 
         hasData: !!data, 
         hasError: !!error,
-        data: data ? JSON.stringify(data).substring(0, 200) : null,
-        errorMessage: error?.message?.substring(0, 200)
+        data: data ? JSON.stringify(data).substring(0, 300) : null,
+        errorMessage: error?.message?.substring(0, 300),
+        errorDetails: error
       });
 
       // Handle error responses

@@ -131,9 +131,11 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  console.log("=== Validate Affiliation Function ===");
+  console.log("=== Validate Affiliation Function Started ===");
   console.log("Method:", req.method);
   console.log("URL:", req.url);
+  console.log("Headers:", Object.fromEntries(req.headers.entries()));
+  console.log("Timestamp:", new Date().toISOString());
 
   try {
     // Initialize Supabase Client
@@ -180,79 +182,26 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     email = email.trim().toLowerCase();
-    console.log("Processing email:", email);
+    console.log("✅ Processing email:", email);
+    console.log("Request processing time so far:", Date.now() - new Date().getTime(), "ms");
 
-    // Check if user already exists using admin API
-    console.log("Checking for existing user with email:", email);
-    
-    try {
-      // Use admin API to check if user exists
-      const { data: existingUser, error: userError } = await supabase.auth.admin.listUsers({
-        page: 1,
-        perPage: 1
-      });
-      
-      if (!userError && existingUser?.users) {
-        // Check if any user has this email
-        const userExists = existingUser.users.some(user => 
-          user.email?.toLowerCase() === email.toLowerCase()
-        );
-        
-        if (userExists) {
-          console.log("User already exists, redirecting to login");
-          return new Response(
-            JSON.stringify({ 
-              code: "UserExists", 
-              message: "Ya tienes una cuenta registrada. Inicia sesión con tu contraseña.",
-              user_exists: true
-            }),
-            { 
-              status: 409, 
-              headers: { "Content-Type": "application/json", ...corsHeaders } 
-            }
-          );
-        }
-      }
-    } catch (adminError) {
-      console.log("Admin API not available, using fallback method:", adminError.message);
-      
-      // Fallback: try to sign in with dummy password
-      try {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: email,
-          password: 'dummy_password_check_for_existing_user_' + Date.now()
-        });
-        
-        // If we get "Invalid login credentials", the user exists but password is wrong
-        if (signInError && signInError.message === 'Invalid login credentials') {
-          console.log("User already exists (fallback method), redirecting to login");
-          return new Response(
-            JSON.stringify({ 
-              code: "UserExists", 
-              message: "Ya tienes una cuenta registrada. Inicia sesión con tu contraseña.",
-              user_exists: true
-            }),
-            { 
-              status: 409, 
-              headers: { "Content-Type": "application/json", ...corsHeaders } 
-            }
-          );
-        }
-      } catch (fallbackError) {
-        console.log("Fallback user check failed, continuing with validation:", fallbackError.message);
-      }
-    }
+    // Skip user existence check for now to not block validation
+    // TODO: Implement user existence check after fixing admin API pagination
+    console.log("⏭️ Skipping user existence check to not block API validation");
+    console.log("🔍 Proceeding directly to affiliation validation for:", email);
 
     // Environment variables check
     const usePartnerAPI = Deno.env.get("USE_PARTNER_API");
     const partnerId = Deno.env.get("EXNESS_PARTNER_ID");
     
-    console.log("Environment check:", {
+    console.log("🔧 Environment variables check:", {
       USE_PARTNER_API: usePartnerAPI,
       HAS_PARTNER_API_BASE: !!Deno.env.get("PARTNER_API_BASE"),
       HAS_PARTNER_API_USER: !!Deno.env.get("PARTNER_API_USER"),
       HAS_PARTNER_API_PASSWORD: !!Deno.env.get("PARTNER_API_PASSWORD"),
-      EXNESS_PARTNER_ID: partnerId
+      ALLOW_DEMO: Deno.env.get("ALLOW_DEMO"),
+      EXNESS_PARTNER_ID: partnerId,
+      PARTNER_API_BASE_VALUE: Deno.env.get("PARTNER_API_BASE")?.substring(0, 50) + "..."
     });
 
     // Demo bypass check (only if ALLOW_DEMO is enabled)
@@ -292,7 +241,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Call real Exness API
     try {
-      console.log("Calling real Exness API for:", email);
+      console.log("🚀 Starting real Exness API call for:", email);
+      console.log("API Base URL:", Deno.env.get("PARTNER_API_BASE"));
       const affiliationData = await checkExnessAffiliation(email);
       
       console.log("Raw affiliation data received:", JSON.stringify(affiliationData, null, 2));
@@ -327,10 +277,11 @@ const handler = async (req: Request): Promise<Response> => {
       );
 
     } catch (apiError: any) {
-      console.error("🚨 API Error:", {
+      console.error("🚨 CRITICAL API ERROR:", {
         message: apiError.message,
         stack: apiError.stack,
-        name: apiError.name
+        name: apiError.name,
+        timestamp: new Date().toISOString()
       });
       
       // Handle specific HTTP errors with consistent responses
