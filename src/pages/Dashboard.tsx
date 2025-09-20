@@ -53,8 +53,8 @@ const Dashboard = () => {
   }
 
   if (!isValidated && !user.isAffiliated) {
-    // Redirect to gate page for affiliation validation
-    navigate("/auth/gate");
+    // Redirect to onboarding for affiliation validation
+    navigate("/onboarding");
     return null;
   }
 

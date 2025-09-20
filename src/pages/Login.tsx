@@ -44,10 +44,10 @@ export default function LoginPage() {
           description: "Has iniciado sesión correctamente."
         });
         
-        // Check if user is validated, if not redirect to gate
+        // Check if user is validated, if not redirect to onboarding
         const isValidated = localStorage.getItem("isValidated") === 'true';
         if (!isValidated) {
-          navigate('/auth/gate');
+          navigate('/onboarding');
         } else {
           navigate('/dashboard');
         }
