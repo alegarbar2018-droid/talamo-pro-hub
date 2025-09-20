@@ -26,8 +26,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Dashboard - Auth state changed:', { 
+      loading, 
+      hasUser: !!user, 
+      userEmail: user?.email 
+    });
+
     // If not authenticated, redirect to login
     if (!loading && !user) {
+      console.log('Dashboard - Redirecting to login, no user found');
       navigate("/login");
       return;
     }

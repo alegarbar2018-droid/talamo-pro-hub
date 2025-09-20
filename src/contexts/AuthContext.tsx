@@ -50,9 +50,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = async () => {
     if (session?.user) {
-      const enrichedUser = await enrichUserData(session.user);
-      setUser(enrichedUser);
-      setIsValidated(enrichedUser.isAffiliated || false);
+      setLoading(true);
+      try {
+        const enrichedUser = await enrichUserData(session.user);
+        setUser(enrichedUser);
+        setIsValidated(enrichedUser.isAffiliated || false);
+      } catch (error) {
+        console.error('Error refreshing user data:', error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -60,16 +67,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, !!session);
         setSession(session);
         
         if (session?.user) {
-          // Defer the user enrichment to avoid blocking
-          setTimeout(async () => {
+          setLoading(true);
+          try {
             const enrichedUser = await enrichUserData(session.user);
             setUser(enrichedUser);
             setIsValidated(enrichedUser.isAffiliated || false);
+          } catch (error) {
+            console.error('Error enriching user data:', error);
+            setUser(session.user as AuthUser);
+            setIsValidated(false);
+          } finally {
             setLoading(false);
-          }, 0);
+          }
         } else {
           setUser(null);
           setIsValidated(false);
@@ -79,16 +92,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('Initial session check:', !!session);
       setSession(session);
       
       if (session?.user) {
-        setTimeout(async () => {
+        setLoading(true);
+        try {
           const enrichedUser = await enrichUserData(session.user);
           setUser(enrichedUser);
           setIsValidated(enrichedUser.isAffiliated || false);
+        } catch (error) {
+          console.error('Error enriching user data:', error);
+          setUser(session.user as AuthUser);
+          setIsValidated(false);
+        } finally {
           setLoading(false);
-        }, 0);
+        }
       } else {
         setLoading(false);
       }
