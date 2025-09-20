@@ -45,6 +45,8 @@ export const useAffiliationValidation = () => {
   ) => {
     if (loading || cooldownSeconds > 0) return;
     
+    console.log("=== VALIDATE AFFILIATION START ===", { email, loading, cooldownSeconds });
+    
     setLoading(true);
     setError("");
     setUserExists(false);
@@ -53,7 +55,9 @@ export const useAffiliationValidation = () => {
       console.log("Starting validation process for:", email);
       
       // Check user existence first - independent operation
+      console.log("Step 1: Checking user existence...");
       const exists = await checkUserExists(email);
+      console.log("Step 1 COMPLETE: User exists =", exists);
       setUserExists(exists);
       
       if (exists && onUserExists) {
@@ -63,22 +67,39 @@ export const useAffiliationValidation = () => {
       }
 
       // Check for demo mode before calling API
+      console.log("Step 2: Checking demo mode...");
       if (email.toLowerCase().includes("demo") || email.toLowerCase().includes("exness")) {
         console.log("Demo mode activated");
         onDemo();
         return;
       }
+      console.log("Step 2 COMPLETE: Not demo mode");
       
       // Validate affiliation with Exness - separate try/catch with timeout
+      console.log("Step 3: Starting affiliation validation...");
       let affiliationData;
       try {
-        console.log("Calling validate-affiliation function...");
-        const { data, error: functionError } = await supabase.functions.invoke(
+        console.log("Step 3a: About to call supabase.functions.invoke...");
+        
+        // Add a manual timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Manual timeout after 10 seconds')), 10000)
+        );
+        
+        const validationPromise = supabase.functions.invoke(
           "validate-affiliation",
           {
             body: { email: email.trim().toLowerCase() }
           }
         );
+        
+        console.log("Step 3b: Created promises, waiting for response...");
+        const result = await Promise.race([validationPromise, timeoutPromise]);
+        console.log("Step 3c: Got result from Promise.race");
+        
+        const { data, error: functionError } = result as any;
+        
+        console.log("Step 3d: Extracted data and error", { hasData: !!data, hasError: !!functionError });
 
         if (functionError) {
           console.error("Function error:", functionError);
@@ -87,12 +108,18 @@ export const useAffiliationValidation = () => {
         }
 
         affiliationData = data;
-        console.log("Validation response:", affiliationData);
+        console.log("Step 3 COMPLETE: Validation response:", affiliationData);
       } catch (affiliationError: any) {
-        console.error("Affiliation validation error:", affiliationError);
-        setError("Error al validar afiliación con el bróker");
+        console.error("Step 3 ERROR: Affiliation validation error:", affiliationError);
+        if (affiliationError.message === 'Manual timeout after 10 seconds') {
+          setError("La validación tardó demasiado tiempo. Intenta de nuevo.");
+        } else {
+          setError("Error al validar afiliación con el bróker");
+        }
         return;
       }
+
+      console.log("Step 4: Processing affiliation response...");
 
       // Handle demo mode
       if (affiliationData?.source === "demo-bypass") {
@@ -147,10 +174,13 @@ export const useAffiliationValidation = () => {
         setError("Respuesta inesperada del servidor");
       }
 
+      console.log("=== VALIDATE AFFILIATION END ===");
+
     } catch (err: any) {
-      console.error("General validation error:", err);
+      console.error("=== GENERAL ERROR ===", err);
       setError("Error de conexión. Verifica tu internet.");
     } finally {
+      console.log("=== VALIDATE AFFILIATION FINALLY ===");
       setLoading(false);
     }
   };
