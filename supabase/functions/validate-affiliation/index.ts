@@ -1,4 +1,4 @@
-// Edge function for Exness affiliation validation - ultra minimal with timeout
+// Edge function for Exness affiliation validation
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
@@ -9,9 +9,6 @@ const corsHeaders = {
 // JWT token cache
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
-
-// Timeout for all external API calls
-const API_TIMEOUT = 8000; // 8 seconds
 
 // Get JWT token from Exness API
 async function getExnessToken(): Promise<string> {
@@ -64,17 +61,13 @@ async function getExnessToken(): Promise<string> {
   return cachedToken;
 }
 
-// Check affiliation with Exness API with timeout
+// Check affiliation with Exness API
 async function checkExnessAffiliation(email: string, retryCount = 0): Promise<any> {
   const apiBase = Deno.env.get("PARTNER_API_BASE");
   
   if (!apiBase) {
     throw new Error("PARTNER_API_BASE not configured");
   }
-
-  // Create abort controller for timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
 
   try {
     const token = await getExnessToken();
@@ -88,10 +81,7 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
         "Authorization": `JWT ${token}`,
       },
       body: JSON.stringify({ email }),
-      signal: controller.signal,
     });
-
-    clearTimeout(timeoutId);
 
     // Handle token expiry with retry
     if (response.status === 401 && retryCount === 0) {
@@ -108,15 +98,15 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
     });
 
     if (!response.ok) {
-      // Map specific error codes
+      // Handle specific error codes
       if (response.status === 401) {
-        throw new Error("unauthorized_broker");
+        throw new Error("Unauthorized - Invalid credentials");
       } else if (response.status === 429) {
-        throw new Error("rate_limited");
+        throw new Error("Rate limited - Too many requests");
       } else if (response.status >= 500) {
-        throw new Error("broker_down");
+        throw new Error(`Upstream error: ${response.status}`);
       } else {
-        throw new Error("bad_broker_response");
+        throw new Error(`API error: ${response.status} ${responseText}`);
       }
     }
 
@@ -125,18 +115,11 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
       data = JSON.parse(responseText);
     } catch (e) {
       console.error("Failed to parse JSON response:", responseText);
-      throw new Error("bad_broker_response");
+      throw new Error("Invalid JSON response from API");
     }
 
     return data;
-  } catch (error: any) {
-    clearTimeout(timeoutId);
-    
-    if (error.name === 'AbortError') {
-      console.error("Request timed out");
-      throw new Error("timeout");
-    }
-    
+  } catch (error) {
     console.error("Error in checkExnessAffiliation:", error);
     throw error;
   }
@@ -152,7 +135,17 @@ const handler = async (req: Request): Promise<Response> => {
   console.log("Method:", req.method);
   console.log("URL:", req.url);
 
-  try {      
+  try {
+    // Initialize Supabase Client
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
     let email: string;
 
     // Handle both POST and GET requests
@@ -188,6 +181,50 @@ const handler = async (req: Request): Promise<Response> => {
 
     email = email.trim().toLowerCase();
     console.log("Processing email:", email);
+
+    // Check if user already exists by looking at profiles table
+    // We need to join with auth.users to get the email since profiles doesn't store email directly
+    // But we can't access auth.users directly, so we'll use a different approach
+    // We'll look for profiles that might belong to this email through user metadata
+    
+    // First check if this email exists in any user's metadata
+    const { data: existingProfiles, error: profileError } = await supabase
+      .from('profiles')
+      .select('user_id')
+      .limit(1);
+    
+    if (!profileError && existingProfiles) {
+      console.log("Checking for existing user with email:", email);
+      
+      // We'll check by trying to sign in with a dummy password
+      // If the user exists, we'll get a specific error
+      try {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: 'dummy_password_check_123456'
+        });
+        
+        // If we get "Invalid login credentials", the user exists but password is wrong
+        // If we get "Invalid email" or similar, the user doesn't exist
+        if (signInError && signInError.message === 'Invalid login credentials') {
+          console.log("User already exists, redirecting to login");
+          return new Response(
+            JSON.stringify({ 
+              code: "UserExists", 
+              message: "Ya tienes una cuenta registrada. Inicia sesión con tu contraseña.",
+              user_exists: true
+            }),
+            { 
+              status: 409, 
+              headers: { "Content-Type": "application/json", ...corsHeaders } 
+            }
+          );
+        }
+      } catch (authCheckError) {
+        console.log("Error checking user existence, continuing with validation:", authCheckError);
+        // If there's an error checking, continue with normal validation
+      }
+    }
 
     // Environment variables check
     const usePartnerAPI = Deno.env.get("USE_PARTNER_API");
@@ -273,45 +310,53 @@ const handler = async (req: Request): Promise<Response> => {
     } catch (apiError: any) {
       console.error("API Error:", apiError.message);
       
-      // Map error codes to user-friendly messages
-      const errorMap: Record<string, { status: number; message: string }> = {
-        timeout: { 
-          status: 504, 
-          message: "El bróker tardó demasiado. Intenta de nuevo." 
-        },
-        rate_limited: { 
-          status: 429, 
-          message: "Demasiadas solicitudes. Espera un momento e intenta de nuevo." 
-        },
-        broker_down: { 
-          status: 502, 
-          message: "Servicio del bróker con incidencias. Intenta más tarde." 
-        },
-        unauthorized_broker: { 
-          status: 401, 
-          message: "No autenticado con el bróker. Reintenta en unos minutos." 
-        },
-        bad_broker_response: { 
-          status: 500, 
-          message: "Respuesta inválida del bróker. Contacta soporte." 
-        }
-      };
-
-      const errorInfo = errorMap[apiError.message] || {
-        status: 500,
-        message: "Error interno del servidor"
-      };
-
-      return new Response(
-        JSON.stringify({ 
-          code: apiError.message,
-          message: errorInfo.message
-        }),
-        { 
-          status: errorInfo.status, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        }
-      );
+      // Handle different error types
+      if (apiError.message.includes("Unauthorized")) {
+        return new Response(
+          JSON.stringify({ 
+            code: "Unauthorized", 
+            message: "Error de autenticación con Exness" 
+          }),
+          { 
+            status: 401, 
+            headers: { "Content-Type": "application/json", ...corsHeaders } 
+          }
+        );
+      } else if (apiError.message.includes("Rate limited")) {
+        return new Response(
+          JSON.stringify({ 
+            code: "Throttled", 
+            message: "Demasiadas solicitudes, intenta más tarde" 
+          }),
+          { 
+            status: 429, 
+            headers: { "Content-Type": "application/json", ...corsHeaders } 
+          }
+        );
+      } else if (apiError.message.includes("Upstream error")) {
+        return new Response(
+          JSON.stringify({ 
+            code: "UpstreamError", 
+            message: "Error en el servidor de Exness, intenta más tarde" 
+          }),
+          { 
+            status: 502, 
+            headers: { "Content-Type": "application/json", ...corsHeaders } 
+          }
+        );
+      } else {
+        // Generic server error
+        return new Response(
+          JSON.stringify({ 
+            code: "ServerError", 
+            message: "Error interno del servidor" 
+          }),
+          { 
+            status: 500, 
+            headers: { "Content-Type": "application/json", ...corsHeaders } 
+          }
+        );
+      }
     }
 
   } catch (error: any) {
