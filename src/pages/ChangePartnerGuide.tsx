@@ -80,11 +80,12 @@ export default function ChangePartnerGuidePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground mb-2">
-                    Navega a Configuración de Partner
+                    Contacta con el Chat de Soporte
                   </h3>
                   <p className="text-muted-foreground">
-                    Ve a <strong>Configuración</strong> → <strong>Cambiar Partner</strong> 
-                    o busca la opción "Partner ID" en tu panel de control.
+                    Abre el chat de soporte al cliente de Exness y escribe <strong>"cambio de partner"</strong>. 
+                    El chat responderá automáticamente con un enlace para abrir el formulario de solicitud 
+                    de cambio donde deberás agregar nuestro Partner ID.
                   </p>
                 </div>
               </div>
