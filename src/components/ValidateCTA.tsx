@@ -151,9 +151,10 @@ export const ValidateCTA = ({
       </button>
 
       {/* Secondary Option Label */}
-      <div className="absolute -bottom-6 left-0 right-0 text-center">
-        <span className="text-xs text-muted-foreground whitespace-nowrap">
-          No estoy afiliado a Tálamo
+      <div className="absolute -bottom-7 left-0 right-0 text-center">
+        <span className="text-xs text-teal/80 font-medium whitespace-nowrap bg-background/80 px-2 py-1 rounded-md border border-teal/20">
+          <Users className="h-3 w-3 inline mr-1" />
+          Tengo cuenta pero no estoy afiliado
         </span>
       </div>
 
