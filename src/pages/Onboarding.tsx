@@ -412,14 +412,26 @@ const Onboarding = () => {
 
           {/* Results for not affiliated */}
           {isNotAffiliated && (
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg dark:bg-amber-950 dark:border-amber-800">
-              <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
-                <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-                <span className="font-medium">Tu cuenta no está afiliada a Tálamo</span>
+            <div className="space-y-4">
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg dark:from-amber-950 dark:to-orange-950 dark:border-amber-800 shadow-lg">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
+                    <AlertTriangle className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-amber-900 dark:text-amber-100 mb-2">
+                      Tu cuenta no está afiliada a Tálamo
+                    </h3>
+                    <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+                      No te preocupes, tienes opciones para continuar. Ve las soluciones disponibles abajo.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
+                      <ArrowRight className="h-3 w-3" />
+                      <span className="font-medium">Opciones disponibles más abajo</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-amber-700 dark:text-amber-300 mt-2">
-                ¿Tu validación indicó que no estás afiliado a Tálamo? → <span className="font-medium">Ver opciones para continuar abajo</span>
-              </p>
             </div>
           )}
 
@@ -487,17 +499,29 @@ const Onboarding = () => {
         </CardContent>
       </Card>
 
-      {/* Block B: Sub-flow for non-affiliated users */}
+      {/* Block B: Sub-flow for non-affiliated users - ALWAYS VISIBLE WHEN NOT AFFILIATED */}
       {isNotAffiliated && (
-        <Card id="block-b-not-affiliated" className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
-          <CardHeader>
-            <CardTitle className="text-xl text-foreground flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              Tengo cuenta, pero no estoy afiliado a Tálamo
-            </CardTitle>
-            <CardDescription className="text-amber-800 dark:text-amber-200">
-              Tienes dos opciones para continuar y acceder a Tálamo
-            </CardDescription>
+        <Card id="block-b-not-affiliated" className="border-amber-300 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 dark:border-amber-700 dark:from-amber-950 dark:via-orange-950 dark:to-amber-900 shadow-xl">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
+                <HelpCircle className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <CardTitle className="text-xl text-foreground flex items-center gap-2">
+                  Opciones para cuentas no afiliadas
+                </CardTitle>
+                <CardDescription className="text-amber-800 dark:text-amber-200 mt-1">
+                  Tienes dos opciones claras para continuar y acceder a Tálamo
+                </CardDescription>
+              </div>
+            </div>
+            
+            <div className="bg-amber-100 dark:bg-amber-900 border border-amber-300 dark:border-amber-700 rounded-lg p-3">
+              <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
+                💡 <strong>No hay problema:</strong> Puedes crear una cuenta nueva con nuestro enlace o solicitar cambio de partner en tu cuenta actual.
+              </p>
+            </div>
           </CardHeader>
           
           <CardContent className="space-y-6">
