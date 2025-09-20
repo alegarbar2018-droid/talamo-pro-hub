@@ -71,7 +71,7 @@ const Index = () => {
               size="lg" 
               onClick={() => {
                 console.info('CTA: Crear Cuenta Exness');
-                navigate("/auth/exness?flow=create");
+                window.open("https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank");
               }}
               className="bg-gradient-primary hover:shadow-glow"
               data-event="cta-crear-cuenta-hero"
