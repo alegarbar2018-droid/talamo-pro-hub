@@ -147,9 +147,19 @@ export const ValidateStep = ({
             </div>
             
             {error && !isNotAffiliated && (
-              <div className="flex items-center gap-2 text-destructive text-sm p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-                <span>{error}</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-destructive text-sm p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+                {/* Always show options when there's an error */}
+                <Button
+                  onClick={() => onNotAffiliated()}
+                  variant="outline"
+                  className="w-full text-sm"
+                >
+                  Ver opciones para afiliarte
+                </Button>
               </div>
             )}
             

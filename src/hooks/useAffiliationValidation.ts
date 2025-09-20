@@ -21,9 +21,12 @@ export const useAffiliationValidation = () => {
     console.info(`🔍 Starting validation for email:`, email);
     
     try {
-      // Check for demo mode (case insensitive)
+      // Check for demo mode (only if ALLOW_DEMO is enabled)
       const emailLower = email.toLowerCase();
-      if (emailLower.includes("demo") || emailLower.includes("exness")) {
+      const allowDemo = window.location.hostname.includes('localhost') || 
+                       window.location.search.includes('demo=1');
+      
+      if (allowDemo && /demo|exness/i.test(emailLower)) {
         console.info(`🎭 Demo mode activated for:`, email);
         onDemo();
         toast({
@@ -58,20 +61,13 @@ export const useAffiliationValidation = () => {
           return;
         }
 
-        // Check for not affiliated (403)
-        if (error.message?.includes('403') || error.message?.includes('NotAffiliated')) {
-          console.info(`🚫 User not affiliated, showing options`);
-          onNotAffiliated();
-          return;
-        }
-
-        // Handle other HTTP errors
-        if (error.message?.includes('401')) {
-          setError("Error de autenticación con el bróker. Intenta más tarde.");
+        // Handle HTTP errors with proper user flow
+        if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+          setError("Error de autenticación con el bróker. Intenta más tarde o ve las opciones para afiliarte.");
           return;
         }
         
-        if (error.message?.includes('429')) {
+        if (error.message?.includes('429') || error.message?.includes('RateLimited')) {
           setError("Demasiadas solicitudes. Espera y vuelve a intentar.");
           setCooldownSeconds(60);
           const interval = setInterval(() => {
@@ -86,13 +82,13 @@ export const useAffiliationValidation = () => {
           return;
         }
 
-        if (error.message?.includes('500') || error.message?.includes('502')) {
+        if (error.message?.includes('502') || error.message?.includes('BrokerDown')) {
           setError("Servicio temporalmente no disponible. Intenta más tarde.");
           return;
         }
 
-        // Generic error - treat as not affiliated to show options
-        console.info(`🤷 Generic error, treating as not affiliated`);
+        // Any other error - treat as not affiliated to show options
+        console.info(`🤷 Error or unexpected response, showing not affiliated options`);
         onNotAffiliated();
         return;
       }

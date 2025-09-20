@@ -255,9 +255,10 @@ const handler = async (req: Request): Promise<Response> => {
       EXNESS_PARTNER_ID: partnerId
     });
 
-    // Demo bypass check (case-insensitive)
-    const isDemo = /demo|exness/i.test(email);
-    console.log("Demo bypass check:", { email, isDemo });
+    // Demo bypass check (only if ALLOW_DEMO is enabled)
+    const allowDemo = Deno.env.get("ALLOW_DEMO");
+    const isDemo = allowDemo === "1" && /demo|exness/i.test(email);
+    console.log("Demo bypass check:", { email, isDemo, allowDemo });
 
     if (isDemo) {
       const result = {
@@ -279,12 +280,11 @@ const handler = async (req: Request): Promise<Response> => {
       console.log("Partner API disabled, returning not affiliated");
       return new Response(
         JSON.stringify({ 
-          code: "NotAffiliated", 
           affiliation: false,
           message: "API de validación deshabilitada - contacta soporte" 
         }),
         { 
-          status: 403, 
+          status: 200, 
           headers: { "Content-Type": "application/json", ...corsHeaders } 
         }
       );
@@ -313,32 +313,15 @@ const handler = async (req: Request): Promise<Response> => {
         });
       } 
       
-      // Handle explicit non-affiliation
-      if (affiliationData && affiliationData.affiliation === false) {
-        console.log("❌ User explicitly not affiliated");
-        return new Response(
-          JSON.stringify({ 
-            code: "NotAffiliated", 
-            affiliation: false,
-            message: "Email no afiliado al partner Tálamo" 
-          }),
-          { 
-            status: 403, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
-      }
-
-      // Handle unexpected response format
-      console.log("⚠️ Unexpected API response format:", affiliationData);
+      // Handle explicit non-affiliation or any other response format
+      console.log("❌ User not affiliated or unexpected response format");
       return new Response(
         JSON.stringify({ 
-          code: "NotAffiliated", 
           affiliation: false,
-          message: "Formato de respuesta inesperado de la API" 
+          message: "Email no afiliado al partner Tálamo" 
         }),
         { 
-          status: 403, 
+          status: 200, 
           headers: { "Content-Type": "application/json", ...corsHeaders } 
         }
       );
@@ -350,13 +333,13 @@ const handler = async (req: Request): Promise<Response> => {
         name: apiError.name
       });
       
-      // Handle specific HTTP errors
+      // Handle specific HTTP errors with consistent responses
       if (apiError.message.includes("401") || apiError.message.includes("Unauthorized")) {
         console.log("🔐 Authentication error with Exness API");
         return new Response(
           JSON.stringify({ 
             code: "Unauthorized", 
-            message: "Error de autenticación con Exness API" 
+            message: "Error de autenticación con el bróker" 
           }),
           { 
             status: 401, 
@@ -369,7 +352,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.log("🚫 Rate limit hit");
         return new Response(
           JSON.stringify({ 
-            code: "Throttled", 
+            code: "RateLimited", 
             message: "Demasiadas solicitudes, intenta más tarde" 
           }),
           { 
@@ -383,8 +366,8 @@ const handler = async (req: Request): Promise<Response> => {
         console.log("🌐 Upstream server error");
         return new Response(
           JSON.stringify({ 
-            code: "UpstreamError", 
-            message: "Servidor de Exness temporalmente no disponible" 
+            code: "BrokerDown", 
+            message: "Servicio temporalmente no disponible" 
           }),
           { 
             status: 502, 
@@ -393,16 +376,15 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
-      // For any other error, treat as "not affiliated" to give user options
-      console.log("🔄 Generic error, treating as not affiliated to show user options");
+      // For any other error, return as not affiliated to show user options
+      console.log("🔄 Generic error, returning not affiliated to show user options");
       return new Response(
         JSON.stringify({ 
-          code: "NotAffiliated", 
           affiliation: false,
           message: "No se pudo validar la afiliación en este momento" 
         }),
         { 
-          status: 403, 
+          status: 200, 
           headers: { "Content-Type": "application/json", ...corsHeaders } 
         }
       );
