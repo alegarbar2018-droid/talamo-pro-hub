@@ -7,7 +7,9 @@ import {
   CheckCircle,
   AlertTriangle,
   Copy,
-  X
+  X,
+  TrendingUp,
+  Shield
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PARTNER_ID } from "@/lib/constants";
@@ -175,8 +177,81 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why Exness */}
-      <WhyExness />
+      {/* Why Exness - Enhanced */}
+      <section id="exness" className="bg-background border-y border-line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              ¿Por qué Exness para operar con estructura?
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Elegimos Exness por condiciones que favorecen una operativa seria y medible: 
+              ejecución estable, retiros ágiles y políticas claras. Eso nos permite construir 
+              Tálamo sin membresía y con métricas coherentes.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-surface border border-line rounded-xl p-6 text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <ArrowRight className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Retiros rápidos</h3>
+              <p className="text-sm text-muted-foreground">
+                Flujo estable y automatizado, incluso fines de semana
+              </p>
+            </div>
+            
+            <div className="bg-surface border border-line rounded-xl p-6 text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Target className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Ejecución transparente</h3>
+              <p className="text-sm text-muted-foreground">
+                Reglas claras de slippage y estabilidad en alta volatilidad
+              </p>
+            </div>
+            
+            <div className="bg-surface border border-line rounded-xl p-6 text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Spreads competitivos</h3>
+              <p className="text-sm text-muted-foreground">
+                Especialmente en XAUUSD, USOIL e índices
+              </p>
+            </div>
+            
+            <div className="bg-surface border border-line rounded-xl p-6 text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-2">Seguridad</h3>
+              <p className="text-sm text-muted-foreground">
+                Estándares de seguridad y licenciamiento por entidad
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-8 text-center">
+            <p className="text-xs text-muted-foreground">
+              Disponibilidad y condiciones pueden variar según entidad/región. 
+              Verifica directamente con el bróker.
+            </p>
+          </div>
+          
+          <div className="flex justify-center mt-8">
+            <Button 
+              onClick={() => navigate("/onboarding?step=choose")}
+              className="bg-gradient-primary hover:shadow-glow"
+              data-event="cta-solicitar-acceso-exness"
+            >
+              Solicitar acceso
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* FAQ */}
       <FAQExpanded />
