@@ -72,6 +72,7 @@ const OnboardingNew = () => {
   };
 
   const handleNotAffiliated = () => {
+    console.info(`🚫 Setting not affiliated state to true`);
     setIsNotAffiliated(true);
     // Stay on validate step to show options
   };

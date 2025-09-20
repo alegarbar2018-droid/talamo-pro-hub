@@ -49,18 +49,24 @@ export const ValidateStep = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.info(`🚀 Form submitted with email:`, email);
+    
     await validateAffiliation(
       email,
       onValidationSuccess,
       () => {
+        console.info(`🔄 Setting not affiliated state and scrolling to options`);
         onNotAffiliated();
         // Scroll to options after state update
         setTimeout(() => {
           const blockB = document.getElementById('block-b-not-affiliated');
           if (blockB) {
+            console.info(`📍 Scrolling to not affiliated options`);
             blockB.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            console.warn(`⚠️ Element 'block-b-not-affiliated' not found`);
           }
-        }, 100);
+        }, 300);
       },
       onDemoMode,
       onUserExists
@@ -167,11 +173,18 @@ export const ValidateStep = ({
 
           {/* Opciones para usuarios no afiliados */}
           {isNotAffiliated && (
-            <NotAffiliatedOptions
-              onCreateAccount={handleCreateAccount}
-              onRequestPartnerChange={() => onShowPartnerModal(true)}
-              onRetryValidation={handleRetryWithConfirmation}
-            />
+            <div className="mt-6">
+              <div className="text-center mb-4">
+                <p className="text-sm text-muted-foreground">
+                  ✨ Opciones disponibles para ti:
+                </p>
+              </div>
+              <NotAffiliatedOptions
+                onCreateAccount={handleCreateAccount}
+                onRequestPartnerChange={() => onShowPartnerModal(true)}
+                onRetryValidation={handleRetryWithConfirmation}
+              />
+            </div>
           )}
 
           {/* Mostrar mensaje de nueva cuenta creada */}
