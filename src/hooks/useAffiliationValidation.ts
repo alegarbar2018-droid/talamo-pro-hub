@@ -12,7 +12,8 @@ export const useAffiliationValidation = () => {
     email: string,
     onSuccess: (uid?: string) => void,
     onNotAffiliated: () => void,
-    onDemo: () => void
+    onDemo: () => void,
+    onUserExists?: () => void
   ) => {
     setError("");
     setLoading(true);
@@ -37,8 +38,24 @@ export const useAffiliationValidation = () => {
 
       console.log('Supabase response:', { data, error, hasError: !!error });
 
-      // Check for 403 responses specifically for "NotAffiliated" users
+      // Check for specific response codes
       if (error) {
+        // Handle 409 responses for existing users
+        const is409Response = 
+          error.message?.includes('FunctionsHttpError: 409') ||
+          error.message?.includes('FunctionsRelayError: 409') ||
+          error.message?.includes('UserExists') ||
+          error.context?.status === 409 ||
+          error.status === 409;
+
+        if (is409Response) {
+          console.info(`User already exists (409 response)`, { email, errorMessage: error.message });
+          if (onUserExists) {
+            onUserExists();
+          }
+          return;
+        }
+
         // Handle different ways Supabase wraps 403 responses
         const is403Response = 
           error.message?.includes('FunctionsHttpError: 403') ||

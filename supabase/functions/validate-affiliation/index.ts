@@ -136,6 +136,16 @@ const handler = async (req: Request): Promise<Response> => {
   console.log("URL:", req.url);
 
   try {
+    // Initialize Supabase Admin Client
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
     let email: string;
 
     // Handle both POST and GET requests
@@ -171,6 +181,26 @@ const handler = async (req: Request): Promise<Response> => {
 
     email = email.trim().toLowerCase();
     console.log("Processing email:", email);
+
+    // Check if user already exists in Supabase
+    const { data: existingUser, error: userError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
+    
+    if (userError) {
+      console.error("Error checking existing user:", userError);
+    } else if (existingUser?.user) {
+      console.log("User already exists, redirecting to login");
+      return new Response(
+        JSON.stringify({ 
+          code: "UserExists", 
+          message: "Ya tienes una cuenta registrada. Inicia sesión con tu contraseña.",
+          user_exists: true
+        }),
+        { 
+          status: 409, 
+          headers: { "Content-Type": "application/json", ...corsHeaders } 
+        }
+      );
+    }
 
     // Environment variables check
     const usePartnerAPI = Deno.env.get("USE_PARTNER_API");

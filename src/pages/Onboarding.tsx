@@ -7,9 +7,11 @@ import { ValidateStep } from "@/components/onboarding/steps/ValidateStep";
 import { EligibleStep } from "@/components/onboarding/steps/EligibleStep";
 import { ProfileStep } from "@/components/onboarding/steps/ProfileStep";
 import { DoneStep } from "@/components/onboarding/steps/DoneStep";
+import { useNavigate } from "react-router-dom";
 
 const OnboardingNew = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const {
     // State
     step,
@@ -129,6 +131,10 @@ const OnboardingNew = () => {
             onDemoMode={handleDemoMode}
             onRetryValidation={handleRetryValidation}
             onShowPartnerModal={setShowPartnerModal}
+            onUserExists={() => {
+              // Redirect to login with email pre-filled
+              navigate(`/login?email=${encodeURIComponent(email)}`);
+            }}
           />
         );
       

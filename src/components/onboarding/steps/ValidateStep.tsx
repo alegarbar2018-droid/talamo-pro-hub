@@ -29,6 +29,7 @@ interface ValidateStepProps {
   onDemoMode: () => void;
   onRetryValidation: () => void;
   onShowPartnerModal: (show: boolean) => void;
+  onUserExists?: () => void;
 }
 
 export const ValidateStep = ({
@@ -40,7 +41,8 @@ export const ValidateStep = ({
   onNotAffiliated,
   onDemoMode,
   onRetryValidation,
-  onShowPartnerModal
+  onShowPartnerModal,
+  onUserExists
 }: ValidateStepProps) => {
   const { loading, error, cooldownSeconds, validateAffiliation } = useAffiliationValidation();
   const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
@@ -60,7 +62,8 @@ export const ValidateStep = ({
           }
         }, 100);
       },
-      onDemoMode
+      onDemoMode,
+      onUserExists
     );
   };
 

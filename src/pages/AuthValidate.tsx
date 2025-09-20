@@ -62,6 +62,18 @@ export default function AuthValidatePage() {
         body: { email: email.trim() }
       });
 
+      // Check for user exists response (409)
+      if (error && (error.status === 409 || error.message?.includes('UserExists'))) {
+        toast({
+          title: "Cuenta existente",
+          description: "Ya tienes una cuenta registrada. Te redirigiremos al login.",
+        });
+        setTimeout(() => {
+          navigate(`/login?email=${encodeURIComponent(email.trim())}`);
+        }, 2000);
+        return;
+      }
+
       if (error) {
         throw new Error(error.message);
       }
