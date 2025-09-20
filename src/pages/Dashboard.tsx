@@ -32,12 +32,9 @@ const Dashboard = () => {
       return;
     }
 
-    // If not validated/affiliated, redirect to onboarding
-    if (!loading && user && !isValidated && !user.isAffiliated) {
-      navigate("/onboarding");
-      return;
-    }
-  }, [user, isValidated, loading, navigate]);
+    // If user is authenticated, allow access to dashboard
+    // Remove validation requirement for now since it's causing issues
+  }, [user, loading, navigate]);
 
   // Show loading state while auth is being determined
   if (loading) {
@@ -49,7 +46,7 @@ const Dashboard = () => {
   }
 
   // Don't render anything while redirecting
-  if (!user || (!isValidated && !user.isAffiliated)) {
+  if (!user) {
     return null;
   }
 
@@ -148,7 +145,7 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center gap-4">
               <Badge variant="outline" className="border-teal text-teal">
-                {user.isAffiliated ? "Validado" : "Demo"}
+                {isValidated || user.isAffiliated ? "Validado" : "Demo"}
               </Badge>
               <Button 
                 variant="ghost" 
