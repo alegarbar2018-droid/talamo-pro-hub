@@ -44,13 +44,8 @@ export default function LoginPage() {
           description: "Has iniciado sesión correctamente."
         });
         
-        // Check if user is validated, if not redirect to onboarding
-        const isValidated = localStorage.getItem("isValidated") === 'true';
-        if (!isValidated) {
-          navigate('/onboarding');
-        } else {
-          navigate('/dashboard');
-        }
+        // Redirect to dashboard after successful login
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Login error:', error);
