@@ -95,8 +95,7 @@ const SyllabusDetailed = () => {
                 <CardTitle className="text-2xl text-foreground flex items-center gap-4 group-hover:text-teal transition-colors duration-300">
                   <div className="flex items-center gap-3">
                     <Badge 
-                      variant="outline" 
-                      className="text-teal border-teal/50 bg-teal/10 hover:bg-teal/20 transition-colors px-3 py-1 text-sm font-medium"
+                      className="bg-gradient-to-r from-teal/20 to-accent/20 border-teal/30 text-teal font-semibold px-4 py-1.5 rounded-full backdrop-blur-sm shadow-sm hover:shadow-md hover:from-teal/30 hover:to-accent/30 transition-all duration-200"
                     >
                       {level.lessons.length} lecciones
                     </Badge>
@@ -120,8 +119,7 @@ const SyllabusDetailed = () => {
                         <div className="flex items-center gap-4 w-full">
                           <div className="flex items-center gap-3">
                             <Badge 
-                              variant="outline" 
-                              className="text-xs font-mono bg-teal/10 text-teal border-teal/30 group-hover/trigger:bg-teal/20 transition-colors"
+                              className="bg-gradient-to-r from-primary/20 to-teal/20 border-primary/30 text-primary font-mono text-xs px-3 py-1 rounded-full backdrop-blur-sm shadow-sm group-hover/trigger:shadow-md group-hover/trigger:from-primary/30 group-hover/trigger:to-teal/30 transition-all duration-200"
                             >
                               {lesson.code}
                             </Badge>
