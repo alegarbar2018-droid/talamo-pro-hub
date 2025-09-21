@@ -90,7 +90,7 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
     .from('profiles')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
   
   if (error) {
     console.error('Error fetching user profile:', error);
@@ -156,9 +156,10 @@ export const isUserValidated = async (userId: string): Promise<boolean> => {
     .from('affiliations')
     .select('is_affiliated')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
   
   if (error) {
+    console.error('Error checking affiliation:', error);
     // Fallback to localStorage for existing users
     return localStorage.getItem("isValidated") === 'true';
   }
