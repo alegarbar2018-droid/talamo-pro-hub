@@ -22,60 +22,50 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-line bg-surface/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2 group"
-            >
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">T</span>
-              </div>
-              <span className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                Tálamo
-              </span>
-              <Badge variant="outline" className="border-teal text-teal text-xs">
-                Trading Hub
-              </Badge>
-            </button>
-          </div>
+          <button 
+            onClick={() => navigate("/")}
+            className="flex items-center gap-3 group"
+          >
+            <div className="w-7 h-7 bg-gradient-primary rounded-md flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">T</span>
+            </div>
+            <span className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors duration-200">
+              Tálamo
+            </span>
+          </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Button
+              <button
                 key={item.label}
-                variant="ghost"
                 onClick={() => handleNavigation(item.href)}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all duration-200"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 relative group"
               >
-                <item.icon className="h-4 w-4" />
                 {item.label}
-              </Button>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-200" />
+              </button>
             ))}
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <Button 
-              variant="outline" 
+              variant="ghost" 
               onClick={() => navigate("/login")}
-              className="border-primary/30 text-primary hover:bg-primary/10"
+              className="text-sm font-medium"
             >
               Iniciar Sesión
             </Button>
             <Button 
               onClick={() => navigate("/onboarding?step=choose")}
-              className="bg-gradient-primary hover:shadow-glow relative overflow-hidden group"
+              className="bg-gradient-primary hover:shadow-lg text-sm font-medium px-6"
             >
-              <span className="relative z-10 flex items-center gap-2">
-                <Target className="h-4 w-4" />
-                Únete Gratis
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-teal opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              Comenzar
             </Button>
           </div>
 
