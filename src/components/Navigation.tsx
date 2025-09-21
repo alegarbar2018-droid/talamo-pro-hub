@@ -70,66 +70,71 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-80 p-0">
-              <div className="flex flex-col h-full">
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-line">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">T</span>
+          <div className="flex md:hidden items-center gap-2">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/login")}
+              className="text-xs px-3 py-2 h-8"
+            >
+              Login
+            </Button>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="p-2">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[320px] p-0 bg-background border-border/40">
+                <div className="flex flex-col h-full">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-6 border-b border-border/20">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 bg-gradient-primary rounded-md flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">T</span>
+                      </div>
+                      <span className="text-lg font-semibold text-foreground">Tálamo</span>
                     </div>
-                    <span className="text-xl font-bold text-foreground">Tálamo</span>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
 
-                {/* Navigation Links */}
-                <div className="flex-1 p-6 space-y-4">
-                  {navItems.map((item) => (
-                    <button
-                      key={item.label}
-                      onClick={() => handleNavigation(item.href)}
-                      className="w-full flex items-start gap-3 p-4 text-left rounded-xl hover:bg-primary/10 transition-all duration-200 group"
+                  {/* Navigation Links */}
+                  <div className="flex-1 p-6 space-y-2">
+                    {navItems.map((item) => (
+                      <button
+                        key={item.label}
+                        onClick={() => handleNavigation(item.href)}
+                        className="w-full flex items-center gap-4 p-4 text-left rounded-lg hover:bg-muted/50 transition-all duration-200 group"
+                      >
+                        <div className="w-9 h-9 bg-muted rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                          <item.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-foreground text-sm">{item.label}</h3>
+                          <p className="text-xs text-muted-foreground">{item.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* CTA Section */}
+                  <div className="p-6 border-t border-border/20 space-y-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleNavigation("/login")}
+                      className="w-full h-11 text-sm font-medium"
                     >
-                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <item.icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground">{item.label}</h3>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
-                      </div>
-                    </button>
-                  ))}
+                      Iniciar Sesión
+                    </Button>
+                    <Button 
+                      onClick={() => handleNavigation("/onboarding?step=choose")}
+                      className="w-full bg-gradient-primary hover:shadow-lg h-11 text-sm font-medium"
+                    >
+                      Comenzar Ahora
+                    </Button>
+                  </div>
                 </div>
-
-                {/* CTA Section */}
-                <div className="p-6 border-t border-line space-y-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => handleNavigation("/login")}
-                    className="w-full"
-                  >
-                    Iniciar Sesión
-                  </Button>
-                  <Button 
-                    onClick={() => handleNavigation("/onboarding?step=choose")}
-                    className="w-full bg-gradient-primary hover:shadow-glow"
-                  >
-                    <Target className="h-4 w-4 mr-2" />
-                    Únete Gratis a Tálamo
-                  </Button>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>
