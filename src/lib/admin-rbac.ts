@@ -5,14 +5,11 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export type AdminRole = 
-  | 'SUPERADMIN' 
-  | 'ADMIN_OPERATIONS'
-  | 'ADMIN_CONTENT' 
-  | 'MODERATOR_SIGNALS'
+  | 'ADMIN'
+  | 'CONTENT' 
   | 'SUPPORT'
   | 'ANALYST'
-  | 'AUDITOR'
-  | 'PROVIDER';
+  | 'USER';
 
 export type Permission = {
   resource: string;
@@ -24,31 +21,14 @@ export type ActionRisk = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 // Comprehensive RBAC Matrix
 export const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
-  SUPERADMIN: [
+  ADMIN: [
     { resource: '*', action: '*' },
   ],
-  ADMIN_OPERATIONS: [
-    { resource: 'tournaments', action: 'read' },
-    { resource: 'tournaments', action: 'write' },
-    { resource: 'tournaments', action: 'publish' },
-    { resource: 'tournaments', action: 'settle' },
-    { resource: 'prizes', action: '*' },
-    { resource: 'signals', action: 'read' },
-    { resource: 'providers', action: 'read' },
-    { resource: 'metrics', action: 'read' },
-  ],
-  ADMIN_CONTENT: [
+  CONTENT: [
     { resource: 'courses', action: '*' },
     { resource: 'lessons', action: '*' },
     { resource: 'assessments', action: '*' },
     { resource: 'questions', action: '*' },
-  ],
-  MODERATOR_SIGNALS: [
-    { resource: 'signals', action: 'read' },
-    { resource: 'signals', action: 'review' },
-    { resource: 'signals', action: 'approve' },
-    { resource: 'signals', action: 'reject' },
-    { resource: 'signals', action: 'suspend' },
   ],
   SUPPORT: [
     { resource: 'tickets', action: '*' },
@@ -61,14 +41,9 @@ export const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     { resource: 'reports', action: '*' },
     { resource: 'users', action: 'read', scope: ['masked'] },
   ],
-  AUDITOR: [
-    { resource: 'audit', action: 'read' },
-    { resource: 'audit', action: 'export' },
-  ],
-  PROVIDER: [
-    { resource: 'signals', action: 'create', scope: ['own'] },
-    { resource: 'signals', action: 'read', scope: ['own'] },
-    { resource: 'signals', action: 'edit', scope: ['own'] },
+  USER: [
+    { resource: 'profile', action: 'read' },
+    { resource: 'profile', action: 'update' },
   ],
 };
 
@@ -188,24 +163,24 @@ export async function validateRoleAssignment(
     return { valid: false, reason: 'Insufficient permissions to assign roles' };
   }
 
-  // Prevent removing the last SUPERADMIN
-  if (newRole !== 'SUPERADMIN') {
+  // Prevent removing the last ADMIN
+  if (newRole !== 'ADMIN') {
     const { data: currentRole } = await supabase
       .from('admin_users')
       .select('role')
       .eq('user_id', targetUserId)
       .single();
 
-    if (currentRole?.role === 'SUPERADMIN') {
+    if (currentRole?.role === 'ADMIN') {
       const { count } = await supabase
         .from('admin_users')
         .select('id', { count: 'exact', head: true })
-        .eq('role', 'SUPERADMIN');
+        .eq('role', 'ADMIN');
 
       if ((count || 0) <= 1) {
         return { 
           valid: false, 
-          reason: 'Cannot remove the last SUPERADMIN. Assign another SUPERADMIN first.' 
+          reason: 'Cannot remove the last ADMIN. Assign another ADMIN first.' 
         };
       }
     }
