@@ -31,8 +31,10 @@ import {
 } from '@/components/ui/select';
 import { Search, Eye, Edit, UserCheck, UserX, Filter } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { AdminRole, updateAdminUserRole, logAdminAction } from '@/lib/auth-admin';
+import { AdminRole, updateAdminUserRole, logAdminAction, getCurrentAdminRole } from '@/lib/auth-admin';
 import { Skeleton } from '@/components/ui/skeleton';
+import { maskSensitiveData, MaskingOptions } from '@/lib/admin-security';
+import { checkPermission } from '@/lib/admin-rbac';
 
 interface UserWithProfile {
   id: string;
@@ -58,17 +60,39 @@ export const AdminUsers: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [affiliationFilter, setAffiliationFilter] = useState<string>('all');
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
+  const [currentAdminRole, setCurrentAdminRole] = useState<string | null>(null);
   
   const queryClient = useQueryClient();
+
+  // Get current admin role for data masking
+  const { data: adminRole } = useQuery({
+    queryKey: ['current-admin-role'],
+    queryFn: getCurrentAdminRole,
+  });
 
   // Fetch users with profiles and admin roles
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users', searchTerm, roleFilter, affiliationFilter],
     queryFn: async () => {
+      // Check permissions for viewing user data
+      const canViewFullProfiles = await checkPermission('users', 'read');
+      const canViewSensitiveData = await checkPermission('users', 'read_sensitive');
+      
+      if (!canViewFullProfiles) {
+        throw new Error('Insufficient permissions to view user profiles');
+      }
+
       let query = supabase
         .from('profiles')
         .select(`
-          *,
+          id,
+          user_id,
+          first_name,
+          last_name,
+          avatar_url,
+          email,
+          phone,
+          created_at,
           admin_users!left(role),
           affiliations!left(is_affiliated, partner_id)
         `)
@@ -82,8 +106,17 @@ export const AdminUsers: React.FC = () => {
       const { data, error } = await query;
       if (error) throw error;
 
+      // Apply data masking based on admin role and permissions
+      const maskingOptions: MaskingOptions = {
+        maskEmail: !canViewSensitiveData && adminRole !== 'ADMIN',
+        maskPhone: !canViewSensitiveData && adminRole !== 'ADMIN',
+        maskName: adminRole === 'SUPPORT' || adminRole === 'ANALYST',
+      };
+
+      const maskedData = data.map(user => maskSensitiveData(user, maskingOptions));
+
       // Filter by role
-      let filteredData = data;
+      let filteredData = maskedData;
       if (roleFilter !== 'all') {
         filteredData = data.filter(user => {
           const userRole = (user as any).admin_users?.role || 'USER';
@@ -274,18 +307,18 @@ export const AdminUsers: React.FC = () => {
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center space-x-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.profiles?.avatar_url} />
-                        <AvatarFallback>
-                          {user.profiles?.first_name?.[0] || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">
-                          {user.profiles?.first_name} {user.profiles?.last_name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">{user.profiles?.phone}</p>
-                      </div>
+                       <Avatar className="h-8 w-8">
+                         <AvatarImage src={user.avatar_url} />
+                         <AvatarFallback>
+                           {user.first_name?.[0] || 'U'}
+                         </AvatarFallback>
+                       </Avatar>
+                       <div>
+                         <p className="font-medium">
+                           {user.first_name} {user.last_name}
+                         </p>
+                         <p className="text-sm text-muted-foreground">{user.phone}</p>
+                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -338,20 +371,23 @@ export const AdminUsers: React.FC = () => {
                           
                           {selectedUser && (
                             <div className="space-y-6 mt-6">
-                              <div className="flex items-center space-x-4">
-                                <Avatar className="h-16 w-16">
-                                  <AvatarImage src={selectedUser.profiles?.avatar_url} />
-                                  <AvatarFallback className="text-lg">
-                                    {selectedUser.profiles?.first_name?.[0] || 'U'}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <h3 className="font-semibold text-lg">
-                                    {selectedUser.profiles?.first_name} {selectedUser.profiles?.last_name}
-                                  </h3>
-                                  <p className="text-muted-foreground">{selectedUser.profiles?.phone}</p>
-                                </div>
-                              </div>
+                               <div className="flex items-center space-x-4">
+                                 <Avatar className="h-16 w-16">
+                                   <AvatarImage src={selectedUser.avatar_url} />
+                                   <AvatarFallback className="text-lg">
+                                     {selectedUser.first_name?.[0] || 'U'}
+                                   </AvatarFallback>
+                                 </Avatar>
+                                 <div>
+                                   <h3 className="font-semibold text-lg">
+                                     {selectedUser.first_name} {selectedUser.last_name}
+                                   </h3>
+                                   <p className="text-muted-foreground">{selectedUser.phone}</p>
+                                   {selectedUser.email && (
+                                     <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+                                   )}
+                                 </div>
+                               </div>
 
                               <div className="space-y-4">
                                 <div>
