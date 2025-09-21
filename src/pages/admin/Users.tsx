@@ -38,14 +38,13 @@ import { checkPermission } from '@/lib/admin-rbac';
 
 interface UserWithProfile {
   id: string;
-  email: string;
+  user_id: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
+  phone?: string;
   created_at: string;
-  profiles: {
-    first_name: string;
-    last_name: string;
-    avatar_url: string;
-    phone: string;
-  } | null;
   admin_users: {
     role: AdminRole;
   } | null;

@@ -393,6 +393,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          email: string | null
           first_name: string | null
           goal: string | null
           id: string
@@ -410,6 +411,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           goal?: string | null
           id?: string
@@ -427,6 +429,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           goal?: string | null
           id?: string
@@ -683,6 +686,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      user_exists: {
+        Args: { p_email: string }
         Returns: boolean
       }
     }
