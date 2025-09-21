@@ -13,12 +13,16 @@ export const AdminLayout: React.FC = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+  console.log('AdminLayout - Auth state:', { user: !!user, loading });
+
   // Check admin role
-  const { data: adminRole, isLoading: roleLoading } = useQuery({
+  const { data: adminRole, isLoading: roleLoading, error: roleError } = useQuery({
     queryKey: ['admin-role', user?.id],
     queryFn: getCurrentAdminRole,
     enabled: !!user,
   });
+
+  console.log('AdminLayout - Role state:', { adminRole, roleLoading, roleError });
 
   if (loading || roleLoading) {
     return (
