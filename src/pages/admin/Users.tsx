@@ -31,9 +31,9 @@ import {
 } from '@/components/ui/select';
 import { Search, Eye, Edit, UserCheck, UserX, Filter } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { AdminRole, updateAdminUserRole, logAdminAction, getCurrentAdminRole } from '@/lib/auth-admin';
+import { AdminRole, updateAdminUserRole, getCurrentAdminRole } from '@/lib/auth-admin';
 import { Skeleton } from '@/components/ui/skeleton';
-import { maskSensitiveData, MaskingOptions } from '@/lib/admin-security';
+import { maskSensitiveData, MaskingOptions, checkRateLimit, logSecurityEvent, generateCorrelationId } from '@/lib/admin-security';
 import { checkPermission } from '@/lib/admin-rbac';
 
 interface UserWithProfile {
@@ -114,10 +114,10 @@ export const AdminUsers: React.FC = () => {
 
       const maskedData = data.map(user => maskSensitiveData(user, maskingOptions));
 
-      // Filter by role
+      // Filter by role (apply to original data, not masked)
       let filteredData = maskedData;
       if (roleFilter !== 'all') {
-        filteredData = data.filter(user => {
+        filteredData = maskedData.filter(user => {
           const userRole = (user as any).admin_users?.role || 'USER';
           return userRole === roleFilter;
         });
@@ -159,14 +159,19 @@ export const AdminUsers: React.FC = () => {
         return data;
       }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: async (data, variables) => {
       toast({
         title: 'Rol actualizado',
         description: `El rol del usuario ha sido actualizado a ${variables.role}`,
       });
       
-      logAdminAction('user.role_updated', `User:${variables.userId}`, { 
-        newRole: variables.role 
+      // Log the role update for security audit
+      await logSecurityEvent({
+        action: 'user.role_updated',
+        resource: 'admin_users',
+        resource_id: variables.userId,
+        reason: `Role updated to ${variables.role}`,
+        correlation_id: generateCorrelationId()
       });
       
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });

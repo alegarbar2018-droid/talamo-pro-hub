@@ -132,47 +132,79 @@ export function maskSensitiveData<T extends Record<string, any>>(
   data: T,
   options: MaskingOptions = {}
 ): T {
+  const {
+    maskEmail = true,
+    maskPhone = true,
+    maskName = false,
+    maskFinancial = true
+  } = options;
+
   const masked = { ...data } as any;
 
-  if (options.maskEmail && 'email' in masked && typeof masked.email === 'string') {
+  // Enhanced email masking
+  if (maskEmail && 'email' in masked && typeof masked.email === 'string') {
     const [local, domain] = masked.email.split('@');
-    masked.email = `${local.slice(0, 2)}***@${domain}`;
+    if (local && domain) {
+      const visibleChars = Math.min(3, Math.floor(local.length / 2));
+      const maskedLocal = local.substring(0, visibleChars) + '***';
+      masked.email = `${maskedLocal}@${domain}`;
+    }
   }
 
-  if (options.maskPhone && 'phone' in masked && typeof masked.phone === 'string') {
-    masked.phone = masked.phone.replace(/(\d{3})\d{3}(\d{4})/, '$1***$2');
+  // Enhanced phone masking
+  if (maskPhone && 'phone' in masked && typeof masked.phone === 'string') {
+    const phone = masked.phone.replace(/\D/g, ''); // Remove non-digits
+    if (phone.length >= 4) {
+      const lastFour = phone.slice(-4);
+      const maskedLength = Math.max(3, phone.length - 4);
+      masked.phone = '*'.repeat(maskedLength) + lastFour;
+    }
   }
 
-  if (options.maskName) {
+  // Name masking
+  if (maskName) {
     if ('first_name' in masked && typeof masked.first_name === 'string') {
-      masked.first_name = masked.first_name.slice(0, 1) + '***';
+      masked.first_name = masked.first_name.slice(0, 1) + '*'.repeat(Math.max(2, masked.first_name.length - 1));
     }
     if ('last_name' in masked && typeof masked.last_name === 'string') {
-      masked.last_name = masked.last_name.slice(0, 1) + '***';
+      masked.last_name = masked.last_name.slice(0, 1) + '*'.repeat(Math.max(2, masked.last_name.length - 1));
     }
   }
 
-  if (options.maskFinancial) {
-    if ('account_number' in masked && typeof masked.account_number === 'string') {
-      masked.account_number = '****' + masked.account_number.slice(-4);
-    }
-    if ('card_number' in masked && typeof masked.card_number === 'string') {
-      masked.card_number = '**** **** **** ' + masked.card_number.slice(-4);
-    }
+  // Financial data masking
+  if (maskFinancial) {
+    const financialFields = ['account_number', 'card_number', 'ssn', 'tax_id'];
+    financialFields.forEach(field => {
+      if (field in masked && typeof masked[field] === 'string') {
+        const value = masked[field];
+        if (value.length > 4) {
+          masked[field] = '*'.repeat(value.length - 4) + value.slice(-4);
+        }
+      }
+    });
   }
+
+  // Additional sensitive fields
+  const sensitiveFields = ['bio', 'notes', 'comments'];
+  sensitiveFields.forEach(field => {
+    if (field in masked && typeof masked[field] === 'string' && maskName) {
+      masked[field] = '[REDACTED]';
+    }
+  });
 
   return masked as T;
 }
 
-// Rate limiting for sensitive operations
+// Rate limiting for sensitive operations (in-memory fallback)
 const operationCounts = new Map<string, { count: number; resetAt: number }>();
 
-export function checkRateLimit(
+export async function checkRateLimit(
   operation: string,
   userId: string,
   maxAttempts: number = 5,
-  windowMs: number = 60000
-): { allowed: boolean; remainingAttempts: number; resetAt: number } {
+  windowMs: number = 15 * 60 * 1000 // 15 minutes
+): Promise<{ allowed: boolean; remainingAttempts: number; resetAt: number }> {
+  // Use in-memory rate limiting for now (until types are updated)
   const key = `${operation}:${userId}`;
   const now = Date.now();
   const current = operationCounts.get(key);
