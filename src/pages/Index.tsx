@@ -93,25 +93,28 @@ const Index = () => {
               
               <div className="max-w-4xl mx-auto">
                 <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-medium">
-                  Ecosistema completo de trading: academia estructurada, señales verificadas, 
-                  copy trading inteligente, herramientas profesionales y comunidad transparente.
+                  <span className="text-primary font-semibold">Únete a más de 1000+ traders</span> que ya operan con Exness a través de Tálamo. 
+                  Academia estructurada, señales verificadas en vivo, copy trading inteligente y herramientas profesionales.
+                  <span className="block mt-2 text-lg font-semibold text-foreground">
+                    🎯 Sin membresías • 📊 Resultados transparentes • 🛡️ Riesgos claros
+                  </span>
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <Button 
-                size="lg" 
-                onClick={() => navigate("/onboarding?step=choose")}
-                className="group relative bg-gradient-primary hover:shadow-glow-intense text-lg px-8 py-4 h-auto overflow-hidden transition-all duration-500 hover:scale-105"
-                data-event="cta-solicitar-acceso-hero"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <span className="relative flex items-center gap-3">
-                  Solicitar acceso
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-              </Button>
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/onboarding?step=choose")}
+                  className="group relative bg-gradient-primary hover:shadow-glow-intense text-lg px-8 py-4 h-auto overflow-hidden transition-all duration-500 hover:scale-105"
+                  data-event="cta-solicitar-acceso-hero"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <span className="relative flex items-center gap-3">
+                    🚀 Únete gratis a Tálamo + Exness
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                </Button>
               
               <Button 
                 size="lg"

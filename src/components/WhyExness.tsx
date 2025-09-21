@@ -7,7 +7,8 @@ import {
   BarChart3,
   CheckCircle,
   DollarSign,
-  Globe
+  Globe,
+  ArrowRight
 } from "lucide-react";
 
 const WhyExness = () => {
@@ -58,13 +59,16 @@ const WhyExness = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-4">
-            Exness como base para operar con estructura
+            🏆 ¿Por qué Exness es el broker #1 para traders serios?
           </h2>
           <p className="text-muted-foreground max-w-3xl mx-auto">
-            Elegimos Exness porque habilita un proceso profesional: ejecución consistente, 
-            retiros ágiles y políticas claras. Eso permite backtesting coherente, rutinas 
-            repetibles y control de riesgo.
+            <span className="text-primary font-semibold">+18 millones de traders</span> confían en Exness globalmente. 
+            Elegimos Exness porque ofrece las mejores condiciones para trading profesional: 
+            <span className="text-foreground font-medium">spreads desde 0.0 pips, retiros instantáneos 24/7</span> y ejecución Market sin rechazos.
           </p>
+          <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 text-teal px-4 py-2 rounded-full text-sm font-medium">
+            ✅ Regulado CySEC | ✅ Sin comisiones ocultas | ✅ Apalancamiento 1:2000
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
@@ -101,11 +105,37 @@ const WhyExness = () => {
           </CardContent>
         </Card>
 
-        <div className="text-xs text-muted-foreground text-center">
-          <p>
-            <strong>Nota:</strong> Disponibilidad y condiciones pueden variar según entidad y país. 
-            Verifica la información directamente con el bróker.
-          </p>
+        <div className="mt-8 text-center space-y-4">
+          <div className="bg-gradient-primary/10 border border-primary/20 rounded-xl p-6">
+            <h3 className="text-xl font-bold text-foreground mb-2">
+              🎯 ¿Listo para operar con Exness?
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              Únete a Tálamo y accede a tu cuenta Exness con condiciones preferenciales
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button 
+                onClick={() => window.location.href = '/onboarding?step=choose'}
+                className="bg-gradient-primary text-white px-6 py-3 rounded-lg font-semibold hover:shadow-glow transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                🚀 Crear cuenta Exness gratis
+                <ArrowRight className="h-4 w-4" />
+              </button>
+              <button 
+                onClick={() => window.location.href = '/onboarding?step=validate'}
+                className="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary/10 transition-all duration-300"
+              >
+                ✅ Ya tengo cuenta, validar
+              </button>
+            </div>
+          </div>
+          
+          <div className="text-xs text-muted-foreground">
+            <p>
+              <strong>Nota:</strong> Disponibilidad y condiciones pueden variar según entidad y país. 
+              El trading de CFDs conlleva riesgos de pérdida. Verifica la información directamente con el bróker.
+            </p>
+          </div>
         </div>
       </div>
     </section>

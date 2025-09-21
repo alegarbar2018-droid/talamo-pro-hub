@@ -1,14 +1,21 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://talamo.app/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /onboarding/
+
+# Allow important pages for SEO
+Allow: /academy
+Allow: /signals
+Allow: /copy-trading
+Allow: /tools
+Allow: /login
+Allow: /register
+
+# Crawl delay
+Crawl-delay: 1
