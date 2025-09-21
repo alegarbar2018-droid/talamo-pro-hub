@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -10,7 +11,11 @@ import {
   X,
   TrendingUp,
   Shield,
-  Users
+  Users,
+  Sparkles,
+  Award,
+  Zap,
+  Check
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PARTNER_ID } from "@/lib/constants";
@@ -20,6 +25,7 @@ import ModulesWithDetails from "@/components/ModulesWithDetails";
 import SyllabusDetailed from "@/components/SyllabusDetailed";
 import WhyExness from "@/components/WhyExness";
 import FAQExpanded from "@/components/FAQExpanded";
+import Navigation from "@/components/Navigation";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -34,105 +40,113 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-line bg-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-foreground">Tálamo</h1>
-              <Badge variant="outline" className="border-teal text-teal">MVP</Badge>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/login")}>
-                Iniciar Sesión
-              </Button>
-              <Button 
-                onClick={() => navigate("/onboarding?step=choose")}
-                className="bg-gradient-primary hover:shadow-glow"
-                data-event="cta-solicitar-acceso-header"
-              >
-                Solicitar acceso
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background overflow-hidden">
+      {/* Navigation */}
+      <Navigation />
 
       {/* Hero Section - Premium Version */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-background via-surface to-background py-24 md:py-32">
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-surface/30 to-background"
+      >
         {/* Premium background effects */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent"></div>
-        
-        {/* Floating orbs */}
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-gradient-primary opacity-20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-primary opacity-15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-primary opacity-5 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-primary opacity-8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        </div>
         
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--primary-rgb),0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(var(--primary-rgb),0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--primary-rgb),0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(var(--primary-rgb),0.02)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-12">
-            {/* Premium badge */}
-            <div className="inline-flex items-center gap-2 bg-surface/80 backdrop-blur-sm border border-primary/20 text-primary px-6 py-3 rounded-full text-sm font-semibold shadow-glow-subtle animate-fade-in">
-              <div className="w-2 h-2 bg-gradient-primary rounded-full animate-pulse"></div>
-              Plataforma Premium de Trading
-            </div>
+        <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24">
+          <div className="text-center space-y-16">
             
-            <div className="space-y-8 animate-fade-in">
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
-                <span className="text-foreground">Trading Profesional</span>
+            {/* Premium badge */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="inline-flex items-center gap-3 bg-surface/90 backdrop-blur-xl border-2 border-primary/20 text-primary px-8 py-4 rounded-2xl text-sm font-semibold shadow-lg shadow-primary/10"
+            >
+              <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+              Plataforma Exclusiva de Trading Profesional
+              <Award className="w-4 h-4 text-primary" />
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="space-y-8"
+            >
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight">
+                <span className="text-foreground">Trading</span>
                 <br />
                 <span className="bg-gradient-primary bg-clip-text text-transparent relative">
-                  Sin vende humos
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-primary rounded-full opacity-60"></div>
+                  Profesional
+                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-40 h-2 bg-gradient-primary rounded-full opacity-60"></div>
                 </span>
               </h1>
               
               <div className="max-w-4xl mx-auto">
-                <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-medium">
-                  <span className="text-primary font-semibold">Únete a más de 1000+ traders</span> que ya operan con Exness a través de Tálamo. 
-                  Academia estructurada, señales verificadas en vivo, copy trading inteligente y herramientas profesionales.
-                  <span className="block mt-2 text-lg font-semibold text-foreground">
-                    🎯 Sin membresías • 📊 Resultados transparentes • 🛡️ Riesgos claros
+                <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-medium tracking-wide">
+                  <span className="text-primary font-semibold">Únete a traders profesionales</span> que operan con Exness a través de Tálamo. 
+                  Academia estructurada, señales auditadas en tiempo real, copy trading inteligente.
+                  <span className="block mt-4 text-lg font-semibold text-foreground">
+                    🎯 Acceso por afiliación • 📊 Resultados transparentes • 🛡️ Riesgos gestionados
                   </span>
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate("/onboarding?step=choose")}
-                  className="group relative bg-gradient-primary hover:shadow-glow-intense text-lg px-8 py-4 h-auto overflow-hidden transition-all duration-500 hover:scale-105"
-                  data-event="cta-solicitar-acceso-hero"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <span className="relative flex items-center gap-3">
-                    🚀 Únete gratis a Tálamo + Exness
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </span>
-                </Button>
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+            >
+              <Button 
+                size="lg" 
+                onClick={() => navigate("/onboarding?step=choose")}
+                className="group relative bg-gradient-primary hover:shadow-glow-intense text-lg px-10 py-6 h-auto overflow-hidden transition-all duration-300 hover:scale-105 rounded-2xl"
+                data-event="cta-solicitar-acceso-hero"
+              >
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  whileHover={{ scale: 1.05 }}
+                ></motion.div>
+                <span className="relative flex items-center gap-3 font-semibold">
+                  <Zap className="h-5 w-5" />
+                  Solicitar acceso exclusivo
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
+              </Button>
               
               <Button 
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("/onboarding?step=validate")}
-                className="group border-2 border-primary/30 bg-surface/50 backdrop-blur-sm text-primary hover:bg-primary/10 hover:border-primary hover:shadow-glow text-lg px-8 py-4 h-auto transition-all duration-500 hover:scale-105"
+                className="group border-2 border-primary/30 bg-surface/50 backdrop-blur-xl text-primary hover:bg-primary/10 hover:border-primary hover:shadow-lg text-lg px-10 py-6 h-auto transition-all duration-300 hover:scale-105 rounded-2xl"
                 data-event="cta-ya-tengo-cuenta-hero"
               >
-                <Target className="h-5 w-5 mr-3 group-hover:rotate-90 transition-transform duration-500" />
+                <Target className="h-5 w-5 mr-3 group-hover:rotate-90 transition-transform duration-300" />
                 Ya tengo cuenta en Exness
               </Button>
-            </div>
+            </motion.div>
             
             {/* Trust indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 pt-8 opacity-60 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.4 }}
+              className="flex flex-wrap justify-center items-center gap-8 pt-8 opacity-70"
+            >
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="h-4 w-4 text-primary" />
-                <span>Sin membresías</span>
+                <span>Acceso por afiliación</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <TrendingUp className="h-4 w-4 text-primary" />
@@ -142,10 +156,10 @@ const Index = () => {
                 <Target className="h-4 w-4 text-primary" />
                 <span>Verificado</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.section>
 
       {/* Why We Do It Section */}
       <WhyWeDoIt />
@@ -164,7 +178,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
-              ¿Por qué el acceso sin membresía?
+              ¿Por qué el acceso por afiliación?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Nuestro modelo es simple y transparente: ganamos cuando tú ganas
@@ -226,102 +240,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why Exness - Enhanced */}
-      <section id="exness" className="bg-background border-y border-line">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              ¿Por qué Exness para operar con estructura?
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Elegimos Exness por condiciones que favorecen una operativa seria y medible: 
-              ejecución estable, retiros ágiles y políticas claras. Eso nos permite construir 
-              Tálamo sin membresía y con métricas coherentes.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-surface border border-line rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <ArrowRight className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">Retiros rápidos</h3>
-              <p className="text-sm text-muted-foreground">
-                Flujo estable y automatizado, incluso fines de semana
-              </p>
-            </div>
-            
-            <div className="bg-surface border border-line rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Target className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">Ejecución transparente</h3>
-              <p className="text-sm text-muted-foreground">
-                Reglas claras de slippage y estabilidad en alta volatilidad
-              </p>
-            </div>
-            
-            <div className="bg-surface border border-line rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">Spreads competitivos</h3>
-              <p className="text-sm text-muted-foreground">
-                Especialmente en XAUUSD, USOIL e índices
-              </p>
-            </div>
-            
-            <div className="bg-surface border border-line rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">Seguridad</h3>
-              <p className="text-sm text-muted-foreground">
-                Estándares de seguridad y licenciamiento por entidad
-              </p>
-            </div>
-          </div>
-          
-          <div className="mt-8 text-center">
-            <p className="text-xs text-muted-foreground">
-              Disponibilidad y condiciones pueden variar según entidad/región. 
-              Verifica directamente con el bróker.
-            </p>
-          </div>
-          
-          <div className="flex justify-center mt-8">
-            <div className="flex flex-col gap-3 items-center">
-              <Button 
-                onClick={() => navigate("/onboarding?step=choose")}
-                className="bg-gradient-primary hover:shadow-glow"
-                data-event="cta-solicitar-acceso-exness"
-              >
-                Solicitar acceso
-                <ArrowRight className="h-5 w-5 ml-2" />
-              </Button>
-              
-              <div className="flex gap-4 text-sm">
-                <Button 
-                  variant="link"
-                  onClick={() => navigate("/onboarding?step=validate")}
-                  className="text-muted-foreground hover:text-foreground"
-                  data-event="cta-ya-tengo-cuenta-exness"
-                >
-                  Ya tengo cuenta
-                </Button>
-                <Button 
-                  variant="link"
-                  onClick={() => navigate("/onboarding?step=validate")}
-                  className="text-muted-foreground hover:text-foreground"
-                  data-event="cta-no-afiliado-exness"
-                >
-                  No estoy afiliado
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Why Exness */}
+      <WhyExness />
 
       {/* FAQ */}
       <FAQExpanded />
@@ -343,17 +263,17 @@ const Index = () => {
               <Button 
                 size="lg" 
                 onClick={() => navigate("/onboarding?step=choose")}
-                className="bg-white text-primary hover:bg-white/90"
+                className="bg-white text-primary hover:bg-white/90 rounded-2xl"
                 data-event="cta-solicitar-acceso-final"
               >
-                Solicitar acceso
+                Solicitar acceso exclusivo
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
               <Button 
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("/onboarding?step=validate")}
-                className="border-white text-white hover:bg-white/10"
+                className="border-white text-white hover:bg-white/10 rounded-2xl"
                 data-event="cta-validar-acceso-final"
               >
                 <Target className="h-5 w-5 mr-2" />
@@ -378,79 +298,174 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <div className="border-t border-line bg-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-foreground">Tálamo</span>
-              <span className="text-muted-foreground">Trading profesional, sin promesas vacías</span>
+      <footer className="border-t border-line bg-surface">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">T</span>
+                </div>
+                <span className="font-bold text-foreground text-xl">Tálamo</span>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Trading profesional, sin promesas vacías
+              </p>
             </div>
-            <div className="flex gap-4 text-sm text-muted-foreground">
-              <Button variant="link" className="text-muted-foreground">Términos</Button>
-              <Button variant="link" className="text-muted-foreground">Privacidad</Button>
-              <Button variant="link" className="text-muted-foreground">Riesgos</Button>
+            
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground">Plataforma</h4>
+              <div className="space-y-2 text-sm">
+                <button 
+                  onClick={() => navigate("/academy")}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Academia
+                </button>
+                <button 
+                  onClick={() => navigate("/signals")}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Señales
+                </button>
+                <button 
+                  onClick={() => navigate("/copy-trading")}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Copy Trading
+                </button>
+                <button 
+                  onClick={() => navigate("/tools")}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Herramientas
+                </button>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground">Cuenta</h4>
+              <div className="space-y-2 text-sm">
+                <button 
+                  onClick={() => navigate("/login")}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Iniciar Sesión
+                </button>
+                <button 
+                  onClick={() => navigate("/onboarding?step=choose")}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Solicitar Acceso
+                </button>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground">Legal</h4>
+              <div className="space-y-2 text-sm">
+                <button className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Términos de Servicio
+                </button>
+                <button className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Política de Privacidad
+                </button>
+                <button className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Aviso de Riesgos
+                </button>
+              </div>
             </div>
           </div>
+          
+          <div className="border-t border-line mt-8 pt-8 text-center">
+            <p className="text-xs text-muted-foreground">
+              <strong>Aviso de riesgo:</strong> El trading de CFDs conlleva un alto nivel de riesgo y puede resultar en la pérdida de todo su capital. 
+              No debe arriesgar más de lo que puede permitirse perder. Antes de decidir operar, debe considerar cuidadosamente sus objetivos de inversión, 
+              nivel de experiencia y tolerancia al riesgo.
+            </p>
+            <p className="text-xs text-muted-foreground mt-4">
+              © 2024 Tálamo Trading. Todos los derechos reservados.
+            </p>
+          </div>
         </div>
-      </div>
+      </footer>
 
-      {/* Change Partner Modal */}
+      {/* Partner Modal */}
       {showPartnerModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowPartnerModal(false)}
-          />
-          <div 
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="change-partner-title"
-            className="relative bg-gradient-to-br from-slate-900 to-slate-800 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
-          >
-            <button
-              onClick={() => setShowPartnerModal(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label="Cerrar modal"
-            >
-              <X className="h-5 w-5 text-white/60" />
-            </button>
-
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-background rounded-2xl max-w-lg w-full p-6 space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-foreground">Cambiar Partner</h3>
+              <button 
+                onClick={() => setShowPartnerModal(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
             <div className="space-y-4">
               <div>
-                <h3 id="change-partner-title" className="text-xl font-bold text-white">
-                  Cambiar Partner ID en Exness
-                </h3>
-                <p className="text-white/80 text-sm mt-2">
-                  Sigue estos pasos para cambiar tu Partner ID a Tálamo:
+                <p className="text-sm text-muted-foreground mb-2">
+                  1. Contacta al soporte de Exness
                 </p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  2. Copia este mensaje:
+                </p>
+                <div className="bg-surface border rounded p-3 text-sm">
+                  "Hola, quiero cambiar mi partner actual por el partner ID {PARTNER_ID}. Gracias."
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`Hola, quiero cambiar mi partner actual por el partner ID ${PARTNER_ID}. Gracias.`);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="mt-2 flex items-center gap-2 text-primary text-sm hover:underline"
+                >
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? "Copiado" : "Copiar mensaje"}
+                </button>
               </div>
-
-              <ol className="mt-4 space-y-3 text-sm text-white/80 list-decimal list-inside">
-                <li>Escribe al soporte de Exness y solicita <strong>cambio de partner</strong>.</li>
-                <li>Indica este <strong>ID</strong>: <code className="px-1.5 py-0.5 rounded bg-white/10">{PARTNER_ID}</code> (Tálamo).</li>
-                <li>Una vez confirmado, regresa y toca <em>Validar acceso</em>.</li>
-              </ol>
-              <p className="mt-4 text-xs text-white/60">
-                Alternativa: crea una cuenta nueva con nuestro enlace y valida acceso.
-              </p>
-              <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-end">
-                <button 
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  3. Si te piden el Partner ID:
+                </p>
+                <div className="bg-surface border rounded p-3 text-sm font-mono">
+                  {PARTNER_ID}
+                </div>
+                <button
                   onClick={() => {
                     navigator.clipboard.writeText(PARTNER_ID);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
-                  }} 
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors"
+                  }}
+                  className="mt-2 flex items-center gap-2 text-primary text-sm hover:underline"
                 >
-                  <Copy className="h-4 w-4" /> {copied ? "¡Copiado!" : "Copiar ID"}
-                </button>
-                <button 
-                  onClick={() => setShowPartnerModal(false)} 
-                  className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold transition-colors"
-                >
-                  Listo
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  Copiar Partner ID
                 </button>
               </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowPartnerModal(false)}
+                className="flex-1"
+              >
+                Cerrar
+              </Button>
+              <Button 
+                onClick={() => {
+                  setShowPartnerModal(false);
+                  navigate("/onboarding?step=validate");
+                }}
+                className="flex-1"
+              >
+                Ya lo hice, validar
+              </Button>
             </div>
           </div>
         </div>
