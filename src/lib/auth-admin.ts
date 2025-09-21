@@ -21,13 +21,19 @@ export interface Permission {
 // Get current admin user role
 export async function getCurrentAdminRole(): Promise<AdminRole | null> {
   try {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user?.id) return null;
+
     const { data, error } = await supabase
       .from('admin_users')
       .select('role')
-      .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
-      .single();
+      .eq('user_id', user.user.id)
+      .maybeSingle();
 
-    if (error) return null;
+    if (error) {
+      console.error('Error getting admin role:', error);
+      return null;
+    }
     return data?.role || null;
   } catch (error) {
     console.error('Error getting admin role:', error);
