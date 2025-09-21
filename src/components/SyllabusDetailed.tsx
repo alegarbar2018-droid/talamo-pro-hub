@@ -93,13 +93,20 @@ const SyllabusDetailed = () => {
               
               <CardHeader className="relative pb-6">
                 <CardTitle className="text-2xl text-foreground flex items-center gap-4 group-hover:text-teal transition-colors duration-300">
-                  <div className="flex items-center gap-3">
-                    <Badge 
-                      className="bg-gradient-to-r from-teal/80 to-accent/70 text-white font-inter font-semibold px-4 py-2 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl hover:from-teal/90 hover:to-accent/80 transition-all duration-200 flex items-center justify-center min-h-[28px] border border-teal/20"
-                    >
-                      {level.lessons.length} lecciones
-                    </Badge>
-                    <div className="w-2 h-8 bg-gradient-to-b from-teal to-accent rounded-full" />
+                  <div className="flex items-center gap-4">
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-teal via-accent to-primary rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+                      <div className="relative bg-background/90 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
+                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal to-accent animate-pulse"></div>
+                        <span className="font-inter font-semibold text-sm text-foreground">
+                          {level.lessons.length}
+                        </span>
+                        <span className="font-inter text-xs text-muted-foreground/80 uppercase tracking-wide">
+                          lecciones
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-px h-8 bg-gradient-to-b from-transparent via-border/50 to-transparent"></div>
                   </div>
                   <span className="bg-gradient-to-r from-foreground to-teal bg-clip-text text-transparent">
                     {level.level}
@@ -117,12 +124,16 @@ const SyllabusDetailed = () => {
                     >
                       <AccordionTrigger className="text-left px-6 py-4 hover:no-underline group/trigger">
                         <div className="flex items-center gap-4 w-full">
-                          <div className="flex items-center gap-3">
-                            <Badge 
-                              className="bg-gradient-to-r from-primary/80 to-teal/70 text-white font-inter font-semibold text-xs px-3 py-1.5 rounded-full backdrop-blur-sm shadow-lg group-hover/trigger:shadow-xl group-hover/trigger:from-primary/90 group-hover/trigger:to-teal/80 transition-all duration-200 flex items-center justify-center min-h-[24px] border border-primary/20"
-                            >
-                              {lesson.code}
-                            </Badge>
+                          <div className="flex items-center gap-4">
+                            <div className="relative group">
+                              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-teal to-accent rounded-lg blur opacity-25 group-hover/trigger:opacity-50 transition duration-300"></div>
+                              <div className="relative bg-surface/80 backdrop-blur-xl border border-white/5 rounded-lg px-3 py-1.5 flex items-center gap-2 shadow-md">
+                                <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-primary to-teal"></div>
+                                <span className="font-inter font-bold text-xs text-primary tracking-wider">
+                                  {lesson.code}
+                                </span>
+                              </div>
+                            </div>
                             <span className="font-medium text-foreground group-hover/trigger:text-teal transition-colors">
                               {lesson.title}
                             </span>
