@@ -95,7 +95,7 @@ const SyllabusDetailed = () => {
                 <CardTitle className="text-2xl text-foreground flex items-center gap-4 group-hover:text-teal transition-colors duration-300">
                   <div className="flex items-center gap-3">
                     <Badge 
-                      className="bg-gradient-to-r from-teal/20 to-accent/20 border-teal/30 text-teal font-inter font-semibold px-4 py-2 rounded-full backdrop-blur-sm shadow-sm hover:shadow-md hover:from-teal/30 hover:to-accent/30 transition-all duration-200 flex items-center justify-center min-h-[28px]"
+                      className="bg-gradient-to-r from-teal/80 to-accent/70 text-white font-inter font-semibold px-4 py-2 rounded-full backdrop-blur-sm shadow-lg hover:shadow-xl hover:from-teal/90 hover:to-accent/80 transition-all duration-200 flex items-center justify-center min-h-[28px] border border-teal/20"
                     >
                       {level.lessons.length} lecciones
                     </Badge>
@@ -119,7 +119,7 @@ const SyllabusDetailed = () => {
                         <div className="flex items-center gap-4 w-full">
                           <div className="flex items-center gap-3">
                             <Badge 
-                              className="bg-gradient-to-r from-primary/20 to-teal/20 border-primary/30 text-primary font-inter font-semibold text-xs px-3 py-1.5 rounded-full backdrop-blur-sm shadow-sm group-hover/trigger:shadow-md group-hover/trigger:from-primary/30 group-hover/trigger:to-teal/30 transition-all duration-200 flex items-center justify-center min-h-[24px]"
+                              className="bg-gradient-to-r from-primary/80 to-teal/70 text-white font-inter font-semibold text-xs px-3 py-1.5 rounded-full backdrop-blur-sm shadow-lg group-hover/trigger:shadow-xl group-hover/trigger:from-primary/90 group-hover/trigger:to-teal/80 transition-all duration-200 flex items-center justify-center min-h-[24px] border border-primary/20"
                             >
                               {lesson.code}
                             </Badge>
