@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
-import { isFlagEnabled } from '@/lib/flags';
+import { isFeatureEnabled } from '@/lib/flags';
 import '../i18n';
 
 // Mock the flag system
 vi.mock('@/lib/flags', () => ({
-  isFlagEnabled: vi.fn()
+  isFeatureEnabled: vi.fn()
 }));
 
 // Mock the auth modules to avoid authentication checks
@@ -68,7 +68,7 @@ describe('i18n Internals Tests', () => {
 
   describe('Flag OFF - Components should render without LanguageSwitcher', () => {
     beforeEach(() => {
-      (isFlagEnabled as any).mockReturnValue(false);
+      (isFeatureEnabled as any).mockReturnValue(false);
     });
 
     it('should render Academy without errors', async () => {
@@ -122,7 +122,7 @@ describe('i18n Internals Tests', () => {
 
   describe('Flag ON - Components should render with i18n support', () => {
     beforeEach(() => {
-      (isFlagEnabled as any).mockReturnValue(true);
+      (isFeatureEnabled as any).mockReturnValue(true);
     });
 
     it('should change language without breaking render', async () => {
