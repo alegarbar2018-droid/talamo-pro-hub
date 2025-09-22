@@ -57,17 +57,72 @@ const WhyExness = () => {
   return (
     <section id="exness" className="bg-surface border-y border-line">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
-            🏆 ¿Por qué Exness es el broker #1 para traders serios?
-          </h2>
-          <p className="text-muted-foreground max-w-3xl mx-auto">
-            <span className="text-primary font-semibold">+18 millones de traders</span> confían en Exness globalmente. 
-            Elegimos Exness porque ofrece las mejores condiciones para trading profesional: 
-            <span className="text-foreground font-medium">spreads desde 0.0 pips, retiros instantáneos 24/7</span> y ejecución Market sin rechazos.
-          </p>
-          <div className="mt-4 inline-flex items-center gap-2 bg-teal/10 text-teal px-4 py-2 rounded-full text-sm font-medium">
-            ✅ Regulado CySEC | ✅ Sin comisiones ocultas | ✅ Apalancamiento 1:2000
+        <div className="text-center mb-16 relative">
+          {/* Background glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-primary/10 to-accent/5 rounded-3xl blur-3xl"></div>
+          
+          <div className="relative">
+            {/* Premium badge */}
+            <div className="inline-block mb-6">
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-teal via-primary to-accent rounded-full blur opacity-30 group-hover:opacity-50 transition duration-500"></div>
+                <div className="relative bg-background/90 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal to-primary animate-pulse"></div>
+                  <span className="text-sm font-medium text-foreground tracking-wider uppercase">
+                    Broker Premium #1
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+              <span className="bg-gradient-to-r from-teal via-primary to-accent bg-clip-text text-transparent">
+                ¿Por qué Exness
+              </span>
+              <br />
+              <span className="text-foreground">
+                es la elección profesional?
+              </span>
+            </h2>
+            
+            <div className="max-w-4xl mx-auto space-y-4">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                <span className="inline-block bg-gradient-to-r from-teal to-primary bg-clip-text text-transparent font-bold text-xl">
+                  +18 millones de traders
+                </span> confían en Exness globalmente.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Elegimos Exness porque ofrece las mejores condiciones para trading profesional: 
+                <span className="text-foreground font-semibold"> spreads desde 0.0 pips, retiros instantáneos 24/7</span> y ejecución Market sin rechazos.
+              </p>
+            </div>
+
+            {/* Premium features cards */}
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+              <div className="group relative">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal/40 to-primary/40 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-background/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 shadow-lg">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-500"></div>
+                  <span className="text-sm font-medium text-foreground">Regulado CySEC</span>
+                </div>
+              </div>
+              
+              <div className="group relative">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/40 to-accent/40 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-background/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 shadow-lg">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500"></div>
+                  <span className="text-sm font-medium text-foreground">Sin comisiones ocultas</span>
+                </div>
+              </div>
+              
+              <div className="group relative">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/40 to-teal/40 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+                <div className="relative bg-background/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 shadow-lg">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-pink-500"></div>
+                  <span className="text-sm font-medium text-foreground">Apalancamiento 1:2000</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
