@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { mockValidateAffiliation } from '@/lib/mockApi';
 
 export const useAffiliationValidation = () => {
   const [loading, setLoading] = useState(false);
@@ -22,27 +21,85 @@ export const useAffiliationValidation = () => {
     console.info(`🔍 Starting validation for email:`, email);
     
     try {
-      // Usar Mock API como método principal ya que las APIs de Exness no funcionan
-      console.info(`🎭 Using Mock API for validation (Exness APIs unavailable)`);
+      console.info(`📡 Calling validate-affiliation function with email:`, email);
+      const startTime = performance.now();
       
-      const mockResult = await mockValidateAffiliation(email);
-      
-      if (mockResult.isAffiliated) {
-        console.info(`✅ Mock validation successful for:`, email);
-        onSuccess(mockResult.clientUid || "");
+      const { data, error } = await supabase.functions.invoke('validate-affiliation', {
+        body: { email }
+      });
+
+      const endTime = performance.now();
+      console.info('📋 Supabase response received in', Math.round(endTime - startTime), 'ms');
+      console.info('📋 Response details:', { 
+        hasData: !!data, 
+        hasError: !!error,
+        data: data ? JSON.stringify(data).substring(0, 300) : null,
+        errorMessage: error?.message?.substring(0, 300),
+        errorDetails: error
+      });
+
+      // Handle error responses
+      if (error) {
+        console.info(`❌ Error detected:`, error.message);
+
+        // Check for existing user (409)
+        if (error.message?.includes('409') || error.message?.includes('UserExists')) {
+          console.info(`👤 User already exists, redirecting to login`);
+          if (onUserExists) {
+            onUserExists();
+          }
+          return;
+        }
+
+        // Handle HTTP errors with proper user flow
+        if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+          setError("Error de autenticación con el bróker. Intenta más tarde o ve las opciones para afiliarte.");
+          return;
+        }
+        
+        if (error.message?.includes('429') || error.message?.includes('RateLimited')) {
+          setError("Demasiadas solicitudes. Espera y vuelve a intentar.");
+          setCooldownSeconds(60);
+          const interval = setInterval(() => {
+            setCooldownSeconds((prev) => {
+              if (prev <= 1) {
+                clearInterval(interval);
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+          return;
+        }
+
+        if (error.message?.includes('502') || error.message?.includes('BrokerDown')) {
+          setError("Servicio temporalmente no disponible. Intenta más tarde.");
+          return;
+        }
+
+        // Any other error - treat as not affiliated to show options
+        console.info(`🤷 Error or unexpected response, showing not affiliated options`);
+        onNotAffiliated();
+        return;
+      }
+
+      // Handle successful response
+      if (data?.affiliation === true) {
+        console.info(`✅ Affiliation validated successfully:`, data.client_uid);
+        onSuccess(data.client_uid || "");
         toast({
           title: "Validación Exitosa",
-          description: "Email validado correctamente",
+          description: "Afiliación confirmada correctamente",
         });
       } else {
-        console.info(`❌ Mock validation - not affiliated:`, email);
+        console.info(`❌ Not affiliated based on data response`);
         onNotAffiliated();
       }
 
     } catch (err: any) {
-      console.error(`💥 Mock validation failed:`, err.message);
+      console.error(`💥 Caught exception:`, err.message);
       
-      // Si el mock falla, mostrar opciones de no afiliado
+      // Fallback: treat any exception as "not affiliated" to give user options
       console.info(`🔄 Fallback: showing not affiliated options`);
       onNotAffiliated();
     } finally {
