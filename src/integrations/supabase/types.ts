@@ -669,6 +669,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_basic_profile_for_admin: {
+        Args: { target_user_id: string }
+        Returns: Json
+      }
       get_current_admin_role: {
         Args: Record<PropertyKey, never>
         Returns: string
