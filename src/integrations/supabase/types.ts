@@ -666,9 +666,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profile_security_summary: {
+        Row: {
+          profiles_with_email: number | null
+          profiles_with_financial_data: number | null
+          profiles_with_phone: number | null
+          total_profiles: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      check_profile_data_exposure: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          description: string
+          issue_type: string
+          severity: string
+          table_name: string
+        }[]
+      }
+      emergency_revoke_profile_access: {
+        Args: { reason: string; target_user_id: string }
+        Returns: boolean
+      }
       get_basic_profile_for_admin: {
         Args: { target_user_id: string }
         Returns: Json
@@ -680,6 +701,14 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_masked_profile: {
+        Args: { target_user_id: string }
+        Returns: Json
+      }
+      get_sensitive_profile_fields: {
+        Args: Record<PropertyKey, never>
+        Returns: string[]
       }
       get_sensitive_profile_for_admin: {
         Args: { justification: string; target_user_id: string }
@@ -695,6 +724,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_profile_access: {
+        Args: {
+          access_reason?: string
+          access_type: string
+          accessed_fields?: string[]
+          target_user_id: string
+        }
+        Returns: undefined
       }
       user_exists: {
         Args: { p_email: string }
