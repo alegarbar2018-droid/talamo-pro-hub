@@ -26,15 +26,24 @@ class ExnessClient {
   private readonly baseUrl: string;
   private readonly email: string;
   private readonly password: string;
+  private readonly SAFETY_WINDOW_MS = 120 * 1000; // 2 minutes safety buffer
 
   constructor() {
-    this.baseUrl = process.env.PARTNER_API_BASE || '';
-    this.email = process.env.PARTNER_API_USER || '';
-    this.password = process.env.PARTNER_API_PASSWORD || '';
+    this.baseUrl = process.env.PARTNER_API_BASE || Deno.env.get('PARTNER_API_BASE') || '';
+    this.email = process.env.PARTNER_API_USER || Deno.env.get('PARTNER_API_USER') || '';
+    this.password = process.env.PARTNER_API_PASSWORD || Deno.env.get('PARTNER_API_PASSWORD') || '';
     
     if (!this.baseUrl || !this.email || !this.password) {
       throw new Error('Missing required Exness API configuration');
     }
+  }
+
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
+  }
+
+  private addJitter(delay: number): number {
+    return delay + Math.random() * 300; // Add up to 300ms jitter
   }
 
   private async login(): Promise<string> {
@@ -95,72 +104,124 @@ class ExnessClient {
     }
   }
 
-  private async getValidToken(): Promise<string> {
-    if (this.token && this.tokenExpiry && Date.now() < this.tokenExpiry) {
+  private async getToken(): Promise<string> {
+    const now = Date.now();
+    
+    // Check if token exists and is still valid with safety window
+    if (this.token && this.tokenExpiry && now < (this.tokenExpiry - this.SAFETY_WINDOW_MS)) {
       return this.token;
     }
+    
+    // Clear expired token
+    this.token = null;
+    this.tokenExpiry = null;
     
     return await this.login();
   }
 
-  async checkAffiliationByEmail(email: string, retryCount = 0): Promise<{
+  private async fetchWithRetry(url: string, init: RequestInit, maxRetries = 2): Promise<Response> {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const response = await fetch(url, {
+          ...init,
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        // Handle rate limiting with exponential backoff
+        if (response.status === 429 && attempt < maxRetries) {
+          const retryAfter = parseInt(response.headers.get('retry-after') || '2');
+          const baseDelay = Math.max(retryAfter * 1000, 300 * Math.pow(2, attempt));
+          const delayWithJitter = this.addJitter(baseDelay);
+          
+          console.log(`[ExnessClient] Rate limited, retrying after ${delayWithJitter}ms (attempt ${attempt + 1})`);
+          await new Promise(resolve => setTimeout(resolve, delayWithJitter));
+          continue;
+        }
+        
+        return response;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error');
+        
+        if (error instanceof Error && error.name === 'AbortError') {
+          lastError = new Error('Request timeout');
+          break; // Don't retry timeouts
+        }
+        
+        // For 5xx errors, retry once
+        if (attempt < Math.min(maxRetries, 1)) {
+          const delay = this.addJitter(1000 * Math.pow(2, attempt));
+          console.log(`[ExnessClient] Network error, retrying after ${delay}ms (attempt ${attempt + 1})`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+      }
+    }
+    
+    throw lastError || new Error('Max retries exceeded');
+  }
+
+  async checkAffiliationByEmail(email: string): Promise<{
     isAffiliated: boolean;
     partnerId?: string | null;
     partnerIdMatch: boolean;
     clientUid?: string | null;
     accounts?: string[];
     error?: string;
+    code?: string;
   }> {
-    const maxRetries = 3;
+    const normalizedEmail = this.normalizeEmail(email);
     const startTime = Date.now();
+    const expectedPartnerId = (process.env.EXNESS_PARTNER_ID || Deno.env.get('EXNESS_PARTNER_ID'));
 
     try {
-      const token = await this.getValidToken();
+      const token = await this.getToken();
       const url = `${this.baseUrl}/partner/affiliation/`;
 
-      console.log(`[ExnessClient] Attempting affiliation check for email (attempt ${retryCount + 1}/${maxRetries + 1})`);
+      console.log(`[ExnessClient] Attempting affiliation check for normalized email`);
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-      const response = await fetch(url, {
+      const response = await this.fetchWithRetry(url, {
         method: 'POST',
         headers: {
           'Authorization': `JWT ${token}`,
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ email }),
-        signal: controller.signal,
+        body: JSON.stringify({ email: normalizedEmail }),
       });
-
-      clearTimeout(timeoutId);
 
       const responseTime = Date.now() - startTime;
       console.log(`[ExnessClient] Response received in ${responseTime}ms with status: ${response.status}`);
 
-      // Handle token expiry with retry
-      if (response.status === 401 && retryCount < maxRetries) {
-        console.log(`[ExnessClient] Token expired, clearing cache and retrying`);
+      // Handle 401 - don't retry, invalid token
+      if (response.status === 401) {
+        console.error(`[ExnessClient] Authentication failed - invalid credentials`);
         this.token = null;
         this.tokenExpiry = null;
-        const backoffDelay = Math.min(1000 * Math.pow(2, retryCount), 4000); // Exponential backoff
-        await new Promise(resolve => setTimeout(resolve, backoffDelay));
-        return this.checkAffiliationByEmail(email, retryCount + 1);
-      }
-
-      // Handle rate limiting with retry  
-      if (response.status === 429 && retryCount < maxRetries) {
-        const retryAfter = parseInt(response.headers.get('retry-after') || '2');
-        const backoffDelay = Math.max(retryAfter * 1000, 1000 * Math.pow(2, retryCount));
-        console.log(`[ExnessClient] Rate limited, retrying after ${backoffDelay}ms`);
-        await new Promise(resolve => setTimeout(resolve, backoffDelay));
-        return this.checkAffiliationByEmail(email, retryCount + 1);
+        return {
+          isAffiliated: false,
+          partnerId: null,
+          partnerIdMatch: false,
+          clientUid: null,
+          accounts: [],
+          error: 'Authentication failed',
+          code: 'Unauthorized'
+        };
       }
 
       if (!response.ok) {
-        const errorText = await response.text();
+        const errorText = await response.text().catch(() => 'Unknown error');
         console.error(`[ExnessClient] API error: ${response.status} ${response.statusText} - ${errorText}`);
+        
+        const errorCode = response.status >= 500 ? 'UpstreamError' : 
+                         response.status === 429 ? 'Throttled' :
+                         response.status >= 400 ? 'BadRequest' : 'UnknownError';
         
         return {
           isAffiliated: false,
@@ -168,58 +229,38 @@ class ExnessClient {
           partnerIdMatch: false,
           clientUid: null,
           accounts: [],
-          error: `API request failed: ${response.status} ${response.statusText}`
+          error: `API request failed: ${response.status} ${response.statusText}`,
+          code: errorCode
         };
       }
 
       const data: ExnessAffiliationResponse = await response.json();
-      const partnerId = data.affiliation ? process.env.EXNESS_PARTNER_ID || null : null;
+      const partnerId = data.affiliation ? expectedPartnerId : null;
+      const partnerIdMatch = data.affiliation && partnerId === expectedPartnerId;
 
-      console.log(`[ExnessClient] Affiliation check completed: ${data.affiliation ? 'affiliated' : 'not affiliated'}`);
+      console.log(`[ExnessClient] Affiliation check completed: ${data.affiliation ? 'affiliated' : 'not affiliated'} (${responseTime}ms)`);
 
       return {
         isAffiliated: data.affiliation,
         partnerId,
-        partnerIdMatch: data.affiliation,
+        partnerIdMatch,
         clientUid: data.client_uid,
-        accounts: data.accounts,
+        accounts: data.accounts || [],
       };
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.error(`[ExnessClient] Request timeout after ${responseTime}ms`);
-        if (retryCount < maxRetries) {
-          const backoffDelay = 1000 * Math.pow(2, retryCount);
-          await new Promise(resolve => setTimeout(resolve, backoffDelay));
-          return this.checkAffiliationByEmail(email, retryCount + 1);
-        }
-        return {
-          isAffiliated: false,
-          partnerId: null,
-          partnerIdMatch: false,
-          clientUid: null,
-          accounts: [],
-          error: 'Request timeout'
-        };
-      }
-
       console.error(`[ExnessClient] Affiliation check error (${responseTime}ms):`, error);
       
-      // Retry on network errors
-      if (retryCount < maxRetries) {
-        const backoffDelay = 1000 * Math.pow(2, retryCount);
-        await new Promise(resolve => setTimeout(resolve, backoffDelay));
-        return this.checkAffiliationByEmail(email, retryCount + 1);
-      }
-
+      const errorCode = error instanceof Error && error.message === 'Request timeout' ? 'Timeout' : 'NetworkError';
+      
       return {
         isAffiliated: false,
         partnerId: null,
         partnerIdMatch: false,
         clientUid: null,
         accounts: [],
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
+        code: errorCode
       };
     }
   }

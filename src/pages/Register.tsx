@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
 import { signUp } from '@/lib/auth';
+import { validatePasswordStrength } from '@/lib/validation';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RegisterPage() {
@@ -204,8 +205,17 @@ export default function RegisterPage() {
                   required
                   className="bg-background border-line text-foreground"
                 />
+                </div>
+                {passwordErrors.length > 0 && (
+                  <div className="space-y-1">
+                    {passwordErrors.map((error, index) => (
+                      <p key={index} className="text-sm text-destructive">
+                        {error}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
             
             <div className="space-y-2">
               <Label htmlFor="email" className="text-foreground">Email</Label>

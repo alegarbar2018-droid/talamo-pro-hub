@@ -12,11 +12,15 @@ interface ValidationRequest {
 }
 
 interface ValidationResponse {
-  success: boolean;
-  is_affiliated?: boolean;
-  user_exists?: boolean;
-  demo_mode?: boolean;
-  error?: string;
+  ok: boolean;
+  code?: string;
+  message?: string;
+  data?: {
+    is_affiliated?: boolean;
+    user_exists?: boolean;
+    demo_mode?: boolean;
+    uid?: string;
+  };
   rate_limited?: boolean;
   retry_after?: number;
 }
@@ -138,8 +142,9 @@ Deno.serve(async (req) => {
   if (rateLimit.limited) {
     return new Response(
       JSON.stringify({
-        success: false,
-        error: 'Too many requests',
+        ok: false,
+        code: 'Throttled',
+        message: 'Too many requests',
         rate_limited: true,
         retry_after: rateLimit.retryAfter
       } as ValidationResponse),
@@ -162,8 +167,12 @@ Deno.serve(async (req) => {
 
     if (req.method !== 'POST') {
       return new Response(
-        JSON.stringify({ success: false, error: 'Method not allowed' }),
-        { status: 405, headers: corsHeaders }
+        JSON.stringify({ 
+          ok: false, 
+          code: 'MethodNotAllowed',
+          message: 'Method not allowed' 
+        }),
+        { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -177,8 +186,12 @@ Deno.serve(async (req) => {
       });
       
       return new Response(
-        JSON.stringify({ success: false, error: 'Valid email required' }),
-        { status: 400, headers: corsHeaders }
+        JSON.stringify({ 
+          ok: false, 
+          code: 'BadRequest',
+          message: 'Valid email required' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -189,8 +202,12 @@ Deno.serve(async (req) => {
       });
       
       return new Response(
-        JSON.stringify({ success: false, error: 'Invalid email format' }),
-        { status: 400, headers: corsHeaders }
+        JSON.stringify({ 
+          ok: false, 
+          code: 'BadRequest',
+          message: 'Invalid email format' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -206,9 +223,11 @@ Deno.serve(async (req) => {
       
       return new Response(
         JSON.stringify({
-          success: true,
-          demo_mode: true,
-          is_affiliated: true
+          ok: true,
+          data: {
+            demo_mode: true,
+            is_affiliated: true
+          }
         } as ValidationResponse),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -230,9 +249,11 @@ Deno.serve(async (req) => {
       
       return new Response(
         JSON.stringify({
-          success: true,
-          user_exists: true,
-          is_affiliated: true
+          ok: true,
+          data: {
+            user_exists: true,
+            is_affiliated: true
+          }
         } as ValidationResponse),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -261,9 +282,11 @@ Deno.serve(async (req) => {
 
         return new Response(
           JSON.stringify({
-            success: true,
-            is_affiliated: affiliationResult.affiliated,
-            uid: affiliationResult.uid
+            ok: true,
+            data: {
+              is_affiliated: affiliationResult.affiliated,
+              uid: affiliationResult.uid
+            }
           } as ValidationResponse),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -278,10 +301,11 @@ Deno.serve(async (req) => {
 
         return new Response(
           JSON.stringify({
-            success: false,
-            error: 'Unable to verify affiliation at this time'
+            ok: false,
+            code: 'UpstreamError',
+            message: 'Unable to verify affiliation at this time'
           } as ValidationResponse),
-          { status: 503, headers: corsHeaders }
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
     }
@@ -289,8 +313,10 @@ Deno.serve(async (req) => {
     // Fallback response when Partner API is disabled
     return new Response(
       JSON.stringify({
-        success: true,
-        is_affiliated: false
+        ok: true,
+        data: {
+          is_affiliated: false
+        }
       } as ValidationResponse),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -300,10 +326,11 @@ Deno.serve(async (req) => {
     
     return new Response(
       JSON.stringify({
-        success: false,
-        error: 'Internal server error'
+        ok: false,
+        code: 'InternalError',
+        message: 'Internal server error'
       } as ValidationResponse),
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

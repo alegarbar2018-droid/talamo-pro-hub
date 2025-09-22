@@ -244,11 +244,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <Alert className="mt-4 border-warning/20 bg-warning/5">
-            <AlertDescription className="text-sm text-muted-foreground">
-              <strong>Prueba con:</strong> demo@email.com para acceso rápido
-            </AlertDescription>
-          </Alert>
         </CardContent>
       </Card>
     </div>

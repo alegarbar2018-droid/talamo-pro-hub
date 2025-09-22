@@ -59,14 +59,19 @@ export const useAffiliationValidation = () => {
           return;
         }
 
-        // Handle other HTTP errors
-        if (error.status === 503) {
+        // Handle other HTTP errors based on standardized codes
+        if (error.status === 503 || data?.code === 'UpstreamError') {
           setError("Servicio temporalmente no disponible. Intenta más tarde.");
           return;
         }
 
-        if (error.status === 401) {
+        if (error.status === 401 || data?.code === 'Unauthorized') {
           setError("Error de autenticación. Intenta más tarde o ve las opciones para afiliarte.");
+          return;
+        }
+
+        if (data?.code === 'BadRequest') {
+          setError("Solicitud inválida. Verifica el formato del email.");
           return;
         }
 
@@ -76,9 +81,9 @@ export const useAffiliationValidation = () => {
         return;
       }
 
-      // Handle successful structured response
-      if (data?.success) {
-        if (data.demo_mode) {
+      // Handle successful structured response with new format
+      if (data?.ok) {
+        if (data.data?.demo_mode) {
           console.info(`🧪 Demo mode validation successful`);
           onDemo();
           toast({
@@ -88,7 +93,7 @@ export const useAffiliationValidation = () => {
           return;
         }
 
-        if (data.user_exists) {
+        if (data.data?.user_exists) {
           console.info(`👤 User already exists, redirecting to login`);
           if (onUserExists) {
             onUserExists();
@@ -96,9 +101,9 @@ export const useAffiliationValidation = () => {
           return;
         }
 
-        if (data.is_affiliated) {
-          console.info(`✅ Affiliation validated successfully:`, data.uid);
-          onSuccess(data.uid || "");
+        if (data.data?.is_affiliated) {
+          console.info(`✅ Affiliation validated successfully:`, data.data.uid);
+          onSuccess(data.data.uid || "");
           toast({
             title: "Validación Exitosa",
             description: "Afiliación confirmada correctamente",
@@ -108,9 +113,17 @@ export const useAffiliationValidation = () => {
           onNotAffiliated();
         }
       } else {
-        // Handle error in response data
-        if (data?.error) {
-          setError(data.error);
+        // Handle error in response data with standardized codes
+        if (data?.code && data?.message) {
+          const errorMessages = {
+            'Throttled': 'Demasiadas solicitudes. Espera antes de intentar de nuevo.',
+            'BadRequest': 'Solicitud inválida. Verifica el formato del email.',
+            'Unauthorized': 'Error de autenticación. Intenta más tarde.',
+            'UpstreamError': 'Servicio temporalmente no disponible. Intenta más tarde.',
+            'InternalError': 'Error interno del servidor. Intenta más tarde.'
+          };
+          
+          setError(errorMessages[data.code as keyof typeof errorMessages] || data.message);
         } else {
           console.info(`❌ Validation failed, showing not affiliated options`);
           onNotAffiliated();
