@@ -21,10 +21,10 @@ export const useAffiliationValidation = () => {
     console.info(`🔍 Starting validation for email:`, email);
     
     try {
-      console.info(`📡 Calling validate-affiliation function with email:`, email);
+      console.info(`📡 Calling secure-affiliation-check function with email:`, email);
       const startTime = performance.now();
       
-      const { data, error } = await supabase.functions.invoke('validate-affiliation', {
+      const { data, error } = await supabase.functions.invoke('secure-affiliation-check', {
         body: { email }
       });
 
@@ -38,28 +38,15 @@ export const useAffiliationValidation = () => {
         errorDetails: error
       });
 
-      // Handle error responses
+      // Handle structured response from secure-affiliation-check
       if (error) {
         console.info(`❌ Error detected:`, error.message);
 
-        // Check for existing user (409)
-        if (error.message?.includes('409') || error.message?.includes('UserExists')) {
-          console.info(`👤 User already exists, redirecting to login`);
-          if (onUserExists) {
-            onUserExists();
-          }
-          return;
-        }
-
-        // Handle HTTP errors with proper user flow
-        if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
-          setError("Error de autenticación con el bróker. Intenta más tarde o ve las opciones para afiliarte.");
-          return;
-        }
-        
-        if (error.message?.includes('429') || error.message?.includes('RateLimited')) {
-          setError("Demasiadas solicitudes. Espera y vuelve a intentar.");
-          setCooldownSeconds(60);
+        // Handle rate limiting
+        if (error.status === 429 || data?.rate_limited) {
+          const retryAfter = data?.retry_after || 300;
+          setError("Demasiadas solicitudes. Espera antes de intentar de nuevo.");
+          setCooldownSeconds(retryAfter);
           const interval = setInterval(() => {
             setCooldownSeconds((prev) => {
               if (prev <= 1) {
@@ -72,28 +59,62 @@ export const useAffiliationValidation = () => {
           return;
         }
 
-        if (error.message?.includes('502') || error.message?.includes('BrokerDown')) {
+        // Handle other HTTP errors
+        if (error.status === 503) {
           setError("Servicio temporalmente no disponible. Intenta más tarde.");
           return;
         }
 
-        // Any other error - treat as not affiliated to show options
+        if (error.status === 401) {
+          setError("Error de autenticación. Intenta más tarde o ve las opciones para afiliarte.");
+          return;
+        }
+
+        // Fallback for other errors
         console.info(`🤷 Error or unexpected response, showing not affiliated options`);
         onNotAffiliated();
         return;
       }
 
-      // Handle successful response
-      if (data?.affiliation === true) {
-        console.info(`✅ Affiliation validated successfully:`, data.client_uid);
-        onSuccess(data.client_uid || "");
-        toast({
-          title: "Validación Exitosa",
-          description: "Afiliación confirmada correctamente",
-        });
+      // Handle successful structured response
+      if (data?.success) {
+        if (data.demo_mode) {
+          console.info(`🧪 Demo mode validation successful`);
+          onDemo();
+          toast({
+            title: "Modo Demo Activado",
+            description: "Acceso de demostración confirmado",
+          });
+          return;
+        }
+
+        if (data.user_exists) {
+          console.info(`👤 User already exists, redirecting to login`);
+          if (onUserExists) {
+            onUserExists();
+          }
+          return;
+        }
+
+        if (data.is_affiliated) {
+          console.info(`✅ Affiliation validated successfully:`, data.uid);
+          onSuccess(data.uid || "");
+          toast({
+            title: "Validación Exitosa",
+            description: "Afiliación confirmada correctamente",
+          });
+        } else {
+          console.info(`❌ Not affiliated based on response`);
+          onNotAffiliated();
+        }
       } else {
-        console.info(`❌ Not affiliated based on data response`);
-        onNotAffiliated();
+        // Handle error in response data
+        if (data?.error) {
+          setError(data.error);
+        } else {
+          console.info(`❌ Validation failed, showing not affiliated options`);
+          onNotAffiliated();
+        }
       }
 
     } catch (err: any) {

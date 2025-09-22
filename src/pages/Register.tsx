@@ -60,10 +60,29 @@ export default function RegisterPage() {
       return false;
     }
 
-    if (formData.password.length < 6) {
+    // Password validation: minimum 8 characters, at least one uppercase letter and one number
+    if (formData.password.length < 8) {
       toast({
         title: "Contraseña muy corta",
-        description: "La contraseña debe tener al menos 6 caracteres.",
+        description: "La contraseña debe tener al menos 8 caracteres.",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    if (!/[A-Z]/.test(formData.password)) {
+      toast({
+        title: "Contraseña insegura",
+        description: "La contraseña debe contener al menos una letra mayúscula.",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    if (!/\d/.test(formData.password)) {
+      toast({
+        title: "Contraseña insegura", 
+        description: "La contraseña debe contener al menos un número.",
         variant: "destructive"
       });
       return false;
@@ -207,7 +226,7 @@ export default function RegisterPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres, 1 mayúscula y 1 número"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   required
@@ -285,8 +304,6 @@ export default function RegisterPage() {
           <Alert className="mt-4 border-warning/20 bg-warning/5">
             <AlertDescription className="text-sm text-muted-foreground">
               <strong>Importante:</strong> Necesitarás una cuenta de Exness afiliada para acceder a todas las funciones de Tálamo.
-              <br />
-              <strong>Prueba:</strong> Usa demo@email.com para testing.
             </AlertDescription>
           </Alert>
         </CardContent>

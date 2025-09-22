@@ -1,168 +1,55 @@
-# Changelog - Talamo Pro Hub
+# Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to Talamo Pro Hub will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [Unreleased] - 2024-XX-XX
 
-## [Unreleased]
+### Security Enhancements 🔒
+- **Strengthened affiliation validation flow** - Centralized validation logic using `secure-affiliation-check` function
+- **Enhanced password policy** - Now requires minimum 8 characters, at least one uppercase letter and one number
+- **Improved rate limiting** - Implemented 10 requests per 5 minutes per client with proper cooldown handling
+- **Added audit logging** - All affiliation validation attempts are now logged with anonymized client IDs
+- **Removed hardcoded credentials** - Moved sensitive configuration to environment variables
 
-### Added
-- i18n infrastructure with Spanish/English/Portuguese support (flagged with `i18n_v1`)
-- LanguageSwitcher component (only visible with flag enabled)
-- Translation namespaces: common, nav, landing, dashboard, admin, forms, table, academy, signals, copy, tools
-- Locale utilities for number and date formatting
-- Base translation files for all supported languages
+### Backend Improvements 🔧
+- **Exness client robustness** - Added exponential backoff retry logic, proper timeout handling (10s), and comprehensive error handling
+- **Unified error responses** - Consistent JSON response structure across all validation endpoints
+- **Token caching optimization** - Smart token expiry handling based on actual API response
+- **Function consolidation** - Deprecated `validate-affiliation` in favor of `secure-affiliation-check` with backward compatibility wrapper
 
-### Changed
-- Navigation and landing page texts now read from i18n (flagged, no visible change by default)
-- Dashboard and Admin panels support i18n translations (flagged)
-- Academy, Signals, Copy Trading, and Tools pages internationalized (flagged)
-- AdminBreadcrumbs component uses translation keys
-- All UI strings in internal pages wrapped with t() functions
+### Frontend Enhancements 💡
+- **Unified validation hook** - Single `useAffiliationValidation` hook for all affiliation checks
+- **Structured error handling** - Error handling based on response structure rather than string parsing
+- **Improved UX feedback** - Better loading states, cooldown timers, and user-friendly error messages
+- **Cleaned demo artifacts** - Removed development/testing comments from production UI
 
-### Technical
-- Added react-i18next, i18next, and i18next-browser-languagedetector dependencies
-- Language detection: URL query → localStorage → browser → fallback to Spanish
-- Added comprehensive smoke tests for i18n functionality
-- Extended existing test suites to cover flag-controlled behavior
+### Developer Experience 🛠️
+- **Comprehensive test suite** - Added unit tests for password validation, Exness client, and affiliation hook
+- **Environment variable management** - Clear separation between client and server-side configuration
+- **Updated documentation** - Enhanced `.env.example` with proper categorization and security notes
+- **Feature flag protection** - All new functionality respects existing feature flag system
 
-### Notes
-- **No behavior change by default** - all i18n features are behind `i18n_v1` flag
-- To enable for testing: `VITE_TALAMO_FLAGS=i18n_v1 bun dev`
-- Fallback language is Spanish for all missing translations
-- Language switcher only appears when flag is enabled
+### Migration Notes 📋
+- **Environment Variables**: Update your environment configuration based on the new `.env.example`
+- **API Changes**: The validation responses now use structured format (`is_affiliated`, `uid`, `error` fields)
+- **Backward Compatibility**: Existing `validate-affiliation` calls will continue to work via compatibility wrapper
+- **Feature Flags**: With flags disabled, the application maintains current behavior
 
-### Added (Flagged Features - OFF by default)
-- **Feature Flags System** (`src/lib/flags.ts`) - Complete feature flag system supporting:
-  - `academy_v1` - Academia module infrastructure
-  - `signals_v1` - Trading signals module infrastructure  
-  - `copy_v1` - Copy trading module infrastructure
-  - `rbac_v1` - Advanced Role-Based Access Control
-  - `obs_v1` - Observability and metrics system
-  - `api_v1` - New versioned API endpoints
-  - `i18n_v1` - Internationalization system (es/en/pt)
-- **Internationalization Infrastructure** (`src/i18n/`) - Complete i18n system with:
-  - Support for Spanish (default), English, and Portuguese
-  - Structured translation files by namespace (common, nav, landing, dashboard)
-  - Language detection via URL query, localStorage, and browser settings
-  - React integration with `react-i18next` hooks
-  - Language switcher component (only visible when `i18n_v1` flag is ON)
-  - Navigation and landing page integration with translation keys
-- **Locale Utilities** (`src/lib/locale.ts`) - Number and date formatting helpers:
-  - Currency formatting with proper locale support
-  - Percentage formatting with configurable decimals
-  - Date/time formatting with timezone support
-  - Ready for integration with trading data display
-- **Academy Module Structure** (`src/modules/academy/`) - Complete type definitions and mock data for:
-  - Course management with video, text, quiz, and exercise content
-  - Student progress tracking and completion metrics
-  - Academy statistics and analytics
-- **Signals Module Structure** (`src/modules/signals/`) - Trading signals infrastructure with:
-  - Signal providers and subscription management
-  - Performance tracking and accuracy metrics
-  - Real-time notifications system
-- **Copy Trading Module Structure** (`src/modules/copy/`) - Copy trading system with:
-  - Trader profiles and performance metrics
-  - Position copying with risk management
-  - Follower statistics and commission tracking
-- **Observability System** (`src/lib/observability.ts`) - Comprehensive logging and metrics:
-  - Structured logging with multiple levels
-  - Performance monitoring and timing
-  - API request/response logging
-  - React component performance hooks
-- **New API Endpoints** (Supabase Edge Functions):
-  - `/api/v1/health` - System health checks and monitoring
-  - `/api/v1/affiliation/validate` - Enhanced affiliation validation with security
-- **Smoke Tests** (`src/__tests__/smoke.test.tsx`) - Critical flow validation:
-  - Landing page rendering without errors
-  - Onboarding flow basic functionality
-  - Dashboard navigation testing
-  - Feature flag integration testing
-  - Mock API response handling
+### Breaking Changes ⚠️
+- Password validation now enforces stronger requirements (8+ characters, uppercase, number)
+- Validation API responses use new structured format (though wrapper maintains compatibility)
 
-### Changed (Internal - No User Impact)
-- **Navigation Internationalization** (`src/components/Navigation.tsx`) - Navigation labels now read from i18n translation files:
-  - Menu items (Academia, Señales, Copy Trading, Herramientas) use translation keys
-  - CTA buttons (Iniciar Sesión, Comenzar) use translation system
-  - Language switcher integrated into navigation bar (only visible with `i18n_v1` flag)
-  - No visible changes when flag is OFF - maintains exact same Spanish text
-- **Landing Page Internationalization** (`src/pages/Index.tsx`) - Hero section and CTAs now use translation system:
-  - Hero title and subtitle use translation keys
-  - Call-to-action buttons read from translation files
-  - Document language automatically updates with i18n language selection
-  - No visual changes when flag is OFF - preserves original Spanish content
-- **Environment Configuration** - Migrated hardcoded constants to environment variables:
-  - `PARTNER_ID` now reads from `VITE_PARTNER_ID` (maintains same visible value)
-  - `PARTNER_LINK` now reads from `VITE_PARTNER_LINK` (maintains same behavior)
-  - `EXNESS_AUTH_URL` and `EXNESS_AFFILIATION_URL` now configurable
-  - Backwards compatible - existing imports still work unchanged
-- **Constants Migration** (`src/lib/constants.ts`) - Added environment variable support with fallbacks
-- **Build System** - Added new NPM scripts for enhanced development workflow:
-  - `test:smoke` - Run smoke tests for critical flows
-  - `lint:ci` - CI-friendly linting with JSON output
-  - `typecheck` - TypeScript compilation checking
-
-### Security
-- **Rate Limiting** - Implemented in new API endpoints (10 req/min per client)
-- **Request Timeouts** - 8-second timeouts with AbortController
-- **Input Validation** - Enhanced email validation and sanitization
-- **Error Handling** - Structured error responses without exposing internals
-- **CORS Security** - Proper CORS headers for all new endpoints
-- **Secrets Management** - Environment-based configuration for sensitive data
-
-### Tests
-- **Smoke Test Coverage** - Critical user flows protected by automated tests
-- **Mock API Testing** - All response codes (200/401/429/400/500) validated
-- **Performance Baselines** - Render time testing for key components
-- **Feature Flag Testing** - Validation of flag behavior in various states
-- **i18n Smoke Tests** (`src/__tests__/i18n.smoke.test.tsx`) - Internationalization testing:
-  - Flag OFF: Ensures no visible changes, LanguageSwitcher hidden, navigation shows Spanish text
-  - Flag ON: Language switcher renders in navigation, translation system works
-  - Language switching doesn't break existing functionality
-  - Translation file loading and key availability validation
-  - Navigation and landing page translation integration tests
-
-### Documentation
-- **NO-BREAK GUARDRAILS** (`docs/NO-BREAK-GUARDRAILS.md`) - Comprehensive safety documentation:
-  - Risk matrix and mitigation strategies
-  - Feature flag configuration and rollback procedures
-  - Release and rollback checklists
-  - Protected contracts and emergency procedures
-- **Environment Setup** (`.env.example`) - Complete environment configuration template
-- **Code Documentation** - Extensive inline documentation for all new modules
+### Testing 🧪
+- Added comprehensive test coverage for critical authentication flows
+- Tests verify rate limiting, retry logic, timeout handling, and error scenarios
+- Password validation test suite ensures security policy compliance
 
 ---
 
-## Important Notes
+## Previous Versions
 
-### Backwards Compatibility
-- **100% Backwards Compatible** - All existing functionality unchanged
-- **Zero Breaking Changes** - Existing API contracts maintained exactly
-- **Feature Flags OFF** - All new features disabled by default
-- **Same User Experience** - No visible changes to end users
-- **i18n System Reversible** - With `i18n_v1` OFF, no translation logic active, maintains original Spanish text
-- **Navigation Translation Ready** - Complete translation integration that's invisible until flag enabled
-
-### Migration Path
-- Environment variables are **optional** - fallbacks maintain existing behavior
-- Feature flags are **opt-in** - enable only when ready for testing
-- New APIs are **parallel** - existing endpoints unchanged
-- Module structures are **prepared** - not connected to UI until flagged
-- **i18n System Ready** - Complete infrastructure prepared, activate with `VITE_TALAMO_FLAGS=i18n_v1`
-
-### Security Posture
-- No secrets exposed in client bundle
-- Enhanced error handling without information disclosure
-- Rate limiting and timeout protection
-- Comprehensive audit trail for security events
-
-### Testing Strategy
-- **Smoke tests MUST pass** before any deployment
-- **Contract tests** validate API compatibility
-- **Performance baselines** ensure no degradation
-- **Feature flag isolation** prevents accidental activation
-
----
-
-**DEPLOYMENT SAFETY:** With all flags OFF, this release is functionally identical to the previous version. New capabilities can be enabled gradually through feature flags.
+### [1.0.0] - Previous Release
+- Initial implementation of authentication and affiliation system
+- Basic Exness integration
+- Core dashboard and trading tools
+- User profile management

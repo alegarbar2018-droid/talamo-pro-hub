@@ -55,15 +55,25 @@ export default function AuthValidatePage() {
     setLoading(true);
 
     try {
-      // Call the real Supabase edge function
+      // Call the secure affiliation check function
       const { supabase } = await import('@/integrations/supabase/client');
       
-      const { data, error } = await supabase.functions.invoke('validate-affiliation', {
+      const { data, error } = await supabase.functions.invoke('secure-affiliation-check', {
         body: { email: email.trim() }
       });
 
-      // Check for user exists response (409)
-      if (error && (error.status === 409 || error.message?.includes('UserExists'))) {
+      // Handle rate limiting
+      if (error && error.status === 429) {
+        toast({
+          title: "Demasiadas solicitudes",
+          description: "Has excedido el límite de intentos. Espera unos minutos antes de intentar de nuevo.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check for user exists response
+      if (data?.user_exists) {
         toast({
           title: "Cuenta existente",
           description: "Ya tienes una cuenta registrada. Te redirigiremos al login.",
@@ -78,13 +88,13 @@ export default function AuthValidatePage() {
         throw new Error(error.message);
       }
 
-      // Transform the response to match the expected format
+      // Handle structured response from secure-affiliation-check
       const result = {
-        isAffiliated: data.affiliation || false,
-        partnerId: data.partnerId,
-        partnerIdMatch: data.affiliation || false,
-        clientUid: data.client_uid,
-        accounts: data.accounts || []
+        isAffiliated: data?.is_affiliated || false,
+        partnerId: data?.partnerId,
+        partnerIdMatch: data?.is_affiliated || false,
+        clientUid: data?.uid,
+        accounts: data?.accounts || []
       };
 
       setResult(result);
@@ -217,13 +227,6 @@ export default function AuthValidatePage() {
               </Button>
             </form>
 
-            {/* Demo hint */}
-            <Alert className="mt-6 border-teal/20 bg-teal/5">
-              <CheckCircle className="h-4 w-4 text-teal" />
-              <AlertDescription className="text-sm">
-                <strong>Para demo:</strong> Usa demo@email.com o cualquier email que contenga "exness" o "demo"
-              </AlertDescription>
-            </Alert>
           </CardContent>
         </Card>
 
