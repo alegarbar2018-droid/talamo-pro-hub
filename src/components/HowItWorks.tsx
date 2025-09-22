@@ -60,9 +60,9 @@ const HowItWorks = () => {
               <p className="text-muted-foreground">En solo 3 pasos simples</p>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 relative">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
               {/* Connection lines for desktop */}
-              <div className="hidden lg:block absolute top-16 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-teal/50 via-accent/50 to-teal/50" />
+              <div className="hidden md:block absolute top-16 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-teal/50 via-accent/50 to-teal/50" />
               
               {steps.map((step, index) => (
                 <div key={index} className="group relative text-center space-y-6">
