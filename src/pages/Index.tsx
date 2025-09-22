@@ -103,9 +103,9 @@ const Index = () => {
                   <div className="flex flex-wrap justify-center gap-6 mt-8">
                     <div className="group relative">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-teal/30 via-primary/20 to-accent/30 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
-                      <div className="relative bg-surface/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
+                      <div className="relative bg-surface/90 backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
                         <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal to-primary"></div>
-                        <span className="font-inter text-sm font-medium text-foreground tracking-wide">
+                        <span className="font-inter text-sm font-medium text-white tracking-wide">
                           Acceso Exclusivo
                         </span>
                       </div>
@@ -113,9 +113,9 @@ const Index = () => {
                     
                     <div className="group relative">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 via-accent/20 to-teal/30 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
-                      <div className="relative bg-surface/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
+                      <div className="relative bg-surface/90 backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
                         <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent"></div>
-                        <span className="font-inter text-sm font-medium text-foreground tracking-wide">
+                        <span className="font-inter text-sm font-medium text-white tracking-wide">
                           100% Transparente
                         </span>
                       </div>
@@ -123,9 +123,9 @@ const Index = () => {
                     
                     <div className="group relative">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/30 via-teal/20 to-primary/30 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
-                      <div className="relative bg-surface/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
+                      <div className="relative bg-surface/90 backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
                         <div className="w-2 h-2 rounded-full bg-gradient-to-r from-accent to-teal"></div>
-                        <span className="font-inter text-sm font-medium text-foreground tracking-wide">
+                        <span className="font-inter text-sm font-medium text-white tracking-wide">
                           Riesgo Controlado
                         </span>
                       </div>
