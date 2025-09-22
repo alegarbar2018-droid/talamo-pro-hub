@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `rbac_v1` - Advanced Role-Based Access Control
   - `obs_v1` - Observability and metrics system
   - `api_v1` - New versioned API endpoints
+  - `i18n_v1` - Internationalization system (es/en/pt)
+- **Internationalization Infrastructure** (`src/i18n/`) - Complete i18n system with:
+  - Support for Spanish (default), English, and Portuguese
+  - Structured translation files by namespace (common, nav, landing, dashboard)
+  - Language detection via URL query, localStorage, and browser settings
+  - React integration with `react-i18next` hooks
+  - Language switcher component (only visible when `i18n_v1` flag is ON)
+- **Locale Utilities** (`src/lib/locale.ts`) - Number and date formatting helpers:
+  - Currency formatting with proper locale support
+  - Percentage formatting with configurable decimals
+  - Date/time formatting with timezone support
+  - Ready for integration with trading data display
 - **Academy Module Structure** (`src/modules/academy/`) - Complete type definitions and mock data for:
   - Course management with video, text, quiz, and exercise content
   - Student progress tracking and completion metrics
@@ -67,6 +79,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Mock API Testing** - All response codes (200/401/429/400/500) validated
 - **Performance Baselines** - Render time testing for key components
 - **Feature Flag Testing** - Validation of flag behavior in various states
+- **i18n Smoke Tests** (`src/__tests__/i18n.smoke.test.tsx`) - Internationalization testing:
+  - Flag OFF: Ensures no visible changes, LanguageSwitcher hidden
+  - Flag ON: Language switcher renders, translation system works
+  - Language switching doesn't break existing functionality
+  - Translation file loading and key availability validation
 
 ### Documentation
 - **NO-BREAK GUARDRAILS** (`docs/NO-BREAK-GUARDRAILS.md`) - Comprehensive safety documentation:
@@ -86,12 +103,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Zero Breaking Changes** - Existing API contracts maintained exactly
 - **Feature Flags OFF** - All new features disabled by default
 - **Same User Experience** - No visible changes to end users
+- **i18n System Reversible** - With `i18n_v1` OFF, no translation logic active
 
 ### Migration Path
 - Environment variables are **optional** - fallbacks maintain existing behavior
 - Feature flags are **opt-in** - enable only when ready for testing
 - New APIs are **parallel** - existing endpoints unchanged
 - Module structures are **prepared** - not connected to UI until flagged
+- **i18n System Ready** - Complete infrastructure prepared, activate with `VITE_TALAMO_FLAGS=i18n_v1`
 
 ### Security Posture
 - No secrets exposed in client bundle

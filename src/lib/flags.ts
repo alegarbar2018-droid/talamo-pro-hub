@@ -12,6 +12,7 @@ export type TalamoFlag =
   | 'rbac_v1'         // Advanced RBAC system
   | 'obs_v1'          // Observability and metrics
   | 'api_v1'          // New versioned APIs
+  | 'i18n_v1'         // Internationalization system
 
 /**
  * Parse feature flags from environment variable
@@ -42,7 +43,8 @@ function isValidFlag(flag: string): flag is TalamoFlag {
     'copy_v1',
     'rbac_v1',
     'obs_v1',
-    'api_v1'
+    'api_v1',
+    'i18n_v1'
   ];
   
   return validFlags.includes(flag as TalamoFlag);
