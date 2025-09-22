@@ -54,7 +54,7 @@ const HowItWorks = () => {
           {/* Card glow effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-accent/5 rounded-lg" />
           
-          <CardContent className="relative p-12">
+          <CardContent className="relative p-8">
             <div className="text-center mb-12">
               <h3 className="text-2xl font-bold text-foreground mb-3">Proceso de Acceso</h3>
               <p className="text-muted-foreground">En solo 3 pasos simples</p>
