@@ -281,16 +281,14 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="bg-gradient-primary">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          {/* Premium background effects */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5"></div>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse opacity-20"></div>
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl animate-pulse opacity-30" style={{ animationDelay: '2s' }}></div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Subtle background effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5"></div>
           
           {/* Subtle grid pattern overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] opacity-30"></div>
-          <div className="relative text-center space-y-12">
-            <div className="space-y-10">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-40"></div>
+          <div className="relative text-center space-y-8">
+            <div className="space-y-6">
               {/* Premium badge with enhanced effects */}
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -316,26 +314,25 @@ const Index = () => {
               </motion.div>
 
               <motion.div 
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="space-y-8"
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="space-y-4"
               >
-                <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+                <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight">
                   <span className="relative inline-block">
-                    <span className="bg-gradient-to-r from-white via-white/95 to-white bg-clip-text text-transparent filter drop-shadow-sm">
+                    <span className="bg-gradient-to-r from-white via-white/95 to-white bg-clip-text text-transparent">
                       {t("landing:ready_transform")}
                     </span>
-                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-full blur-sm"></div>
-                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-white to-transparent rounded-full"></div>
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-white/60 rounded-full"></div>
                   </span>
                 </h2>
                 
-                <div className="max-w-4xl mx-auto space-y-6">
-                  <p className="text-2xl md:text-3xl text-white/95 leading-relaxed font-semibold tracking-wide">
+                <div className="max-w-3xl mx-auto space-y-3">
+                  <p className="text-xl text-white/90 leading-relaxed font-medium">
                     {t("landing:join_community")}
                   </p>
-                  <p className="text-xl text-white/80 leading-relaxed font-medium">
+                  <p className="text-lg text-white/75 leading-relaxed">
                     {t("landing:access_methodology")}
                   </p>
                 </div>
