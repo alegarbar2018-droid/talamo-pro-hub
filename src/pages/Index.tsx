@@ -281,95 +281,158 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="bg-gradient-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center space-y-8">
-            <div className="space-y-8">
-              {/* Premium badge */}
-              <div className="inline-block">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          {/* Premium background effects */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse opacity-20"></div>
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl animate-pulse opacity-30" style={{ animationDelay: '2s' }}></div>
+          
+          {/* Floating particles effect */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-1/4 left-1/3 w-2 h-2 bg-white/30 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-white/40 rounded-full animate-ping" style={{ animationDelay: '3s' }}></div>
+            <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 bg-white/20 rounded-full animate-ping" style={{ animationDelay: '5s' }}></div>
+          </div>
+          <div className="relative text-center space-y-12">
+            <div className="space-y-10">
+              {/* Premium badge with enhanced effects */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+                className="inline-block"
+              >
                 <div className="group relative">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-white/30 via-white/50 to-white/30 rounded-full blur opacity-50 group-hover:opacity-70 transition duration-500"></div>
-                  <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2 flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
-                    <span className="text-sm font-medium text-white/90 tracking-wider uppercase">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-white/20 via-white/40 to-white/20 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition duration-700 animate-pulse"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-white/30 via-white/60 to-white/30 rounded-full blur opacity-70 group-hover:opacity-90 transition duration-500"></div>
+                  <div className="relative bg-white/15 backdrop-blur-xl border-2 border-white/30 rounded-full px-8 py-3 flex items-center gap-4 shadow-2xl">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                      <div className="w-2 h-2 rounded-full bg-white/70 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-white/50 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    </div>
+                    <span className="text-base font-bold text-white tracking-widest uppercase letter-spacing-2">
                       Acceso Exclusivo
                     </span>
+                    <Sparkles className="w-4 h-4 text-white animate-pulse" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="space-y-6">
-                <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                  <span className="relative">
-                    <span className="bg-gradient-to-r from-white via-white/90 to-white bg-clip-text text-transparent">
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="space-y-8"
+              >
+                <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+                  <span className="relative inline-block">
+                    <span className="bg-gradient-to-r from-white via-white/95 to-white bg-clip-text text-transparent filter drop-shadow-sm">
                       {t("landing:ready_transform")}
                     </span>
-                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-full"></div>
+                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-32 h-1.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-full blur-sm"></div>
+                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-white to-transparent rounded-full"></div>
                   </span>
                 </h2>
                 
-                <div className="max-w-3xl mx-auto space-y-4">
-                  <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-medium">
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <p className="text-2xl md:text-3xl text-white/95 leading-relaxed font-semibold tracking-wide">
                     {t("landing:join_community")}
                   </p>
-                  <p className="text-lg text-white/70 leading-relaxed">
+                  <p className="text-xl text-white/80 leading-relaxed font-medium">
                     {t("landing:access_methodology")}
                   </p>
                 </div>
 
-                {/* Premium features highlight */}
-                <div className="flex flex-wrap justify-center gap-6 pt-4">
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-300"></div>
-                    <span className="text-sm text-white/90 font-medium">Academia Estructurada</span>
+                {/* Enhanced premium features highlight */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="flex flex-wrap justify-center gap-8 pt-6"
+                >
+                  <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400/30 to-green-400/30 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
+                    <div className="relative flex items-center gap-3 bg-white/15 backdrop-blur-xl border border-white/30 rounded-2xl px-6 py-3 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-400 to-green-300 animate-pulse"></div>
+                      <span className="text-base text-white font-semibold tracking-wide">Academia Estructurada</span>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-300"></div>
-                    <span className="text-sm text-white/90 font-medium">Señales Auditadas</span>
+                  <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400/30 to-blue-400/30 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
+                    <div className="relative flex items-center gap-3 bg-white/15 backdrop-blur-xl border border-white/30 rounded-2xl px-6 py-3 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-blue-300 animate-pulse"></div>
+                      <span className="text-base text-white font-semibold tracking-wide">Señales Auditadas</span>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-300"></div>
-                    <span className="text-sm text-white/90 font-medium">Copy Trading Elite</span>
+                  <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-300"></div>
+                    <div className="relative flex items-center gap-3 bg-white/15 backdrop-blur-xl border border-white/30 rounded-2xl px-6 py-3 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-pink-300 animate-pulse"></div>
+                      <span className="text-base text-white font-semibold tracking-wide">Copy Trading Elite</span>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
+              </motion.div>
+            </div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-6 justify-center"
+            >
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-white/20 via-white/40 to-white/20 rounded-3xl blur opacity-60 group-hover:opacity-80 transition duration-500"></div>
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/onboarding?step=choose")}
+                  className="relative bg-white text-primary hover:bg-white/95 hover:shadow-2xl hover:shadow-white/20 text-lg font-bold px-12 py-6 h-auto transition-all duration-500 hover:scale-105 rounded-3xl border-2 border-white"
+                  data-event="cta-solicitar-acceso-final"
+                >
+                  <Zap className="h-5 w-5 mr-3" />
+                  {t("landing:cta_access")}
+                  <ArrowRight className="h-5 w-5 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
+                </Button>
               </div>
-            </div>
+              
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-white/10 via-white/20 to-white/10 rounded-3xl blur opacity-40 group-hover:opacity-60 transition duration-500"></div>
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  onClick={() => navigate("/onboarding?step=validate")}
+                  className="relative border-2 border-white/60 text-white hover:bg-white/15 hover:border-white hover:shadow-xl hover:shadow-white/10 text-lg font-semibold px-12 py-6 h-auto transition-all duration-500 hover:scale-105 rounded-3xl backdrop-blur-xl"
+                  data-event="cta-validar-acceso-final"
+                >
+                  <Target className="h-5 w-5 mr-3 group-hover:rotate-45 transition-transform duration-300" />
+                  {t("landing:exness_have")}
+                </Button>
+              </div>
+            </motion.div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                onClick={() => navigate("/onboarding?step=choose")}
-                className="bg-white text-primary hover:bg-white/90 rounded-2xl"
-                data-event="cta-solicitar-acceso-final"
-              >
-                {t("landing:cta_access")}
-                <ArrowRight className="h-5 w-5 ml-2" />
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/onboarding?step=validate")}
-                className="border-white text-white hover:bg-white/10 rounded-2xl"
-                data-event="cta-validar-acceso-final"
-              >
-                <Target className="h-5 w-5 mr-2" />
-                {t("landing:exness_have")}
-              </Button>
-            </div>
-            
-            {/* Additional option for non-affiliated users */}
-            <div className="mt-4">
-              <Button 
-                variant="link"
-                onClick={() => navigate("/onboarding?step=validate")}
-                className="text-white/70 hover:text-white text-sm"
-                data-event="cta-no-afiliado-final"
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Tengo cuenta pero no estoy afiliado a Tálamo
-              </Button>
-            </div>
+            {/* Enhanced additional option for non-affiliated users */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="mt-6"
+            >
+              <div className="group relative inline-block">
+                <div className="absolute -inset-2 bg-white/5 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                <Button 
+                  variant="link"
+                  onClick={() => navigate("/onboarding?step=validate")}
+                  className="relative text-white/70 hover:text-white text-base font-medium px-6 py-3 rounded-2xl transition-all duration-300 hover:bg-white/10 backdrop-blur-sm"
+                  data-event="cta-no-afiliado-final"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Tengo cuenta pero no estoy afiliado a Tálamo
+                </Button>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
