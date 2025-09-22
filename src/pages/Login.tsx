@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, X } from 'lucide-react';
 import { signIn, resetPassword } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 
@@ -105,6 +105,16 @@ export default function LoginPage() {
   if (showResetForm) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        {/* Close button to return to home */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/')}
+          className="fixed top-4 right-4 z-50 text-muted-foreground hover:text-foreground bg-background/80 backdrop-blur-sm border border-line hover:bg-surface"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+        
         <Card className="w-full max-w-md border-line bg-surface">
           <CardHeader className="space-y-2">
             <Button 
@@ -152,6 +162,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {/* Close button to return to home */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => navigate('/')}
+        className="fixed top-4 right-4 z-50 text-muted-foreground hover:text-foreground bg-background/80 backdrop-blur-sm border border-line hover:bg-surface"
+      >
+        <X className="h-5 w-5" />
+      </Button>
+      
       <Card className="w-full max-w-md border-line bg-surface">
         <CardHeader className="space-y-2">
           <CardTitle className="text-2xl text-foreground">Iniciar sesión</CardTitle>
