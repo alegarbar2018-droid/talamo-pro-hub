@@ -92,7 +92,7 @@ const Index = () => {
               <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight">
                 <div className="relative">
                   <div className="text-white">Trading serio.</div>
-                  <span className="bg-gradient-primary bg-clip-text text-transparent">Sin humo</span>
+                  <span className="text-primary">Sin humo</span>
                   <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-40 h-2 bg-gradient-primary rounded-full opacity-60"></div>
                 </div>
               </h1>
