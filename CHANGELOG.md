@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Language detection via URL query, localStorage, and browser settings
   - React integration with `react-i18next` hooks
   - Language switcher component (only visible when `i18n_v1` flag is ON)
+  - Navigation and landing page integration with translation keys
 - **Locale Utilities** (`src/lib/locale.ts`) - Number and date formatting helpers:
   - Currency formatting with proper locale support
   - Percentage formatting with configurable decimals
@@ -55,6 +56,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Mock API response handling
 
 ### Changed (Internal - No User Impact)
+- **Navigation Internationalization** (`src/components/Navigation.tsx`) - Navigation labels now read from i18n translation files:
+  - Menu items (Academia, Señales, Copy Trading, Herramientas) use translation keys
+  - CTA buttons (Iniciar Sesión, Comenzar) use translation system
+  - Language switcher integrated into navigation bar (only visible with `i18n_v1` flag)
+  - No visible changes when flag is OFF - maintains exact same Spanish text
+- **Landing Page Internationalization** (`src/pages/Index.tsx`) - Hero section and CTAs now use translation system:
+  - Hero title and subtitle use translation keys
+  - Call-to-action buttons read from translation files
+  - Document language automatically updates with i18n language selection
+  - No visual changes when flag is OFF - preserves original Spanish content
 - **Environment Configuration** - Migrated hardcoded constants to environment variables:
   - `PARTNER_ID` now reads from `VITE_PARTNER_ID` (maintains same visible value)
   - `PARTNER_LINK` now reads from `VITE_PARTNER_LINK` (maintains same behavior)
@@ -80,10 +91,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Performance Baselines** - Render time testing for key components
 - **Feature Flag Testing** - Validation of flag behavior in various states
 - **i18n Smoke Tests** (`src/__tests__/i18n.smoke.test.tsx`) - Internationalization testing:
-  - Flag OFF: Ensures no visible changes, LanguageSwitcher hidden
-  - Flag ON: Language switcher renders, translation system works
+  - Flag OFF: Ensures no visible changes, LanguageSwitcher hidden, navigation shows Spanish text
+  - Flag ON: Language switcher renders in navigation, translation system works
   - Language switching doesn't break existing functionality
   - Translation file loading and key availability validation
+  - Navigation and landing page translation integration tests
 
 ### Documentation
 - **NO-BREAK GUARDRAILS** (`docs/NO-BREAK-GUARDRAILS.md`) - Comprehensive safety documentation:
@@ -103,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Zero Breaking Changes** - Existing API contracts maintained exactly
 - **Feature Flags OFF** - All new features disabled by default
 - **Same User Experience** - No visible changes to end users
-- **i18n System Reversible** - With `i18n_v1` OFF, no translation logic active
+- **i18n System Reversible** - With `i18n_v1` OFF, no translation logic active, maintains original Spanish text
+- **Navigation Translation Ready** - Complete translation integration that's invisible until flag enabled
 
 ### Migration Path
 - Environment variables are **optional** - fallbacks maintain existing behavior

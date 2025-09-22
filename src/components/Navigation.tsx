@@ -4,16 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, X, Target, TrendingUp, GraduationCap, Users, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation(["nav"]);
 
   const navItems = [
-    { label: "Academia", href: "/academy", icon: GraduationCap, description: "Aprende trading profesional" },
-    { label: "Señales", href: "/signals", icon: TrendingUp, description: "Señales verificadas en vivo" },
-    { label: "Copy Trading", href: "/copy-trading", icon: Users, description: "Copia a traders exitosos" },
-    { label: "Herramientas", href: "/tools", icon: Zap, description: "Tools profesionales" }
+    { label: t("nav:academy"), href: "/academy", icon: GraduationCap, description: "Aprende trading profesional" },
+    { label: t("nav:signals"), href: "/signals", icon: TrendingUp, description: "Señales verificadas en vivo" },
+    { label: t("nav:copy"), href: "/copy-trading", icon: Users, description: "Copia a traders exitosos" },
+    { label: t("nav:tools"), href: "/tools", icon: Zap, description: "Tools profesionales" }
   ];
 
   const handleNavigation = (href: string) => {
@@ -54,29 +57,31 @@ const Navigation = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
+            <LanguageSwitcher />
             <Button 
               variant="ghost" 
               onClick={() => navigate("/login")}
               className="text-sm font-medium"
             >
-              Iniciar Sesión
+              {t("nav:login")}
             </Button>
             <Button 
               onClick={() => navigate("/onboarding?step=choose")}
               className="bg-gradient-primary hover:shadow-lg text-sm font-medium px-6"
             >
-              Comenzar
+              {t("nav:start")}
             </Button>
           </div>
 
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center gap-2">
+            <LanguageSwitcher />
             <Button 
               variant="ghost" 
               onClick={() => navigate("/login")}
               className="text-xs px-3 py-2 h-8"
             >
-              Login
+              {t("nav:login")}
             </Button>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -122,13 +127,13 @@ const Navigation = () => {
                       onClick={() => handleNavigation("/login")}
                       className="w-full h-11 text-sm font-medium"
                     >
-                      Iniciar Sesión
+                      {t("nav:login")}
                     </Button>
                     <Button 
                       onClick={() => handleNavigation("/onboarding?step=choose")}
                       className="w-full bg-gradient-primary hover:shadow-lg h-11 text-sm font-medium"
                     >
-                      Comenzar Ahora
+                      {t("nav:start_now")}
                     </Button>
                   </div>
                 </div>

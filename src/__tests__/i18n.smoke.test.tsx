@@ -61,6 +61,23 @@ describe('i18n System - Flag OFF (Default)', () => {
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 
+  it('navigation renders without errors and shows Spanish text', () => {
+    const Wrapper = createWrapper();
+    
+    render(
+      <Wrapper>
+        <Index />
+      </Wrapper>
+    );
+
+    // Navigation should render without errors and show Spanish text
+    expect(screen.getByText(/Academia/i)).toBeInTheDocument();
+    expect(screen.getByText(/Señales/i)).toBeInTheDocument();
+    
+    // No language switcher in navigation
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+  });
+
   it('LanguageSwitcher returns null when flag is OFF', () => {
     const Wrapper = createWrapper();
     
@@ -110,6 +127,23 @@ describe('i18n System - Flag ON (QA Mode)', () => {
 
     // Basic content should still be present
     expect(screen.getByText(/Trading/i)).toBeInTheDocument();
+  });
+
+  it('navigation renders with LanguageSwitcher when flag is ON', () => {
+    const Wrapper = createWrapper();
+    
+    render(
+      <Wrapper>
+        <Index />
+      </Wrapper>
+    );
+
+    // Language switcher should be present in navigation
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    
+    // Navigation content should still render
+    expect(screen.getByText(/Academia/i)).toBeInTheDocument();
+    expect(screen.getByText(/Señales/i)).toBeInTheDocument();
   });
 
   it('handles language switching without breaking render', async () => {

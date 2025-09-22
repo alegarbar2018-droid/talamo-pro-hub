@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import {
   Check
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { PARTNER_ID } from "@/lib/constants";
 import WhyWeDoIt from "@/components/WhyWeDoIt";
 import HowItWorks from "@/components/HowItWorks";
@@ -31,6 +32,12 @@ const Index = () => {
   const navigate = useNavigate();
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { t, i18n } = useTranslation(["landing", "nav", "common"]);
+
+  // Set document language when i18n language changes
+  useEffect(() => {
+    document.documentElement.lang = i18n.language || "es";
+  }, [i18n.language]);
 
   const principles = [
     "Trading profesional, sin promesas vacías",
@@ -72,7 +79,7 @@ const Index = () => {
               className="inline-flex items-center gap-3 bg-surface/90 backdrop-blur-xl border-2 border-primary/20 text-primary px-8 py-4 rounded-2xl text-sm font-semibold shadow-lg shadow-primary/10"
             >
               <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-              Plataforma Exclusiva de Trading Profesional
+              {t("landing:exclusive_platform")}
               <Award className="w-4 h-4 text-primary" />
             </motion.div>
             
@@ -83,18 +90,15 @@ const Index = () => {
               className="space-y-8"
             >
               <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight">
-                <span className="text-foreground">Trading</span>
-                <br />
-                <span className="bg-gradient-primary bg-clip-text text-transparent relative">
-                  Profesional
+                <span className="bg-gradient-primary bg-clip-text text-transparent relative whitespace-pre-line">
+                  {t("landing:professional_trading")}
                   <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-40 h-2 bg-gradient-primary rounded-full opacity-60"></div>
                 </span>
               </h1>
               
               <div className="max-w-4xl mx-auto">
                 <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-medium tracking-wide">
-                  <span className="text-primary font-semibold">Únete a traders profesionales</span> que operan con Exness a través de Tálamo. 
-                  Academia estructurada, señales auditadas en tiempo real, copy trading inteligente.
+                  {t("landing:hero_subtitle")}
                   <div className="flex flex-wrap justify-center gap-6 mt-8">
                     <div className="group relative">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-teal/30 via-primary/20 to-accent/30 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
@@ -148,7 +152,7 @@ const Index = () => {
                 ></motion.div>
                 <span className="relative flex items-center gap-3 font-semibold">
                   <Zap className="h-5 w-5" />
-                  Solicitar acceso exclusivo
+                  {t("landing:cta_access")}
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </span>
               </Button>
@@ -161,7 +165,7 @@ const Index = () => {
                 data-event="cta-ya-tengo-cuenta-hero"
               >
                 <Target className="h-5 w-5 mr-3 group-hover:rotate-90 transition-transform duration-300" />
-                Ya tengo cuenta en Exness
+                {t("landing:exness_have")}
               </Button>
             </motion.div>
             
@@ -294,10 +298,9 @@ const Index = () => {
 
               <div className="space-y-6">
                 <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-                  <span className="block mb-2">¿Listo para</span>
                   <span className="relative">
                     <span className="bg-gradient-to-r from-white via-white/90 to-white bg-clip-text text-transparent">
-                      transformar tu trading?
+                      {t("landing:ready_transform")}
                     </span>
                     <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-full"></div>
                   </span>
@@ -305,10 +308,10 @@ const Index = () => {
                 
                 <div className="max-w-3xl mx-auto space-y-4">
                   <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-medium">
-                    Únete a una comunidad selecta de traders profesionales
+                    {t("landing:join_community")}
                   </p>
                   <p className="text-lg text-white/70 leading-relaxed">
-                    Accede a metodología probada, señales auditadas y herramientas de trading institucional
+                    {t("landing:access_methodology")}
                   </p>
                 </div>
 
@@ -339,7 +342,7 @@ const Index = () => {
                 className="bg-white text-primary hover:bg-white/90 rounded-2xl"
                 data-event="cta-solicitar-acceso-final"
               >
-                Solicitar acceso exclusivo
+                {t("landing:cta_access")}
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
               <Button 
@@ -350,7 +353,7 @@ const Index = () => {
                 data-event="cta-validar-acceso-final"
               >
                 <Target className="h-5 w-5 mr-2" />
-                Ya tengo cuenta en Exness
+                {t("landing:exness_have")}
               </Button>
             </div>
             
