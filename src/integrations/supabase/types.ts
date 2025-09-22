@@ -681,6 +681,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_sensitive_profile_for_admin: {
+        Args: { justification: string; target_user_id: string }
+        Returns: Json
+      }
       has_admin_permission: {
         Args: { _action: string; _resource: string }
         Returns: boolean
