@@ -282,11 +282,8 @@ const Index = () => {
       {/* CTA Section */}
       <section className="bg-gradient-primary">
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Subtle background effects */}
+          {/* Clean premium background */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5"></div>
-          
-          {/* Subtle grid pattern overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-40"></div>
           <div className="relative text-center space-y-8">
             <div className="space-y-6">
               {/* Premium badge with enhanced effects */}
