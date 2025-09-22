@@ -278,13 +278,58 @@ const Index = () => {
       <section className="bg-gradient-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-white">
-                ¿Listo para empezar?
-              </h2>
-              <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                Únete a Tálamo y comienza tu camino hacia el trading profesional
-              </p>
+            <div className="space-y-8">
+              {/* Premium badge */}
+              <div className="inline-block">
+                <div className="group relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-white/30 via-white/50 to-white/30 rounded-full blur opacity-50 group-hover:opacity-70 transition duration-500"></div>
+                  <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-6 py-2 flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                    <span className="text-sm font-medium text-white/90 tracking-wider uppercase">
+                      Acceso Exclusivo
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                  <span className="block mb-2">¿Listo para</span>
+                  <span className="relative">
+                    <span className="bg-gradient-to-r from-white via-white/90 to-white bg-clip-text text-transparent">
+                      transformar tu trading?
+                    </span>
+                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-full"></div>
+                  </span>
+                </h2>
+                
+                <div className="max-w-3xl mx-auto space-y-4">
+                  <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-medium">
+                    Únete a una comunidad selecta de traders profesionales
+                  </p>
+                  <p className="text-lg text-white/70 leading-relaxed">
+                    Accede a metodología probada, señales auditadas y herramientas de trading institucional
+                  </p>
+                </div>
+
+                {/* Premium features highlight */}
+                <div className="flex flex-wrap justify-center gap-6 pt-4">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
+                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-300"></div>
+                    <span className="text-sm text-white/90 font-medium">Academia Estructurada</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
+                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-300"></div>
+                    <span className="text-sm text-white/90 font-medium">Señales Auditadas</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
+                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-300"></div>
+                    <span className="text-sm text-white/90 font-medium">Copy Trading Elite</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
