@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 
 const Signals = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['signals']);
   const [filters, setFilters] = useState({
     market: "all",
     timeframe: "all",
@@ -88,12 +90,18 @@ const Signals = () => {
   });
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Activa": return "bg-teal/20 text-teal border-teal/30";
-      case "TP alcanzado": return "bg-success/20 text-success border-success/30";
-      case "SL alcanzado": return "bg-destructive/20 text-destructive border-destructive/30";
-      default: return "bg-muted/20 text-muted-foreground border-muted/30";
-    }
+    const statusMap: Record<string, string> = {
+      "Activa": "bg-teal/20 text-teal border-teal/30",
+      "Active": "bg-teal/20 text-teal border-teal/30",
+      "Ativo": "bg-teal/20 text-teal border-teal/30",
+      "TP alcanzado": "bg-success/20 text-success border-success/30",
+      "TP reached": "bg-success/20 text-success border-success/30",
+      "TP atingido": "bg-success/20 text-success border-success/30",
+      "SL alcanzado": "bg-destructive/20 text-destructive border-destructive/30",
+      "SL reached": "bg-destructive/20 text-destructive border-destructive/30",
+      "SL atingido": "bg-destructive/20 text-destructive border-destructive/30",
+    };
+    return statusMap[status] || "bg-muted/20 text-muted-foreground border-muted/30";
   };
 
   const getTypeIcon = (type: string) => {
@@ -108,8 +116,8 @@ const Signals = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Señales Verificadas</h1>
-              <p className="text-muted-foreground">Análisis profesional con transparencia total</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('signals:title')}</h1>
+              <p className="text-muted-foreground">{t('signals:subtitle')}</p>
             </div>
             <Button 
               variant="ghost" 
@@ -117,7 +125,7 @@ const Signals = () => {
               className="text-teal hover:bg-teal/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Dashboard
+              {t('signals:back_to_dashboard')}
             </Button>
           </div>
         </div>
@@ -128,8 +136,7 @@ const Signals = () => {
         <Alert className="border-warning/20 bg-warning/10 mb-6">
           <AlertTriangle className="h-4 w-4 text-warning" />
           <AlertDescription className="text-foreground">
-            <strong>Aviso importante:</strong> Las señales son análisis educativos, no recomendaciones de inversión. 
-            El trading conlleva riesgo de pérdida. Siempre use gestión de riesgo apropiada.
+            <strong>{t('signals:risk_warning.title')}</strong> {t('signals:risk_warning.description')}
           </AlertDescription>
         </Alert>
 
@@ -138,13 +145,13 @@ const Signals = () => {
           <CardHeader>
             <CardTitle className="text-foreground flex items-center gap-2">
               <Filter className="h-5 w-5 text-teal" />
-              Filtros
+              {t('signals:filters.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Mercado</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">{t('signals:filters.market')}</label>
                 <Select value={filters.market} onValueChange={(value) => 
                   setFilters({ ...filters, market: value })
                 }>
@@ -152,7 +159,7 @@ const Signals = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los mercados</SelectItem>
+                    <SelectItem value="all">{t('signals:filters.all_markets')}</SelectItem>
                     <SelectItem value="XAUUSD">XAUUSD</SelectItem>
                     <SelectItem value="EURUSD">EURUSD</SelectItem>
                     <SelectItem value="GBPJPY">GBPJPY</SelectItem>
@@ -162,7 +169,7 @@ const Signals = () => {
               </div>
               
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Timeframe</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">{t('signals:filters.timeframe')}</label>
                 <Select value={filters.timeframe} onValueChange={(value) => 
                   setFilters({ ...filters, timeframe: value })
                 }>
@@ -170,7 +177,7 @@ const Signals = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los TF</SelectItem>
+                    <SelectItem value="all">{t('signals:filters.all_timeframes')}</SelectItem>
                     <SelectItem value="M15">M15</SelectItem>
                     <SelectItem value="H1">H1</SelectItem>
                     <SelectItem value="H4">H4</SelectItem>
@@ -180,7 +187,7 @@ const Signals = () => {
               </div>
               
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">RR Mínimo</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">{t('signals:filters.min_rr')}</label>
                 <Select value={filters.minRR} onValueChange={(value) => 
                   setFilters({ ...filters, minRR: value })
                 }>
@@ -188,7 +195,7 @@ const Signals = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Cualquier RR</SelectItem>
+                    <SelectItem value="all">{t('signals:filters.any_rr')}</SelectItem>
                     <SelectItem value="1.5">1.5+</SelectItem>
                     <SelectItem value="2.0">2.0+</SelectItem>
                     <SelectItem value="3.0">3.0+</SelectItem>
@@ -216,7 +223,7 @@ const Signals = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={getStatusColor(signal.status)}>
-                      {signal.status}
+                      {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, '_')}`) || signal.status}
                     </Badge>
                     <Badge variant="outline" className="border-teal text-teal">
                       RR 1:{signal.rr}
@@ -229,50 +236,50 @@ const Signals = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Signal Details */}
                   <div className="space-y-4">
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="text-muted-foreground">Entrada:</span>
-                        <div className="font-mono font-medium text-foreground">{signal.entry}</div>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Stop Loss:</span>
-                        <div className="font-mono font-medium text-destructive">{signal.sl}</div>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Take Profit:</span>
-                        <div className="font-mono font-medium text-success">{signal.tp}</div>
-                      </div>
-                    </div>
+                     <div className="grid grid-cols-3 gap-4 text-sm">
+                       <div>
+                         <span className="text-muted-foreground">{t('signals:signal.entry')}</span>
+                         <div className="font-mono font-medium text-foreground">{signal.entry}</div>
+                       </div>
+                       <div>
+                         <span className="text-muted-foreground">{t('signals:signal.stop_loss')}</span>
+                         <div className="font-mono font-medium text-destructive">{signal.sl}</div>
+                       </div>
+                       <div>
+                         <span className="text-muted-foreground">{t('signals:signal.take_profit')}</span>
+                         <div className="font-mono font-medium text-success">{signal.tp}</div>
+                       </div>
+                     </div>
                     
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         {signal.publishedAt}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Target className="h-4 w-4" />
-                        Confianza {signal.confidence}
-                      </div>
+                       <div className="flex items-center gap-1">
+                         <Target className="h-4 w-4" />
+                         {t('signals:signal.confidence')} {signal.confidence}
+                       </div>
                     </div>
                   </div>
                   
                   {/* Analysis */}
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4 text-teal" />
-                        Lógica del análisis
-                      </h4>
+                     <div>
+                       <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                         <BarChart3 className="h-4 w-4 text-teal" />
+                         {t('signals:signal.analysis_logic')}
+                       </h4>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {signal.logic}
                       </p>
                     </div>
                     
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                        <AlertTriangle className="h-4 w-4 text-warning" />
-                        Invalidación
-                      </h4>
+                     <div>
+                       <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                         <AlertTriangle className="h-4 w-4 text-warning" />
+                         {t('signals:signal.invalidation')}
+                       </h4>
                       <p className="text-sm text-muted-foreground">
                         {signal.invalidation}
                       </p>
@@ -280,16 +287,16 @@ const Signals = () => {
                   </div>
                 </div>
                 
-                <div className="flex gap-3 mt-6 pt-4 border-t border-line">
-                  <Button variant="outline" className="border-teal text-teal hover:bg-teal/10">
-                    <Eye className="h-4 w-4 mr-2" />
-                    Ver análisis completo
-                  </Button>
-                  <Button variant="outline" className="border-line">
-                    <Activity className="h-4 w-4 mr-2" />
-                    Ver gráfico
-                  </Button>
-                </div>
+                 <div className="flex gap-3 mt-6 pt-4 border-t border-line">
+                   <Button variant="outline" className="border-teal text-teal hover:bg-teal/10">
+                     <Eye className="h-4 w-4 mr-2" />
+                     {t('signals:signal.view_full_analysis')}
+                   </Button>
+                   <Button variant="outline" className="border-line">
+                     <Activity className="h-4 w-4 mr-2" />
+                     {t('signals:signal.view_chart')}
+                   </Button>
+                 </div>
               </CardContent>
             </Card>
           ))}
@@ -299,14 +306,14 @@ const Signals = () => {
           <Card className="border-line bg-surface">
             <CardContent className="text-center py-12">
               <p className="text-muted-foreground">
-                No se encontraron señales con los filtros seleccionados.
+                {t('signals:empty')}
               </p>
               <Button 
                 variant="outline" 
                 onClick={() => setFilters({ market: "all", timeframe: "all", minRR: "all" })}
                 className="mt-4 border-teal text-teal hover:bg-teal/10"
               >
-                Limpiar filtros
+                {t('signals:clear_filters')}
               </Button>
             </CardContent>
           </Card>
@@ -315,28 +322,28 @@ const Signals = () => {
         {/* Historical Performance */}
         <Card className="border-line bg-surface mt-8">
           <CardHeader>
-            <CardTitle className="text-foreground">Rendimiento Histórico</CardTitle>
+            <CardTitle className="text-foreground">{t('signals:performance.title')}</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Estadísticas de señales de los últimos 30 días
+              {t('signals:performance.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">67%</div>
-                <div className="text-sm text-muted-foreground">Win Rate</div>
+                <div className="text-sm text-muted-foreground">{t('signals:performance.win_rate')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">2.1</div>
-                <div className="text-sm text-muted-foreground">RR Promedio</div>
+                <div className="text-sm text-muted-foreground">{t('signals:performance.avg_rr')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">24</div>
-                <div className="text-sm text-muted-foreground">Señales publicadas</div>
+                <div className="text-sm text-muted-foreground">{t('signals:performance.published_signals')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">+12.3%</div>
-                <div className="text-sm text-muted-foreground">Rendimiento simulado</div>
+                <div className="text-sm text-muted-foreground">{t('signals:performance.simulated_return')}</div>
               </div>
             </div>
           </CardContent>

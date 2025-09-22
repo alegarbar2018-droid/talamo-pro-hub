@@ -17,7 +17,7 @@
     },
     "roles": {
       "admin": "Administrador",
-      "analyst": "Analista", 
+      "analyst": "Analista",
       "content": "Contenido",
       "support": "Soporte",
       "user": "Usuario"
@@ -37,10 +37,23 @@
     "logout": "Cerrar Sesión"
   },
   "breadcrumbs": {
-    "home": "Inicio", 
+    "home": "Inicio",
     "admin": "Administración",
     "dashboard": "Dashboard",
-    "users": "Usuarios"
+    "users": "Usuarios",
+    "academy": "Academia",
+    "signals": "Señales",
+    "copy": "Copy Trading",
+    "tools": "Herramientas",
+    "affiliation": "Afiliación",
+    "lms": "LMS",
+    "eas": "EAs",
+    "competitions": "Competencias",
+    "community": "Comunidad",
+    "referrals": "Referidos",
+    "integrations": "Integraciones",
+    "audit": "Auditoría",
+    "settings": "Configuración"
   },
   "toasts": {
     "role_updated": "Rol actualizado",

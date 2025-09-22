@@ -1,0 +1,44 @@
+{
+  "title": "Sinais Verificados",
+  "subtitle": "Análise profissional com transparência total",
+  "back_to_dashboard": "Painel",
+  "risk_warning": {
+    "title": "Aviso importante:",
+    "description": "Sinais são análises educacionais, não recomendações de investimento. Trading envolve risco de perda. Sempre use gestão de risco apropriada."
+  },
+  "filters": {
+    "title": "Filtros",
+    "market": "Mercado",
+    "timeframe": "Timeframe",
+    "min_rr": "RR Mínimo",
+    "all_markets": "Todos os mercados",
+    "all_timeframes": "Todos os TFs",
+    "any_rr": "Qualquer RR"
+  },
+  "signal": {
+    "entry": "Entrada:",
+    "stop_loss": "Stop Loss:",
+    "take_profit": "Take Profit:",
+    "published": "Publicado",
+    "confidence": "Confiança",
+    "analysis_logic": "Lógica da análise",
+    "invalidation": "Invalidação",
+    "status": {
+      "active": "Ativo",
+      "tp_reached": "TP atingido",
+      "sl_reached": "SL atingido"
+    },
+    "view_full_analysis": "Ver análise completa",
+    "view_chart": "Ver gráfico"
+  },
+  "empty": "Nenhum sinal encontrado com os filtros selecionados.",
+  "clear_filters": "Limpar filtros",
+  "performance": {
+    "title": "Desempenho Histórico",
+    "subtitle": "Estatísticas de sinais dos últimos 30 dias",
+    "win_rate": "Win Rate",
+    "avg_rr": "RR Médio",
+    "published_signals": "Sinais publicados",
+    "simulated_return": "Retorno simulado"
+  }
+}

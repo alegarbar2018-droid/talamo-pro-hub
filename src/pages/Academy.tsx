@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 const Academy = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['academy']);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>(['0.1', '0.2', '1.1']);
 
@@ -109,10 +111,10 @@ const Academy = () => {
                 className="text-teal hover:bg-teal/10"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver a niveles
+                {t('academy:back_to_levels')}
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Nivel {level.level}: {level.title}</h1>
+                <h1 className="text-2xl font-bold text-foreground">{t('academy:levels.level')} {level.level}: {level.title}</h1>
                 <p className="text-muted-foreground">{level.description}</p>
               </div>
             </div>
@@ -150,13 +152,13 @@ const Academy = () => {
                             {lesson.code}. {lesson.title}
                           </CardTitle>
                           <CardDescription className="text-muted-foreground">
-                            {lesson.bullets.length} conceptos clave
+                            {lesson.bullets.length} {t('academy:lesson.key_concepts')}
                           </CardDescription>
                         </div>
                       </div>
                       {isCompleted && (
                         <Badge variant="outline" className="border-success text-success">
-                          Completada
+                          {t('academy:lesson.completed_badge')}
                         </Badge>
                       )}
                     </div>
@@ -165,7 +167,7 @@ const Academy = () => {
                   {isAvailable && (
                     <CardContent>
                       <div className="space-y-3">
-                        <h4 className="font-semibold text-foreground">Objetivos de la lección:</h4>
+                        <h4 className="font-semibold text-foreground">{t('academy:lesson.objectives')}</h4>
                         <ul className="space-y-2">
                           {lesson.bullets.map((bullet, bulletIndex) => (
                             <li key={bulletIndex} className="flex items-start gap-2 text-muted-foreground">
@@ -181,7 +183,7 @@ const Academy = () => {
                             className="border-teal text-teal hover:bg-teal/10"
                           >
                             <FileText className="h-4 w-4 mr-2" />
-                            Ver contenido
+                            {t('academy:lesson.view_content')}
                           </Button>
                           {!isCompleted && (
                             <Button 
@@ -189,7 +191,7 @@ const Academy = () => {
                               className="bg-gradient-primary hover:shadow-glow"
                             >
                               <CheckCircle className="h-4 w-4 mr-2" />
-                              Marcar completada
+                              {t('academy:lesson.mark_completed')}
                             </Button>
                           )}
                         </div>
@@ -211,8 +213,8 @@ const Academy = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Academia Tálamo</h1>
-              <p className="text-muted-foreground">Formación estructurada de trading profesional</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('academy:title')}</h1>
+              <p className="text-muted-foreground">{t('academy:subtitle')}</p>
             </div>
             <Button 
               variant="ghost" 
@@ -220,7 +222,7 @@ const Academy = () => {
               className="text-teal hover:bg-teal/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Dashboard
+              {t('academy:back_to_dashboard')}
             </Button>
           </div>
         </div>
@@ -258,13 +260,13 @@ const Academy = () => {
                       )}
                       <div>
                         <Badge variant="outline" className="mb-1">
-                          Nivel {level.level}
+                          {t('academy:levels.level')} {level.level}
                         </Badge>
                       </div>
                     </div>
                     {progress === 100 && (
                       <Badge className="bg-success text-success-foreground">
-                        Completado
+                        {t('academy:levels.completed')}
                       </Badge>
                     )}
                   </div>
@@ -279,12 +281,12 @@ const Academy = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />
-                      {totalLessons} lecciones
+                      {totalLessons} {t('academy:progress.lessons')}
                     </div>
                     
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Progreso</span>
+                        <span className="text-muted-foreground">{t('academy:levels.level')}</span>
                         <span className="text-foreground">{completedCount}/{totalLessons}</span>
                       </div>
                       <Progress value={progress} className="h-2" />
@@ -295,11 +297,11 @@ const Academy = () => {
                         variant="outline" 
                         className="w-full border-teal text-teal hover:bg-teal/10"
                       >
-                        {progress > 0 ? 'Continuar' : 'Comenzar'}
+                        {progress > 0 ? t('academy:levels.continue') : t('academy:levels.start')}
                       </Button>
                     ) : (
                       <div className="text-xs text-muted-foreground text-center py-2">
-                        Completa el nivel anterior para desbloquear
+                        {t('academy:levels.unlock_message')}
                       </div>
                     )}
                   </div>
@@ -312,28 +314,28 @@ const Academy = () => {
         {/* Progress Summary */}
         <Card className="border-line bg-surface mt-8">
           <CardHeader>
-            <CardTitle className="text-foreground">Tu Progreso General</CardTitle>
+            <CardTitle className="text-foreground">{t('academy:progress.title')}</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Resumen de tu avance en la academia
+              {t('academy:progress.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">{completedLessons.length}</div>
-                <div className="text-sm text-muted-foreground">Lecciones completadas</div>
+                <div className="text-sm text-muted-foreground">{t('academy:progress.lessons_completed')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">
                   {syllabus.filter(level => getLevelProgress(level) === 100).length}
                 </div>
-                <div className="text-sm text-muted-foreground">Niveles completados</div>
+                <div className="text-sm text-muted-foreground">{t('academy:progress.levels_completed')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-teal">
                   {Math.round((completedLessons.length / syllabus.reduce((acc, level) => acc + level.lessons.length, 0)) * 100)}%
                 </div>
-                <div className="text-sm text-muted-foreground">Progreso total</div>
+                <div className="text-sm text-muted-foreground">{t('academy:progress.total_progress')}</div>
               </div>
             </div>
           </CardContent>

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- i18n infrastructure with Spanish/English/Portuguese support (flagged with `i18n_v1`)
+- LanguageSwitcher component (only visible with flag enabled)
+- Translation namespaces: common, nav, landing, dashboard, admin, forms, table, academy, signals, copy, tools
+- Locale utilities for number and date formatting
+- Base translation files for all supported languages
+
+### Changed
+- Navigation and landing page texts now read from i18n (flagged, no visible change by default)
+- Dashboard and Admin panels support i18n translations (flagged)
+- Academy, Signals, Copy Trading, and Tools pages internationalized (flagged)
+- AdminBreadcrumbs component uses translation keys
+- All UI strings in internal pages wrapped with t() functions
+
+### Technical
+- Added react-i18next, i18next, and i18next-browser-languagedetector dependencies
+- Language detection: URL query → localStorage → browser → fallback to Spanish
+- Added comprehensive smoke tests for i18n functionality
+- Extended existing test suites to cover flag-controlled behavior
+
+### Notes
+- **No behavior change by default** - all i18n features are behind `i18n_v1` flag
+- To enable for testing: `VITE_TALAMO_FLAGS=i18n_v1 bun dev`
+- Fallback language is Spanish for all missing translations
+- Language switcher only appears when flag is enabled
+
 ### Added (Flagged Features - OFF by default)
 - **Feature Flags System** (`src/lib/flags.ts`) - Complete feature flag system supporting:
   - `academy_v1` - Academia module infrastructure

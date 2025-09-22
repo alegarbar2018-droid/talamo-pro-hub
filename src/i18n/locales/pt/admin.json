@@ -40,7 +40,20 @@
     "home": "Início",
     "admin": "Administração",
     "dashboard": "Painel",
-    "users": "Usuários"
+    "users": "Usuários",
+    "academy": "Academia",
+    "signals": "Sinais",
+    "copy": "Copy Trading",
+    "tools": "Ferramentas",
+    "affiliation": "Afiliação",
+    "lms": "LMS",
+    "eas": "EAs",
+    "competitions": "Competições",
+    "community": "Comunidade",
+    "referrals": "Indicações",
+    "integrations": "Integrações",
+    "audit": "Auditoria",
+    "settings": "Configurações"
   },
   "toasts": {
     "role_updated": "Papel atualizado",

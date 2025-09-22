@@ -1,0 +1,61 @@
+{
+  "title": "Ferramentas de Trading",
+  "subtitle": "Calculadoras e utilitários profissionais",
+  "back_to_dashboard": "Painel",
+  "tools": {
+    "risk_calculator": "Calculadora de Risco",
+    "dd_panel": "Painel de Drawdown",
+    "journal": "Diário de Trading",
+    "audit": "Auditoria MT4/MT5"
+  },
+  "risk_calculator": {
+    "title": "Calculadora de Risco",
+    "subtitle": "Determine o tamanho de posição ideal baseado na sua gestão de risco",
+    "balance": "Saldo da conta ($)",
+    "risk_percent": "Risco por trade (%)",
+    "stop_loss": "Stop Loss (pips)",
+    "pip_value": "Valor do pip",
+    "calculate": "Calcular Tamanho da Posição",
+    "result": "lotes",
+    "result_subtitle": "Tamanho de posição recomendado",
+    "recommendation": "Recomendação:",
+    "recommendation_text": "Não arrisque mais de 1-2% do seu capital por operação. Esta calculadora é um guia, sempre ajuste de acordo com sua estratégia.",
+    "how_to_use": "Como usar:",
+    "step_1": "• Digite seu saldo atual",
+    "step_2": "• Defina seu % de risco por trade",
+    "step_3": "• Especifique a distância do SL",
+    "step_4": "• Selecione o valor do pip"
+  },
+  "drawdown_panel": {
+    "title": "Painel de Drawdown",
+    "subtitle": "Simule cenários de drawdown e planeje a recuperação",
+    "simulator_title": "Simulador de Drawdown",
+    "simulator_description": "Ferramenta para analisar o impacto de sequências perdedoras e planejar a recuperação",
+    "configure": "Configurar simulação"
+  },
+  "journal": {
+    "title": "Diário de Trading",
+    "subtitle": "Registre suas operações e reflexões para melhorar continuamente",
+    "date": "Data",
+    "instrument": "Instrumento",
+    "entry": "Entrada",
+    "exit": "Saída",
+    "result": "Resultado ($)",
+    "notes": "Notas e reflexões",
+    "notes_placeholder": "O que funcionou bem? O que você pode melhorar? Seguiu seu plano?",
+    "tags": "Tags (separadas por vírgula)",
+    "tags_placeholder": "rompimento, disciplina, análise",
+    "save": "Salvar no Diário"
+  },
+  "audit": {
+    "title": "Auditoria MT4/MT5",
+    "subtitle": "Ferramenta para análise de contas reais (somente leitura). Em breve.",
+    "security_notice": "Segurança total:",
+    "security_text": "Esta ferramenta funcionará apenas em modo somente leitura, sem capacidade de executar ordens ou modificar posições em sua conta de trading."
+  },
+  "alerts": {
+    "complete_fields": "Por favor, complete todos os campos",
+    "sl_positive": "O Stop Loss deve ser maior que 0",
+    "entry_saved": "Entrada salva no diário"
+  }
+}

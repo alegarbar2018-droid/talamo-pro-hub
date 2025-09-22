@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 const Tools = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['tools']);
   const [riskCalc, setRiskCalc] = useState({
     balance: "",
     riskPercent: "",
@@ -47,12 +49,12 @@ const Tools = () => {
     const pipValue = parseFloat(riskCalc.pipValue);
 
     if (!balance || !riskPercent || !slPips || !pipValue) {
-      alert("Por favor complete todos los campos");
+      alert(t('tools:alerts.complete_fields'));
       return;
     }
 
     if (slPips <= 0) {
-      alert("El Stop Loss debe ser mayor a 0");
+      alert(t('tools:alerts.sl_positive'));
       return;
     }
 
@@ -84,7 +86,7 @@ const Tools = () => {
       tags: ""
     });
     
-    alert("Entrada guardada en el journal");
+    alert(t('tools:alerts.entry_saved'));
   };
 
   const tools = [
@@ -124,8 +126,8 @@ const Tools = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Herramientas de Trading</h1>
-              <p className="text-muted-foreground">Calculadoras y utilidades profesionales</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('tools:title')}</h1>
+              <p className="text-muted-foreground">{t('tools:subtitle')}</p>
             </div>
             <Button 
               variant="ghost" 
@@ -133,7 +135,7 @@ const Tools = () => {
               className="text-teal hover:bg-teal/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Dashboard
+              {t('tools:back_to_dashboard')}
             </Button>
           </div>
         </div>

@@ -1,0 +1,55 @@
+{
+  "title": "Copy Trading Inteligente",
+  "subtitle": "Estrategias verificadas con transparencia total",
+  "back_to_dashboard": "Dashboard",
+  "risk_warning": {
+    "title": "Aviso de riesgo:",
+    "description": "El copy trading implica riesgo de pérdida. Los resultados pasados no garantizan rendimientos futuros. Configure siempre límites de riesgo apropiados para su capital."
+  },
+  "active_strategies": {
+    "title": "Tus Estrategias Activas",
+    "followed": "Estrategias seguidas",
+    "estimated_return": "Rendimiento estimado",
+    "max_drawdown": "Drawdown máximo"
+  },
+  "strategy": {
+    "conservative": "Conservador",
+    "moderate": "Moderado",
+    "aggressive": "Agresivo",
+    "verified": "Verificada",
+    "beta": "Beta",
+    "profit_factor": "Profit Factor:",
+    "max_dd": "Max DD:",
+    "green_months": "Meses verdes:",
+    "monthly_return": "Retorno mensual:",
+    "win_rate": "Win Rate",
+    "avg_rr": "RR Promedio:",
+    "total_trades": "Total trades:",
+    "instruments": "Instrumentos:",
+    "min_balance": "Balance mínimo recomendado:",
+    "configure_copy": "Configurar copia",
+    "following": "Siguiendo"
+  },
+  "risk_management": {
+    "title": "Gestión de Riesgo en Copy Trading",
+    "subtitle": "Lineamientos importantes para el copy trading seguro",
+    "golden_rules": "Reglas de oro",
+    "rule_1": "Nunca arriesgue más del 2-5% de su capital total",
+    "rule_2": "Diversifique entre múltiples estrategias",
+    "rule_3": "Establezca límites de drawdown máximo",
+    "rule_4": "Monitoree regularmente el rendimiento",
+    "recommended_config": "Configuración recomendada",
+    "conservative_allocation": "Estrategia Conservadora:",
+    "moderate_allocation": "Estrategia Moderada:",
+    "aggressive_allocation": "Estrategia Agresiva:",
+    "configure_limits": "Configurar límites de riesgo"
+  },
+  "disclaimer": {
+    "title": "Importante sobre Copy Trading",
+    "point_1": "• El copy trading no requiere acceso directo a su cuenta de trading",
+    "point_2": "• Las señales se proporcionan para que usted ejecute manualmente",
+    "point_3": "• Tálamo nunca opera directamente en su cuenta",
+    "point_4": "• Usted mantiene control total sobre sus operaciones en todo momento",
+    "point_5": "• Los resultados mostrados son simulaciones basadas en datos históricos"
+  }
+}

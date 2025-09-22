@@ -17,6 +17,10 @@ import dashboardES from './locales/es/dashboard.json';
 import adminES from './locales/es/admin.json';
 import formsES from './locales/es/forms.json';
 import tableES from './locales/es/table.json';
+import academyES from './locales/es/academy.json';
+import signalsES from './locales/es/signals.json';
+import copyES from './locales/es/copy.json';
+import toolsES from './locales/es/tools.json';
 
 import commonEN from './locales/en/common.json';
 import navEN from './locales/en/nav.json';
@@ -25,6 +29,10 @@ import dashboardEN from './locales/en/dashboard.json';
 import adminEN from './locales/en/admin.json';
 import formsEN from './locales/en/forms.json';
 import tableEN from './locales/en/table.json';
+import academyEN from './locales/en/academy.json';
+import signalsEN from './locales/en/signals.json';
+import copyEN from './locales/en/copy.json';
+import toolsEN from './locales/en/tools.json';
 
 import commonPT from './locales/pt/common.json';
 import navPT from './locales/pt/nav.json';
@@ -33,6 +41,10 @@ import dashboardPT from './locales/pt/dashboard.json';
 import adminPT from './locales/pt/admin.json';
 import formsPT from './locales/pt/forms.json';
 import tablePT from './locales/pt/table.json';
+import academyPT from './locales/pt/academy.json';
+import signalsPT from './locales/pt/signals.json';
+import copyPT from './locales/pt/copy.json';
+import toolsPT from './locales/pt/tools.json';
 
 // Initialize i18next
 i18n
@@ -61,6 +73,10 @@ i18n
         admin: adminES,
         forms: formsES,
         table: tableES,
+        academy: academyES,
+        signals: signalsES,
+        copy: copyES,
+        tools: toolsES,
       },
       en: {
         common: commonEN,
@@ -70,6 +86,10 @@ i18n
         admin: adminEN,
         forms: formsEN,
         table: tableEN,
+        academy: academyEN,
+        signals: signalsEN,
+        copy: copyEN,
+        tools: toolsEN,
       },
       pt: {
         common: commonPT,
@@ -79,12 +99,16 @@ i18n
         admin: adminPT,
         forms: formsPT,
         table: tablePT,
+        academy: academyPT,
+        signals: signalsPT,
+        copy: copyPT,
+        tools: toolsPT,
       },
     },
 
     // Namespaces
     defaultNS: 'common',
-    ns: ['common', 'nav', 'landing', 'dashboard', 'admin', 'forms', 'table'],
+    ns: ['common', 'nav', 'landing', 'dashboard', 'admin', 'forms', 'table', 'academy', 'signals', 'copy', 'tools'],
 
     // Interpolation
     interpolation: {

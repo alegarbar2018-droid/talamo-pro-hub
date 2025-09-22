@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 const CopyTrading = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['copy']);
   const [followedStrategies, setFollowedStrategies] = useState<string[]>([]);
 
   const strategies = [
@@ -107,8 +109,8 @@ const CopyTrading = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Copy Trading Inteligente</h1>
-              <p className="text-muted-foreground">Estrategias verificadas con transparencia total</p>
+              <h1 className="text-2xl font-bold text-foreground">{t('copy:title')}</h1>
+              <p className="text-muted-foreground">{t('copy:subtitle')}</p>
             </div>
             <Button 
               variant="ghost" 
@@ -116,7 +118,7 @@ const CopyTrading = () => {
               className="text-teal hover:bg-teal/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Dashboard
+              {t('copy:back_to_dashboard')}
             </Button>
           </div>
         </div>
@@ -127,8 +129,7 @@ const CopyTrading = () => {
         <Alert className="border-warning/20 bg-warning/10 mb-6">
           <AlertTriangle className="h-4 w-4 text-warning" />
           <AlertDescription className="text-foreground">
-            <strong>Aviso de riesgo:</strong> El copy trading implica riesgo de pérdida. Los resultados pasados no garantizan 
-            rendimientos futuros. Configure siempre límites de riesgo apropiados para su capital.
+            <strong>{t('copy:risk_warning.title')}</strong> {t('copy:risk_warning.description')}
           </AlertDescription>
         </Alert>
 
@@ -138,22 +139,22 @@ const CopyTrading = () => {
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
                 <Activity className="h-5 w-5 text-teal" />
-                Tus Estrategias Activas
+                {t('copy:active_strategies.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-teal">{followedStrategies.length}</div>
-                  <div className="text-sm text-muted-foreground">Estrategias seguidas</div>
+                  <div className="text-sm text-muted-foreground">{t('copy:active_strategies.followed')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-success">+8.4%</div>
-                  <div className="text-sm text-muted-foreground">Rendimiento estimado</div>
+                  <div className="text-sm text-muted-foreground">{t('copy:active_strategies.estimated_return')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-teal">12.3%</div>
-                  <div className="text-sm text-muted-foreground">Drawdown máximo</div>
+                  <div className="text-sm text-muted-foreground">{t('copy:active_strategies.max_drawdown')}</div>
                 </div>
               </div>
             </CardContent>

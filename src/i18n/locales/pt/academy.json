@@ -1,0 +1,28 @@
+{
+  "title": "Academia Tálamo",
+  "subtitle": "Educação estruturada de trading profissional",
+  "back_to_dashboard": "Painel",
+  "back_to_levels": "Voltar aos níveis",
+  "levels": {
+    "level": "Nível",
+    "completed": "Concluído",
+    "continue": "Continuar",
+    "start": "Começar",
+    "unlock_message": "Complete o nível anterior para desbloquear"
+  },
+  "lesson": {
+    "objectives": "Objetivos da lição:",
+    "key_concepts": "conceitos chave",
+    "view_content": "Ver conteúdo",
+    "mark_completed": "Marcar concluído",
+    "completed_badge": "Concluída"
+  },
+  "progress": {
+    "title": "Seu Progresso Geral",
+    "subtitle": "Resumo do seu progresso na academia",
+    "lessons_completed": "Lições concluídas",
+    "levels_completed": "Níveis concluídos",
+    "total_progress": "Progresso total",
+    "lessons": "lições"
+  }
+}

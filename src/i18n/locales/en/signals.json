@@ -1,0 +1,44 @@
+{
+  "title": "Verified Signals",
+  "subtitle": "Professional analysis with full transparency",
+  "back_to_dashboard": "Dashboard",
+  "risk_warning": {
+    "title": "Important notice:",
+    "description": "Signals are educational analysis, not investment recommendations. Trading involves risk of loss. Always use appropriate risk management."
+  },
+  "filters": {
+    "title": "Filters",
+    "market": "Market",
+    "timeframe": "Timeframe",
+    "min_rr": "Min RR",
+    "all_markets": "All markets",
+    "all_timeframes": "All TFs",
+    "any_rr": "Any RR"
+  },
+  "signal": {
+    "entry": "Entry:",
+    "stop_loss": "Stop Loss:",
+    "take_profit": "Take Profit:",
+    "published": "Published",
+    "confidence": "Confidence",
+    "analysis_logic": "Analysis logic",
+    "invalidation": "Invalidation",
+    "status": {
+      "active": "Active",
+      "tp_reached": "TP reached",
+      "sl_reached": "SL reached"
+    },
+    "view_full_analysis": "View full analysis",
+    "view_chart": "View chart"
+  },
+  "empty": "No signals found with selected filters.",
+  "clear_filters": "Clear filters",
+  "performance": {
+    "title": "Historical Performance",
+    "subtitle": "Signal statistics from the last 30 days",
+    "win_rate": "Win Rate",
+    "avg_rr": "Avg RR",
+    "published_signals": "Published signals",
+    "simulated_return": "Simulated return"
+  }
+}

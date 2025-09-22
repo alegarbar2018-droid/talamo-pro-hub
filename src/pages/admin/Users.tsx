@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,6 +56,7 @@ interface UserWithProfile {
 }
 
 export const AdminUsers: React.FC = () => {
+  const { t } = useTranslation(['admin', 'table', 'forms']);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [affiliationFilter, setAffiliationFilter] = useState<string>('all');
@@ -161,8 +163,8 @@ export const AdminUsers: React.FC = () => {
     },
     onSuccess: async (data, variables) => {
       toast({
-        title: 'Rol actualizado',
-        description: `El rol del usuario ha sido actualizado a ${variables.role}`,
+        title: t('admin:toasts.role_updated'),
+        description: t('admin:toasts.role_updated_desc'),
       });
       
       // Log the role update for security audit
@@ -178,8 +180,8 @@ export const AdminUsers: React.FC = () => {
     },
     onError: (error) => {
       toast({
-        title: 'Error',
-        description: 'No se pudo actualizar el rol del usuario',
+        title: t('admin:toasts.error'),
+        description: t('admin:toasts.role_update_error'),
         variant: 'destructive',
       });
     },
@@ -197,11 +199,11 @@ export const AdminUsers: React.FC = () => {
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case 'ADMIN': return 'Administrador';
-      case 'ANALYST': return 'Analista';
-      case 'CONTENT': return 'Contenido';
-      case 'SUPPORT': return 'Soporte';
-      default: return 'Usuario';
+      case 'ADMIN': return t('admin:users.roles.admin');
+      case 'ANALYST': return t('admin:users.roles.analyst');
+      case 'CONTENT': return t('admin:users.roles.content');
+      case 'SUPPORT': return t('admin:users.roles.support');
+      default: return t('admin:users.roles.user');
     }
   };
 
@@ -236,9 +238,9 @@ export const AdminUsers: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Usuarios</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('admin:users.title')}</h1>
           <p className="text-muted-foreground">
-            Gestión de usuarios y roles administrativos
+            {t('admin:users.subtitle')}
           </p>
         </div>
       </div>
@@ -251,7 +253,7 @@ export const AdminUsers: React.FC = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por nombre..."
+                  placeholder={t('admin:users.search')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -261,26 +263,26 @@ export const AdminUsers: React.FC = () => {
             
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filtrar por rol" />
+                <SelectValue placeholder={t('admin:users.filters.role')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los roles</SelectItem>
-                <SelectItem value="ADMIN">Administrador</SelectItem>
-                <SelectItem value="ANALYST">Analista</SelectItem>
-                <SelectItem value="CONTENT">Contenido</SelectItem>
-                <SelectItem value="SUPPORT">Soporte</SelectItem>
-                <SelectItem value="USER">Usuario</SelectItem>
+                <SelectItem value="all">{t('admin:users.filters.all_roles')}</SelectItem>
+                <SelectItem value="ADMIN">{t('admin:users.roles.admin')}</SelectItem>
+                <SelectItem value="ANALYST">{t('admin:users.roles.analyst')}</SelectItem>
+                <SelectItem value="CONTENT">{t('admin:users.roles.content')}</SelectItem>
+                <SelectItem value="SUPPORT">{t('admin:users.roles.support')}</SelectItem>
+                <SelectItem value="USER">{t('admin:users.roles.user')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={affiliationFilter} onValueChange={setAffiliationFilter}>
               <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filtrar por afiliación" />
+                <SelectValue placeholder={t('admin:users.filters.affiliation')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="affiliated">Afiliados</SelectItem>
-                <SelectItem value="unaffiliated">No afiliados</SelectItem>
+                <SelectItem value="all">{t('admin:users.filters.all')}</SelectItem>
+                <SelectItem value="affiliated">{t('admin:users.filters.affiliated')}</SelectItem>
+                <SelectItem value="unaffiliated">{t('admin:users.filters.unaffiliated')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -290,20 +292,20 @@ export const AdminUsers: React.FC = () => {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Usuarios</CardTitle>
+          <CardTitle>{t('admin:users.list_title')}</CardTitle>
           <CardDescription>
-            {users?.length || 0} usuario(s) encontrado(s)
+            {users?.length || 0} {t('admin:users.found')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Usuario</TableHead>
-                <TableHead>Rol</TableHead>
-                <TableHead>Afiliación</TableHead>
-                <TableHead>Registro</TableHead>
-                <TableHead>Acciones</TableHead>
+                <TableHead>{t('table:columns.user')}</TableHead>
+                <TableHead>{t('table:columns.role')}</TableHead>
+                <TableHead>{t('table:columns.affiliation')}</TableHead>
+                <TableHead>{t('table:columns.registration')}</TableHead>
+                <TableHead>{t('table:columns.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -334,7 +336,7 @@ export const AdminUsers: React.FC = () => {
                     {user.affiliations?.is_affiliated ? (
                       <div className="flex items-center space-x-2">
                         <UserCheck className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">Verificado</span>
+                        <span className="text-sm">{t('admin:users.details.verified')}</span>
                         {user.affiliations.partner_id && (
                           <Badge variant="outline" className="text-xs">
                             {user.affiliations.partner_id}
@@ -344,7 +346,7 @@ export const AdminUsers: React.FC = () => {
                     ) : (
                       <div className="flex items-center space-x-2">
                         <UserX className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Sin verificar</span>
+                        <span className="text-sm text-muted-foreground">{t('admin:users.details.not_verified')}</span>
                       </div>
                     )}
                   </TableCell>
@@ -367,9 +369,9 @@ export const AdminUsers: React.FC = () => {
                         </SheetTrigger>
                         <SheetContent>
                           <SheetHeader>
-                            <SheetTitle>Detalles del Usuario</SheetTitle>
+                            <SheetTitle>{t('admin:users.details.title')}</SheetTitle>
                             <SheetDescription>
-                              Información completa y opciones de gestión
+                              {t('admin:users.details.subtitle')}
                             </SheetDescription>
                           </SheetHeader>
                           
@@ -393,9 +395,9 @@ export const AdminUsers: React.FC = () => {
                                  </div>
                                </div>
 
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="text-sm font-medium">Rol Administrativo</label>
+                               <div className="space-y-4">
+                                 <div>
+                                   <label className="text-sm font-medium">{t('admin:users.details.admin_role')}</label>
                                   <Select
                                     value={selectedUser.admin_users?.role || 'USER'}
                                     onValueChange={(value) => {
@@ -408,23 +410,23 @@ export const AdminUsers: React.FC = () => {
                                     <SelectTrigger className="w-full mt-1">
                                       <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="USER">Usuario</SelectItem>
-                                      <SelectItem value="SUPPORT">Soporte</SelectItem>
-                                      <SelectItem value="CONTENT">Contenido</SelectItem>
-                                      <SelectItem value="ANALYST">Analista</SelectItem>
-                                      <SelectItem value="ADMIN">Administrador</SelectItem>
-                                    </SelectContent>
+                                     <SelectContent>
+                                       <SelectItem value="USER">{t('admin:users.roles.user')}</SelectItem>
+                                       <SelectItem value="SUPPORT">{t('admin:users.roles.support')}</SelectItem>
+                                       <SelectItem value="CONTENT">{t('admin:users.roles.content')}</SelectItem>
+                                       <SelectItem value="ANALYST">{t('admin:users.roles.analyst')}</SelectItem>
+                                       <SelectItem value="ADMIN">{t('admin:users.roles.admin')}</SelectItem>
+                                     </SelectContent>
                                   </Select>
                                 </div>
 
-                                <div>
-                                  <label className="text-sm font-medium">Estado de Afiliación</label>
+                                 <div>
+                                   <label className="text-sm font-medium">{t('admin:users.details.affiliation_status')}</label>
                                   <div className="mt-2 p-3 border rounded-lg">
                                     {selectedUser.affiliations?.is_affiliated ? (
-                                      <div className="flex items-center space-x-2">
-                                        <UserCheck className="h-4 w-4 text-green-500" />
-                                        <span className="text-sm">Verificado con Exness</span>
+                                       <div className="flex items-center space-x-2">
+                                         <UserCheck className="h-4 w-4 text-green-500" />
+                                         <span className="text-sm">{t('admin:users.details.verified')}</span>
                                         {selectedUser.affiliations.partner_id && (
                                           <Badge variant="outline">
                                             ID: {selectedUser.affiliations.partner_id}
@@ -432,12 +434,12 @@ export const AdminUsers: React.FC = () => {
                                         )}
                                       </div>
                                     ) : (
-                                      <div className="flex items-center space-x-2">
-                                        <UserX className="h-4 w-4 text-muted-foreground" />
-                                        <span className="text-sm text-muted-foreground">
-                                          No verificado
-                                        </span>
-                                      </div>
+                                       <div className="flex items-center space-x-2">
+                                         <UserX className="h-4 w-4 text-muted-foreground" />
+                                         <span className="text-sm text-muted-foreground">
+                                           {t('admin:users.details.not_verified')}
+                                         </span>
+                                       </div>
                                     )}
                                   </div>
                                 </div>

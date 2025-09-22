@@ -1,0 +1,61 @@
+{
+  "title": "Trading Tools",
+  "subtitle": "Professional calculators and utilities",
+  "back_to_dashboard": "Dashboard",
+  "tools": {
+    "risk_calculator": "Risk Calculator",
+    "dd_panel": "Drawdown Panel",
+    "journal": "Trading Journal",
+    "audit": "MT4/MT5 Audit"
+  },
+  "risk_calculator": {
+    "title": "Risk Calculator",
+    "subtitle": "Determine optimal position size based on your risk management",
+    "balance": "Account balance ($)",
+    "risk_percent": "Risk per trade (%)",
+    "stop_loss": "Stop Loss (pips)",
+    "pip_value": "Pip value",
+    "calculate": "Calculate Position Size",
+    "result": "lots",
+    "result_subtitle": "Recommended position size",
+    "recommendation": "Recommendation:",
+    "recommendation_text": "Don't risk more than 1-2% of your capital per operation. This calculator is a guide, always adjust according to your strategy.",
+    "how_to_use": "How to use:",
+    "step_1": "• Enter your current balance",
+    "step_2": "• Define your % risk per trade",
+    "step_3": "• Specify the SL distance",
+    "step_4": "• Select the pip value"
+  },
+  "drawdown_panel": {
+    "title": "Drawdown Panel",
+    "subtitle": "Simulate drawdown scenarios and plan recovery",
+    "simulator_title": "Drawdown Simulator",
+    "simulator_description": "Tool to analyze the impact of losing streaks and plan recovery",
+    "configure": "Configure simulation"
+  },
+  "journal": {
+    "title": "Trading Journal",
+    "subtitle": "Record your trades and reflections to improve continuously",
+    "date": "Date",
+    "instrument": "Instrument",
+    "entry": "Entry",
+    "exit": "Exit",
+    "result": "Result ($)",
+    "notes": "Notes and reflections",
+    "notes_placeholder": "What worked well? What can you improve? Did you follow your plan?",
+    "tags": "Tags (comma separated)",
+    "tags_placeholder": "breakout, discipline, analysis",
+    "save": "Save to Journal"
+  },
+  "audit": {
+    "title": "MT4/MT5 Audit",
+    "subtitle": "Tool for real account analysis (read-only). Coming soon.",
+    "security_notice": "Total security:",
+    "security_text": "This tool will work only in read-only mode, without the ability to execute orders or modify positions in your trading account."
+  },
+  "alerts": {
+    "complete_fields": "Please complete all fields",
+    "sl_positive": "Stop Loss must be greater than 0",
+    "entry_saved": "Entry saved to journal"
+  }
+}

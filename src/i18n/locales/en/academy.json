@@ -1,0 +1,28 @@
+{
+  "title": "Tálamo Academy",
+  "subtitle": "Structured professional trading education",
+  "back_to_dashboard": "Dashboard",
+  "back_to_levels": "Back to levels",
+  "levels": {
+    "level": "Level",
+    "completed": "Completed",
+    "continue": "Continue",
+    "start": "Start",
+    "unlock_message": "Complete previous level to unlock"
+  },
+  "lesson": {
+    "objectives": "Lesson objectives:",
+    "key_concepts": "key concepts",
+    "view_content": "View content",
+    "mark_completed": "Mark completed",
+    "completed_badge": "Completed"
+  },
+  "progress": {
+    "title": "Your Overall Progress",
+    "subtitle": "Summary of your academy progress",
+    "lessons_completed": "Lessons completed",
+    "levels_completed": "Levels completed",
+    "total_progress": "Total progress",
+    "lessons": "lessons"
+  }
+}

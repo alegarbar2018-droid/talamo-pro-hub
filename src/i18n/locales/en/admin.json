@@ -40,7 +40,20 @@
     "home": "Home",
     "admin": "Administration",
     "dashboard": "Dashboard",
-    "users": "Users"
+    "users": "Users",
+    "academy": "Academy",
+    "signals": "Signals",
+    "copy": "Copy Trading",
+    "tools": "Tools",
+    "affiliation": "Affiliation",
+    "lms": "LMS",
+    "eas": "EAs",
+    "competitions": "Competitions",
+    "community": "Community",
+    "referrals": "Referrals",
+    "integrations": "Integrations",
+    "audit": "Audit",
+    "settings": "Settings"
   },
   "toasts": {
     "role_updated": "Role updated",
