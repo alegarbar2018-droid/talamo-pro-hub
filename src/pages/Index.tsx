@@ -90,10 +90,11 @@ const Index = () => {
               className="space-y-8"
             >
               <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight">
-                <span className="bg-gradient-primary bg-clip-text text-transparent relative whitespace-pre-line">
-                  {t("landing:professional_trading")}
+                <div className="relative">
+                  <div className="text-white">Trading serio.</div>
+                  <span className="bg-gradient-primary bg-clip-text text-transparent">Sin humo</span>
                   <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-40 h-2 bg-gradient-primary rounded-full opacity-60"></div>
-                </span>
+                </div>
               </h1>
               
               <div className="max-w-4xl mx-auto">
