@@ -1,0 +1,51 @@
+{
+  "title": "Admin Panel",
+  "dashboard": "Dashboard",
+  "users": {
+    "title": "Users",
+    "subtitle": "User management and administrative roles",
+    "search": "Search by name...",
+    "found": "user(s) found",
+    "list_title": "User List",
+    "filters": {
+      "role": "Filter by role",
+      "affiliation": "Filter by affiliation",
+      "all_roles": "All roles",
+      "all": "All",
+      "affiliated": "Affiliated",
+      "unaffiliated": "Unaffiliated"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "analyst": "Analyst",
+      "content": "Content",
+      "support": "Support", 
+      "user": "User"
+    },
+    "details": {
+      "title": "User Details",
+      "subtitle": "Complete information and management options",
+      "admin_role": "Administrative Role",
+      "affiliation_status": "Affiliation Status",
+      "verified": "Verified with Exness",
+      "not_verified": "Not verified"
+    }
+  },
+  "navigation": {
+    "home": "Go to site",
+    "profile": "My Profile",
+    "logout": "Sign Out"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "admin": "Administration",
+    "dashboard": "Dashboard",
+    "users": "Users"
+  },
+  "toasts": {
+    "role_updated": "Role updated",
+    "role_updated_desc": "User role has been updated",
+    "error": "Error",
+    "role_update_error": "Could not update user role"
+  }
+}

@@ -19,11 +19,14 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import { formatDateTime } from "@/lib/locale";
 import AffiliationGate from "@/components/AffiliationGate";
 
 const Dashboard = () => {
   const { user, isValidated, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation(["dashboard", "common"]);
 
   useEffect(() => {
     console.log('Dashboard - Auth state changed:', { 
@@ -47,7 +50,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-foreground">Cargando...</div>
+        <div className="text-foreground">{t("common:loading")}</div>
       </div>
     );
   }
@@ -63,32 +66,32 @@ const Dashboard = () => {
 
   const quickActions = [
     {
-      title: "Academia",
-      description: "Continúa tu formación",
+      title: t("dashboard:modules.academy.title"),
+      description: t("dashboard:modules.academy.description"),
       icon: BookOpen,
       progress: academyProgress,
       action: () => navigate("/academy"),
       color: "teal"
     },
     {
-      title: "Señales Activas",
-      description: "3 señales disponibles",
+      title: t("dashboard:modules.signals.title"),
+      description: `3 ${t("dashboard:modules.signals.description")}`,
       icon: TrendingUp,
-      badge: "3 nuevas",
+      badge: `3 ${t("dashboard:modules.signals.badge")}`,
       action: () => navigate("/signals"),
       color: "teal"
     },
     {
-      title: "Copy Trading",
-      description: "Estrategias verificadas",
+      title: t("dashboard:modules.copy.title"),
+      description: t("dashboard:modules.copy.description"),
       icon: Users,
-      badge: "Moderado activo",
+      badge: t("dashboard:modules.copy.badge"),
       action: () => navigate("/copy-trading"),
       color: "success"
     },
     {
-      title: "Herramientas",
-      description: "Calculadoras y análisis",
+      title: t("dashboard:modules.tools.title"),
+      description: t("dashboard:modules.tools.description"),
       icon: Calculator,
       action: () => navigate("/tools"),
       color: "muted"
@@ -97,22 +100,22 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: "Trades esta semana",
+      title: t("dashboard:stats.trades_week"),
       value: tradesThisWeek,
       icon: Activity,
-      trend: "+3 vs semana anterior"
+      trend: `+3 ${t("dashboard:stats.trend_vs_week")}`
     },
     {
-      title: "Win Rate",
+      title: t("dashboard:stats.win_rate"),
       value: `${winRate}%`,
       icon: Target,
-      trend: "+5% vs mes anterior"
+      trend: `+5% ${t("dashboard:stats.trend_vs_month")}`
     },
     {
-      title: "Progreso Academia",
+      title: t("dashboard:stats.academy_progress"),
       value: `${academyProgress}%`,
       icon: BarChart3,
-      trend: "Nivel 1 completado"
+      trend: t("dashboard:stats.level_completed")
     }
   ];
 
@@ -147,18 +150,18 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Tálamo</h1>
-              <p className="text-muted-foreground">Trading profesional, sin promesas vacías</p>
+              <h1 className="text-2xl font-bold text-foreground">{t("dashboard:title")}</h1>
+              <p className="text-muted-foreground">{t("dashboard:subtitle")}</p>
             </div>
             <div className="flex items-center gap-4">
               <Badge variant="outline" className="border-teal text-teal">
-                {isValidated || user.isAffiliated ? "Validado" : "Demo"}
+                {isValidated || user.isAffiliated ? t("dashboard:status.validated") : t("dashboard:status.demo")}
               </Badge>
               <Button 
                 variant="ghost" 
                 onClick={signOut}
               >
-                Cerrar sesión
+                {t("dashboard:actions.logout")}
               </Button>
             </div>
           </div>
@@ -169,10 +172,10 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">
-            Bienvenido, {user.profile?.first_name ? `${user.profile.first_name} ${user.profile.last_name || ''}`.trim() : user.email?.split('@')[0] || 'Usuario'}
+            {t("dashboard:welcome_back")}, {user.profile?.first_name ? `${user.profile.first_name} ${user.profile.last_name || ''}`.trim() : user.email?.split('@')[0] || 'Usuario'}
           </h2>
           <p className="text-muted-foreground">
-            Aquí tienes un resumen de tu progreso y actividades recientes
+            {t("dashboard:progress_summary")}
           </p>
         </div>
 
@@ -220,11 +223,11 @@ const Dashboard = () => {
                 {action.progress && (
                   <div className="space-y-2">
                     <Progress value={action.progress} className="h-2" />
-                    <p className="text-xs text-muted-foreground">{action.progress}% completado</p>
+                    <p className="text-xs text-muted-foreground">{action.progress}% {t("dashboard:modules.academy.completed")}</p>
                   </div>
                 )}
                 <Button variant="ghost" size="sm" className="w-full mt-2 text-teal hover:bg-teal/10">
-                  Ir <ArrowRight className="h-4 w-4 ml-1" />
+                  {t("dashboard:actions.go")} <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               </CardContent>
             </Card>
@@ -238,10 +241,10 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-teal" />
-                Señales Recientes
+                {t("dashboard:modules.signals.recent_title")}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Últimas señales y sus resultados
+                {t("dashboard:modules.signals.recent_subtitle")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -261,14 +264,14 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-foreground">{signal.status}</p>
+                      <p className="text-sm font-medium text-foreground">{t(`dashboard:signals.status.${signal.status.toLowerCase().replace(' ', '_').replace('ó', 'o')}`)}</p>
                       <p className="text-xs text-muted-foreground">{signal.time}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <Button variant="outline" className="w-full mt-4 border-teal text-teal hover:bg-teal/10">
-                Ver todas las señales
+                {t("dashboard:actions.view_all")}
               </Button>
             </CardContent>
           </Card>
@@ -278,20 +281,20 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-teal" />
-                Checklist de Inicio
+                {t("dashboard:checklist.title")}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Completa estos pasos para maximizar tu experiencia
+                {t("dashboard:checklist.subtitle")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {[
-                  { task: "Completar perfil de trading", done: true },
-                  { task: "Leer Nivel 0 de Academia", done: true },
-                  { task: "Configurar calculadora de riesgo", done: false },
-                  { task: "Unirse a la comunidad", done: false },
-                  { task: "Configurar copy trading", done: false }
+                  { task: t("dashboard:checklist.tasks.profile"), done: true },
+                  { task: t("dashboard:checklist.tasks.academy"), done: true },
+                  { task: t("dashboard:checklist.tasks.calculator"), done: false },
+                  { task: t("dashboard:checklist.tasks.community"), done: false },
+                  { task: t("dashboard:checklist.tasks.copy_trading"), done: false }
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
                     {item.done ? (
@@ -315,11 +318,9 @@ const Dashboard = () => {
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
               <div className="space-y-2">
-                <h3 className="font-semibold text-foreground">Aviso de Riesgo</h3>
+                <h3 className="font-semibold text-foreground">{t("dashboard:risk_warning.title")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  El trading de CFDs conlleva un alto riesgo de pérdida de capital. Entre el 74-89% de las 
-                  cuentas de inversores minoristas pierden dinero al operar CFDs. Debe considerar si comprende 
-                  cómo funcionan los CFDs y si puede permitirse el alto riesgo de perder su dinero.
+                  {t("dashboard:risk_warning.text")}
                 </p>
               </div>
             </div>

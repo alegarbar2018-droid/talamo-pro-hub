@@ -1,0 +1,18 @@
+{
+  "save": "Guardar",
+  "cancel": "Cancelar", 
+  "confirm": "Confirmar",
+  "apply": "Aplicar",
+  "reset": "Reiniciar",
+  "search": "Buscar",
+  "filter": "Filtrar",
+  "clear": "Limpiar",
+  "clear_filters": "Limpiar filtros",
+  "refresh": "Actualizar",
+  "export": "Exportar",
+  "import": "Importar",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "create": "Crear",
+  "update": "Actualizar"
+}

@@ -1,0 +1,24 @@
+{
+  "columns": {
+    "user": "User",
+    "email": "Email",
+    "role": "Role", 
+    "status": "Status",
+    "affiliation": "Affiliation",
+    "created_at": "Created",
+    "actions": "Actions",
+    "name": "Name",
+    "phone": "Phone",
+    "registration": "Registration"
+  },
+  "filters": {
+    "all": "All",
+    "admin": "Admin",
+    "member": "Member",
+    "active": "Active",
+    "blocked": "Blocked"
+  },
+  "empty": "No records to display.",
+  "loading": "Loading…",
+  "found": "found"
+}

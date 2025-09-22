@@ -1,9 +1,77 @@
 {
   "welcome": "Bienvenido",
-  "dashboard": "Panel",
-  "profile": "Perfil",
-  "notifications": "Notificaciones",
-  "statistics": "Estadísticas",
-  "performance": "Rendimiento",
-  "account": "Cuenta"
+  "title": "Tálamo",
+  "subtitle": "Trading profesional, sin promesas vacías",
+  "welcome_back": "Bienvenido",
+  "progress_summary": "Aquí tienes un resumen de tu progreso y actividades recientes",
+  "status": {
+    "validated": "Validado",
+    "demo": "Demo"
+  },
+  "actions": {
+    "logout": "Cerrar sesión",
+    "refresh": "Actualizar",
+    "export": "Exportar",
+    "go": "Ir",
+    "view_all": "Ver todas las señales",
+    "clear_filters": "Limpiar filtros"
+  },
+  "stats": {
+    "trades_week": "Trades esta semana",
+    "win_rate": "Win Rate",
+    "academy_progress": "Progreso Academia",
+    "trend_vs_week": "vs semana anterior",
+    "trend_vs_month": "vs mes anterior",
+    "level_completed": "Nivel 1 completado"
+  },
+  "modules": {
+    "academy": {
+      "title": "Academia",
+      "description": "Continúa tu formación",
+      "completed": "completado"
+    },
+    "signals": {
+      "title": "Señales Activas",
+      "description": "señales disponibles",
+      "badge": "nuevas",
+      "recent_title": "Señales Recientes",
+      "recent_subtitle": "Últimas señales y sus resultados"
+    },
+    "copy": {
+      "title": "Copy Trading",
+      "description": "Estrategias verificadas",
+      "badge": "Moderado activo"
+    },
+    "tools": {
+      "title": "Herramientas",
+      "description": "Calculadoras y análisis"
+    }
+  },
+  "checklist": {
+    "title": "Checklist de Inicio",
+    "subtitle": "Completa estos pasos para maximizar tu experiencia",
+    "tasks": {
+      "profile": "Completar perfil de trading",
+      "academy": "Leer Nivel 0 de Academia",
+      "calculator": "Configurar calculadora de riesgo",
+      "community": "Unirse a la comunidad",
+      "copy_trading": "Configurar copy trading"
+    }
+  },
+  "signals": {
+    "status": {
+      "active": "Activa",
+      "tp_reached": "TP alcanzado",
+      "sl_reached": "SL alcanzado"
+    },
+    "timeframes": {
+      "hours_ago": "Hace {hours}h",
+      "days_ago": "Hace {days}d"
+    }
+  },
+  "risk_warning": {
+    "title": "Aviso de Riesgo",
+    "text": "El trading de CFDs conlleva un alto riesgo de pérdida de capital. Entre el 74-89% de las cuentas de inversores minoristas pierden dinero al operar CFDs. Debe considerar si comprende cómo funcionan los CFDs y si puede permitirse el alto riesgo de perder su dinero."
+  },
+  "empty": "No hay datos para mostrar."
 }

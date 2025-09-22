@@ -1,0 +1,51 @@
+{
+  "title": "Painel Administrativo",
+  "dashboard": "Painel",
+  "users": {
+    "title": "Usuários",
+    "subtitle": "Gestão de usuários e papéis administrativos",
+    "search": "Buscar por nome...",
+    "found": "usuário(s) encontrado(s)",
+    "list_title": "Lista de Usuários",
+    "filters": {
+      "role": "Filtrar por papel",
+      "affiliation": "Filtrar por afiliação",
+      "all_roles": "Todos os papéis",
+      "all": "Todos",
+      "affiliated": "Afiliados",
+      "unaffiliated": "Não afiliados"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "analyst": "Analista",
+      "content": "Conteúdo",
+      "support": "Suporte",
+      "user": "Usuário"
+    },
+    "details": {
+      "title": "Detalhes do Usuário",
+      "subtitle": "Informações completas e opções de gestão",
+      "admin_role": "Papel Administrativo",
+      "affiliation_status": "Status de Afiliação",
+      "verified": "Verificado com Exness",
+      "not_verified": "Não verificado"
+    }
+  },
+  "navigation": {
+    "home": "Ir ao site",
+    "profile": "Meu Perfil",
+    "logout": "Sair"
+  },
+  "breadcrumbs": {
+    "home": "Início",
+    "admin": "Administração",
+    "dashboard": "Painel",
+    "users": "Usuários"
+  },
+  "toasts": {
+    "role_updated": "Papel atualizado",
+    "role_updated_desc": "O papel do usuário foi atualizado",
+    "error": "Erro",
+    "role_update_error": "Não foi possível atualizar o papel do usuário"
+  }
+}

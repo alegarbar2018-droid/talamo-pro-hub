@@ -1,9 +1,77 @@
 {
   "welcome": "Welcome",
-  "dashboard": "Dashboard",
-  "profile": "Profile",
-  "notifications": "Notifications",
-  "statistics": "Statistics",
-  "performance": "Performance",
-  "account": "Account"
+  "title": "Tálamo",
+  "subtitle": "Professional trading, no empty promises",
+  "welcome_back": "Welcome",
+  "progress_summary": "Here's a summary of your progress and recent activities",
+  "status": {
+    "validated": "Validated",
+    "demo": "Demo"
+  },
+  "actions": {
+    "logout": "Sign out",
+    "refresh": "Refresh",
+    "export": "Export",
+    "go": "Go",
+    "view_all": "View all signals",
+    "clear_filters": "Clear filters"
+  },
+  "stats": {
+    "trades_week": "Trades this week",
+    "win_rate": "Win Rate",
+    "academy_progress": "Academy Progress",
+    "trend_vs_week": "vs previous week",
+    "trend_vs_month": "vs previous month",
+    "level_completed": "Level 1 completed"
+  },
+  "modules": {
+    "academy": {
+      "title": "Academy",
+      "description": "Continue your training",
+      "completed": "completed"
+    },
+    "signals": {
+      "title": "Active Signals",
+      "description": "signals available",
+      "badge": "new",
+      "recent_title": "Recent Signals",
+      "recent_subtitle": "Latest signals and their results"
+    },
+    "copy": {
+      "title": "Copy Trading",
+      "description": "Verified strategies",
+      "badge": "Moderate active"
+    },
+    "tools": {
+      "title": "Tools",
+      "description": "Calculators and analysis"
+    }
+  },
+  "checklist": {
+    "title": "Getting Started Checklist",
+    "subtitle": "Complete these steps to maximize your experience",
+    "tasks": {
+      "profile": "Complete trading profile",
+      "academy": "Read Academy Level 0",
+      "calculator": "Set up risk calculator",
+      "community": "Join the community",
+      "copy_trading": "Set up copy trading"
+    }
+  },
+  "signals": {
+    "status": {
+      "active": "Active",
+      "tp_reached": "TP reached",
+      "sl_reached": "SL reached"
+    },
+    "timeframes": {
+      "hours_ago": "{hours}h ago",
+      "days_ago": "{days}d ago"
+    }
+  },
+  "risk_warning": {
+    "title": "Risk Warning",
+    "text": "CFD trading involves high risk of capital loss. Between 74-89% of retail investor accounts lose money when trading CFDs. You should consider whether you understand how CFDs work and whether you can afford the high risk of losing your money."
+  },
+  "empty": "No data to display."
 }

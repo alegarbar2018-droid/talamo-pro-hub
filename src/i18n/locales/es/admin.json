@@ -1,0 +1,51 @@
+{
+  "title": "Panel Administrativo",
+  "dashboard": "Dashboard",
+  "users": {
+    "title": "Usuarios",
+    "subtitle": "Gestión de usuarios y roles administrativos",
+    "search": "Buscar por nombre...",
+    "found": "usuario(s) encontrado(s)",
+    "list_title": "Lista de Usuarios",
+    "filters": {
+      "role": "Filtrar por rol",
+      "affiliation": "Filtrar por afiliación",
+      "all_roles": "Todos los roles",
+      "all": "Todos",
+      "affiliated": "Afiliados",
+      "unaffiliated": "No afiliados"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "analyst": "Analista", 
+      "content": "Contenido",
+      "support": "Soporte",
+      "user": "Usuario"
+    },
+    "details": {
+      "title": "Detalles del Usuario",
+      "subtitle": "Información completa y opciones de gestión",
+      "admin_role": "Rol Administrativo",
+      "affiliation_status": "Estado de Afiliación",
+      "verified": "Verificado con Exness",
+      "not_verified": "No verificado"
+    }
+  },
+  "navigation": {
+    "home": "Ir al sitio",
+    "profile": "Mi Perfil",
+    "logout": "Cerrar Sesión"
+  },
+  "breadcrumbs": {
+    "home": "Inicio", 
+    "admin": "Administración",
+    "dashboard": "Dashboard",
+    "users": "Usuarios"
+  },
+  "toasts": {
+    "role_updated": "Rol actualizado",
+    "role_updated_desc": "El rol del usuario ha sido actualizado",
+    "error": "Error",
+    "role_update_error": "No se pudo actualizar el rol del usuario"
+  }
+}

@@ -14,9 +14,11 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { getCurrentAdminRole } from '@/lib/auth-admin';
+import { useTranslation } from 'react-i18next';
 
 export const AdminHeader: React.FC = () => {
   const { user, signOut } = useAuth();
+  const { t } = useTranslation(["admin", "common"]);
   
   const { data: adminRole } = useQuery({
     queryKey: ['admin-role', user?.id],
@@ -42,15 +44,15 @@ export const AdminHeader: React.FC = () => {
   const getRoleLabel = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return 'Administrador';
+        return t("admin:users.roles.admin");
       case 'ANALYST':
-        return 'Analista';
+        return t("admin:users.roles.analyst");
       case 'CONTENT':
-        return 'Contenido';
+        return t("admin:users.roles.content");
       case 'SUPPORT':
-        return 'Soporte';
+        return t("admin:users.roles.support");
       default:
-        return 'Usuario';
+        return t("admin:users.roles.user");
     }
   };
 
@@ -58,7 +60,7 @@ export const AdminHeader: React.FC = () => {
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center justify-between px-6">
         <div className="flex items-center gap-4">
-          <h1 className="text-lg font-semibold">Panel Administrativo</h1>
+          <h1 className="text-lg font-semibold">{t("admin:title")}</h1>
           {adminRole && (
             <Badge variant={getRoleBadgeVariant(adminRole)} className="text-xs">
               {getRoleLabel(adminRole)}
@@ -70,7 +72,7 @@ export const AdminHeader: React.FC = () => {
           <Button variant="ghost" size="sm" asChild>
             <Link to="/">
               <Home className="h-4 w-4 mr-2" />
-              Ir al sitio
+              {t("admin:navigation.home")}
             </Link>
           </Button>
 
@@ -100,13 +102,13 @@ export const AdminHeader: React.FC = () => {
               <DropdownMenuItem asChild>
                 <Link to="/dashboard">
                   <User className="mr-2 h-4 w-4" />
-                  <span>Mi Perfil</span>
+                  <span>{t("admin:navigation.profile")}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Cerrar Sesión</span>
+                <span>{t("admin:navigation.logout")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

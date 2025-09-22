@@ -1,0 +1,24 @@
+{
+  "columns": {
+    "user": "Usuário",
+    "email": "Email",
+    "role": "Papel",
+    "status": "Status",
+    "affiliation": "Afiliação",
+    "created_at": "Criado",
+    "actions": "Ações",
+    "name": "Nome",
+    "phone": "Telefone",
+    "registration": "Registro"
+  },
+  "filters": {
+    "all": "Todos",
+    "admin": "Admin",
+    "member": "Membro",
+    "active": "Ativo",
+    "blocked": "Bloqueado"
+  },
+  "empty": "Nenhum registro para exibir.",
+  "loading": "Carregando…",
+  "found": "encontrado(s)"
+}
