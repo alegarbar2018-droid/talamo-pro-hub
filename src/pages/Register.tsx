@@ -23,6 +23,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -31,6 +32,12 @@ export default function RegisterPage() {
       ...prev,
       [field]: value
     }));
+    
+    // Real-time password validation
+    if (field === 'password' && typeof value === 'string') {
+      const validation = validatePasswordStrength(value);
+      setPasswordErrors(validation.errors);
+    }
   };
 
   const validateForm = () => {

@@ -29,9 +29,27 @@ class ExnessClient {
   private readonly SAFETY_WINDOW_MS = 120 * 1000; // 2 minutes safety buffer
 
   constructor() {
-    this.baseUrl = process.env.PARTNER_API_BASE || Deno.env.get('PARTNER_API_BASE') || '';
-    this.email = process.env.PARTNER_API_USER || Deno.env.get('PARTNER_API_USER') || '';
-    this.password = process.env.PARTNER_API_PASSWORD || Deno.env.get('PARTNER_API_PASSWORD') || '';
+    // Support both Node.js and Deno environments safely
+    const getEnvVar = (key: string) => {
+      // Try process.env first (Node.js/Browser)
+      if (typeof process !== 'undefined' && process?.env) {
+        return process.env[key];
+      }
+      // Try Deno.env if available (Deno runtime)
+      try {
+        const denoGlobal = (globalThis as any).Deno;
+        if (denoGlobal?.env) {
+          return denoGlobal.env.get(key);
+        }
+      } catch {
+        // Ignore errors accessing Deno
+      }
+      return '';
+    };
+
+    this.baseUrl = getEnvVar('PARTNER_API_BASE') || '';
+    this.email = getEnvVar('PARTNER_API_USER') || '';
+    this.password = getEnvVar('PARTNER_API_PASSWORD') || '';
     
     if (!this.baseUrl || !this.email || !this.password) {
       throw new Error('Missing required Exness API configuration');
@@ -178,7 +196,21 @@ class ExnessClient {
   }> {
     const normalizedEmail = this.normalizeEmail(email);
     const startTime = Date.now();
-    const expectedPartnerId = (process.env.EXNESS_PARTNER_ID || Deno.env.get('EXNESS_PARTNER_ID'));
+    const getEnvVar = (key: string) => {
+      if (typeof process !== 'undefined' && process?.env) {
+        return process.env[key];
+      }
+      try {
+        const denoGlobal = (globalThis as any).Deno;
+        if (denoGlobal?.env) {
+          return denoGlobal.env.get(key);
+        }
+      } catch {
+        // Ignore errors accessing Deno
+      }
+      return '';
+    };
+    const expectedPartnerId = getEnvVar('EXNESS_PARTNER_ID');
 
     try {
       const token = await this.getToken();
