@@ -666,15 +666,7 @@ export type Database = {
       }
     }
     Views: {
-      profile_security_summary: {
-        Row: {
-          profiles_with_email: number | null
-          profiles_with_financial_data: number | null
-          profiles_with_phone: number | null
-          total_profiles: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       check_profile_data_exposure: {
@@ -706,6 +698,29 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: Json
       }
+      get_profile_security_summary: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_recent_profile_access_attempts: {
+        Args: { hours_back?: number }
+        Returns: {
+          access_reason: string
+          access_time: string
+          action: string
+          actor_id: string
+          target_user_id: string
+        }[]
+      }
+      get_security_recommendations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category: string
+          priority: string
+          recommendation: string
+          status: string
+        }[]
+      }
       get_sensitive_profile_fields: {
         Args: Record<PropertyKey, never>
         Returns: string[]
@@ -734,9 +749,25 @@ export type Database = {
         }
         Returns: undefined
       }
+      security_checklist: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_item: string
+          recommendation: string
+          status: string
+        }[]
+      }
       user_exists: {
         Args: { p_email: string }
         Returns: boolean
+      }
+      validate_profile_data_integrity: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_name: string
+          details: string
+          status: string
+        }[]
       }
     }
     Enums: {
