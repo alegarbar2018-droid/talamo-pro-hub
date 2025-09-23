@@ -11,6 +11,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 import AuthForgot from "./pages/AuthForgot";
+import AuthCallback from "./pages/AuthCallback";
+import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Academy from "./pages/Academy";
@@ -47,6 +49,8 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             
             <Route path="/auth/forgot" element={<AuthForgot />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/academy" element={<Academy />} />
