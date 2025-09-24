@@ -177,10 +177,6 @@ async function checkExnessAffiliation(
 
 Deno.serve(async (req) => {
   console.log("🚀 === SECURE AFFILIATION CHECK FUNCTION START ===");
-  console.log("Method:", req.method);
-  console.log("URL:", req.url);
-  console.log("Headers:", Object.fromEntries(req.headers.entries()));
-  console.log("Timestamp:", new Date().toISOString());
   
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -188,226 +184,66 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const clientId = getClientIdentifier(req);
-  const rateLimit = isRateLimited(clientId);
-  
-  if (rateLimit.limited) {
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        code: 'Throttled',
-        message: 'Too many requests',
-        rate_limited: true,
-        retry_after: rateLimit.retryAfter
-      } as ValidationResponse),
-      {
-        status: 429,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Retry-After': rateLimit.retryAfter?.toString() || '300'
-        }
-      }
-    );
-  }
-
+  // Simple test to verify the function is working
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    if (req.method !== 'POST') {
+    console.log("📧 Function is running, processing request...");
+    
+    // Parse request body
+    let requestBody;
+    try {
+      const rawBody = await req.text();
+      console.log("📦 Raw request body:", rawBody);
+      requestBody = JSON.parse(rawBody);
+      console.log("📋 Parsed request body:", requestBody);
+    } catch (parseError) {
+      console.error("❌ Error parsing request body:", parseError);
       return new Response(
-        JSON.stringify({ 
-          ok: false, 
-          code: 'MethodNotAllowed',
-          message: 'Method not allowed' 
-        }),
-        { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const { email, captcha_token }: ValidationRequest = await req.json();
-
-    console.log("📧 Email received:", email);
-    console.log("🎫 Captcha token:", !!captcha_token);
-
-    // Input validation
-    if (!email || typeof email !== 'string') {
-      console.log("❌ Invalid email provided:", email);
-      await logSecurityEvent(supabase, 'invalid_email_format', { 
-        email: '[REDACTED]', 
-        client_id: clientId 
-      });
-      
-      return new Response(
-        JSON.stringify({ 
-          ok: false, 
+        JSON.stringify({
+          ok: false,
           code: 'BadRequest',
-          message: 'Valid email required' 
+          message: 'Invalid request body'
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (!validateEmail(email)) {
-      console.log("❌ Invalid email format:", email);
-      await logSecurityEvent(supabase, 'invalid_email_format', { 
-        email: '[REDACTED]', 
-        client_id: clientId 
-      });
-      
+    const { email } = requestBody;
+    console.log("📧 Processing email:", email);
+
+    // Basic validation
+    if (!email) {
+      console.log("❌ No email provided");
       return new Response(
-        JSON.stringify({ 
-          ok: false, 
+        JSON.stringify({
+          ok: false,
           code: 'BadRequest',
-          message: 'Invalid email format' 
+          message: 'Email is required'
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Check for demo mode bypass
-    const allowDemo = Deno.env.get('ALLOW_DEMO') === 'true';
-    const isDemoEmail = email.toLowerCase().includes('demo') || email.toLowerCase().includes('test');
-    
-    console.log("🧪 Demo check:", { allowDemo, isDemoEmail, email: email.toLowerCase() });
-    
-    if (allowDemo && isDemoEmail) {
-      console.log("✅ Demo mode activated for:", email);
-      await logSecurityEvent(supabase, 'demo_access_granted', { 
-        email: '[REDACTED]',
-        client_id: clientId
-      });
-      
-      return new Response(
-        JSON.stringify({
-          ok: true,
-          data: {
-            demo_mode: true,
-            is_affiliated: true
-          }
-        } as ValidationResponse),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from('profiles')
-      .select('user_id')
-      .eq('email', email.toLowerCase())
-      .single();
-
-    if (existingUser) {
-      await logSecurityEvent(supabase, 'existing_user_validation_attempt', { 
-        email: '[REDACTED]',
-        user_id: existingUser.user_id,
-        client_id: clientId
-      });
-      
-      return new Response(
-        JSON.stringify({
-          ok: true,
-          data: {
-            user_exists: true,
-            is_affiliated: true
-          }
-        } as ValidationResponse),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Check affiliation via Partner API
-    const usePartnerAPI = Deno.env.get('USE_PARTNER_API') === 'true';
-    
-    console.log("🔧 Environment check:", {
-      USE_PARTNER_API: usePartnerAPI,
-      HAS_PARTNER_API_BASE: !!Deno.env.get('PARTNER_API_BASE'),
-      HAS_PARTNER_API_USER: !!Deno.env.get('PARTNER_API_USER'),
-      HAS_PARTNER_API_PASSWORD: !!Deno.env.get('PARTNER_API_PASSWORD')
-    });
-    
-    if (usePartnerAPI) {
-      console.log("🌐 Partner API is enabled, proceeding with affiliation check");
-      try {
-        const affiliationResult = await checkExnessAffiliation(email);
-        console.log("📋 Affiliation result:", affiliationResult);
-        
-        // Log affiliation check result
-        await supabase.from('affiliation_reports').insert({
-          email: email.toLowerCase(),
-          status: affiliationResult.affiliated ? 'affiliated' : 'not_affiliated',
-          uid: affiliationResult.uid || null,
-          partner_id: Deno.env.get('EXNESS_PARTNER_ID') || null
-        });
-
-        await logSecurityEvent(supabase, 'affiliation_check_completed', {
-          email: '[REDACTED]',
-          is_affiliated: affiliationResult.affiliated,
-          client_id: clientId
-        });
-
-        return new Response(
-          JSON.stringify({
-            ok: true,
-            data: {
-              is_affiliated: affiliationResult.affiliated,
-              uid: affiliationResult.uid
-            }
-          } as ValidationResponse),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      } catch (apiError) {
-        console.error('🚨 Partner API error:', apiError);
-        console.error('Error details:', {
-          message: apiError instanceof Error ? apiError.message : 'Unknown error',
-          stack: apiError instanceof Error ? apiError.stack : 'No stack trace'
-        });
-        
-        await logSecurityEvent(supabase, 'partner_api_error', {
-          email: '[REDACTED]',
-          error: apiError instanceof Error ? apiError.message : 'Unknown error',
-          client_id: clientId
-        });
-
-        return new Response(
-          JSON.stringify({
-            ok: false,
-            code: 'UpstreamError',
-            message: 'Unable to verify affiliation at this time'
-          } as ValidationResponse),
-          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-    }
-
-    // Fallback response when Partner API is disabled
-    console.log("⚠️ Partner API is disabled, returning not affiliated");
+    // For now, return a simple success response for testing
+    console.log("✅ Returning test response");
     return new Response(
       JSON.stringify({
         ok: true,
         data: {
-          is_affiliated: false
+          is_affiliated: false,
+          message: `Function is working! Processed email: ${email}`
         }
-      } as ValidationResponse),
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('🚨 Validation function error:', error);
-    console.error('Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : 'No stack trace'
-    });
-    
+    console.error('🚨 Function error:', error);
     return new Response(
       JSON.stringify({
         ok: false,
         code: 'InternalError',
-        message: 'Internal server error'
-      } as ValidationResponse),
+        message: 'Function error occurred'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
