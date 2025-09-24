@@ -255,35 +255,78 @@ export default function CopyInfo() {
                 <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
                   <Shield className="w-6 h-6 text-primary" />
                 </div>
-                <h2 className="text-4xl font-bold text-white">Qué te llevas</h2>
+                <h2 className="text-4xl font-bold text-white">Qué estamos ofreciendo</h2>
               </div>
+              <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                Un menú curado con estrategias de copy trading de la página de Exness que <span className="text-primary font-semibold">revisamos y analizamos</span> para 
+                que tengas un panorama más informado y tomes decisiones de inversión inteligentes.
+              </p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 transition-all duration-300">
-                <h3 className="font-bold text-white mb-3 group-hover:text-primary transition-colors">
-                  Perfiles por bandas de riesgo
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-8 group hover:border-primary/40 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mb-6">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors">
+                  Estrategias analizadas y categorizadas
                 </h3>
-                <p className="text-muted-foreground text-sm">
-                  Con PF, DD y consistencia claramente definidos.
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  Revisamos estrategias de copy trading en Exness y las organizamos por:
                 </p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Perfil de riesgo:</b> Conservador, Moderado, Agresivo</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Métricas clave:</b> Profit Factor, Drawdown histórico, Consistencia</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Transparencia total:</b> Datos reales sin marketing</span>
+                  </li>
+                </ul>
               </Card>
               
-              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 transition-all duration-300">
-                <h3 className="font-bold text-white mb-3 group-hover:text-primary transition-colors">
-                  Guía de límites
+              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-8 group hover:border-primary/40 transition-all duration-300">
+                <div className="w-12 h-12 bg-gradient-to-br from-teal/20 to-primary/20 rounded-xl flex items-center justify-center mb-6">
+                  <Users className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors">
+                  Guía de selección personalizada
                 </h3>
-                <p className="text-muted-foreground text-sm">
-                  Stop diario, exposición total, correlación y "circuit breaker".
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  Te ayudamos a seleccionar estrategias según tu perfil de inversionista:
                 </p>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Análisis de tolerancia al riesgo</b></span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Criterios de evaluación objetivos</b></span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Recomendaciones de diversificación</b></span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-teal flex-shrink-0" />
+                    <span><b className="text-white">Límites de exposición sugeridos</b></span>
+                  </li>
+                </ul>
               </Card>
-              
-              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 transition-all duration-300">
-                <h3 className="font-bold text-white mb-3 group-hover:text-primary transition-colors">
-                  Checklist honesto
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  Para seleccionar sin sesgos emocionales.
+            </div>
+
+            <div className="mt-8 text-center">
+              <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 p-6 max-w-4xl mx-auto">
+                <p className="text-muted-foreground leading-relaxed">
+                  <strong className="text-primary">Importante:</strong> No somos asesores financieros ni garantizamos resultados. 
+                  Proporcionamos <span className="text-white font-semibold">análisis educativo</span> para que tomes decisiones informadas 
+                  basadas en datos objetivos, no en promesas de marketing.
                 </p>
               </Card>
             </div>
