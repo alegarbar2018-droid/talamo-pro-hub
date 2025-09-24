@@ -390,70 +390,174 @@ export default function ToolsInfo() {
               {/* Glosario de Fórmulas Tab */}
               <TabsContent value="formulas" className="space-y-8">
                 <div className="text-center mb-8">
-                  <h2 className="text-4xl font-bold text-white mb-4">Repositorio de Fórmulas</h2>
+                  <h2 className="text-4xl font-bold text-white mb-4">Calculadora de Fórmulas</h2>
                   <p className="text-muted-foreground max-w-3xl mx-auto">
-                    Todas las ecuaciones con ejemplos prácticos y enlaces a la Academia
+                    Todas las fórmulas que necesitas con nombres claros, ejemplos prácticos y casos de uso
                   </p>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-8">
+                <div className="space-y-8">
                   {[
                     {
-                      category: "Risk Management",
+                      category: "🎯 Gestión de Riesgo",
+                      description: "Fórmulas esenciales para controlar tu exposición",
                       formulas: [
-                        { name: "Position Size", formula: "Lotes = (Equity × %Risk) / (SL_pips × Pip_Value)" },
-                        { name: "Risk Amount", formula: "Risk = Equity × Risk_Percentage / 100" },
-                        { name: "Risk/Reward", formula: "R:R = (TP - Entry) / (Entry - SL)" }
+                        { 
+                          name: "¿Cuántos lotes comprar?", 
+                          formula: "Lotes = (Capital × % Riesgo) ÷ (Stop Loss en pips × Valor del pip)",
+                          example: "Ejemplo: $10,000 × 2% ÷ (20 pips × $10) = 1 lote",
+                          explanation: "Determina el tamaño exacto de tu posición basado en cuánto estás dispuesto a perder"
+                        },
+                        { 
+                          name: "¿Cuánto dinero arriesgo?", 
+                          formula: "Dinero en riesgo = Capital × Porcentaje de riesgo ÷ 100",
+                          example: "Ejemplo: $10,000 × 2% ÷ 100 = $200",
+                          explanation: "Calcula la cantidad exacta en dólares que pondrás en riesgo"
+                        },
+                        { 
+                          name: "¿Vale la pena la operación?", 
+                          formula: "Ratio R:R = (Take Profit - Entrada) ÷ (Entrada - Stop Loss)",
+                          example: "Ejemplo: (1.2100 - 1.2000) ÷ (1.2000 - 1.1980) = 5:1",
+                          explanation: "Evalúa si la recompensa potencial justifica el riesgo asumido"
+                        }
                       ]
                     },
                     {
-                      category: "P&L Calculation",
+                      category: "💰 Ganancias y Pérdidas",
+                      description: "Calcula tus resultados en tiempo real",
                       formulas: [
-                        { name: "Forex P&L", formula: "P&L = (Close - Open) × Lot_Size × Pip_Value" },
-                        { name: "Indices P&L", formula: "P&L = (Close - Open) × Contract_Size × Tick_Value" },
-                        { name: "Percentage Gain", formula: "%Gain = (P&L / Initial_Investment) × 100" }
+                        { 
+                          name: "¿Cuánto gané/perdí en Forex?", 
+                          formula: "P&L = (Precio de cierre - Precio de apertura) × Tamaño del lote × Valor del pip",
+                          example: "Ejemplo: (1.2100 - 1.2000) × 1 lote × $10 = $1,000",
+                          explanation: "Calcula tu ganancia o pérdida exacta en pares de divisas"
+                        },
+                        { 
+                          name: "¿Cuánto gané/perdí en Índices?", 
+                          formula: "P&L = (Precio de cierre - Precio de apertura) × Tamaño del contrato × Valor del tick",
+                          example: "Ejemplo: (15,500 - 15,000) × 1 × $5 = $2,500",
+                          explanation: "Calcula resultados en índices como SPX500, NAS100, etc."
+                        },
+                        { 
+                          name: "¿Qué porcentaje gané?", 
+                          formula: "% Ganancia = (P&L ÷ Inversión inicial) × 100",
+                          example: "Ejemplo: ($500 ÷ $10,000) × 100 = 5%",
+                          explanation: "Convierte tu ganancia en dólares a porcentaje de tu cuenta"
+                        }
                       ]
                     },
                     {
-                      category: "Margin & Leverage",
+                      category: "🏦 Margen y Apalancamiento",
+                      description: "Controla tu capacidad de compra",
                       formulas: [
-                        { name: "Required Margin", formula: "Margin = (Lot_Size × Contract_Size) / Leverage" },
-                        { name: "Margin Level", formula: "Level = (Equity / Used_Margin) × 100" },
-                        { name: "Free Margin", formula: "Free = Equity - Used_Margin" }
+                        { 
+                          name: "¿Cuánto margen necesito?", 
+                          formula: "Margen requerido = (Lotes × Tamaño del contrato) ÷ Apalancamiento",
+                          example: "Ejemplo: (1 × $100,000) ÷ 100 = $1,000",
+                          explanation: "Calcula cuánto dinero necesitas para abrir una posición"
+                        },
+                        { 
+                          name: "¿Qué tan segura está mi cuenta?", 
+                          formula: "Nivel de margen = (Patrimonio ÷ Margen usado) × 100",
+                          example: "Ejemplo: ($12,000 ÷ $8,000) × 100 = 150%",
+                          explanation: "Mide qué tan cerca estás del margin call (peligro bajo 100%)"
+                        },
+                        { 
+                          name: "¿Cuánto puedo operar aún?", 
+                          formula: "Margen libre = Patrimonio - Margen usado",
+                          example: "Ejemplo: $12,000 - $8,000 = $4,000",
+                          explanation: "Dinero disponible para abrir nuevas posiciones"
+                        }
                       ]
                     },
                     {
-                      category: "Costs & Fees",
+                      category: "💸 Costos de Operación",
+                      description: "Conoce el costo real de cada trade",
                       formulas: [
-                        { name: "Spread Cost", formula: "Cost = Spread × Lot_Size × Pip_Value" },
-                        { name: "Swap Points", formula: "Swap = Lot_Size × Contract_Size × Points × Days" },
-                        { name: "Commission", formula: "Commission = Lot_Size × Rate_per_Lot" }
+                        { 
+                          name: "¿Cuánto me cuesta el spread?", 
+                          formula: "Costo del spread = Spread en pips × Tamaño del lote × Valor del pip",
+                          example: "Ejemplo: 2 pips × 1 lote × $10 = $20",
+                          explanation: "El costo inmediato al abrir cualquier posición"
+                        },
+                        { 
+                          name: "¿Cuánto pago por mantener la posición?", 
+                          formula: "Swap = Tamaño del lote × Tamaño del contrato × Puntos swap × Días",
+                          example: "Ejemplo: 1 × $100,000 × 0.5 × 1 = $50",
+                          explanation: "Costo o ganancia por mantener posiciones abiertas overnight"
+                        },
+                        { 
+                          name: "¿Cuánto es la comisión total?", 
+                          formula: "Comisión = Tamaño del lote × Tarifa por lote",
+                          example: "Ejemplo: 1 lote × $3.5 = $3.5 por lado",
+                          explanation: "Comisiones fijas que cobra tu broker por operación"
+                        }
                       ]
                     }
                   ].map((section, sectionIndex) => (
                     <motion.div
                       key={section.category}
-                      initial={{ opacity: 0, x: sectionIndex % 2 === 0 ? -20 : 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: sectionIndex * 0.2 }}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: sectionIndex * 0.1 }}
                     >
-                      <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6">
-                        <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                          <Calculator className="w-5 h-5 text-primary" />
-                          {section.category}
-                        </h3>
-                        <div className="space-y-4">
+                      <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 overflow-hidden">
+                        <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 border-b border-primary/20">
+                          <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                            {section.category}
+                          </h3>
+                          <p className="text-muted-foreground">{section.description}</p>
+                        </div>
+                        
+                        <div className="p-6 space-y-6">
                           {section.formulas.map((formula, index) => (
-                            <div key={formula.name} className="bg-muted/10 rounded-lg p-4">
-                              <h4 className="font-semibold text-white mb-2">{formula.name}</h4>
-                              <code className="text-sm text-primary bg-primary/10 px-2 py-1 rounded">
-                                {formula.formula}
-                              </code>
-                              <div className="flex items-center gap-2 mt-2">
-                                <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-xs text-muted-foreground">Ver en Academia</span>
+                            <motion.div 
+                              key={formula.name} 
+                              initial={{ opacity: 0, x: -20 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                              className="group"
+                            >
+                              <div className="bg-gradient-to-r from-muted/5 to-primary/5 rounded-xl p-6 border border-muted/20 group-hover:border-primary/30 transition-all duration-300">
+                                <div className="flex items-start justify-between mb-4">
+                                  <h4 className="text-lg font-bold text-white group-hover:text-primary transition-colors">
+                                    {formula.name}
+                                  </h4>
+                                  <Badge variant="outline" className="border-primary/30 text-primary text-xs">
+                                    Ver en Academia
+                                  </Badge>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                  <div className="bg-muted/10 rounded-lg p-4 border border-muted/20">
+                                    <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Fórmula:</p>
+                                    <code className="text-sm text-primary font-mono bg-primary/10 px-3 py-2 rounded-md block">
+                                      {formula.formula}
+                                    </code>
+                                  </div>
+                                  
+                                  <div className="bg-teal/5 rounded-lg p-4 border border-teal/20">
+                                    <p className="text-xs text-teal-400 mb-2 uppercase tracking-wider">Ejemplo práctico:</p>
+                                    <p className="text-sm text-muted-foreground font-mono">
+                                      {formula.example}
+                                    </p>
+                                  </div>
+                                  
+                                  <div className="bg-accent/5 rounded-lg p-4 border border-accent/20">
+                                    <p className="text-xs text-accent mb-2 uppercase tracking-wider">Para qué sirve:</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {formula.explanation}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-muted/20">
+                                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-xs text-muted-foreground">Calculadora integrada disponible</span>
+                                  <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
                               </div>
-                            </div>
+                            </motion.div>
                           ))}
                         </div>
                       </Card>
