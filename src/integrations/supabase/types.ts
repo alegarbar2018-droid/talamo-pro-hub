@@ -38,10 +38,103 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_mfa: {
+        Row: {
+          backup_codes_hash: string[] | null
+          created_at: string
+          enabled: boolean
+          id: string
+          last_used_at: string | null
+          recovery_codes_used: number
+          secret_encrypted: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes_hash?: string[] | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_used_at?: string | null
+          recovery_codes_used?: number
+          secret_encrypted: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_codes_hash?: string[] | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_used_at?: string | null
+          recovery_codes_used?: number
+          secret_encrypted?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_mfa_rate_limits: {
+        Row: {
+          blocked_until: string | null
+          created_at: string
+          failed_attempts: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          blocked_until?: string | null
+          created_at?: string
+          failed_attempts?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          blocked_until?: string | null
+          created_at?: string
+          failed_attempts?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_mfa_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          ip_address: string | null
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
           id: string
+          mfa_enabled: boolean
+          mfa_enforced_at: string | null
+          mfa_required: boolean
           role: Database["public"]["Enums"]["admin_role"]
           updated_at: string
           user_id: string
@@ -49,6 +142,9 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          mfa_enabled?: boolean
+          mfa_enforced_at?: string | null
+          mfa_required?: boolean
           role?: Database["public"]["Enums"]["admin_role"]
           updated_at?: string
           user_id: string
@@ -56,6 +152,9 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          mfa_enabled?: boolean
+          mfa_enforced_at?: string | null
+          mfa_required?: boolean
           role?: Database["public"]["Enums"]["admin_role"]
           updated_at?: string
           user_id?: string
@@ -729,6 +828,10 @@ export type Database = {
         Args: { justification: string; target_user_id: string }
         Returns: Json
       }
+      has_active_mfa_session: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       has_admin_permission: {
         Args: { _action: string; _resource: string }
         Returns: boolean
@@ -748,6 +851,10 @@ export type Database = {
           target_user_id: string
         }
         Returns: undefined
+      }
+      requires_mfa_for_operation: {
+        Args: { _operation: string }
+        Returns: boolean
       }
       security_checklist: {
         Args: Record<PropertyKey, never>
