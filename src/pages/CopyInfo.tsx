@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useObservability } from "@/components/business/ObservabilityProvider";
 import Navigation from "@/components/Navigation";
-import CopyRiskDemo from "@/components/public/demos/CopyRiskDemo";
+import PortfolioDiversificationDemo from "@/components/public/demos/PortfolioDiversificationDemo";
 import { Copy, Target, CheckCircle, ArrowRight, Zap, Users, Shield, AlertTriangle } from "lucide-react";
 
 export default function CopyInfo() {
@@ -99,6 +99,88 @@ export default function CopyInfo() {
 
         {/* Content Sections */}
         <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-20">
+          
+          {/* What is Copy Trading */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-20"
+          >
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
+                  <Copy className="w-6 h-6 text-primary" />
+                </div>
+                <h2 className="text-4xl font-bold text-white">¿Qué es Copy Trading?</h2>
+              </div>
+              <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+                Es replicar automáticamente las operaciones de traders experimentados (proveedores de estrategia) en tu propia cuenta. 
+                <span className="text-primary font-semibold"> Tu capital, sus decisiones, tu riesgo.</span>
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 transition-all duration-300">
+                <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center mb-4">
+                  <Target className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="font-bold text-white mb-3 group-hover:text-primary transition-colors">
+                  Selección inteligente
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Elegimos estrategias que nos hacen sentido revisar. <b className="text-white">No conocemos personalmente a los proveedores.</b>
+                </p>
+              </Card>
+
+              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 transition-all duration-300">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal/20 to-primary/20 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-bold text-white mb-3 group-hover:text-primary transition-colors">
+                  Diversificación esencial
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Para una buena inversión con copy trading, <b className="text-white">debes crear un portafolio</b> que distribuya el riesgo.
+                </p>
+              </Card>
+
+              <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 transition-all duration-300">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-5 h-5 text-orange-400" />
+                </div>
+                <h3 className="font-bold text-white mb-3 group-hover:text-primary transition-colors">
+                  Múltiples estrategias
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Nunca pongas todos los huevos en una canasta. <b className="text-white">Diversifica en varias estrategias</b> según tu tolerancia al riesgo.
+                </p>
+              </Card>
+            </div>
+          </motion.div>
+
+          {/* Portfolio Diversification Calculator */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-20"
+          >
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-primary" />
+                </div>
+                <h2 className="text-4xl font-bold text-white">Calculadora de Diversificación</h2>
+              </div>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                Ingresa tu capital y aversión al riesgo para ver cómo distribuir tu inversión entre diferentes estrategias.
+              </p>
+            </div>
+            
+            <PortfolioDiversificationDemo />
+          </motion.div>
+
           <div className="grid lg:grid-cols-2 gap-12 mb-16">
             {/* Para quién es */}
             <motion.div
@@ -118,15 +200,15 @@ export default function CopyInfo() {
                 <ul className="space-y-4">
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-teal mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground">Personas con <b className="text-white">tolerancia al riesgo clara</b> (low/med/high) que quieren perfiles acordes.</span>
+                    <span className="text-muted-foreground">Personas con <b className="text-white">tolerancia al riesgo clara</b> que entienden la importancia de diversificar.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-teal mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground"><b className="text-white">Seguidores responsables</b> que entienden que copiar ≠ desentenderse.</span>
+                    <span className="text-muted-foreground"><b className="text-white">Inversionistas responsables</b> que buscan construir un portafolio balanceado.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-teal mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground"><b className="text-white">Diversificadores</b> que buscan consistencia y control de correlación.</span>
+                    <span className="text-muted-foreground"><b className="text-white">Diversificadores inteligentes</b> que entienden que el riesgo se distribuye, no se elimina.</span>
                   </li>
                 </ul>
               </Card>
@@ -147,9 +229,16 @@ export default function CopyInfo() {
               </div>
               
               <Card className="bg-surface/50 backdrop-blur-xl border-red-500/20 p-6">
-                <p className="text-muted-foreground leading-relaxed">
-                  Quien persigue <b className="text-red-400">rachas</b>, sube tamaño por impulso o copia por simpatía.
-                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <AlertTriangle className="w-4 h-4 text-red-400 mt-1 flex-shrink-0" />
+                    <span className="text-muted-foreground">Quien busca <b className="text-red-400">"el trader perfecto"</b> y pone todo en una estrategia.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <AlertTriangle className="w-4 h-4 text-red-400 mt-1 flex-shrink-0" />
+                    <span className="text-muted-foreground">Personas que <b className="text-red-400">no entienden</b> que diversificar es esencial.</span>
+                  </li>
+                </ul>
               </Card>
             </motion.div>
           </div>
@@ -197,31 +286,6 @@ export default function CopyInfo() {
                   Para seleccionar sin sesgos emocionales.
                 </p>
               </Card>
-            </div>
-          </motion.div>
-
-          {/* Demo Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold text-white mb-4">Demo educativo</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Calculadora de asignación de capital basada en drawdown histórico y tu tolerancia al riesgo.
-              </p>
-            </div>
-            
-            <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-8">
-              <CopyRiskDemo />
-            </Card>
-            
-            <div className="text-center mt-4">
-              <Badge variant="outline" className="border-primary/30 text-primary">
-                Simulación simple para decidir cuánto capital asignar a un perfil dado su DD histórico
-              </Badge>
             </div>
           </motion.div>
 
