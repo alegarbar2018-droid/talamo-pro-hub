@@ -30,9 +30,9 @@ export default function ToolsInfo() {
       <Navigation />
       
       {/* Premium background effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-primary opacity-8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 md:w-[500px] md:h-[500px] bg-gradient-primary opacity-8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
       <main className="relative">
@@ -41,17 +41,17 @@ export default function ToolsInfo() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="pt-20 pb-16"
+          className="pt-16 md:pt-20 pb-12 md:pb-16"
         >
-          <div className="max-w-6xl mx-auto px-6 lg:px-8">
-            <div className="text-center mb-16">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 md:mb-16">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-surface/90 backdrop-blur-xl border border-primary/20 text-primary px-6 py-3 rounded-2xl text-sm font-semibold mb-8"
+                className="inline-flex items-center gap-2 bg-surface/90 backdrop-blur-xl border border-primary/20 text-primary px-4 sm:px-6 py-2 sm:py-3 rounded-2xl text-xs sm:text-sm font-semibold mb-6 md:mb-8"
               >
-                <Zap className="w-4 h-4" />
+                <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
                 Herramientas Profesionales
               </motion.div>
               
@@ -59,7 +59,7 @@ export default function ToolsInfo() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-5xl md:text-7xl font-bold leading-tight mb-6"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 px-2"
               >
                 <span className="text-white">Menos errores.</span>
                 <br />
@@ -70,7 +70,7 @@ export default function ToolsInfo() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed"
+                className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 md:mb-10 leading-relaxed px-4"
               >
                 Calculadoras y utilidades que convierten criterios en números y límites reales.
               </motion.p>
@@ -79,24 +79,24 @@ export default function ToolsInfo() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
+                className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4"
               >
                 <Button 
                   size="lg"
                   onClick={() => navigate("/access")}
-                  className="bg-gradient-primary hover:shadow-glow text-lg px-8 py-6 h-auto rounded-2xl group"
+                  className="bg-gradient-primary hover:shadow-glow text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto rounded-2xl group w-full sm:w-auto"
                 >
-                  <Zap className="w-5 h-5 mr-2" />
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Validar afiliación
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button 
                   size="lg"
                   variant="outline" 
                   onClick={() => navigate("/tools")}
-                  className="border-2 border-primary/30 bg-surface/50 backdrop-blur-xl text-primary hover:bg-primary/10 text-lg px-8 py-6 h-auto rounded-2xl"
+                  className="border-2 border-primary/30 bg-surface/50 backdrop-blur-xl text-primary hover:bg-primary/10 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto rounded-2xl w-full sm:w-auto"
                 >
-                  <Target className="w-5 h-5 mr-2" />
+                  <Target className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Explorar calculadoras
                 </Button>
               </motion.div>
@@ -105,105 +105,109 @@ export default function ToolsInfo() {
         </motion.section>
 
         {/* Main Content Hub */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-20">
           
           {/* Navigation Tabs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="mb-12"
+            className="mb-8 md:mb-12"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="flex justify-center mb-8">
-                <TabsList className="bg-surface/50 backdrop-blur-xl border border-primary/20 p-2 rounded-2xl">
-                  <TabsTrigger value="calculators" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-6 py-3 flex items-center gap-2">
-                    <Calculator className="w-4 h-4" />
-                    Calculadoras
+              <div className="flex justify-center mb-6 md:mb-8 px-2">
+                <TabsList className="bg-surface/50 backdrop-blur-xl border border-primary/20 p-1 sm:p-2 rounded-2xl w-full max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-1">
+                  <TabsTrigger value="calculators" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                    <Calculator className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Calculadoras</span>
+                    <span className="xs:hidden">Calc</span>
                   </TabsTrigger>
-                  <TabsTrigger value="contracts" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-6 py-3 flex items-center gap-2">
-                    <CandlestickChart className="w-4 h-4" />
-                    Contratos
+                  <TabsTrigger value="contracts" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                    <CandlestickChart className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Contratos</span>
+                    <span className="xs:hidden">Cont</span>
                   </TabsTrigger>
-                  <TabsTrigger value="formulas" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-6 py-3 flex items-center gap-2">
-                    <BookOpen className="w-4 h-4" />
-                    Fórmulas
+                  <TabsTrigger value="formulas" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                    <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Fórmulas</span>
+                    <span className="xs:hidden">Form</span>
                   </TabsTrigger>
-                  <TabsTrigger value="features" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-6 py-3 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    Extras
+                  <TabsTrigger value="features" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Extras</span>
+                    <span className="xs:hidden">Ext</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
 
               {/* Calculadoras Principales Tab */}
-              <TabsContent value="calculators" className="space-y-8">
-                <div className="text-center mb-8">
-                  <h2 className="text-4xl font-bold text-white mb-4">Calculadoras Profesionales</h2>
-                  <p className="text-muted-foreground max-w-3xl mx-auto">
+              <TabsContent value="calculators" className="space-y-6 md:space-y-8">
+                <div className="text-center mb-6 md:mb-8">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 md:mb-4">Calculadoras Profesionales</h2>
+                  <p className="text-sm sm:text-base text-muted-foreground max-w-3xl mx-auto px-4">
                     Suite completa de herramientas para gestión de riesgo, costos y análisis de operaciones
                   </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                   {[
                     { 
-                      icon: <Target className="w-6 h-6" />, 
+                      icon: <Target className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Tamaño de Posición", 
                       desc: "Cálculo de lotes/volumen según riesgo y SL",
                       color: "from-blue-500/20 to-cyan-500/20",
                       textColor: "text-blue-400"
                     },
                     { 
-                      icon: <DollarSign className="w-6 h-6" />, 
+                      icon: <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Valor del Pip", 
                       desc: "En moneda de la cuenta para cualquier par",
                       color: "from-green-500/20 to-emerald-500/20",
                       textColor: "text-green-400"
                     },
                     { 
-                      icon: <Shield className="w-6 h-6" />, 
+                      icon: <Shield className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Margen & Nivel", 
                       desc: "Margen usado, libre y nivel de margen",
                       color: "from-purple-500/20 to-violet-500/20",
                       textColor: "text-purple-400"
                     },
                     { 
-                      icon: <TrendingUp className="w-6 h-6" />, 
+                      icon: <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "TP/SL a Precio", 
                       desc: "Desde porcentaje o pips a precio exacto",
                       color: "from-orange-500/20 to-red-500/20",
                       textColor: "text-orange-400"
                     },
                     { 
-                      icon: <BarChart3 className="w-6 h-6" />, 
+                      icon: <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "P&L Calculator", 
                       desc: "Pérdida/Ganancia en tiempo real",
                       color: "from-teal-500/20 to-cyan-500/20",
                       textColor: "text-teal-400"
                     },
                     { 
-                      icon: <Activity className="w-6 h-6" />, 
+                      icon: <Activity className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Risk/Reward", 
                       desc: "Ratio riesgo/beneficio y expectativa",
                       color: "from-pink-500/20 to-rose-500/20",
                       textColor: "text-pink-400"
                     },
                     { 
-                      icon: <Layers className="w-6 h-6" />, 
+                      icon: <Layers className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Costo de Spread", 
                       desc: "Impacto del spread en tu operación",
                       color: "from-indigo-500/20 to-blue-500/20",
                       textColor: "text-indigo-400"
                     },
                     { 
-                      icon: <Clock className="w-6 h-6" />, 
+                      icon: <Clock className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Swap Calculator", 
                       desc: "Financing/rollover para posiciones overnight",
                       color: "from-yellow-500/20 to-amber-500/20",
                       textColor: "text-yellow-400"
                     },
                     { 
-                      icon: <Zap className="w-6 h-6" />, 
+                      icon: <Zap className="w-5 h-5 sm:w-6 sm:h-6" />, 
                       title: "Slippage Rule", 
                       desc: "Ejecución según rango de mercado",
                       color: "from-slate-500/20 to-gray-500/20",
@@ -216,14 +220,14 @@ export default function ToolsInfo() {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 hover:shadow-glow transition-all duration-300">
-                        <div className={`w-12 h-12 bg-gradient-to-br ${calc.color} rounded-xl flex items-center justify-center mb-4`}>
+                      <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-4 sm:p-6 group hover:border-primary/40 hover:shadow-glow transition-all duration-300">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${calc.color} rounded-xl flex items-center justify-center mb-3 sm:mb-4`}>
                           <div className={calc.textColor}>{calc.icon}</div>
                         </div>
-                        <h3 className="font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                        <h3 className="font-bold text-white mb-2 group-hover:text-primary transition-colors text-sm sm:text-base">
                           {calc.title}
                         </h3>
-                        <p className="text-muted-foreground text-sm">
+                        <p className="text-muted-foreground text-xs sm:text-sm">
                           {calc.desc}
                         </p>
                       </Card>
@@ -232,24 +236,24 @@ export default function ToolsInfo() {
                 </div>
 
                 {/* Pro Features */}
-                <Card className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-xl border-primary/30 p-8">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-white" />
+                <Card className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-xl border-primary/30 p-6 md:p-8">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-white">Versión Pro</h3>
-                      <p className="text-muted-foreground">Funciones avanzadas para traders profesionales</p>
+                      <h3 className="text-xl sm:text-2xl font-bold text-white">Versión Pro</h3>
+                      <p className="text-sm sm:text-base text-muted-foreground">Funciones avanzadas para traders profesionales</p>
                     </div>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                     <div className="flex items-center gap-3">
-                      <PieChart className="w-5 h-5 text-primary" />
-                      <span className="text-white">Exposición y Correlación</span>
+                      <PieChart className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                      <span className="text-white text-sm sm:text-base">Exposición y Correlación</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Coins className="w-5 h-5 text-primary" />
-                      <span className="text-white">Comisiones/Bonos (educativo)</span>
+                      <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+                      <span className="text-white text-sm sm:text-base">Comisiones/Bonos (educativo)</span>
                     </div>
                   </div>
                 </Card>
