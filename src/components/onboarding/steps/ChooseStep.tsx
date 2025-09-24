@@ -23,7 +23,7 @@ export const ChooseStep = ({ onChooseCreateAccount, onChooseValidateExisting }: 
             <Target className="h-10 w-10 text-primary-foreground" />
           </div>
         </div>
-        <h2 className="text-4xl font-bold text-foreground">Acceso Premium</h2>
+        <h2 className="text-4xl font-bold text-foreground">Solicitar Acceso</h2>
         <p className="text-xl text-muted-foreground max-w-lg mx-auto">
           Herramientas profesionales de trading para usuarios de Exness
         </p>

@@ -97,9 +97,9 @@ export const ValidateStep = ({
             <Shield className="h-8 w-8 text-primary-foreground" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-foreground">Validación de cuenta</h2>
+        <h2 className="text-3xl font-bold text-foreground">Validación de Afiliación</h2>
         <p className="text-muted-foreground text-lg max-w-md mx-auto">
-          Verifica tu afiliación con Tálamo para acceso completo
+          Verifica tu cuenta de Exness para acceso completo
         </p>
       </div>
 
@@ -111,13 +111,19 @@ export const ValidateStep = ({
                 <Info className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="space-y-3">
-                <h3 className="font-bold text-foreground text-xl">Acceso Premium por Afiliación</h3>
+                <h3 className="font-bold text-foreground text-xl">Acceso por Afiliación</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Tálamo es gratuito para cuentas afiliadas. Validamos únicamente tu email para confirmar 
-                  la afiliación con nuestro partner oficial.
+                  Tálamo no cobra membresía. Nuestro modelo se sostiene con rebates de spread cuando operas 
+                  con tu cuenta Exness afiliada a Tálamo (sin costo extra para ti). Así alineamos incentivos: 
+                  solo ganamos si tú operas con estructura. Validamos únicamente tu email para confirmar 
+                  la afiliación, nunca accedemos a tus fondos.
                 </p>
                 <div className="bg-primary/10 text-primary px-4 py-3 rounded-xl font-mono text-sm font-medium">
                   Partner ID: {PARTNER_ID}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-primary">
+                  <Shield className="h-4 w-4" />
+                  <span className="font-medium">Proceso encriptado y privado</span>
                 </div>
               </div>
             </div>
@@ -172,7 +178,7 @@ export const ValidateStep = ({
               ) : cooldownSeconds > 0 ? (
                 `Espera ${cooldownSeconds}s antes de reintentar`
               ) : (
-                "Validar Afiliación Premium"
+                "Validar Afiliación"
               )}
             </Button>
           </form>
@@ -219,30 +225,44 @@ export const ValidateStep = ({
                   <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                     <Info className="h-4 w-4 text-primary" />
                   </div>
-                  <span className="text-lg">¿Por qué validamos la afiliación?</span>
+              <span className="text-lg">¿Por qué validamos la afiliación?</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-6 pb-6">
-                <div className="grid gap-4 mt-4">
-                  <div className="flex items-start gap-3">
-                    <Lock className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold text-foreground">Tu cuenta, tus fondos</p>
-                      <p className="text-sm text-muted-foreground">Nunca operamos tu cuenta ni accedemos a tus fondos</p>
+                <div className="space-y-4 mt-4">
+                  <p className="text-muted-foreground leading-relaxed">
+                    Esto alinea incentivos: solo ganamos si tú operas con estructura a largo plazo. 
+                    Nuestra prioridad es ejecución con datos y control de riesgo, no vender promesas.
+                  </p>
+                  
+                  <div className="grid gap-4">
+                    <div className="flex items-start gap-3">
+                      <Lock className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Tu cuenta, tus fondos</p>
+                        <p className="text-sm text-muted-foreground">Nunca operamos tu cuenta ni accedemos a tus fondos</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <TrendingUp className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold text-foreground">Incentivos alineados</p>
-                      <p className="text-sm text-muted-foreground">Solo ganamos con rebates si operas con estructura</p>
+                    <div className="flex items-start gap-3">
+                      <TrendingUp className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Incentivos alineados</p>
+                        <p className="text-sm text-muted-foreground">Solo ganamos con rebates si operas con estructura</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Users className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold text-foreground">Acceso gratuito</p>
-                      <p className="text-sm text-muted-foreground">Sin membresías ni tarifas para cuentas afiliadas</p>
+                    <div className="flex items-start gap-3">
+                      <Eye className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Validación segura</p>
+                        <p className="text-sm text-muted-foreground">Solo verificamos email/UID por API encriptada</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Users className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Sin tarifas ni membresías</p>
+                        <p className="text-sm text-muted-foreground">Acceso gratuito para cuentas afiliadas</p>
+                      </div>
                     </div>
                   </div>
                 </div>

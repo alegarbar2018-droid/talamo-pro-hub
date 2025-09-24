@@ -27,16 +27,16 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
             </Button>
             <div className="space-y-1">
               <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Acceso Exclusivo
+                Solicitar Acceso
               </h1>
               <p className="text-sm text-muted-foreground font-medium">
-                Paso {stepNumber} de 5 • Tálamo Premium
+                Paso {stepNumber} de 5 • Tálamo
               </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="border-primary/40 text-primary bg-primary/5 px-4 py-2 text-sm font-semibold">
-              PREMIUM
+              Tálamo
             </Badge>
           </div>
         </div>
