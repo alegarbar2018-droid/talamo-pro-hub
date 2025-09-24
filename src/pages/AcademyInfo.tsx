@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useObservability } from "@/components/business/ObservabilityProvider";
 import Navigation from "@/components/Navigation";
 import AcademyChecklistDemo from "@/components/public/demos/AcademyChecklistDemo";
+import SyllabusDetailed from "@/components/SyllabusDetailed";
 import { GraduationCap, Target, CheckCircle, ArrowRight, Zap, Users, BookOpen } from "lucide-react";
 
 export default function AcademyInfo() {
@@ -223,12 +224,21 @@ export default function AcademyInfo() {
             </Card>
           </motion.div>
 
+          {/* Temario completo */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <SyllabusDetailed />
+          </motion.div>
+
           {/* Footer */}
           <motion.footer 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="text-center"
+            className="text-center mt-16"
           >
             <div className="bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-2xl p-6">
               <p className="text-sm text-muted-foreground">
