@@ -42,15 +42,18 @@ const Navigation = () => {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <button
                 key={item.label}
                 onClick={() => handleNavigation(item.href)}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 relative group"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 relative group px-3 py-2 rounded-lg hover:bg-muted/50"
               >
-                {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-200" />
+                <div className="flex items-center gap-2">
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </div>
+                <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary group-hover:w-3/4 transition-all duration-200" />
               </button>
             ))}
           </div>
