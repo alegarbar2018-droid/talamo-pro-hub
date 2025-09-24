@@ -39,29 +39,6 @@ export default function AcademyInfo() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-20">
           <AcademyDifference />
 
-          {/* Demo Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-16 mt-20"
-          >
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-primary" />
-                </div>
-                <h2 className="text-4xl font-bold text-white">Así funciona por dentro</h2>
-              </div>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Progreso medible, tareas con criterios objetivos, KPIs reales y herramientas descargables.
-              </p>
-            </div>
-            
-            <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-8">
-              <AcademyChecklistDemo />
-            </Card>
-          </motion.div>
 
           {/* Temario completo */}
           <motion.div
