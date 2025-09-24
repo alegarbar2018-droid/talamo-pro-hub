@@ -223,14 +223,14 @@ Deno.serve(async (req) => {
       );
     }
 
-    // For now, return a simple success response for testing
-    console.log("✅ Returning test response");
+    // For now, return a simple success response for testing  
+    console.log("✅ Returning test response - not affiliated");
     return new Response(
       JSON.stringify({
         ok: true,
         data: {
           is_affiliated: false,
-          message: `Function is working! Processed email: ${email}`
+          message: `Test function processed email: ${email}`
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
