@@ -260,9 +260,62 @@ export default function ToolsInfo() {
                 <div className="text-center mb-8">
                   <h2 className="text-4xl font-bold text-white mb-4">Fichas Técnicas por Activo</h2>
                   <p className="text-muted-foreground max-w-3xl mx-auto">
-                    Datos clave de cada instrumento organizados por categoría
+                    Especificaciones completas de cada instrumento para que sepas exactamente cómo operar sin sorpresas
                   </p>
                 </div>
+
+                {/* Context and Purpose */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  className="mb-8"
+                >
+                  <Card className="bg-gradient-to-r from-primary/5 to-accent/5 backdrop-blur-xl border-primary/20 p-8">
+                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                          <Info className="w-6 h-6 text-primary" />
+                          ¿Qué son las Fichas Técnicas?
+                        </h3>
+                        <p className="text-muted-foreground mb-4">
+                          Cada instrumento financiero tiene características únicas que afectan directamente tus cálculos de riesgo y costos. 
+                          Nuestras fichas técnicas centralizan esta información crítica.
+                        </p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-primary" />
+                            <span className="text-sm text-muted-foreground">Evita errores de cálculo por datos incorrectos</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-primary" />
+                            <span className="text-sm text-muted-foreground">Optimiza tu gestión de riesgo por instrumento</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-primary" />
+                            <span className="text-sm text-muted-foreground">Conoce costos reales antes de operar</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                          <Target className="w-6 h-6 text-primary" />
+                          ¿Para qué las ofrecemos?
+                        </h3>
+                        <p className="text-muted-foreground mb-4">
+                          Porque cada pip, cada punto de spread, cada requirement de margen impacta tu rentabilidad. 
+                          No dejes nada al azar.
+                        </p>
+                        <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                          <p className="text-sm text-white font-semibold mb-2">Ejemplo práctico:</p>
+                          <p className="text-sm text-muted-foreground">
+                            En EURUSD necesitas $10 de margen por microlote, pero en USDJPY son $9. 
+                            Esa diferencia puede significar 10% más de apalancamiento disponible.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[
