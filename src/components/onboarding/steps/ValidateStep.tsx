@@ -111,19 +111,12 @@ export const ValidateStep = ({
                 <Info className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="space-y-3">
-                <h3 className="font-bold text-foreground text-xl">Acceso por Afiliación</h3>
+                <h3 className="font-bold text-foreground text-xl">Validación de Afiliación</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Tálamo no cobra membresía. Nuestro modelo se sostiene con rebates de spread cuando operas 
-                  con tu cuenta Exness afiliada a Tálamo (sin costo extra para ti). Así alineamos incentivos: 
-                  solo ganamos si tú operas con estructura. Validamos únicamente tu email para confirmar 
-                  la afiliación, nunca accedemos a tus fondos.
+                  Ingresa tu email de Exness para verificar que tu cuenta esté afiliada con nuestro partner oficial.
                 </p>
                 <div className="bg-primary/10 text-primary px-4 py-3 rounded-xl font-mono text-sm font-medium">
                   Partner ID: {PARTNER_ID}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-primary">
-                  <Shield className="h-4 w-4" />
-                  <span className="font-medium">Proceso encriptado y privado</span>
                 </div>
               </div>
             </div>
@@ -229,7 +222,21 @@ export const ValidateStep = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-6 pb-6">
-                <div className="space-y-4 mt-4">
+                <div className="space-y-6 mt-4">
+                  <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 rounded-xl p-6">
+                    <h4 className="font-bold text-foreground mb-3 text-lg">Nuestro Modelo de Negocio</h4>
+                    <p className="text-muted-foreground leading-relaxed mb-4">
+                      Tálamo no cobra membresía. Nuestro modelo se sostiene con rebates de spread cuando operas 
+                      con tu cuenta Exness afiliada a Tálamo (sin costo extra para ti). Así alineamos incentivos: 
+                      solo ganamos si tú operas con estructura. Validamos únicamente tu email para confirmar 
+                      la afiliación, nunca accedemos a tus fondos.
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-primary">
+                      <Shield className="h-4 w-4" />
+                      <span className="font-medium">Proceso encriptado y privado</span>
+                    </div>
+                  </div>
+                  
                   <p className="text-muted-foreground leading-relaxed">
                     Esto alinea incentivos: solo ganamos si tú operas con estructura a largo plazo. 
                     Nuestra prioridad es ejecución con datos y control de riesgo, no vender promesas.
