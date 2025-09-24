@@ -86,20 +86,57 @@ async function checkExnessAffiliation(
   retryCount = 0
 ): Promise<{ affiliated: boolean; uid?: string; error?: string }> {
   const maxRetries = 2;
-  const baseUrl = Deno.env.get('PARTNER_API_BASE');
+  // Use fixed Exness API base URL as per specifications
+  const baseUrl = "https://my.exnessaffiliates.com";
   const username = Deno.env.get('PARTNER_API_USER');
   const password = Deno.env.get('PARTNER_API_PASSWORD');
 
-  if (!baseUrl || !username || !password) {
-    throw new Error('Partner API configuration missing');
+  console.log("🔧 Exness API config:", {
+    baseUrl,
+    hasUsername: !!username,
+    hasPassword: !!password,
+    retryCount
+  });
+
+  if (!username || !password) {
+    throw new Error('PARTNER_API_USER or PARTNER_API_PASSWORD not configured');
   }
 
   try {
-    const response = await fetch(`${baseUrl}/validate-affiliation`, {
+    // First, get JWT token
+    console.log("🎫 Getting JWT token from:", `${baseUrl}/api/auth`);
+    const authResponse = await fetch(`${baseUrl}/api/auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+      },
+      body: JSON.stringify({
+        email: username,
+        password: password,
+      }),
+      signal: AbortSignal.timeout(10000) // 10 second timeout
+    });
+
+    if (!authResponse.ok) {
+      const errorText = await authResponse.text();
+      console.error("🚨 Auth request failed:", authResponse.status, errorText);
+      throw new Error(`Authentication failed: ${authResponse.status}`);
+    }
+
+    const authData = await authResponse.json();
+    console.log("✅ Auth response received:", { hasToken: !!authData.token });
+
+    if (!authData.token) {
+      throw new Error('No token received from authentication');
+    }
+
+    // Now check affiliation
+    console.log("🔍 Checking affiliation at:", `${baseUrl}/api/partner/affiliation/`);
+    const response = await fetch(`${baseUrl}/api/partner/affiliation/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authData.token}`
       },
       body: JSON.stringify({ email }),
       signal: AbortSignal.timeout(10000) // 10 second timeout
@@ -107,23 +144,31 @@ async function checkExnessAffiliation(
 
     if (response.status === 429 && retryCount < maxRetries) {
       const retryAfter = parseInt(response.headers.get('retry-after') || '2');
+      console.log(`⏳ Rate limited, waiting ${retryAfter}s before retry ${retryCount + 1}/${maxRetries}`);
       await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
       return checkExnessAffiliation(email, retryCount + 1);
     }
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("🚨 Affiliation check failed:", response.status, errorText);
       throw new Error(`API responded with status: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log("📊 Affiliation API response:", data);
+    
     return {
-      affiliated: data.is_affiliated || false,
-      uid: data.uid,
+      affiliated: data.affiliation === true,
+      uid: data.client_uid,
       error: data.error
     };
   } catch (error) {
+    console.error("🚨 checkExnessAffiliation error:", error);
     if (retryCount < maxRetries) {
-      await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+      const backoffMs = 1000 * (retryCount + 1);
+      console.log(`🔄 Retrying after ${backoffMs}ms, attempt ${retryCount + 1}/${maxRetries}`);
+      await new Promise(resolve => setTimeout(resolve, backoffMs));
       return checkExnessAffiliation(email, retryCount + 1);
     }
     throw error;
@@ -131,8 +176,15 @@ async function checkExnessAffiliation(
 }
 
 Deno.serve(async (req) => {
+  console.log("🚀 === SECURE AFFILIATION CHECK FUNCTION START ===");
+  console.log("Method:", req.method);
+  console.log("URL:", req.url);
+  console.log("Headers:", Object.fromEntries(req.headers.entries()));
+  console.log("Timestamp:", new Date().toISOString());
+  
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
+    console.log("✅ Handling CORS preflight request");
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -178,8 +230,12 @@ Deno.serve(async (req) => {
 
     const { email, captcha_token }: ValidationRequest = await req.json();
 
+    console.log("📧 Email received:", email);
+    console.log("🎫 Captcha token:", !!captcha_token);
+
     // Input validation
     if (!email || typeof email !== 'string') {
+      console.log("❌ Invalid email provided:", email);
       await logSecurityEvent(supabase, 'invalid_email_format', { 
         email: '[REDACTED]', 
         client_id: clientId 
@@ -196,6 +252,7 @@ Deno.serve(async (req) => {
     }
 
     if (!validateEmail(email)) {
+      console.log("❌ Invalid email format:", email);
       await logSecurityEvent(supabase, 'invalid_email_format', { 
         email: '[REDACTED]', 
         client_id: clientId 
@@ -215,7 +272,10 @@ Deno.serve(async (req) => {
     const allowDemo = Deno.env.get('ALLOW_DEMO') === 'true';
     const isDemoEmail = email.toLowerCase().includes('demo') || email.toLowerCase().includes('test');
     
+    console.log("🧪 Demo check:", { allowDemo, isDemoEmail, email: email.toLowerCase() });
+    
     if (allowDemo && isDemoEmail) {
+      console.log("✅ Demo mode activated for:", email);
       await logSecurityEvent(supabase, 'demo_access_granted', { 
         email: '[REDACTED]',
         client_id: clientId
@@ -262,9 +322,18 @@ Deno.serve(async (req) => {
     // Check affiliation via Partner API
     const usePartnerAPI = Deno.env.get('USE_PARTNER_API') === 'true';
     
+    console.log("🔧 Environment check:", {
+      USE_PARTNER_API: usePartnerAPI,
+      HAS_PARTNER_API_BASE: !!Deno.env.get('PARTNER_API_BASE'),
+      HAS_PARTNER_API_USER: !!Deno.env.get('PARTNER_API_USER'),
+      HAS_PARTNER_API_PASSWORD: !!Deno.env.get('PARTNER_API_PASSWORD')
+    });
+    
     if (usePartnerAPI) {
+      console.log("🌐 Partner API is enabled, proceeding with affiliation check");
       try {
         const affiliationResult = await checkExnessAffiliation(email);
+        console.log("📋 Affiliation result:", affiliationResult);
         
         // Log affiliation check result
         await supabase.from('affiliation_reports').insert({
@@ -291,7 +360,11 @@ Deno.serve(async (req) => {
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       } catch (apiError) {
-        console.error('Partner API error:', apiError);
+        console.error('🚨 Partner API error:', apiError);
+        console.error('Error details:', {
+          message: apiError instanceof Error ? apiError.message : 'Unknown error',
+          stack: apiError instanceof Error ? apiError.stack : 'No stack trace'
+        });
         
         await logSecurityEvent(supabase, 'partner_api_error', {
           email: '[REDACTED]',
@@ -311,6 +384,7 @@ Deno.serve(async (req) => {
     }
 
     // Fallback response when Partner API is disabled
+    console.log("⚠️ Partner API is disabled, returning not affiliated");
     return new Response(
       JSON.stringify({
         ok: true,
@@ -322,7 +396,11 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Validation function error:', error);
+    console.error('🚨 Validation function error:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
     
     return new Response(
       JSON.stringify({
