@@ -24,6 +24,10 @@ import AuthValidate from "./pages/AuthValidate";
 import ChangePartnerGuide from "./pages/ChangePartnerGuide";
 import ExnessRedirect from "./pages/ExnessRedirect";
 import AccessWizard from "./pages/AccessWizard";
+import AcademyInfo from "./pages/AcademyInfo";
+import SignalsInfo from "./pages/SignalsInfo";
+import CopyInfo from "./pages/CopyInfo";
+import ToolsInfo from "./pages/ToolsInfo";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminUsers } from "./pages/admin/Users";
@@ -61,6 +65,12 @@ const App = () => (
             <Route path="/copy-trading" element={<CopyTrading />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/access" element={<AccessWizard />} />
+            
+            {/* Public info pages */}
+            <Route path="/academy-info" element={<AcademyInfo />} />
+            <Route path="/signals-info" element={<SignalsInfo />} />
+            <Route path="/copy-info" element={<CopyInfo />} />
+            <Route path="/tools-info" element={<ToolsInfo />} />
             
             {/* Legacy redirects */}
             <Route path="/auth/validate" element={<Navigate to="/onboarding?step=validate" replace />} />
