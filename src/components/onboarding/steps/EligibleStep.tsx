@@ -79,12 +79,12 @@ export const EligibleStep = ({
 
   return (
     <Card className="border-line bg-surface shadow-glow-subtle">
-      <CardHeader>
-        <CardTitle className="text-xl text-foreground flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-green-500" />
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-lg sm:text-xl text-foreground flex items-center gap-2">
+          <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
           {isDemoMode ? "Acceso Demo" : "Acceso Verificado"}
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm sm:text-base">
           {isDemoMode 
             ? "Tienes acceso temporal para probar Tálamo" 
             : "Tu cuenta está afiliada correctamente"
@@ -92,22 +92,22 @@ export const EligibleStep = ({
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
         {isDemoMode && (
-          <div className="p-4 bg-warning/10 border border-warning/20 rounded-lg">
+          <div className="p-3 sm:p-4 bg-warning/10 border border-warning/20 rounded-lg">
             <div className="flex items-center gap-2 text-warning">
-              <AlertTriangle className="h-4 w-4" />
-              <span className="font-medium">Modo demo — acceso temporal sin validación por API</span>
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+              <span className="font-medium text-sm sm:text-base">Modo demo — acceso temporal sin validación por API</span>
             </div>
           </div>
         )}
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-950 dark:border-blue-800">
-          <div className="flex items-start gap-3">
-            <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0 dark:text-blue-400" />
-            <div className="space-y-2">
-              <h3 className="font-semibold text-blue-900 dark:text-blue-100">Seguridad y privacidad</h3>
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 dark:bg-blue-950 dark:border-blue-800">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mt-0.5 flex-shrink-0 dark:text-blue-400" />
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 text-sm sm:text-base">Seguridad y privacidad</h3>
+              <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
                 Tu panel es independiente de tu cuenta de trading. Tálamo no accede a tus fondos; 
                 solo validamos tu afiliación para proporcionarte acceso sin membresía.
               </p>
@@ -115,10 +115,10 @@ export const EligibleStep = ({
           </div>
         </div>
         
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div className="space-y-4">
+        <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-base font-medium">Crear contraseña</Label>
+              <Label htmlFor="password" className="text-sm sm:text-base font-medium">Crear contraseña</Label>
               <Input
                 id="password"
                 type="password"
@@ -127,12 +127,12 @@ export const EligibleStep = ({
                 onChange={(e) => onPasswordChange(e.target.value)}
                 required
                 minLength={8}
-                className="bg-input border-line h-11"
+                className="bg-input border-line h-10 sm:h-11"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-base font-medium">Confirmar contraseña</Label>
+              <Label htmlFor="confirmPassword" className="text-sm sm:text-base font-medium">Confirmar contraseña</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -141,12 +141,12 @@ export const EligibleStep = ({
                 onChange={(e) => onConfirmPasswordChange(e.target.value)}
                 required
                 minLength={8}
-                className="bg-input border-line h-11"
+                className="bg-input border-line h-10 sm:h-11"
               />
             </div>
           </div>
 
-          <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground bg-muted/30 p-2 sm:p-3 rounded-lg">
             <p>La contraseña debe tener al menos 8 caracteres, incluir una mayúscula y un número.</p>
           </div>
           
@@ -165,7 +165,7 @@ export const EligibleStep = ({
               !/(?=.*[A-Z])(?=.*\d)/.test(password) || 
               loading
             }
-            className="w-full bg-gradient-primary hover:shadow-glow h-11"
+            className="w-full bg-gradient-primary hover:shadow-glow h-10 sm:h-11"
           >
             {loading ? "Creando cuenta..." : "Continuar al perfil"}
           </Button>
