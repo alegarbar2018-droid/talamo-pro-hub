@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,22 @@ import {
   PieChart
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { useObservability, withPageTracking } from "@/components/business/ObservabilityProvider";
 
 const CopyTrading = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['copy']);
+  const { trackInteraction, trackBusinessEvent } = useObservability();
   const [followedStrategies, setFollowedStrategies] = useState<string[]>([]);
+
+  // Track page view
+  React.useEffect(() => {
+    trackBusinessEvent('copy_strategy_followed', { 
+      page: 'copy_trading',
+      followed_strategies_count: followedStrategies.length
+    });
+  }, [trackBusinessEvent, followedStrategies.length]);
 
   const strategies = [
     {
@@ -96,10 +107,18 @@ const CopyTrading = () => {
   };
 
   const toggleFollow = (strategyId: string) => {
-    if (followedStrategies.includes(strategyId)) {
+    const wasFollowed = followedStrategies.includes(strategyId);
+    
+    if (wasFollowed) {
       setFollowedStrategies(followedStrategies.filter(id => id !== strategyId));
+      trackInteraction('strategy_card', 'unfollow', { strategy_id: strategyId });
     } else {
       setFollowedStrategies([...followedStrategies, strategyId]);
+      trackInteraction('strategy_card', 'follow', { strategy_id: strategyId });
+      trackBusinessEvent('copy_strategy_followed', { 
+        strategy_id: strategyId,
+        strategy_name: strategies.find(s => s.id === strategyId)?.name 
+      });
     }
   };
 
@@ -126,12 +145,12 @@ const CopyTrading = () => {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Risk Warning */}
-        <Alert className="border-warning/20 bg-warning/10 mb-6">
-          <AlertTriangle className="h-4 w-4 text-warning" />
-          <AlertDescription className="text-foreground">
-            <strong>{t('copy:risk_warning.title')}</strong> {t('copy:risk_warning.description')}
-          </AlertDescription>
-        </Alert>
+        <TradingDisclaimer 
+          variant="full"
+          context="copy-trading"
+          showCollapsible={true}
+          className="mb-6"
+        />
 
         {/* Overview Stats */}
         {followedStrategies.length > 0 && (
@@ -262,6 +281,11 @@ const CopyTrading = () => {
                           : 'bg-gradient-primary hover:shadow-glow'
                       }`}
                       variant={isFollowed ? "outline" : "default"}
+                      aria-label={
+                        isFollowed 
+                          ? `Dejar de seguir la estrategia ${strategy.name}`
+                          : `Configurar copia de la estrategia ${strategy.name}`
+                      }
                     >
                       {isFollowed ? (
                         <>
@@ -272,7 +296,18 @@ const CopyTrading = () => {
                         "Configurar copia"
                       )}
                     </Button>
-                    <Button variant="outline" size="icon" className="border-line">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="border-line"
+                      onClick={() => {
+                        trackInteraction('strategy_card', 'view_chart', {
+                          strategy_id: strategy.id,
+                          strategy_name: strategy.name
+                        });
+                      }}
+                      aria-label={`Ver gráfico de rendimiento de ${strategy.name}`}
+                    >
                       <BarChart3 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -374,4 +409,4 @@ const CopyTrading = () => {
   );
 };
 
-export default CopyTrading;
+export default withPageTracking(CopyTrading, 'copy-trading');

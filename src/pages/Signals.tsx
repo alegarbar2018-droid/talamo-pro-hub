@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,26 @@ import {
   Activity
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { useObservability, withPageTracking } from "@/components/business/ObservabilityProvider";
 
 const Signals = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['signals']);
+  const { trackInteraction, trackBusinessEvent } = useObservability();
   const [filters, setFilters] = useState({
     market: "all",
     timeframe: "all",
     minRR: "all"
   });
+
+  // Track page view and signal interactions
+  React.useEffect(() => {
+    trackBusinessEvent('signal_viewed', { 
+      page: 'signals_list',
+      filters_active: Object.values(filters).some(f => f !== 'all')
+    });
+  }, [trackBusinessEvent, filters]);
 
   const signals = [
     {
@@ -133,12 +144,12 @@ const Signals = () => {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Risk Warning */}
-        <Alert className="border-warning/20 bg-warning/10 mb-6">
-          <AlertTriangle className="h-4 w-4 text-warning" />
-          <AlertDescription className="text-foreground">
-            <strong>{t('signals:risk_warning.title')}</strong> {t('signals:risk_warning.description')}
-          </AlertDescription>
-        </Alert>
+        <TradingDisclaimer 
+          variant="full"
+          context="signals"
+          showCollapsible={true}
+          className="mb-6"
+        />
 
         {/* Filters */}
         <Card className="border-line bg-surface mb-6">
@@ -288,11 +299,32 @@ const Signals = () => {
                 </div>
                 
                  <div className="flex gap-3 mt-6 pt-4 border-t border-line">
-                   <Button variant="outline" className="border-teal text-teal hover:bg-teal/10">
-                     <Eye className="h-4 w-4 mr-2" />
-                     {t('signals:signal.view_full_analysis')}
-                   </Button>
-                   <Button variant="outline" className="border-line">
+                  <Button 
+                    variant="outline" 
+                    className="border-teal text-teal hover:bg-teal/10"
+                    onClick={() => {
+                      trackInteraction('signal_card', 'view_full_analysis', {
+                        signal_id: signal.id,
+                        signal_type: signal.type,
+                        instrument: signal.instrument
+                      });
+                    }}
+                    aria-label={`Ver análisis completo de ${signal.title}`}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    {t('signals:signal.view_full_analysis')}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="border-line"
+                    onClick={() => {
+                      trackInteraction('signal_card', 'view_chart', {
+                        signal_id: signal.id,
+                        instrument: signal.instrument
+                      });
+                    }}
+                    aria-label={`Ver gráfico de ${signal.instrument}`}
+                  >
                      <Activity className="h-4 w-4 mr-2" />
                      {t('signals:signal.view_chart')}
                    </Button>
@@ -353,4 +385,4 @@ const Signals = () => {
   );
 };
 
-export default Signals;
+export default withPageTracking(Signals, 'signals');
