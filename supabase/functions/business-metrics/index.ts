@@ -91,10 +91,10 @@ async function calculateRetentionRate(supabase: any, days: number): Promise<numb
   const { data: activeUsers } = await supabase
     .from('audit_logs')
     .select('actor_id')
-    .in('actor_id', cohortUsers.map(u => u.user_id))
+    .in('actor_id', cohortUsers.map((u: any) => u.user_id))
     .gte('created_at', new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)).toISOString());
   
-  activeUsers?.forEach(u => activeUserIds.add(u.actor_id));
+  activeUsers?.forEach((u: any) => activeUserIds.add(u.actor_id));
   
   return (activeUserIds.size / cohortUsers.length) * 100;
 }
@@ -121,17 +121,17 @@ async function calculateAffiliationFunnel(supabase: any): Promise<any> {
   }
   
   const totalChecks = checkEvents.length;
-  const successful = checkEvents.filter(e => e.action === 'affiliation_validated').length;
-  const errors = checkEvents.filter(e => e.action === 'api_error').length;
+  const successful = checkEvents.filter((e: any) => e.action === 'affiliation_validated').length;
+  const errors = checkEvents.filter((e: any) => e.action === 'api_error').length;
   
   // Calculate latency metrics
   const latencies = checkEvents
-    .filter(e => e.meta?.latency_ms)
-    .map(e => e.meta.latency_ms)
-    .sort((a, b) => a - b);
+    .filter((e: any) => e.meta?.latency_ms)
+    .map((e: any) => e.meta.latency_ms)
+    .sort((a: number, b: number) => a - b);
   
   const avgLatency = latencies.length > 0 
-    ? latencies.reduce((sum, lat) => sum + lat, 0) / latencies.length 
+    ? latencies.reduce((sum: number, lat: number) => sum + lat, 0) / latencies.length 
     : 0;
     
   const p95Index = Math.floor(latencies.length * 0.95);

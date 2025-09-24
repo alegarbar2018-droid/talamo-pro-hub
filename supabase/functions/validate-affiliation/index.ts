@@ -59,7 +59,7 @@ async function getExnessToken(): Promise<string> {
   cachedToken = data.token;
   tokenExpiry = now + (55 * 60 * 1000);
   
-  return cachedToken;
+  return cachedToken as string;
 }
 
 // Check affiliation with Exness API
@@ -140,7 +140,7 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
     console.log("Parsed affiliation data:", data);
     return data;
   } catch (error) {
-    if (retryCount < maxRetries && (
+    if (retryCount < maxRetries && error instanceof Error && (
       error.message.includes('timeout') || 
       error.message.includes('ETIMEDOUT') ||
       error.message.includes('UpstreamError')
