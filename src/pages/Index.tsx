@@ -279,6 +279,130 @@ const Index = () => {
       {/* FAQ */}
       <FAQExpanded />
 
+      {/* Explore Features Section */}
+      <section className="bg-background border-y border-line py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Explora lo que ofrecemos
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Conoce en detalle nuestras herramientas y metodología antes de solicitar acceso
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="group bg-surface border border-line rounded-xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+            >
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-teal/20 to-primary/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Target className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Academia</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Aprendizaje estructurado con objetivos claros y métricas reales
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate("/academy-info")}
+                    className="w-full border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="group bg-surface border border-line rounded-xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+            >
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Señales</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Análisis transparente con reglas claras y métricas verificables
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate("/signals-info")}
+                    className="w-full border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="group bg-surface border border-line rounded-xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+            >
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-accent/20 to-teal/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Copy className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Copy Trading</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Criterios para copiar con cabeza y gestión de riesgo responsable
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate("/copy-info")}
+                    className="w-full border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="group bg-surface border border-line rounded-xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+            >
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-teal/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Zap className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-2">Herramientas</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Calculadoras y utilidades para operar con precisión y disciplina
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate("/tools-info")}
+                    className="w-full border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Ver detalles
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-line bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
