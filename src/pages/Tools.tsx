@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,13 @@ import {
   Settings
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { useObservability } from "@/components/business/ObservabilityProvider";
 
 const Tools = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['tools']);
+  const { trackPageView, trackInteraction } = useObservability();
   const [riskCalc, setRiskCalc] = useState({
     balance: "",
     riskPercent: "",
@@ -41,6 +44,10 @@ const Tools = () => {
     notes: "",
     tags: ""
   });
+
+  useEffect(() => {
+    trackPageView('tools');
+  }, [trackPageView]);
 
   const calculateLotSize = () => {
     const balance = parseFloat(riskCalc.balance);
@@ -62,6 +69,12 @@ const Tools = () => {
     const lotSize = riskAmount / (slPips * pipValue);
     
     setCalcResult(Math.round(lotSize * 100) / 100);
+    trackInteraction('risk_calculator_used', 'calculate', { 
+      balance, 
+      riskPercent, 
+      slPips, 
+      lotSize: Math.round(lotSize * 100) / 100 
+    });
   };
 
   const saveJournalEntry = () => {
@@ -87,6 +100,7 @@ const Tools = () => {
     });
     
     alert(t('tools:alerts.entry_saved'));
+    trackInteraction('journal_entry_saved', 'submit', { pair: journalEntry.pair });
   };
 
   const tools = [
@@ -440,6 +454,14 @@ const Tools = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Trading Disclaimer */}
+        <TradingDisclaimer 
+          context="tools" 
+          variant="compact" 
+          showCollapsible={true}
+          className="mt-8"
+        />
       </div>
     </div>
   );

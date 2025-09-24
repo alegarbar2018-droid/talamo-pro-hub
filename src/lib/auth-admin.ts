@@ -44,6 +44,16 @@ export async function getCurrentAdminRole(): Promise<AdminRole | null> {
 // Check if user has admin permission
 export async function hasAdminPermission(resource: string, action: string): Promise<boolean> {
   try {
+    const role = await getCurrentAdminRole();
+    
+    // Full admin access
+    if (role === 'ADMIN') return true;
+    
+    // Analyst role permissions for analytics
+    if (role === 'ANALYST' && resource === 'analytics' && action === 'read') {
+      return true;
+    }
+
     const { data, error } = await supabase.rpc('has_admin_permission', {
       _resource: resource,
       _action: action

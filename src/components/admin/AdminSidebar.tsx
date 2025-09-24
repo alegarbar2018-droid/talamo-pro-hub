@@ -115,7 +115,15 @@ export const AdminSidebar: React.FC = () => {
             {open && <SidebarGroupLabel>{section.section}</SidebarGroupLabel>}
             <SidebarGroupContent>
               <SidebarMenu>
-                {section.items.map((item) => (
+                {section.items
+                  .filter(item => {
+                    // Hide analytics for non-admin/analyst users
+                    if (item.url === '/admin/analytics') {
+                      return adminRole === 'ADMIN' || adminRole === 'ANALYST';
+                    }
+                    return true;
+                  })
+                  .map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClassName}>

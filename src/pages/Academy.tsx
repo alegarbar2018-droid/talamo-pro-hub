@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,19 @@ import {
   Target
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { useObservability } from "@/components/business/ObservabilityProvider";
 
 const Academy = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['academy']);
+  const { trackPageView, trackInteraction } = useObservability();
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>(['0.1', '0.2', '1.1']);
+
+  useEffect(() => {
+    trackPageView('academy');
+  }, [trackPageView]);
 
   const syllabus = [
     {
@@ -95,6 +102,7 @@ const Academy = () => {
   const markLessonCompleted = (lessonCode: string) => {
     if (!completedLessons.includes(lessonCode)) {
       setCompletedLessons([...completedLessons, lessonCode]);
+      trackInteraction('lesson_completed', 'click', { lessonCode });
     }
   };
 
@@ -340,6 +348,14 @@ const Academy = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Trading Disclaimer */}
+        <TradingDisclaimer 
+          context="academy" 
+          variant="compact" 
+          showCollapsible={true}
+          className="mt-8"
+        />
       </div>
     </div>
   );

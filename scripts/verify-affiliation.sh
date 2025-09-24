@@ -62,6 +62,23 @@ for i in {1..35}; do
   if [[ "$STATUS" == "429" ]]; then
     RATE_LIMITED=1
     echo "✅ Rate limit activado en request #$i (HTTP 429)"
+    
+    # Extract Retry-After header from the 429 response
+    RETRY_RESPONSE=$(curl -sS -D- -o /dev/null \
+      --json "{\"email\":\"retry_test@test.com\"}" \
+      -H "X-Idempotency-Key: retry_$RATE_KEY" \
+      "$AFFILIATION_ENDPOINT" 2>/dev/null || echo "")
+    
+    RETRY_AFTER=$(echo "$RETRY_RESPONSE" | grep -i "retry-after:" | cut -d: -f2 | tr -d ' \r\n' || echo "")
+    
+    if [[ -n "$RETRY_AFTER" ]]; then
+      echo "✅ Retry-After header encontrado: ${RETRY_AFTER}s"
+      echo "⏱️  Esperando $RETRY_AFTER segundos antes del siguiente test..."
+      sleep "$RETRY_AFTER"
+    else
+      echo "⚠️  Retry-After header no encontrado en respuesta 429"
+    fi
+    
     break
   elif [[ "$STATUS" =~ ^[45] ]]; then
     echo "⚠️  Request #$i: HTTP $STATUS (no 429)"
