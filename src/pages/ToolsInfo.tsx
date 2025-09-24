@@ -114,29 +114,43 @@ export default function ToolsInfo() {
             className="mb-8 md:mb-12"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="flex justify-center mb-6 md:mb-8 px-2">
-                <TabsList className="bg-surface/80 backdrop-blur-xl border border-primary/30 p-1 rounded-2xl w-full max-w-4xl grid grid-cols-4 gap-1">
-                  <TabsTrigger value="calculators" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                    <Calculator className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Calculadoras</span>
-                    <span className="sm:hidden">Calc</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="contracts" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                    <CandlestickChart className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Contratos</span>
-                    <span className="sm:hidden">Cont</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="formulas" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                    <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Fórmulas</span>
-                    <span className="sm:hidden">Form</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="features" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Extras</span>
-                    <span className="sm:hidden">Ext</span>
-                  </TabsTrigger>
-                </TabsList>
+              <div className="flex justify-center mb-6 md:mb-8 px-4">
+                <div className="bg-surface/90 backdrop-blur-xl border border-primary/30 p-2 rounded-2xl overflow-hidden">
+                  <TabsList className="bg-transparent p-0 h-auto grid grid-cols-2 lg:grid-cols-4 gap-2 w-full min-w-0">
+                    <TabsTrigger 
+                      value="calculators" 
+                      className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-glow text-muted-foreground bg-transparent rounded-xl px-3 py-3 flex items-center justify-center gap-2 text-xs font-medium transition-all duration-200 min-w-0 whitespace-nowrap"
+                    >
+                      <Calculator className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline">Calculadoras</span>
+                      <span className="md:hidden">Calc</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="contracts" 
+                      className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-glow text-muted-foreground bg-transparent rounded-xl px-3 py-3 flex items-center justify-center gap-2 text-xs font-medium transition-all duration-200 min-w-0 whitespace-nowrap"
+                    >
+                      <CandlestickChart className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline">Contratos</span>
+                      <span className="md:hidden">Cont</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="formulas" 
+                      className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-glow text-muted-foreground bg-transparent rounded-xl px-3 py-3 flex items-center justify-center gap-2 text-xs font-medium transition-all duration-200 min-w-0 whitespace-nowrap"
+                    >
+                      <BookOpen className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline">Fórmulas</span>
+                      <span className="md:hidden">Form</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="features" 
+                      className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-glow text-muted-foreground bg-transparent rounded-xl px-3 py-3 flex items-center justify-center gap-2 text-xs font-medium transition-all duration-200 min-w-0 whitespace-nowrap"
+                    >
+                      <Sparkles className="w-4 h-4 flex-shrink-0" />
+                      <span className="hidden md:inline">Extras</span>
+                      <span className="md:hidden">Ext</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
               </div>
 
               {/* Calculadoras Principales Tab */}
