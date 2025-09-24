@@ -139,12 +139,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Access finalize error:', error);
     
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error',
-        message: errorMessage 
+        message: error.message 
       }),
       { 
         status: 500, 

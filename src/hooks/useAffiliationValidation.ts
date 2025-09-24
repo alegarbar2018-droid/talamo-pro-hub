@@ -24,9 +24,6 @@ export const useAffiliationValidation = () => {
       console.info(`📡 Calling secure-affiliation-check function with email:`, email);
       const startTime = performance.now();
       
-      // Add detailed logging for debugging
-      console.log('🔧 About to call Supabase function with payload:', { email });
-      
       const { data, error } = await supabase.functions.invoke('secure-affiliation-check', {
         body: { email }
       });
@@ -36,15 +33,10 @@ export const useAffiliationValidation = () => {
       console.info('📋 Response details:', { 
         hasData: !!data, 
         hasError: !!error,
-        data: data ? JSON.stringify(data).substring(0, 500) : null,
+        data: data ? JSON.stringify(data).substring(0, 300) : null,
         errorMessage: error?.message?.substring(0, 300),
-        errorDetails: error ? JSON.stringify(error).substring(0, 500) : null
+        errorDetails: error
       });
-      
-      // Log to help debug
-      if (!data && !error) {
-        console.warn('⚠️ No data or error received from Supabase function');
-      }
 
       // Handle structured response from secure-affiliation-check
       if (error) {

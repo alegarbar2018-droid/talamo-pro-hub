@@ -14,31 +14,30 @@ let tokenExpiry: number = 0;
 async function getExnessToken(): Promise<string> {
   const now = Date.now();
   
-  // Return cached token if still valid (55 minutes cache as per specs)
+  // Return cached token if still valid (10 minutes cache)
   if (cachedToken && now < tokenExpiry) {
     console.log("Using cached token");
     return cachedToken;
   }
 
-  // Use fixed Exness API base URL as per specifications
-  const apiBase = "https://my.exnessaffiliates.com";
-  const partnerEmail = Deno.env.get("PARTNER_API_USER");
-  const partnerPassword = Deno.env.get("PARTNER_API_PASSWORD");
+  const apiBase = Deno.env.get("PARTNER_API_BASE");
+  const apiUser = Deno.env.get("PARTNER_API_USER");
+  const apiPassword = Deno.env.get("PARTNER_API_PASSWORD");
 
-  if (!partnerEmail || !partnerPassword) {
-    throw new Error("Missing PARTNER_API_USER or PARTNER_API_PASSWORD in environment variables");
+  if (!apiBase || !apiUser || !apiPassword) {
+    throw new Error("Missing API credentials in environment variables");
   }
 
-  console.log("Requesting new JWT token from:", `${apiBase}/api/auth`);
+  console.log("Requesting new JWT token from:", `${apiBase}/auth/`);
 
-  const response = await fetch(`${apiBase}/api/auth`, {
+  const response = await fetch(`${apiBase}/auth/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email: partnerEmail,
-      password: partnerPassword,
+      login: apiUser,
+      password: apiPassword,
     }),
   });
 
@@ -55,51 +54,41 @@ async function getExnessToken(): Promise<string> {
     throw new Error("No token received from authentication");
   }
 
-  // Cache token for 55 minutes as per specs (3300 seconds)
+  // Cache token for 10 minutes
   cachedToken = data.token;
-  tokenExpiry = now + (55 * 60 * 1000);
+  tokenExpiry = now + (10 * 60 * 1000);
   
-  return cachedToken as string;
+  return cachedToken;
 }
 
 // Check affiliation with Exness API
 async function checkExnessAffiliation(email: string, retryCount = 0): Promise<any> {
-  // Use fixed Exness API base URL as per specifications
-  const apiBase = "https://my.exnessaffiliates.com";
-  const maxRetries = 2;
+  const apiBase = Deno.env.get("PARTNER_API_BASE");
+  
+  if (!apiBase) {
+    throw new Error("PARTNER_API_BASE not configured");
+  }
 
   try {
     const token = await getExnessToken();
     
     console.log("Checking affiliation for:", email);
-    console.log("Using API endpoint:", `${apiBase}/api/partner/affiliation/`);
     
-    const response = await fetch(`${apiBase}/api/partner/affiliation/`, {
+    const response = await fetch(`${apiBase}/partner/affiliation/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        "Authorization": `JWT ${token}`,
       },
       body: JSON.stringify({ email }),
     });
 
     // Handle token expiry with retry
-    if (response.status === 401 && retryCount < maxRetries) {
+    if (response.status === 401 && retryCount === 0) {
       console.log("Token expired, clearing cache and retrying");
       cachedToken = null;
       tokenExpiry = 0;
-      return await checkExnessAffiliation(email, retryCount + 1);
-    }
-
-    // Handle rate limiting with exponential backoff
-    if (response.status === 429 && retryCount < maxRetries) {
-      const retryAfter = parseInt(response.headers.get('retry-after') || '2');
-      const backoffMs = 500 * Math.pow(2, retryCount); // 500ms, 1000ms, 2000ms
-      const delay = Math.max(retryAfter * 1000, backoffMs);
-      
-      console.log(`Rate limited, waiting ${delay}ms before retry ${retryCount + 1}/${maxRetries}`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return await checkExnessAffiliation(email, retryCount + 1);
+      return await checkExnessAffiliation(email, 1);
     }
 
     const responseText = await response.text();
@@ -109,21 +98,13 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
     });
 
     if (!response.ok) {
-      // Handle specific error codes as per API specs
+      // Handle specific error codes
       if (response.status === 401) {
-        throw new Error("NotAuthenticated");
-      } else if (response.status === 403) {
-        throw new Error("PermissionDenied");
-      } else if (response.status === 404) {
-        throw new Error("NotFound");
-      } else if (response.status === 415) {
-        throw new Error("UnsupportedMediaType");
+        throw new Error("Unauthorized - Invalid credentials");
       } else if (response.status === 429) {
-        throw new Error("Throttled");
-      } else if (response.status === 400) {
-        throw new Error("ValidationError");
+        throw new Error("Rate limited - Too many requests");
       } else if (response.status >= 500) {
-        throw new Error(`UpstreamError: ${response.status}`);
+        throw new Error(`Upstream error: ${response.status}`);
       } else {
         throw new Error(`API error: ${response.status} ${responseText}`);
       }
@@ -137,20 +118,8 @@ async function checkExnessAffiliation(email: string, retryCount = 0): Promise<an
       throw new Error("Invalid JSON response from API");
     }
 
-    console.log("Parsed affiliation data:", data);
     return data;
   } catch (error) {
-    if (retryCount < maxRetries && error instanceof Error && (
-      error.message.includes('timeout') || 
-      error.message.includes('ETIMEDOUT') ||
-      error.message.includes('UpstreamError')
-    )) {
-      const backoffMs = 500 * Math.pow(2, retryCount);
-      console.log(`Retrying after ${backoffMs}ms due to:`, error.message);
-      await new Promise(resolve => setTimeout(resolve, backoffMs));
-      return await checkExnessAffiliation(email, retryCount + 1);
-    }
-    
     console.error("Error in checkExnessAffiliation:", error);
     throw error;
   }
@@ -278,58 +247,28 @@ const handler = async (req: Request): Promise<Response> => {
       
       console.log("Raw affiliation data received:", JSON.stringify(affiliationData, null, 2));
 
-      // Handle successful affiliation - check for affiliation property as per API specs
+      // Handle successful affiliation
       if (affiliationData && affiliationData.affiliation === true) {
         const result = {
           affiliation: true,
           accounts: affiliationData.accounts || [],
-          client_uid: affiliationData.client_uid || null,
+          client_uid: affiliationData.client_uid || affiliationData.clientUid || null,
           partnerId: partnerId,
           source: "exness-api",
-          checked_at: new Date().toISOString()
         };
         console.log("✅ Affiliation validated successfully:", result);
-        
-        // Log successful validation to database
-        try {
-          await supabase.from('affiliation_reports').insert({
-            email: email.toLowerCase(),
-            status: 'affiliated',
-            uid: result.client_uid,
-            partner_id: partnerId,
-            response_data: affiliationData
-          });
-        } catch (dbError) {
-          console.error("Failed to log affiliation report:", dbError);
-        }
-        
         return new Response(JSON.stringify(result), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       } 
       
-      // Handle explicit non-affiliation
-      console.log("❌ User not affiliated:", affiliationData);
-      
-      // Log non-affiliation to database
-      try {
-        await supabase.from('affiliation_reports').insert({
-          email: email.toLowerCase(),
-          status: 'not_affiliated',
-          uid: null,
-          partner_id: partnerId,
-          response_data: affiliationData
-        });
-      } catch (dbError) {
-        console.error("Failed to log affiliation report:", dbError);
-      }
-      
+      // Handle explicit non-affiliation or any other response format
+      console.log("❌ User not affiliated or unexpected response format");
       return new Response(
         JSON.stringify({ 
           affiliation: false,
-          message: "Email no afiliado al partner Tálamo",
-          checked_at: new Date().toISOString()
+          message: "Email no afiliado al partner Tálamo" 
         }),
         { 
           status: 200, 
@@ -345,12 +284,12 @@ const handler = async (req: Request): Promise<Response> => {
         timestamp: new Date().toISOString()
       });
       
-      // Handle specific errors as per API specs
-      if (apiError.message === "NotAuthenticated" || apiError.message === "AuthenticationFailed" || apiError.message === "TokenExpired") {
+      // Handle specific HTTP errors with consistent responses
+      if (apiError.message.includes("401") || apiError.message.includes("Unauthorized")) {
         console.log("🔐 Authentication error with Exness API");
         return new Response(
           JSON.stringify({ 
-            code: "UPSTREAM_AUTH", 
+            code: "Unauthorized", 
             message: "Error de autenticación con el bróker" 
           }),
           { 
@@ -360,11 +299,11 @@ const handler = async (req: Request): Promise<Response> => {
         );
       } 
       
-      if (apiError.message === "Throttled") {
+      if (apiError.message.includes("429") || apiError.message.includes("Rate limited")) {
         console.log("🚫 Rate limit hit");
         return new Response(
           JSON.stringify({ 
-            code: "UPSTREAM_THROTTLED", 
+            code: "RateLimited", 
             message: "Demasiadas solicitudes, intenta más tarde" 
           }),
           { 
@@ -374,43 +313,29 @@ const handler = async (req: Request): Promise<Response> => {
         );
       } 
       
-      if (apiError.message === "ValidationError" || apiError.message === "ParseError") {
-        console.log("📧 Email validation error");
-        return new Response(
-          JSON.stringify({ 
-            code: "INVALID_EMAIL", 
-            message: "Formato de email inválido" 
-          }),
-          { 
-            status: 422, 
-            headers: { "Content-Type": "application/json", ...corsHeaders } 
-          }
-        );
-      }
-      
-      if (apiError.message.startsWith("UpstreamError") || apiError.message === "PermissionDenied" || apiError.message === "NotFound") {
+      if (apiError.message.includes("500") || apiError.message.includes("502") || apiError.message.includes("Upstream error")) {
         console.log("🌐 Upstream server error");
         return new Response(
           JSON.stringify({ 
-            code: "UPSTREAM_UNAVAILABLE", 
+            code: "BrokerDown", 
             message: "Servicio temporalmente no disponible" 
           }),
           { 
-            status: 503, 
+            status: 502, 
             headers: { "Content-Type": "application/json", ...corsHeaders } 
           }
         );
       }
 
-      // For any other error, return as internal error
-      console.log("🔄 Internal error:", apiError.message);
+      // For any other error, return as not affiliated to show user options
+      console.log("🔄 Generic error, returning not affiliated to show user options");
       return new Response(
         JSON.stringify({ 
-          code: "INTERNAL",
-          message: "Error interno del sistema" 
+          affiliation: false,
+          message: "No se pudo validar la afiliación en este momento" 
         }),
         { 
-          status: 500, 
+          status: 200, 
           headers: { "Content-Type": "application/json", ...corsHeaders } 
         }
       );

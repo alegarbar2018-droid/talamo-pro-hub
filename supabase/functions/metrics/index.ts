@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
         affiliation_checks_24h: affiliationChecks,
         failed_logins_24h: failedLogins
       },
-      uptime_seconds: Math.floor(Date.now() / 1000)
+      uptime_seconds: Math.floor(process.uptime?.() || 0)
     };
 
     return new Response(
