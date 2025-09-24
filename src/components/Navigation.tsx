@@ -13,10 +13,10 @@ const Navigation = () => {
   const { t } = useTranslation(["nav"]);
 
   const navItems = [
-    { label: t("nav:academy"), href: "/academy", icon: GraduationCap, description: "Aprende trading profesional" },
-    { label: t("nav:signals"), href: "/signals", icon: TrendingUp, description: "Señales verificadas en vivo" },
-    { label: t("nav:copy"), href: "/copy-trading", icon: Users, description: "Copia a traders exitosos" },
-    { label: t("nav:tools"), href: "/tools", icon: Zap, description: "Tools profesionales" }
+    { label: t("nav:academy"), href: "/academy-info", icon: GraduationCap, description: "Aprende trading profesional" },
+    { label: t("nav:signals"), href: "/signals-info", icon: TrendingUp, description: "Señales verificadas en vivo" },
+    { label: t("nav:copy"), href: "/copy-info", icon: Users, description: "Copia a traders exitosos" },
+    { label: t("nav:tools"), href: "/tools-info", icon: Zap, description: "Tools profesionales" }
   ];
 
   const handleNavigation = (href: string) => {
