@@ -114,29 +114,62 @@ export default function ToolsInfo() {
             className="mb-8 md:mb-12"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="flex justify-center mb-6 md:mb-8 px-4">
-                <TabsList className="bg-surface/50 backdrop-blur-xl border border-primary/20 p-2 rounded-2xl w-full max-w-4xl grid grid-cols-2 lg:grid-cols-4 gap-2">
-                  <TabsTrigger value="calculators" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium">
-                    <Calculator className="w-4 h-4" />
-                    <span className="hidden sm:inline">Calculadoras</span>
-                    <span className="sm:hidden">Calc</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="contracts" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium">
-                    <CandlestickChart className="w-4 h-4" />
-                    <span className="hidden sm:inline">Contratos</span>
-                    <span className="sm:hidden">Cont</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="formulas" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium">
-                    <BookOpen className="w-4 h-4" />
-                    <span className="hidden sm:inline">Fórmulas</span>
-                    <span className="sm:hidden">Form</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="features" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-sm font-medium">
-                    <Sparkles className="w-4 h-4" />
-                    <span className="hidden sm:inline">Extras</span>
-                    <span className="sm:hidden">Ext</span>
-                  </TabsTrigger>
-                </TabsList>
+              <div className="w-full px-4 mb-6 md:mb-8">
+                <div className="bg-surface/50 backdrop-blur-xl border border-primary/20 rounded-2xl p-2 mx-auto max-w-4xl">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                    <button
+                      onClick={() => setActiveTab("calculators")}
+                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        activeTab === "calculators"
+                          ? "bg-gradient-primary text-white shadow-glow"
+                          : "text-muted-foreground hover:text-white hover:bg-primary/10"
+                      }`}
+                    >
+                      <Calculator className="w-4 h-4" />
+                      <span className="hidden sm:inline">Calculadoras</span>
+                      <span className="sm:hidden">Calc</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveTab("contracts")}
+                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        activeTab === "contracts"
+                          ? "bg-gradient-primary text-white shadow-glow"
+                          : "text-muted-foreground hover:text-white hover:bg-primary/10"
+                      }`}
+                    >
+                      <CandlestickChart className="w-4 h-4" />
+                      <span className="hidden sm:inline">Contratos</span>
+                      <span className="sm:hidden">Cont</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveTab("formulas")}
+                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        activeTab === "formulas"
+                          ? "bg-gradient-primary text-white shadow-glow"
+                          : "text-muted-foreground hover:text-white hover:bg-primary/10"
+                      }`}
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span className="hidden sm:inline">Fórmulas</span>
+                      <span className="sm:hidden">Form</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveTab("features")}
+                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        activeTab === "features"
+                          ? "bg-gradient-primary text-white shadow-glow"
+                          : "text-muted-foreground hover:text-white hover:bg-primary/10"
+                      }`}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span className="hidden sm:inline">Extras</span>
+                      <span className="sm:hidden">Ext</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Calculadoras Principales Tab */}
