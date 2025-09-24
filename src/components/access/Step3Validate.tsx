@@ -64,46 +64,55 @@ const Step3Validate = ({ data, onUpdate, onNext, onOpenChangePartner }: Step3Val
         gtag("event", "access.validation.requested", { email });
       }
 
-      const response = await fetch(`https://xogbavprnnbfamcjrsel.supabase.co/functions/v1/validate-affiliation`, {
+      // Generate idempotency key for the request
+      const emailNorm = email.trim().toLowerCase();
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const idemData = `${emailNorm}|${today}`;
+      const encoder = new TextEncoder();
+      const data = encoder.encode(idemData);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const idempotencyKey = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const response = await fetch(`https://xogbavprnnbfamcjrsel.supabase.co/functions/v1/affiliation-check`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZ2JhdnBybm5iZmFtY2pyc2VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzNDM3ODQsImV4cCI6MjA3MzkxOTc4NH0.6l1XCkopeKxOPzj9vfYcslB-H-Q-w7F8tPLhGYu-rYw`
+          "X-Idempotency-Key": idempotencyKey
         },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        body: JSON.stringify({ email: emailNorm }),
       });
 
       if (response.ok) {
         const result = await response.json();
         
-        setValidationResult({
-          status: "success",
-          message: "Afiliación verificada",
-          source: result.source || "exness",
-        });
-
-        onUpdate({
-          affiliation: "verified",
-          source: result.source || "exness",
-        });
-
-        // Track success
-        if (typeof gtag !== "undefined") {
-          gtag("event", "access.validation.success", { 
-            email, 
-            source: result.source 
+        // Handle new API response format
+        if (result.ok && result.data?.is_affiliated) {
+          setValidationResult({
+            status: "success",
+            message: "Afiliación verificada",
+            source: result.data.source || "exness",
           });
-        }
 
-        toast({
-          title: "¡Validación exitosa!",
-          description: "Tu afiliación ha sido verificada correctamente",
-        });
+          onUpdate({
+            affiliation: "verified",
+            source: result.data.source || "exness",
+          });
 
-      } else if (response.status === 403) {
-        const error = await response.json();
-        
-        if (error.code === "NotAffiliated") {
+          // Track success
+          if (typeof gtag !== "undefined") {
+            gtag("event", "access.validation.success", { 
+              email, 
+              source: result.data.source 
+            });
+          }
+
+          toast({
+            title: "¡Validación exitosa!",
+            description: "Tu afiliación ha sido verificada correctamente",
+          });
+        } else {
+          // Not affiliated but valid response
           setValidationResult({
             status: "not_affiliated",
             message: "Tu cuenta de Exness no está afiliada a Tálamo",
@@ -124,9 +133,11 @@ const Step3Validate = ({ data, onUpdate, onNext, onOpenChangePartner }: Step3Val
         });
 
       } else if (response.status === 429) {
+        const retryAfter = response.headers.get('retry-after');
+        const waitTime = retryAfter ? `${retryAfter} segundos` : '1–2 minutos';
         setValidationResult({
           status: "error",
-          message: "Demasiadas solicitudes. Intenta nuevamente en 1–2 minutos.",
+          message: `Demasiadas solicitudes. Intenta nuevamente en ${waitTime}.`,
         });
 
       } else {
