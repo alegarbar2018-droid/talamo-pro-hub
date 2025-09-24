@@ -90,38 +90,34 @@ export const ValidateStep = ({
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="border-line bg-surface shadow-glow-subtle">
-        <CardHeader>
-          <CardTitle className="text-xl text-foreground flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
-            Ya tengo cuenta en Exness
-          </CardTitle>
-          <CardDescription>
-            Verificaremos que tu cuenta esté afiliada con nuestro partner oficial
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 rounded-xl p-6 shadow-glow-subtle backdrop-blur-sm">
+    <div className="space-y-8">
+      <div className="text-center space-y-3">
+        <div className="flex items-center justify-center mb-6">
+          <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-2xl">
+            <Shield className="h-8 w-8 text-primary-foreground" />
+          </div>
+        </div>
+        <h2 className="text-3xl font-bold text-foreground">Validación de cuenta</h2>
+        <p className="text-muted-foreground text-lg max-w-md mx-auto">
+          Verifica tu afiliación con Tálamo para acceso completo
+        </p>
+      </div>
+
+      <Card className="border-none bg-gradient-to-br from-surface/80 to-surface/40 backdrop-blur-xl shadow-2xl">        
+        <CardContent className="space-y-8 p-8">
+          <div className="bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-2xl p-6">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
-                <Info className="h-5 w-5 text-primary-foreground" />
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+                <Info className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="space-y-3">
-                <h3 className="font-bold text-foreground text-lg">Acceso por afiliación premium</h3>
+                <h3 className="font-bold text-foreground text-xl">Acceso Premium por Afiliación</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Tálamo no cobra membresía; nuestro modelo se sostiene con rebates de spread cuando operas 
-                  con tu cuenta Exness afiliada a Tálamo (sin costo extra para ti). Así alineamos incentivos: 
-                  solo ganamos si tú operas con estructura. Validamos solo la afiliación (email/UID), 
-                  nunca accedemos a tus fondos.
+                  Tálamo es gratuito para cuentas afiliadas. Validamos únicamente tu email para confirmar 
+                  la afiliación con nuestro partner oficial.
                 </p>
-                <div className="bg-primary/10 text-primary px-3 py-2 rounded font-mono text-sm">
+                <div className="bg-primary/10 text-primary px-4 py-3 rounded-xl font-mono text-sm font-medium">
                   Partner ID: {PARTNER_ID}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-primary">
-                  <Shield className="h-4 w-4" />
-                  <span className="font-medium">Proceso encriptado y privado</span>
                 </div>
               </div>
             </div>
@@ -166,17 +162,17 @@ export const ValidateStep = ({
             <Button
               type="submit"
               disabled={!email || loading || cooldownSeconds > 0}
-              className="w-full bg-gradient-primary hover:shadow-glow h-11"
+              className="w-full bg-gradient-primary hover:shadow-glow h-14 text-lg font-semibold rounded-xl"
             >
               {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Validando con API de Exness...
                 </div>
               ) : cooldownSeconds > 0 ? (
                 `Espera ${cooldownSeconds}s antes de reintentar`
               ) : (
-                "Validar afiliación"
+                "Validar Afiliación Premium"
               )}
             </Button>
           </form>
@@ -215,61 +211,38 @@ export const ValidateStep = ({
             </div>
           )}
 
-          {/* Explainer Accordion */}
+          {/* FAQ simplificado */}
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="why-affiliation" className="border-line">
-              <AccordionTrigger className="text-left font-medium">
-                <div className="flex items-center gap-2">
-                  <Info className="h-4 w-4 text-primary" />
-                  Acceso por afiliación: por qué lo pedimos
+            <AccordionItem value="why-affiliation" className="border-line/50 rounded-xl bg-muted/30">
+              <AccordionTrigger className="text-left font-medium px-6 hover:no-underline rounded-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Info className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-lg">¿Por qué validamos la afiliación?</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="space-y-4 pt-2">
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                  <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    Acceso por afiliación: incentivos alineados
-                  </h4>
-                  
-                  <div className="space-y-3 text-sm text-muted-foreground">
-                    <p>
-                      Tálamo no cobra membresía. Nuestro modelo se sostiene con rebates de spread 
-                      cuando operas con tu cuenta Exness afiliada a Tálamo. No hay costos extra para ti.
-                    </p>
-                    <p>
-                      Esto alinea incentivos: solo ganamos si tú operas con estructura a largo plazo. 
-                      Nuestra prioridad es ejecución con datos y control de riesgo, no vender promesas.
-                    </p>
+              <AccordionContent className="px-6 pb-6">
+                <div className="grid gap-4 mt-4">
+                  <div className="flex items-start gap-3">
+                    <Lock className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-foreground">Tu cuenta, tus fondos</p>
+                      <p className="text-sm text-muted-foreground">Nunca operamos tu cuenta ni accedemos a tus fondos</p>
+                    </div>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                    <div className="flex items-start gap-2">
-                      <Lock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground text-sm">Tu cuenta, tus fondos</p>
-                        <p className="text-xs text-muted-foreground">Tálamo nunca opera tu cuenta</p>
-                      </div>
+                  <div className="flex items-start gap-3">
+                    <TrendingUp className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-foreground">Incentivos alineados</p>
+                      <p className="text-sm text-muted-foreground">Solo ganamos con rebates si operas con estructura</p>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Eye className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground text-sm">Validamos únicamente tu afiliación</p>
-                        <p className="text-xs text-muted-foreground">Email/UID por API, proceso seguro</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Users className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground text-sm">Cuenta no afiliada</p>
-                        <p className="text-xs text-muted-foreground">Puedes crear nueva o solicitar cambio</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Globe className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground text-sm">Transparencia total</p>
-                        <p className="text-xs text-muted-foreground">Métricas y advertencias de riesgo</p>
-                      </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-foreground">Acceso gratuito</p>
+                      <p className="text-sm text-muted-foreground">Sin membresías ni tarifas para cuentas afiliadas</p>
                     </div>
                   </div>
                 </div>

@@ -187,7 +187,7 @@ const OnboardingNew = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-surface">
       {/* Header */}
       <OnboardingHeader 
         stepNumber={getStepNumber()} 
@@ -195,8 +195,16 @@ const OnboardingNew = () => {
       />
 
       {/* Content */}
-      <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderCurrentStep()}
+      <div className="max-w-2xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
+        <div className="backdrop-blur-xl bg-surface/60 border border-line/50 rounded-3xl shadow-2xl p-8 lg:p-12">
+          {renderCurrentStep()}
+        </div>
+      </div>
+
+      {/* Background decoration */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-gradient-primary/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-3xl" />
       </div>
     </div>
   );
