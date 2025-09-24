@@ -115,26 +115,26 @@ export default function ToolsInfo() {
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="flex justify-center mb-6 md:mb-8 px-2">
-                <TabsList className="bg-surface/80 backdrop-blur-xl border border-primary/30 p-2 rounded-2xl w-full max-w-4xl flex flex-wrap justify-center gap-2 sm:grid sm:grid-cols-4 sm:gap-1">
-                  <TabsTrigger value="calculators" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <TabsList className="bg-surface/80 backdrop-blur-xl border border-primary/30 p-1 rounded-2xl w-full max-w-4xl grid grid-cols-4 gap-1">
+                  <TabsTrigger value="calculators" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                     <Calculator className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden xs:inline">Calculadoras</span>
-                    <span className="xs:hidden">Calc</span>
+                    <span className="hidden sm:inline">Calculadoras</span>
+                    <span className="sm:hidden">Calc</span>
                   </TabsTrigger>
-                  <TabsTrigger value="contracts" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <TabsTrigger value="contracts" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                     <CandlestickChart className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden xs:inline">Contratos</span>
-                    <span className="xs:hidden">Cont</span>
+                    <span className="hidden sm:inline">Contratos</span>
+                    <span className="sm:hidden">Cont</span>
                   </TabsTrigger>
-                  <TabsTrigger value="formulas" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <TabsTrigger value="formulas" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                     <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden xs:inline">Fórmulas</span>
-                    <span className="xs:hidden">Form</span>
+                    <span className="hidden sm:inline">Fórmulas</span>
+                    <span className="sm:hidden">Form</span>
                   </TabsTrigger>
-                  <TabsTrigger value="features" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <TabsTrigger value="features" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white text-muted-foreground rounded-xl px-2 sm:px-6 py-2 sm:py-3 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
                     <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden xs:inline">Extras</span>
-                    <span className="xs:hidden">Ext</span>
+                    <span className="hidden sm:inline">Extras</span>
+                    <span className="sm:hidden">Ext</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
