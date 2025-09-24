@@ -63,6 +63,7 @@ const menuItems = [
   {
     section: 'Sistema',
     items: [
+      { title: 'Analíticas', url: '/admin/analytics', icon: TrendingUp, permissions: ['analytics'] },
       { title: 'Integraciones', url: '/admin/integrations', icon: Zap, permissions: ['integrations'] },
       { title: 'Auditoría', url: '/admin/audit', icon: FileText, permissions: ['audit'] },
       { title: 'Configuración', url: '/admin/settings', icon: Settings, permissions: [] },
