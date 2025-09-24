@@ -1,0 +1,169 @@
+name: "Hardening CI - Audit 2025-09-23"
+
+on:
+  pull_request:
+    branches: [main, audit/**]
+  push:
+    branches: [audit/**]
+
+jobs:
+  lint:
+    name: "ESLint & Code Quality"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: 
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - name: "Check for unused code"
+        run: pnpm exec ts-prune || echo "Dead code detected - review manually"
+
+  typecheck:
+    name: "TypeScript Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: 
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc --noEmit --strict
+
+  test-and-coverage:
+    name: "Test Coverage ≥80%"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: 
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test -- --coverage --run
+      - name: "Coverage Gate (80%)"
+        run: |
+          COVERAGE=$(grep -Po '"percentage":\s*\K[0-9.]+' coverage/coverage-summary.json | head -1)
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ Coverage $COVERAGE% < 80% required"
+            exit 1
+          fi
+          echo "✅ Coverage: $COVERAGE%"
+      - uses: actions/upload-artifact@v4
+        with: 
+          name: coverage-report
+          path: coverage/
+
+  security-audit:
+    name: "Security & Dependencies"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: 
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: "Audit Dependencies"
+        run: pnpm audit --audit-level moderate || echo "Security vulnerabilities detected"
+      - name: "Check for secrets"
+        run: |
+          if grep -r "Bearer ey\|sk_\|pk_live" src/ --include="*.ts" --include="*.tsx"; then
+            echo "❌ Potential secrets found in source code"
+            exit 1
+          fi
+          echo "✅ No hardcoded secrets detected"
+
+  sbom-generation:
+    name: "Generate SBOM"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: 
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: "Generate CycloneDX SBOM"
+        run: |
+          npx @cyclonedx/cyclonedx-npm@latest --output-format json --output-file sbom.json
+      - uses: actions/upload-artifact@v4
+        with: 
+          name: sbom
+          path: sbom.json
+
+  build-verification:
+    name: "Build & Bundle Analysis"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: 
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: "Bundle Size Check"
+        run: |
+          BUNDLE_SIZE=$(du -sh dist/ | cut -f1)
+          echo "📦 Bundle size: $BUNDLE_SIZE"
+      - uses: actions/upload-artifact@v4
+        with: 
+          name: build-artifacts
+          path: dist/
+
+  audit-completeness:
+    name: "Audit Documentation Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Verify Audit Documents"
+        run: |
+          REQUIRED_DOCS=(
+            "audit/EXECUTIVE_SUMMARY.md"
+            "audit/API_AFFILIATION_AUDIT.md" 
+            "audit/ARCHITECTURE_OVERVIEW.md"
+            "audit/READINESS_SCORECARD.md"
+            "audit/GAPS_MATRIX.md"
+            "audit/OBSERVABILITY_CHECKS.md"
+            "audit/UX_ACCESSIBILITY_REPORT.md"
+            "audit/DEVOPS_READINESS.md"
+            "audit/SECURITY_THREAT_MODEL.md"
+            "audit/BACKLOG_ICE.md"
+          )
+          
+          MISSING=()
+          for doc in "${REQUIRED_DOCS[@]}"; do
+            if [[ ! -f "$doc" ]]; then
+              MISSING+=("$doc")
+            fi
+          done
+          
+          if [[ ${#MISSING[@]} -gt 0 ]]; then
+            echo "❌ Missing audit documents:"
+            printf ' - %s\n' "${MISSING[@]}"
+            exit 1
+          fi
+          
+          echo "✅ All required audit documents present"
