@@ -14,35 +14,35 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
 
   return (
     <header className="border-b border-line bg-surface/95 backdrop-blur-xl sticky top-0 z-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Back Button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate("/")}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors p-2 -ml-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Salir
+            <ArrowLeft className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Salir</span>
           </Button>
 
           {/* Logo & Title */}
-          <div className="flex items-center gap-3">
-            <h1 className="text-lg font-semibold gradient-text">Tálamo</h1>
-            <Badge variant="secondary" className="text-xs">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <h1 className="text-base sm:text-lg font-semibold gradient-text">Tálamo</h1>
+            <Badge variant="secondary" className="text-xs px-2 py-1">
               Acceso
             </Badge>
           </div>
 
           {/* Step Indicator */}
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground font-medium">
             {stepNumber}/5
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="pb-4">
+        <div className="pb-3 sm:pb-4">
           <Progress 
             value={progress} 
             className="h-1 bg-muted/30"
