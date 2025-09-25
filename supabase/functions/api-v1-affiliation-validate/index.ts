@@ -98,7 +98,7 @@ async function validateAffiliationSecure(email: string): Promise<ValidationRespo
   } catch (error) {
     console.error('Affiliation validation error:', error);
     
-    if (error.name === 'AbortError') {
+    if (error instanceof Error && error.name === 'AbortError') {
       return { 
         success: false, 
         error: 'Validation timeout - please try again' 

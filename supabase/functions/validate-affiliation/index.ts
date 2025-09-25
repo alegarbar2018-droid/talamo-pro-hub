@@ -58,7 +58,7 @@ async function getExnessToken(): Promise<string> {
   cachedToken = data.token;
   tokenExpiry = now + (10 * 60 * 1000);
   
-  return cachedToken;
+  return cachedToken || '';
 }
 
 // Check affiliation with Exness API
