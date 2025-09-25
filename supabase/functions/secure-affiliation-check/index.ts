@@ -145,9 +145,11 @@ async function checkExnessAffiliation(
     }
 
     const data = await response.json();
+    console.log('Exness API Response:', JSON.stringify(data, null, 2));
+    
     return {
-      affiliated: data.is_affiliated || false,
-      uid: data.client_uid || data.uid,
+      affiliated: data.affiliation || false,
+      uid: data.client_uid,
       error: data.error
     };
   } catch (error) {
