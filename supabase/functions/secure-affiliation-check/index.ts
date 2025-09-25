@@ -81,25 +81,54 @@ async function logSecurityEvent(
   }
 }
 
+async function authenticateWithExnessAPI(): Promise<string> {
+  const username = Deno.env.get('PARTNER_API_USER');
+  const password = Deno.env.get('PARTNER_API_PASSWORD');
+
+  if (!username || !password) {
+    throw new Error('Partner API credentials missing');
+  }
+
+  const response = await fetch('https://my.exnessaffiliates.com/api/auth/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      login: username,
+      password: password
+    }),
+    signal: AbortSignal.timeout(10000) // 10 second timeout
+  });
+
+  if (!response.ok) {
+    throw new Error(`Auth API responded with status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  if (!data.token) {
+    throw new Error('No token received from auth API');
+  }
+
+  return data.token;
+}
+
 async function checkExnessAffiliation(
   email: string,
   retryCount = 0
 ): Promise<{ affiliated: boolean; uid?: string; error?: string }> {
   const maxRetries = 2;
-  const baseUrl = Deno.env.get('PARTNER_API_BASE');
-  const username = Deno.env.get('PARTNER_API_USER');
-  const password = Deno.env.get('PARTNER_API_PASSWORD');
-
-  if (!baseUrl || !username || !password) {
-    throw new Error('Partner API configuration missing');
-  }
 
   try {
-    const response = await fetch(`${baseUrl}/validate-affiliation`, {
+    // Step 1: Get authentication token
+    const token = await authenticateWithExnessAPI();
+
+    // Step 2: Check affiliation with the token
+    const response = await fetch('https://my.exnessaffiliates.com/api/partner/affiliation/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ email }),
       signal: AbortSignal.timeout(10000) // 10 second timeout
@@ -112,13 +141,13 @@ async function checkExnessAffiliation(
     }
 
     if (!response.ok) {
-      throw new Error(`API responded with status: ${response.status}`);
+      throw new Error(`Affiliation API responded with status: ${response.status}`);
     }
 
     const data = await response.json();
     return {
       affiliated: data.is_affiliated || false,
-      uid: data.uid,
+      uid: data.client_uid || data.uid,
       error: data.error
     };
   } catch (error) {
