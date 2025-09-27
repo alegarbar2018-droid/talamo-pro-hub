@@ -265,29 +265,79 @@ Deno.serve(async (req) => {
     }
 
     // Check if user already exists
-    const { data: existingUser } = await supabase
+    const emailLower = email.toLowerCase();
+
+    // 1) ¿Existe perfil?
+    const { data: profile } = await supabase
       .from('profiles')
       .select('user_id')
-      .eq('email', email.toLowerCase())
-      .single();
-
-    if (existingUser) {
+      .eq('email', emailLower)
+      .maybeSingle(); // evita throw si no hay fila
+    
+    if (profile?.user_id) {
+      // 2) ¿Tenemos evidencia local de afiliación válida?
+      const { data: aff } = await supabase
+        .from('affiliations')
+        .select('is_affiliated, verified_at, partner_id')
+        .eq('user_id', profile.user_id)
+        .maybeSingle();
+    
+      const partnerId = Deno.env.get('EXNESS_PARTNER_ID') || null;
+      const locallyAffiliated =
+        !!aff?.is_affiliated &&
+        !!aff?.verified_at &&
+        (!!partnerId ? aff.partner_id === partnerId : true);
+    
       await logSecurityEvent(supabase, 'existing_user_validation_attempt', { 
         email: '[REDACTED]',
-        user_id: existingUser.user_id,
-        client_id: clientId
+        user_id: profile.user_id,
+        client_id: clientId,
+        locallyAffiliated
       });
-      
+    
+      if (locallyAffiliated) {
+        // Evidencia local suficiente: no llamamos upstream
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            data: {
+              user_exists: true,
+              is_affiliated: true
+            }
+          } as ValidationResponse),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    
+      // Si existe usuario pero no hay evidencia local, seguimos con la verificación upstream.
+      // Nota: devolveremos user_exists: true junto con el resultado real de afiliación.
+    }
+    
+    // 3) Verificación upstream (si no hay perfil o no hay evidencia local)
+    try {
+      const result = await checkExnessAffiliation(emailLower);
+    
+      // Guarda/actualiza reporte
+      await supabase.from('affiliation_reports').insert({
+        email: emailLower,
+        status: result.affiliated ? 'affiliated' : 'not_affiliated',
+        uid: result.uid ?? null,
+        partner_id: Deno.env.get('EXNESS_PARTNER_ID') ?? null
+      });
+    
       return new Response(
         JSON.stringify({
           ok: true,
           data: {
-            user_exists: true,
-            is_affiliated: true
+            user_exists: !!profile?.user_id,
+            is_affiliated: result.affiliated,
+            uid: result.uid
           }
         } as ValidationResponse),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    } catch (apiError) {
+      // manejo de error como ya tienes
     }
 
     // Check affiliation via Partner API
