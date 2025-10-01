@@ -116,6 +116,19 @@ serve(async (req) => {
         onConflict: 'user_id'
       });
 
+    // Create affiliation record for quick reference
+    await supabase
+      .from('affiliations')
+      .upsert({
+        user_id: userId,
+        email: email.toLowerCase().trim(),
+        partner_id: Deno.env.get('EXNESS_PARTNER_ID') || null,
+        is_affiliated: true,
+        verified_at: new Date().toISOString(),
+      }, {
+        onConflict: 'user_id'
+      });
+
     // Generate session token for immediate login
     const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',

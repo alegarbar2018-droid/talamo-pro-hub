@@ -264,39 +264,23 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if user already exists
     const emailLower = email.toLowerCase();
 
-    // 1) ¿Existe perfil?
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('user_id')
-      .eq('email', emailLower)
-      .maybeSingle(); // evita throw si no hay fila
-    
-    if (profile?.user_id) {
-      // 2) ¿Tenemos evidencia local de afiliación válida?
-      const { data: aff } = await supabase
-        .from('affiliations')
-        .select('is_affiliated, verified_at, partner_id')
-        .eq('user_id', profile.user_id)
-        .maybeSingle();
-    
-      const partnerId = Deno.env.get('EXNESS_PARTNER_ID') || null;
-      const locallyAffiliated =
-        !!aff?.is_affiliated &&
-        !!aff?.verified_at &&
-        (!!partnerId ? aff.partner_id === partnerId : true);
-    
-      await logSecurityEvent(supabase, 'existing_user_validation_attempt', { 
-        email: '[REDACTED]',
-        user_id: profile.user_id,
-        client_id: clientId,
-        locallyAffiliated
-      });
-    
-      if (locallyAffiliated) {
-        // Evidencia local suficiente: no llamamos upstream
+    // PASO 1: Buscar primero en tabla 'affiliations' optimizada
+    const { data: affiliationData, error: affiliationError } = await supabase
+      .rpc('check_affiliation_by_email', { p_email: emailLower });
+
+    if (!affiliationError && affiliationData && affiliationData.length > 0) {
+      const affData = affiliationData[0];
+      
+      if (affData.is_affiliated && affData.user_exists) {
+        // Usuario ya registrado y afiliado - referencia rápida
+        await logSecurityEvent(supabase, 'existing_user_found_in_affiliations', { 
+          email: '[REDACTED]',
+          user_id: affData.user_id,
+          client_id: clientId
+        });
+
         return new Response(
           JSON.stringify({
             ok: true,
@@ -308,99 +292,99 @@ Deno.serve(async (req) => {
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-    
-      // Si existe usuario pero no hay evidencia local, seguimos con la verificación upstream.
-      // Nota: devolveremos user_exists: true junto con el resultado real de afiliación.
     }
-    
-    // 3) Verificación upstream (si no hay perfil o no hay evidencia local)
-    try {
-      const result = await checkExnessAffiliation(emailLower);
-    
-      // Guarda/actualiza reporte
-      await supabase.from('affiliation_reports').insert({
-        email: emailLower,
-        status: result.affiliated ? 'affiliated' : 'not_affiliated',
-        uid: result.uid ?? null,
-        partner_id: Deno.env.get('EXNESS_PARTNER_ID') ?? null
+
+    // PASO 2: Buscar en affiliation_reports como fallback
+    const { data: reportData } = await supabase
+      .from('affiliation_reports')
+      .select('status, uid, partner_id')
+      .eq('email', emailLower)
+      .eq('status', 'affiliated')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (reportData) {
+      await logSecurityEvent(supabase, 'affiliation_found_in_reports', { 
+        email: '[REDACTED]',
+        client_id: clientId
       });
-    
+
       return new Response(
         JSON.stringify({
           ok: true,
           data: {
-            user_exists: !!profile?.user_id,
-            is_affiliated: result.affiliated,
-            uid: result.uid
+            user_exists: false,
+            is_affiliated: true,
+            uid: reportData.uid
+          }
+        } as ValidationResponse),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // PASO 3: Verificación upstream con API de Exness
+    const usePartnerAPI = Deno.env.get('USE_PARTNER_API') === 'true';
+    
+    if (!usePartnerAPI) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          data: {
+            user_exists: false,
+            is_affiliated: false
+          }
+        } as ValidationResponse),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    try {
+      const affiliationResult = await checkExnessAffiliation(emailLower);
+      
+      // Guardar en affiliation_reports para auditoría
+      await supabase.from('affiliation_reports').insert({
+        email: emailLower,
+        status: affiliationResult.affiliated ? 'affiliated' : 'not_affiliated',
+        uid: affiliationResult.uid || null,
+        partner_id: Deno.env.get('EXNESS_PARTNER_ID') || null
+      });
+
+      await logSecurityEvent(supabase, 'affiliation_check_completed', {
+        email: '[REDACTED]',
+        is_affiliated: affiliationResult.affiliated,
+        client_id: clientId
+      });
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          data: {
+            user_exists: false,
+            is_affiliated: affiliationResult.affiliated,
+            uid: affiliationResult.uid
           }
         } as ValidationResponse),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } catch (apiError) {
-      // manejo de error como ya tienes
+      console.error('Partner API error:', apiError);
+      
+      await logSecurityEvent(supabase, 'partner_api_error', {
+        email: '[REDACTED]',
+        error: apiError instanceof Error ? apiError.message : 'Unknown error',
+        client_id: clientId
+      });
+
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          code: 'UpstreamError',
+          message: 'Unable to verify affiliation at this time'
+        } as ValidationResponse),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
-
-    // Check affiliation via Partner API
-    const usePartnerAPI = Deno.env.get('USE_PARTNER_API') === 'true';
-    
-    if (usePartnerAPI) {
-      try {
-        const affiliationResult = await checkExnessAffiliation(email);
-        
-        // Log affiliation check result
-        await supabase.from('affiliation_reports').insert({
-          email: email.toLowerCase(),
-          status: affiliationResult.affiliated ? 'affiliated' : 'not_affiliated',
-          uid: affiliationResult.uid || null,
-          partner_id: Deno.env.get('EXNESS_PARTNER_ID') || null
-        });
-
-        await logSecurityEvent(supabase, 'affiliation_check_completed', {
-          email: '[REDACTED]',
-          is_affiliated: affiliationResult.affiliated,
-          client_id: clientId
-        });
-
-        return new Response(
-          JSON.stringify({
-            ok: true,
-            data: {
-              is_affiliated: affiliationResult.affiliated,
-              uid: affiliationResult.uid
-            }
-          } as ValidationResponse),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      } catch (apiError) {
-        console.error('Partner API error:', apiError);
-        
-        await logSecurityEvent(supabase, 'partner_api_error', {
-          email: '[REDACTED]',
-          error: apiError instanceof Error ? apiError.message : 'Unknown error',
-          client_id: clientId
-        });
-
-        return new Response(
-          JSON.stringify({
-            ok: false,
-            code: 'UpstreamError',
-            message: 'Unable to verify affiliation at this time'
-          } as ValidationResponse),
-          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-    }
-
-    // Fallback response when Partner API is disabled
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        data: {
-          is_affiliated: false
-        }
-      } as ValidationResponse),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
 
   } catch (error) {
     console.error('Validation function error:', error);

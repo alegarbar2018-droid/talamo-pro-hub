@@ -191,6 +191,7 @@ export type Database = {
       affiliations: {
         Row: {
           created_at: string
+          email: string | null
           id: string
           is_affiliated: boolean
           partner_id: string
@@ -200,6 +201,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email?: string | null
           id?: string
           is_affiliated?: boolean
           partner_id: string
@@ -209,6 +211,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email?: string | null
           id?: string
           is_affiliated?: boolean
           partner_id?: string
@@ -768,6 +771,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_affiliation_by_email: {
+        Args: { p_email: string }
+        Returns: {
+          is_affiliated: boolean
+          partner_id: string
+          user_exists: boolean
+          user_id: string
+        }[]
+      }
       check_profile_data_exposure: {
         Args: Record<PropertyKey, never>
         Returns: {
