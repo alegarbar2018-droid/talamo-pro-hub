@@ -25,24 +25,25 @@ interface ValidationResponse {
   retry_after?: number;
 }
 
+// Rate limiting store (in production, use Redis or database)
 const rateLimitStore = new Map<string, { count: number; reset: number }>();
 
 function isRateLimited(clientId: string): { limited: boolean; retryAfter?: number } {
   const now = Date.now();
-  const windowMs = 5 * 60 * 1000;
+  const windowMs = 5 * 60 * 1000; // 5 minutes
   const maxRequests = 10;
 
   const current = rateLimitStore.get(clientId);
-
+  
   if (!current || now > current.reset) {
     rateLimitStore.set(clientId, { count: 1, reset: now + windowMs });
     return { limited: false };
   }
 
   if (current.count >= maxRequests) {
-    return {
-      limited: true,
-      retryAfter: Math.ceil((current.reset - now) / 1000),
+    return { 
+      limited: true, 
+      retryAfter: Math.ceil((current.reset - now) / 1000) 
     };
   }
 
@@ -51,6 +52,7 @@ function isRateLimited(clientId: string): { limited: boolean; retryAfter?: numbe
 }
 
 function getClientIdentifier(req: Request): string {
+  // In production, use IP address and user agent
   const forwarded = req.headers.get('x-forwarded-for');
   const userAgent = req.headers.get('user-agent') || 'unknown';
   const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
@@ -72,7 +74,7 @@ async function logSecurityEvent(
       action: event,
       resource: 'affiliation_validation',
       meta: details,
-      created_at: new Date().toISOString(),
+      created_at: new Date().toISOString()
     });
   } catch (error) {
     console.error('Failed to log security event:', error);
@@ -89,15 +91,24 @@ async function authenticateWithExnessAPI(): Promise<string> {
 
   const response = await fetch('https://my.exnessaffiliates.com/api/auth/', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ login: username, password }),
-    signal: AbortSignal.timeout(10000),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      login: username,
+      password: password
+    }),
+    signal: AbortSignal.timeout(10000) // 10 second timeout
   });
 
-  if (!response.ok) throw new Error(`Auth API responded with status: ${response.status}`);
+  if (!response.ok) {
+    throw new Error(`Auth API responded with status: ${response.status}`);
+  }
 
   const data = await response.json();
-  if (!data.token) throw new Error('No token received from auth API');
+  if (!data.token) {
+    throw new Error('No token received from auth API');
+  }
 
   return data.token;
 }
@@ -109,37 +120,41 @@ async function checkExnessAffiliation(
   const maxRetries = 2;
 
   try {
+    // Step 1: Get authentication token
     const token = await authenticateWithExnessAPI();
 
+    // Step 2: Check affiliation with the token
     const response = await fetch('https://my.exnessaffiliates.com/api/partner/affiliation/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ email }),
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(10000) // 10 second timeout
     });
 
     if (response.status === 429 && retryCount < maxRetries) {
       const retryAfter = parseInt(response.headers.get('retry-after') || '2');
-      await new Promise((r) => setTimeout(r, retryAfter * 1000));
+      await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
       return checkExnessAffiliation(email, retryCount + 1);
     }
 
-    if (!response.ok) throw new Error(`Affiliation API responded with status: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Affiliation API responded with status: ${response.status}`);
+    }
 
     const data = await response.json();
     console.log('Exness API Response:', JSON.stringify(data, null, 2));
-
+    
     return {
       affiliated: data.affiliation || false,
       uid: data.client_uid,
-      error: data.error,
+      error: data.error
     };
   } catch (error) {
     if (retryCount < maxRetries) {
-      await new Promise((r) => setTimeout(r, 1000 * (retryCount + 1)));
+      await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
       return checkExnessAffiliation(email, retryCount + 1);
     }
     throw error;
@@ -147,12 +162,14 @@ async function checkExnessAffiliation(
 }
 
 Deno.serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   const clientId = getClientIdentifier(req);
   const rateLimit = isRateLimited(clientId);
+  
   if (rateLimit.limited) {
     return new Response(
       JSON.stringify({
@@ -160,11 +177,15 @@ Deno.serve(async (req) => {
         code: 'Throttled',
         message: 'Too many requests',
         rate_limited: true,
-        retry_after: rateLimit.retryAfter,
-      }),
+        retry_after: rateLimit.retryAfter
+      } as ValidationResponse),
       {
         status: 429,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': rateLimit.retryAfter?.toString() || '300' },
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Retry-After': rateLimit.retryAfter?.toString() || '300'
+        }
       }
     );
   }
@@ -176,42 +197,221 @@ Deno.serve(async (req) => {
     );
 
     if (req.method !== 'POST') {
-      return new Response(JSON.stringify({ ok: false, code: 'MethodNotAllowed', message: 'Method not allowed' }),
-        { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(
+        JSON.stringify({ 
+          ok: false, 
+          code: 'MethodNotAllowed',
+          message: 'Method not allowed' 
+        }),
+        { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    const { email }: ValidationRequest = await req.json();
-    if (!email || typeof email !== 'string' || !validateEmail(email)) {
-      return new Response(JSON.stringify({ ok: false, code: 'BadRequest', message: 'Valid email required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const { email, captcha_token }: ValidationRequest = await req.json();
+
+    // Input validation
+    if (!email || typeof email !== 'string') {
+      await logSecurityEvent(supabase, 'invalid_email_format', { 
+        email: '[REDACTED]', 
+        client_id: clientId 
+      });
+      
+      return new Response(
+        JSON.stringify({ 
+          ok: false, 
+          code: 'BadRequest',
+          message: 'Valid email required' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
+    if (!validateEmail(email)) {
+      await logSecurityEvent(supabase, 'invalid_email_format', { 
+        email: '[REDACTED]', 
+        client_id: clientId 
+      });
+      
+      return new Response(
+        JSON.stringify({ 
+          ok: false, 
+          code: 'BadRequest',
+          message: 'Invalid email format' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check for demo mode bypass
+    const allowDemo = Deno.env.get('ALLOW_DEMO') === 'true';
+    const isDemoEmail = email.toLowerCase().includes('demo') || email.toLowerCase().includes('test');
+    
+    if (allowDemo && isDemoEmail) {
+      await logSecurityEvent(supabase, 'demo_access_granted', { 
+        email: '[REDACTED]',
+        client_id: clientId
+      });
+      
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          data: {
+            demo_mode: true,
+            is_affiliated: true
+          }
+        } as ValidationResponse),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if user already exists
     const emailLower = email.toLowerCase();
 
-    // 🔑 1) Revisar si YA existe un usuario registrado en Supabase Auth
-    const { data: userLookup } = await supabase.auth.admin.getUserByEmail(emailLower);
-    if (userLookup?.user) {
-      await logSecurityEvent(supabase, 'existing_auth_user_detected', { email: '[REDACTED]', client_id: clientId });
-      return new Response(JSON.stringify({ ok: true, data: { user_exists: true } }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    // 1) ¿Existe perfil?
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_id')
+      .eq('email', emailLower)
+      .maybeSingle(); // evita throw si no hay fila
+    
+    if (profile?.user_id) {
+      // 2) ¿Tenemos evidencia local de afiliación válida?
+      const { data: aff } = await supabase
+        .from('affiliations')
+        .select('is_affiliated, verified_at, partner_id')
+        .eq('user_id', profile.user_id)
+        .maybeSingle();
+    
+      const partnerId = Deno.env.get('EXNESS_PARTNER_ID') || null;
+      const locallyAffiliated =
+        !!aff?.is_affiliated &&
+        !!aff?.verified_at &&
+        (!!partnerId ? aff.partner_id === partnerId : true);
+    
+      await logSecurityEvent(supabase, 'existing_user_validation_attempt', { 
+        email: '[REDACTED]',
+        user_id: profile.user_id,
+        client_id: clientId,
+        locallyAffiliated
+      });
+    
+      if (locallyAffiliated) {
+        // Evidencia local suficiente: no llamamos upstream
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            data: {
+              user_exists: true,
+              is_affiliated: true
+            }
+          } as ValidationResponse),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    
+      // Si existe usuario pero no hay evidencia local, seguimos con la verificación upstream.
+      // Nota: devolveremos user_exists: true junto con el resultado real de afiliación.
+    }
+    
+    // 3) Verificación upstream (si no hay perfil o no hay evidencia local)
+    try {
+      const result = await checkExnessAffiliation(emailLower);
+    
+      // Guarda/actualiza reporte
+      await supabase.from('affiliation_reports').insert({
+        email: emailLower,
+        status: result.affiliated ? 'affiliated' : 'not_affiliated',
+        uid: result.uid ?? null,
+        partner_id: Deno.env.get('EXNESS_PARTNER_ID') ?? null
+      });
+    
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          data: {
+            user_exists: !!profile?.user_id,
+            is_affiliated: result.affiliated,
+            uid: result.uid
+          }
+        } as ValidationResponse),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (apiError) {
+      // manejo de error como ya tienes
     }
 
-    // 🔍 2) Revisar afiliación upstream (Exness)
-    const result = await checkExnessAffiliation(emailLower);
+    // Check affiliation via Partner API
+    const usePartnerAPI = Deno.env.get('USE_PARTNER_API') === 'true';
+    
+    if (usePartnerAPI) {
+      try {
+        const affiliationResult = await checkExnessAffiliation(email);
+        
+        // Log affiliation check result
+        await supabase.from('affiliation_reports').insert({
+          email: email.toLowerCase(),
+          status: affiliationResult.affiliated ? 'affiliated' : 'not_affiliated',
+          uid: affiliationResult.uid || null,
+          partner_id: Deno.env.get('EXNESS_PARTNER_ID') || null
+        });
 
-    await supabase.from('affiliation_reports').insert({
-      email: emailLower,
-      status: result.affiliated ? 'affiliated' : 'not_affiliated',
-      uid: result.uid ?? null,
-      partner_id: Deno.env.get('EXNESS_PARTNER_ID') ?? null,
-    });
+        await logSecurityEvent(supabase, 'affiliation_check_completed', {
+          email: '[REDACTED]',
+          is_affiliated: affiliationResult.affiliated,
+          client_id: clientId
+        });
 
-    return new Response(JSON.stringify({ ok: true, data: { user_exists: false, is_affiliated: result.affiliated, uid: result.uid } }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        return new Response(
+          JSON.stringify({
+            ok: true,
+            data: {
+              is_affiliated: affiliationResult.affiliated,
+              uid: affiliationResult.uid
+            }
+          } as ValidationResponse),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (apiError) {
+        console.error('Partner API error:', apiError);
+        
+        await logSecurityEvent(supabase, 'partner_api_error', {
+          email: '[REDACTED]',
+          error: apiError instanceof Error ? apiError.message : 'Unknown error',
+          client_id: clientId
+        });
+
+        return new Response(
+          JSON.stringify({
+            ok: false,
+            code: 'UpstreamError',
+            message: 'Unable to verify affiliation at this time'
+          } as ValidationResponse),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // Fallback response when Partner API is disabled
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: {
+          is_affiliated: false
+        }
+      } as ValidationResponse),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
     console.error('Validation function error:', error);
-    return new Response(JSON.stringify({ ok: false, code: 'InternalError', message: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        code: 'InternalError',
+        message: 'Internal server error'
+      } as ValidationResponse),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 });
