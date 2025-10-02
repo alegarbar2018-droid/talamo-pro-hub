@@ -60,5 +60,40 @@
     "role_updated_desc": "El rol del usuario ha sido actualizado",
     "error": "Error",
     "role_update_error": "No se pudo actualizar el rol del usuario"
+  },
+  "signals": {
+    "title": "Gestión de Señales",
+    "subtitle": "Crear y gestionar señales de trading",
+    "create_new": "Nueva Señal",
+    "filter_status": "Filtrar por estado",
+    "all_status": "Todos los estados",
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicada",
+      "archived": "Archivada"
+    },
+    "no_signals": "No se encontraron señales",
+    "no_signals_desc": "Comienza creando tu primera señal de trading",
+    "create_first": "Crear Primera Señal",
+    "error_loading": "Error al cargar señales",
+    "created_success": "Señal creada exitosamente",
+    "created_error": "Error al crear señal",
+    "form": {
+      "instrument": "Instrumento",
+      "timeframe": "Marco Temporal",
+      "rr": "Relación Riesgo/Beneficio",
+      "rr_desc": "Relación riesgo/beneficio esperada (ej: 2.5)",
+      "entry_price": "Precio de Entrada (opcional)",
+      "stop_loss": "Stop Loss (opcional)",
+      "take_profit": "Take Profit (opcional)",
+      "logic": "Lógica del Análisis",
+      "logic_desc": "Explica el análisis técnico detrás de esta señal (mín 20 caracteres)",
+      "logic_placeholder": "RSI sobrevendido detectado + alta volatilidad. Entrada confirmada por...",
+      "invalidation": "Condición de Invalidación",
+      "invalidation_desc": "¿Cuándo debe considerarse inválida esta señal? (mín 10 caracteres)",
+      "invalidation_placeholder": "Cierre por debajo de 92500 o ruptura del soporte",
+      "cancel": "Cancelar",
+      "submit": "Crear Señal"
+    }
   }
 }

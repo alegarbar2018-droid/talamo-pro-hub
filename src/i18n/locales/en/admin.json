@@ -60,5 +60,40 @@
     "role_updated_desc": "User role has been updated",
     "error": "Error",
     "role_update_error": "Could not update user role"
+  },
+  "signals": {
+    "title": "Signals Management",
+    "subtitle": "Create and manage trading signals",
+    "create_new": "New Signal",
+    "filter_status": "Filter by status",
+    "all_status": "All statuses",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "no_signals": "No signals found",
+    "no_signals_desc": "Start by creating your first trading signal",
+    "create_first": "Create First Signal",
+    "error_loading": "Error loading signals",
+    "created_success": "Signal created successfully",
+    "created_error": "Error creating signal",
+    "form": {
+      "instrument": "Instrument",
+      "timeframe": "Timeframe",
+      "rr": "Risk/Reward Ratio",
+      "rr_desc": "Expected risk/reward ratio (e.g., 2.5)",
+      "entry_price": "Entry Price (optional)",
+      "stop_loss": "Stop Loss (optional)",
+      "take_profit": "Take Profit (optional)",
+      "logic": "Analysis Logic",
+      "logic_desc": "Explain the technical analysis behind this signal (min 20 chars)",
+      "logic_placeholder": "RSI oversold detected + high volatility. Entry confirmed by...",
+      "invalidation": "Invalidation Condition",
+      "invalidation_desc": "When should this signal be considered invalid? (min 10 chars)",
+      "invalidation_placeholder": "Close below 92500 or breach of support level",
+      "cancel": "Cancel",
+      "submit": "Create Signal"
+    }
   }
 }
