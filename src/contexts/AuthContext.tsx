@@ -36,6 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isValidated, setIsValidated] = useState(false);
+  
+  // Circuit breaker state
+  const enrichmentFailures = React.useRef(0);
+  const MAX_ENRICHMENT_FAILURES = 2;
 
   const handleSignOut = async () => {
     try {
@@ -82,40 +86,101 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Validate token health before enrichment
+  const validateTokenHealth = async (): Promise<boolean> => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error || !session) {
+        console.error('❌ Token validation failed:', error);
+        return false;
+      }
+
+      // Check if token is about to expire (less than 1 hour left)
+      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+      const now = Date.now();
+      const hoursUntilExpiry = (expiresAt - now) / (1000 * 60 * 60);
+
+      if (hoursUntilExpiry < 1) {
+        console.warn('⚠️ Token expires soon, refreshing...');
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError) {
+          console.error('❌ Token refresh failed:', refreshError);
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('❌ Token validation error:', error);
+      return false;
+    }
+  };
+
   const enrichUserData = async (baseUser: User): Promise<AuthUser> => {
-    console.log('⏳ Starting progressive user data enrichment...');
+    console.log('🔄 Starting user data enrichment with validation...');
     const startTime = Date.now();
     
+    // Validate token before attempting queries
+    const isTokenHealthy = await validateTokenHealth();
+    if (!isTokenHealthy) {
+      console.error('❌ Token is not healthy, incrementing failure count');
+      enrichmentFailures.current++;
+      
+      if (enrichmentFailures.current >= MAX_ENRICHMENT_FAILURES) {
+        console.error('🚨 Circuit breaker triggered - too many failures');
+        handleSignOut();
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      }
+      
+      throw new Error('Token validation failed');
+    }
+    
     // Progressive loading: Try to get each piece of data independently
-    // Don't fail the entire login if one piece fails
     const profilePromise = getUserProfile(baseUser.id).catch(err => {
       console.warn('⚠️ getUserProfile failed, using defaults:', err);
+      enrichmentFailures.current++;
       return null;
     });
     
     const rolesPromise = getUserRoles(baseUser.id).catch(err => {
       console.warn('⚠️ getUserRoles failed, using defaults:', err);
+      enrichmentFailures.current++;
       return [];
     });
     
     const validatedPromise = isUserValidated(baseUser.id).catch(err => {
       console.warn('⚠️ isUserValidated failed, using defaults:', err);
+      enrichmentFailures.current++;
       return false;
     });
 
-    // Wait for all promises, but don't fail if some fail
+    // Wait for all promises
     const [profile, roles, validated] = await Promise.all([
       profilePromise,
       rolesPromise,
       validatedPromise
     ]);
 
+    // Check circuit breaker after all queries
+    if (enrichmentFailures.current >= MAX_ENRICHMENT_FAILURES) {
+      console.error('🚨 Circuit breaker triggered - too many enrichment failures');
+      handleSignOut();
+      throw new Error('Error al cargar datos de usuario. Por favor, inicia sesión nuevamente.');
+    }
+
+    // Reset failure counter on success
+    if (profile || roles.length > 0) {
+      enrichmentFailures.current = 0;
+    }
+
     const duration = Date.now() - startTime;
-    console.log(`✅ User data enriched in ${duration}ms (progressive mode)`);
+    console.log(`✅ User data enriched in ${duration}ms`);
     console.log('📊 Data status:', { 
       hasProfile: !!profile, 
       rolesCount: roles?.length || 0, 
-      isValidated: validated 
+      isValidated: validated,
+      failures: enrichmentFailures.current
     });
 
     return {

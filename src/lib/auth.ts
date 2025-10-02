@@ -27,6 +27,25 @@ export interface AuthUser extends User {
   isAffiliated?: boolean;
 }
 
+// Error types for better debugging
+type QueryErrorType = 'RLS_POLICY_VIOLATION' | 'QUERY_TIMEOUT' | 'NETWORK_ERROR' | 'TOKEN_EXPIRED' | 'UNKNOWN';
+
+const getErrorType = (error: any): QueryErrorType => {
+  if (error?.code === '42501' || error?.message?.includes('RLS') || error?.message?.includes('policy')) {
+    return 'RLS_POLICY_VIOLATION';
+  }
+  if (error?.message?.includes('timed out') || error?.message?.includes('timeout')) {
+    return 'QUERY_TIMEOUT';
+  }
+  if (error?.message?.includes('network') || error?.message?.includes('fetch')) {
+    return 'NETWORK_ERROR';
+  }
+  if (error?.message?.includes('token') || error?.message?.includes('JWT')) {
+    return 'TOKEN_EXPIRED';
+  }
+  return 'UNKNOWN';
+};
+
 // Authentication functions
 export const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
   const redirectUrl = `${window.location.origin}/auth/callback`;
@@ -108,7 +127,9 @@ const withTimeout = async <T>(
 
 // Profile functions
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
-  console.log(`📥 Fetching profile for user ${userId}...`);
+  const startTime = Date.now();
+  console.log(`[${new Date().toISOString()}] Starting getUserProfile for userId: ${userId}`);
+  
   try {
     const fetchProfile = async () => {
       const { data, error } = await supabase
@@ -117,14 +138,31 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
         .eq('user_id', userId)
         .maybeSingle();
       
-      if (error) throw error;
-      console.log('✅ Profile fetched successfully');
+      if (error) {
+        const errorType = getErrorType(error);
+        console.error(`[${new Date().toISOString()}] getUserProfile error [${errorType}]:`, error);
+        
+        if (errorType === 'RLS_POLICY_VIOLATION') {
+          console.error('🚨 RLS policy violation detected - session may be corrupted');
+          forceCleanSession();
+        }
+        throw error;
+      }
+      
+      const duration = Date.now() - startTime;
+      console.log(`[${new Date().toISOString()}] ✅ Profile fetched in ${duration}ms`);
       return data;
     };
     
     return await withTimeout(fetchProfile(), 8000);
   } catch (error) {
-    console.error('❌ getUserProfile failed:', error);
+    const duration = Date.now() - startTime;
+    const errorType = getErrorType(error);
+    console.error(`[${new Date().toISOString()}] ❌ getUserProfile failed [${errorType}] after ${duration}ms`);
+    
+    if (errorType === 'RLS_POLICY_VIOLATION') {
+      forceCleanSession();
+    }
     return null;
   }
 };
@@ -142,7 +180,9 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
 
 // Role functions
 export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
-  console.log(`📥 Fetching roles for user ${userId}...`);
+  const startTime = Date.now();
+  console.log(`[${new Date().toISOString()}] Starting getUserRoles for userId: ${userId}`);
+  
   try {
     const fetchRoles = async () => {
       const { data, error } = await supabase
@@ -150,14 +190,31 @@ export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
         .select('*')
         .eq('user_id', userId);
       
-      if (error) throw error;
-      console.log(`✅ Roles fetched: ${data?.length || 0} roles`);
+      if (error) {
+        const errorType = getErrorType(error);
+        console.error(`[${new Date().toISOString()}] getUserRoles error [${errorType}]:`, error);
+        
+        if (errorType === 'RLS_POLICY_VIOLATION') {
+          console.error('🚨 RLS policy violation detected - session may be corrupted');
+          forceCleanSession();
+        }
+        throw error;
+      }
+      
+      const duration = Date.now() - startTime;
+      console.log(`[${new Date().toISOString()}] ✅ Roles fetched in ${duration}ms: ${data?.length || 0} roles`);
       return data || [];
     };
     
     return await withTimeout(fetchRoles(), 8000);
   } catch (error) {
-    console.error('❌ getUserRoles failed:', error);
+    const duration = Date.now() - startTime;
+    const errorType = getErrorType(error);
+    console.error(`[${new Date().toISOString()}] ❌ getUserRoles failed [${errorType}] after ${duration}ms`);
+    
+    if (errorType === 'RLS_POLICY_VIOLATION') {
+      forceCleanSession();
+    }
     return [];
   }
 };
@@ -188,7 +245,9 @@ export const addUserRole = async (userId: string, role: 'admin' | 'trader' | 'pa
 
 // Affiliation functions (integration with existing system)
 export const isUserValidated = async (userId: string): Promise<boolean> => {
-  console.log(`📥 Checking validation for user ${userId}...`);
+  const startTime = Date.now();
+  console.log(`[${new Date().toISOString()}] Starting isUserValidated for userId: ${userId}`);
+  
   try {
     const checkAffiliation = async () => {
       const { data, error } = await supabase
@@ -198,18 +257,33 @@ export const isUserValidated = async (userId: string): Promise<boolean> => {
         .maybeSingle();
       
       if (error) {
-        console.error('❌ Error checking affiliation:', error);
+        const errorType = getErrorType(error);
+        console.error(`[${new Date().toISOString()}] isUserValidated error [${errorType}]:`, error);
+        
+        if (errorType === 'RLS_POLICY_VIOLATION') {
+          console.error('🚨 RLS policy violation detected - session may be corrupted');
+          forceCleanSession();
+          return false;
+        }
+        
         // Fallback to localStorage for existing users
         return localStorage.getItem("isValidated") === 'true';
       }
       
-      console.log(`✅ Validation checked: ${data?.is_affiliated || false}`);
+      const duration = Date.now() - startTime;
+      console.log(`[${new Date().toISOString()}] ✅ Validation checked in ${duration}ms: ${data?.is_affiliated || false}`);
       return data?.is_affiliated || false;
     };
     
     return await withTimeout(checkAffiliation(), 8000);
   } catch (error) {
-    console.error('❌ isUserValidated failed:', error);
+    const duration = Date.now() - startTime;
+    const errorType = getErrorType(error);
+    console.error(`[${new Date().toISOString()}] ❌ isUserValidated failed [${errorType}] after ${duration}ms`);
+    
+    if (errorType === 'RLS_POLICY_VIOLATION') {
+      forceCleanSession();
+    }
     return localStorage.getItem("isValidated") === 'true';
   }
 };
