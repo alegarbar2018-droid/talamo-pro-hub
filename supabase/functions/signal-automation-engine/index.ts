@@ -52,12 +52,12 @@ async function shouldGenerateSignal(
     };
   }
 
-  // Check RSI conditions
+  // Check RSI conditions (CORRECTED: oversold = LONG, overbought = SHORT)
   if (marketData.rsi > config.rsi_overbought) {
     return {
       generate: true,
       type: 'SHORT',
-      reason: `RSI oversold (${marketData.rsi.toFixed(2)} > ${config.rsi_overbought}) with high volatility`
+      reason: `RSI overbought (${marketData.rsi.toFixed(2)} > ${config.rsi_overbought}) with high volatility`
     };
   }
 
@@ -65,7 +65,7 @@ async function shouldGenerateSignal(
     return {
       generate: true,
       type: 'LONG',
-      reason: `RSI overbought (${marketData.rsi.toFixed(2)} < ${config.rsi_oversold}) with high volatility`
+      reason: `RSI oversold (${marketData.rsi.toFixed(2)} < ${config.rsi_oversold}) with high volatility`
     };
   }
 

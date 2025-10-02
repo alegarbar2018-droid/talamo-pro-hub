@@ -433,7 +433,6 @@ export type Database = {
       market_data: {
         Row: {
           created_at: string
-          id: string
           price: number
           rsi: number | null
           symbol: string
@@ -443,7 +442,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          id?: string
           price: number
           rsi?: number | null
           symbol: string
@@ -453,7 +451,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          id?: string
           price?: number
           rsi?: number | null
           symbol?: string

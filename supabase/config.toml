@@ -57,5 +57,11 @@ verify_jwt = false
 [functions.binance-data-collector]
 verify_jwt = false
 
+[[functions.binance-data-collector.schedule]]
+cron = "*/5 * * * *"
+
 [functions.signal-automation-engine]
 verify_jwt = false
+
+[[functions.signal-automation-engine.schedule]]
+cron = "*/5 * * * *"
