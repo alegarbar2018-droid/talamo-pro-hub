@@ -83,39 +83,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const enrichUserData = async (baseUser: User): Promise<AuthUser> => {
-    try {
-      console.log('⏳ Enriching user data with 5s timeout...');
-      
-      // Add overall timeout for enrichment process
-      const enrichmentPromise = Promise.all([
-        getUserProfile(baseUser.id),
-        getUserRoles(baseUser.id),
-        isUserValidated(baseUser.id),
-      ]);
-      
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Enrichment timeout after 5s')), 5000);
-      });
-      
-      const [profile, roles, validated] = await Promise.race([
-        enrichmentPromise,
-        timeoutPromise
-      ]);
+    console.log('⏳ Starting progressive user data enrichment...');
+    const startTime = Date.now();
+    
+    // Progressive loading: Try to get each piece of data independently
+    // Don't fail the entire login if one piece fails
+    const profilePromise = getUserProfile(baseUser.id).catch(err => {
+      console.warn('⚠️ getUserProfile failed, using defaults:', err);
+      return null;
+    });
+    
+    const rolesPromise = getUserRoles(baseUser.id).catch(err => {
+      console.warn('⚠️ getUserRoles failed, using defaults:', err);
+      return [];
+    });
+    
+    const validatedPromise = isUserValidated(baseUser.id).catch(err => {
+      console.warn('⚠️ isUserValidated failed, using defaults:', err);
+      return false;
+    });
 
-      console.log('✅ User data enriched successfully');
-      return {
-        ...baseUser,
-        profile: profile || undefined,
-        roles: roles || [],
-        isAffiliated: validated,
-      };
-    } catch (error) {
-      console.error('❌ Error enriching user data:', error);
-      
-      // Don't call handleSignOut here to avoid infinite loops
-      // Just throw the error and let the caller handle cleanup
-      throw new Error('Session corrupta detectada. Por favor inicia sesión nuevamente.');
-    }
+    // Wait for all promises, but don't fail if some fail
+    const [profile, roles, validated] = await Promise.all([
+      profilePromise,
+      rolesPromise,
+      validatedPromise
+    ]);
+
+    const duration = Date.now() - startTime;
+    console.log(`✅ User data enriched in ${duration}ms (progressive mode)`);
+    console.log('📊 Data status:', { 
+      hasProfile: !!profile, 
+      rolesCount: roles?.length || 0, 
+      isValidated: validated 
+    });
+
+    return {
+      ...baseUser,
+      profile: profile || undefined,
+      roles: roles || [],
+      isAffiliated: validated,
+    };
   };
 
   const refreshUser = async () => {
@@ -126,9 +134,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(enrichedUser);
         setIsValidated(enrichedUser.isAffiliated || false);
       } catch (error) {
-        console.error('Error refreshing user data:', error);
-        // Force logout on refresh failure
-        await handleSignOut();
+        console.error('⚠️ Error refreshing user data (non-fatal):', error);
+        // Don't force logout on refresh failure - progressive auth
       } finally {
         setLoading(false);
       }
@@ -153,22 +160,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, !!session);
+        console.log('🔐 Auth state change:', event, !!session);
         setSession(session);
         
         if (session?.user) {
           setLoading(true);
           try {
+            // Progressive auth: Always set basic user first
+            setUser({
+              ...session.user,
+              profile: undefined,
+              roles: [],
+              isAffiliated: false,
+            });
+            
+            // Then enrich data in background (non-blocking)
             const enrichedUser = await enrichUserData(session.user);
             setUser(enrichedUser);
             setIsValidated(enrichedUser.isAffiliated || false);
           } catch (error) {
-            console.error('Error enriching user data:', error);
-            // Clear state and force sign out on enrichment failure
-            setUser(null);
-            setIsValidated(false);
-            forceCleanSession();
-            await supabase.auth.signOut({ scope: 'local' });
+            console.error('⚠️ Error enriching user data (non-fatal):', error);
+            // Don't logout on enrichment failure with progressive auth
           } finally {
             setLoading(false);
           }
@@ -183,22 +195,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check for existing session only if validation passed
     if (isValid) {
       supabase.auth.getSession().then(async ({ data: { session } }) => {
-        console.log('Initial session check:', !!session);
+        console.log('🔍 Initial session check:', !!session);
         setSession(session);
         
         if (session?.user) {
           setLoading(true);
           try {
+            // Progressive auth: Set basic user immediately
+            setUser({
+              ...session.user,
+              profile: undefined,
+              roles: [],
+              isAffiliated: false,
+            });
+            
+            // Then enrich in background
             const enrichedUser = await enrichUserData(session.user);
             setUser(enrichedUser);
             setIsValidated(enrichedUser.isAffiliated || false);
           } catch (error) {
-            console.error('Error enriching user data:', error);
-            // Clear state and force sign out on enrichment failure
-            setUser(null);
-            setIsValidated(false);
-            forceCleanSession();
-            await supabase.auth.signOut({ scope: 'local' });
+            console.error('⚠️ Error enriching user data (non-fatal):', error);
+            // Don't logout with progressive auth
           } finally {
             setLoading(false);
           }

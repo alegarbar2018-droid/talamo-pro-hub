@@ -84,35 +84,31 @@ export const updatePassword = async (password: string) => {
   return { data, error };
 };
 
-// Utility function for timeout with retry
+// Utility to wrap promises with timeout (increased to 8s for better reliability)
 const withTimeout = async <T>(
   promise: Promise<T>,
-  timeoutMs: number = 3000,
-  retries: number = 1
+  timeoutMs: number = 8000
 ): Promise<T> => {
-  let lastError: Error | null = null;
+  const startTime = Date.now();
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error(`Operation timeout after ${timeoutMs}ms`)), timeoutMs);
+  });
   
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Operation timeout')), timeoutMs);
-      });
-      
-      return await Promise.race([promise, timeoutPromise]);
-    } catch (error) {
-      lastError = error as Error;
-      if (attempt < retries) {
-        // Exponential backoff: wait 1s, then 2s
-        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
-      }
-    }
+  try {
+    const result = await Promise.race([promise, timeoutPromise]);
+    const duration = Date.now() - startTime;
+    console.log(`✅ Operation completed in ${duration}ms`);
+    return result;
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`❌ Operation failed after ${duration}ms:`, error);
+    throw error;
   }
-  
-  throw lastError;
 };
 
 // Profile functions
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
+  console.log(`📥 Fetching profile for user ${userId}...`);
   try {
     const fetchProfile = async () => {
       const { data, error } = await supabase
@@ -122,12 +118,13 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
         .maybeSingle();
       
       if (error) throw error;
+      console.log('✅ Profile fetched successfully');
       return data;
     };
     
-    return await withTimeout(fetchProfile(), 3000, 1);
+    return await withTimeout(fetchProfile(), 8000);
   } catch (error) {
-    console.error('getUserProfile timeout or failed:', error);
+    console.error('❌ getUserProfile failed:', error);
     return null;
   }
 };
@@ -145,6 +142,7 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
 
 // Role functions
 export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
+  console.log(`📥 Fetching roles for user ${userId}...`);
   try {
     const fetchRoles = async () => {
       const { data, error } = await supabase
@@ -153,12 +151,13 @@ export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
         .eq('user_id', userId);
       
       if (error) throw error;
+      console.log(`✅ Roles fetched: ${data?.length || 0} roles`);
       return data || [];
     };
     
-    return await withTimeout(fetchRoles(), 3000, 1);
+    return await withTimeout(fetchRoles(), 8000);
   } catch (error) {
-    console.error('getUserRoles timeout or failed:', error);
+    console.error('❌ getUserRoles failed:', error);
     return [];
   }
 };
@@ -189,6 +188,7 @@ export const addUserRole = async (userId: string, role: 'admin' | 'trader' | 'pa
 
 // Affiliation functions (integration with existing system)
 export const isUserValidated = async (userId: string): Promise<boolean> => {
+  console.log(`📥 Checking validation for user ${userId}...`);
   try {
     const checkAffiliation = async () => {
       const { data, error } = await supabase
@@ -198,17 +198,18 @@ export const isUserValidated = async (userId: string): Promise<boolean> => {
         .maybeSingle();
       
       if (error) {
-        console.error('Error checking affiliation:', error);
+        console.error('❌ Error checking affiliation:', error);
         // Fallback to localStorage for existing users
         return localStorage.getItem("isValidated") === 'true';
       }
       
+      console.log(`✅ Validation checked: ${data?.is_affiliated || false}`);
       return data?.is_affiliated || false;
     };
     
-    return await withTimeout(checkAffiliation(), 3000, 1);
+    return await withTimeout(checkAffiliation(), 8000);
   } catch (error) {
-    console.error('isUserValidated timeout or failed:', error);
+    console.error('❌ isUserValidated failed:', error);
     return localStorage.getItem("isValidated") === 'true';
   }
 };
