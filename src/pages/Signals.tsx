@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   TrendingUp, 
   TrendingDown,
@@ -20,11 +21,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { useObservability, withPageTracking } from "@/components/business/ObservabilityProvider";
+import { useSignals } from "@/hooks/useSignals";
 
 const Signals = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['signals']);
   const { trackInteraction, trackBusinessEvent } = useObservability();
+  const { signals, loading, error } = useSignals();
   const [filters, setFilters] = useState({
     market: "all",
     timeframe: "all",
@@ -38,60 +41,6 @@ const Signals = () => {
       filters_active: Object.values(filters).some(f => f !== 'all')
     });
   }, [trackBusinessEvent, filters]);
-
-  const signals = [
-    {
-      id: "1",
-      title: "XAUUSD - Ruptura de resistencia",
-      instrument: "XAUUSD",
-      type: "LONG",
-      timeframe: "H4",
-      rr: 3.0,
-      entry: "2018.50",
-      sl: "2010.00",
-      tp: "2044.00",
-      logic: "Ruptura confirmada de resistencia en 2015 con retesteo exitoso. RSI saliendo de sobrevendido y confluencia con EMA 200.",
-      invalidation: "Cierre por debajo de 2010 en H4",
-      status: "Activa",
-      publishedAt: "Hace 2h",
-      author: "Analista Senior",
-      confidence: "Alta"
-    },
-    {
-      id: "2", 
-      title: "EURUSD - Patrón de reversión",
-      instrument: "EURUSD",
-      type: "SHORT",
-      timeframe: "H1",
-      rr: 2.5,
-      entry: "1.0850",
-      sl: "1.0880",
-      tp: "1.0775",
-      logic: "Formación de doble techo en confluencia con zona de oferta. Divergencia bajista en MACD confirma debilidad.",
-      invalidation: "Ruptura por encima de 1.0885",
-      status: "TP alcanzado",
-      publishedAt: "Hace 1d",
-      author: "Analista Senior",
-      confidence: "Media"
-    },
-    {
-      id: "3",
-      title: "GBPJPY - Continuación de tendencia",
-      instrument: "GBPJPY", 
-      type: "LONG",
-      timeframe: "H4",
-      rr: 2.0,
-      entry: "188.20",
-      sl: "185.50",
-      tp: "193.60",
-      logic: "Pullback a EMA 50 en tendencia alcista establecida. Soporte dinámico y nivel de Fibonacci 61.8%.",
-      invalidation: "Cierre por debajo de 185.00 en H4",
-      status: "SL alcanzado", 
-      publishedAt: "Hace 2d",
-      author: "Analista Junior",
-      confidence: "Media"
-    }
-  ];
 
   const filteredSignals = signals.filter(signal => {
     if (filters.market !== "all" && signal.instrument !== filters.market) return false;
@@ -120,6 +69,34 @@ const Signals = () => {
       <TrendingUp className="h-4 w-4 text-success" /> : 
       <TrendingDown className="h-4 w-4 text-destructive" />;
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Skeleton className="h-12 w-64 mb-6" />
+          <div className="space-y-6">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-64" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -225,8 +202,8 @@ const Signals = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     {getTypeIcon(signal.type)}
-                    <div>
-                      <CardTitle className="text-foreground">{signal.title}</CardTitle>
+                  <div>
+                      <CardTitle className="text-foreground">{signal.instrument} - {signal.type}</CardTitle>
                       <CardDescription className="text-muted-foreground">
                         {signal.instrument} • {signal.timeframe} • Por {signal.author}
                       </CardDescription>
@@ -249,17 +226,17 @@ const Signals = () => {
                   <div className="space-y-4">
                      <div className="grid grid-cols-3 gap-4 text-sm">
                        <div>
-                         <span className="text-muted-foreground">{t('signals:signal.entry')}</span>
-                         <div className="font-mono font-medium text-foreground">{signal.entry}</div>
-                       </div>
-                       <div>
-                         <span className="text-muted-foreground">{t('signals:signal.stop_loss')}</span>
-                         <div className="font-mono font-medium text-destructive">{signal.sl}</div>
-                       </div>
-                       <div>
-                         <span className="text-muted-foreground">{t('signals:signal.take_profit')}</span>
-                         <div className="font-mono font-medium text-success">{signal.tp}</div>
-                       </div>
+                          <span className="text-muted-foreground">{t('signals:signal.entry')}</span>
+                          <div className="font-mono font-medium text-foreground">{signal.entry.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">{t('signals:signal.stop_loss')}</span>
+                          <div className="font-mono font-medium text-destructive">{signal.sl.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">{t('signals:signal.take_profit')}</span>
+                          <div className="font-mono font-medium text-success">{signal.tp.toFixed(2)}</div>
+                        </div>
                      </div>
                     
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -268,9 +245,9 @@ const Signals = () => {
                         {signal.publishedAt}
                       </div>
                        <div className="flex items-center gap-1">
-                         <Target className="h-4 w-4" />
-                         {t('signals:signal.confidence')} {signal.confidence}
-                       </div>
+                          <Target className="h-4 w-4" />
+                          {t('signals:signal.confidence')}: {signal.confidence}%
+                        </div>
                     </div>
                   </div>
                   
@@ -309,7 +286,7 @@ const Signals = () => {
                         instrument: signal.instrument
                       });
                     }}
-                    aria-label={`Ver análisis completo de ${signal.title}`}
+                    aria-label={`Ver análisis completo de ${signal.instrument}`}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     {t('signals:signal.view_full_analysis')}
