@@ -22,7 +22,7 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallback,
   requiredRoles = [],
 }) => {
-  const { data: userRole, isLoading: roleLoading } = useQuery({
+  const { data: userRole, isLoading: roleLoading, isError: roleError } = useQuery({
     queryKey: ['admin-role'],
     queryFn: getCurrentAdminRole,
   });
@@ -33,7 +33,30 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
     enabled: !!userRole,
   });
 
-  if (roleLoading || permissionLoading) {
+  // Show loading only while checking role
+  if (roleLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin text-teal" />
+        <span className="ml-2 text-muted-foreground">Verificando permisos...</span>
+      </div>
+    );
+  }
+
+  // If no admin role found or error, deny access immediately
+  if (!userRole || roleError) {
+    return fallback || (
+      <Alert className="border-destructive/20 bg-destructive/10">
+        <AlertTriangle className="h-4 w-4 text-destructive" />
+        <AlertDescription>
+          Acceso denegado. No tiene permisos de administrador. Contacte al administrador del sistema si cree que esto es un error.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Show loading while checking specific permission (only if user has admin role)
+  if (permissionLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-6 w-6 animate-spin text-teal" />
@@ -43,7 +66,7 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   }
 
   // Check role-based access if required roles are specified
-  if (requiredRoles.length > 0 && userRole && !requiredRoles.includes(userRole)) {
+  if (requiredRoles.length > 0 && !requiredRoles.includes(userRole)) {
     return fallback || (
       <Alert className="border-warning/20 bg-warning/10">
         <AlertTriangle className="h-4 w-4 text-warning" />
