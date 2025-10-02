@@ -30,12 +30,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const enrichUserData = async (baseUser: User): Promise<AuthUser> => {
     try {
-      const [profile, roles, validated] = await Promise.all([
+      console.log('⏳ Enriching user data with 5s timeout...');
+      
+      // Add overall timeout for enrichment process
+      const enrichmentPromise = Promise.all([
         getUserProfile(baseUser.id),
         getUserRoles(baseUser.id),
         isUserValidated(baseUser.id),
       ]);
+      
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Enrichment timeout after 5s')), 5000);
+      });
+      
+      const [profile, roles, validated] = await Promise.race([
+        enrichmentPromise,
+        timeoutPromise
+      ]);
 
+      console.log('✅ User data enriched successfully');
       return {
         ...baseUser,
         profile: profile || undefined,
@@ -43,8 +56,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAffiliated: validated,
       };
     } catch (error) {
-      console.error('Error enriching user data:', error);
-      return baseUser as AuthUser;
+      console.error('❌ Error enriching user data - forcing logout:', error);
+      
+      // If enrichment fails, assume corrupted session and force logout
+      await handleSignOut();
+      throw new Error('Session corrupta detectada. Por favor inicia sesión nuevamente.');
     }
   };
 
@@ -64,6 +80,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // HEALTH CHECK: Validate stored session before proceeding
+    const initAuth = async () => {
+      console.log('🔍 Starting auth health check...');
+      
+      // Check if stored tokens are valid
+      const { validateStoredSession, forceCleanSession } = await import('@/lib/auth');
+      const isValid = validateStoredSession();
+      
+      if (!isValid) {
+        console.log('⚠️ Invalid stored session detected - cleaning up');
+        forceCleanSession();
+        setLoading(false);
+        return;
+      }
+      
+      console.log('✅ Stored session validation passed');
+    };
+    
+    initAuth();
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -78,7 +114,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsValidated(enrichedUser.isAffiliated || false);
           } catch (error) {
             console.error('Error enriching user data:', error);
-            setUser(session.user as AuthUser);
+            // enrichUserData already handles logout on failure
+            setUser(null);
             setIsValidated(false);
           } finally {
             setLoading(false);
@@ -104,7 +141,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsValidated(enrichedUser.isAffiliated || false);
         } catch (error) {
           console.error('Error enriching user data:', error);
-          setUser(session.user as AuthUser);
+          // enrichUserData already handles logout on failure
+          setUser(null);
           setIsValidated(false);
         } finally {
           setLoading(false);

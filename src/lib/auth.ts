@@ -84,20 +84,52 @@ export const updatePassword = async (password: string) => {
   return { data, error };
 };
 
-// Profile functions
-export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', userId)
-    .maybeSingle();
+// Utility function for timeout with retry
+const withTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number = 3000,
+  retries: number = 1
+): Promise<T> => {
+  let lastError: Error | null = null;
   
-  if (error) {
-    console.error('Error fetching user profile:', error);
-    return null;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Operation timeout')), timeoutMs);
+      });
+      
+      return await Promise.race([promise, timeoutPromise]);
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt < retries) {
+        // Exponential backoff: wait 1s, then 2s
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+      }
+    }
   }
   
-  return data;
+  throw lastError;
+};
+
+// Profile functions
+export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
+  try {
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    };
+    
+    return await withTimeout(fetchProfile(), 3000, 1);
+  } catch (error) {
+    console.error('getUserProfile timeout or failed:', error);
+    return null;
+  }
 };
 
 export const updateUserProfile = async (userId: string, updates: Partial<UserProfile>) => {
@@ -113,17 +145,22 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
 
 // Role functions
 export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
-  const { data, error } = await supabase
-    .from('user_roles')
-    .select('*')
-    .eq('user_id', userId);
-  
-  if (error) {
-    console.error('Error fetching user roles:', error);
+  try {
+    const fetchRoles = async () => {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('*')
+        .eq('user_id', userId);
+      
+      if (error) throw error;
+      return data || [];
+    };
+    
+    return await withTimeout(fetchRoles(), 3000, 1);
+  } catch (error) {
+    console.error('getUserRoles timeout or failed:', error);
     return [];
   }
-  
-  return data || [];
 };
 
 export const hasRole = async (userId: string, role: 'admin' | 'trader' | 'partner'): Promise<boolean> => {
@@ -152,19 +189,28 @@ export const addUserRole = async (userId: string, role: 'admin' | 'trader' | 'pa
 
 // Affiliation functions (integration with existing system)
 export const isUserValidated = async (userId: string): Promise<boolean> => {
-  const { data, error } = await supabase
-    .from('affiliations')
-    .select('is_affiliated')
-    .eq('user_id', userId)
-    .maybeSingle();
-  
-  if (error) {
-    console.error('Error checking affiliation:', error);
-    // Fallback to localStorage for existing users
+  try {
+    const checkAffiliation = async () => {
+      const { data, error } = await supabase
+        .from('affiliations')
+        .select('is_affiliated')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error checking affiliation:', error);
+        // Fallback to localStorage for existing users
+        return localStorage.getItem("isValidated") === 'true';
+      }
+      
+      return data?.is_affiliated || false;
+    };
+    
+    return await withTimeout(checkAffiliation(), 3000, 1);
+  } catch (error) {
+    console.error('isUserValidated timeout or failed:', error);
     return localStorage.getItem("isValidated") === 'true';
   }
-  
-  return data?.is_affiliated || false;
 };
 
 export const setUserValidation = async (userId: string, validated: boolean, partnerId?: string) => {
@@ -187,6 +233,56 @@ export const setUserValidation = async (userId: string, validated: boolean, part
   if (validated) {
     localStorage.setItem("partnerId", partnerId || "1141465940423171000");
   }
+};
+
+// Session validation and cleanup
+export const validateStoredSession = (): boolean => {
+  try {
+    const keys = Object.keys(localStorage);
+    const authKeys = keys.filter(key => key.startsWith('sb-'));
+    
+    if (authKeys.length === 0) return true; // No session stored
+    
+    // Try to parse the auth token
+    const tokenKey = authKeys.find(key => key.includes('auth-token'));
+    if (!tokenKey) return true;
+    
+    const tokenData = localStorage.getItem(tokenKey);
+    if (!tokenData) return true;
+    
+    try {
+      const parsed = JSON.parse(tokenData);
+      
+      // Check if token is expired
+      if (parsed.expires_at) {
+        const expiresAt = new Date(parsed.expires_at * 1000);
+        if (expiresAt < new Date()) {
+          console.log('Stored token is expired');
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (e) {
+      console.error('Failed to parse auth token:', e);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error validating stored session:', error);
+    return false;
+  }
+};
+
+export const forceCleanSession = () => {
+  console.log('🔥 Force cleaning all session data...');
+  
+  const keysToRemove = Object.keys(localStorage).filter(key => 
+    key.startsWith('sb-') || 
+    ['user', 'isValidated', 'partnerId', 'supabase.auth.token'].includes(key)
+  );
+  
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+  console.log('Cleaned keys:', keysToRemove);
 };
 
 // Session management

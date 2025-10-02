@@ -18,6 +18,8 @@ export default function LoginPage() {
   const [resetLoading, setResetLoading] = useState(false);
   const [showResetForm, setShowResetForm] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [showEmergencyReset, setShowEmergencyReset] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -56,6 +58,16 @@ export default function LoginPage() {
       
       if (error) {
         console.error('SignIn error:', error);
+        
+        // Track failed attempts
+        const newFailedAttempts = failedAttempts + 1;
+        setFailedAttempts(newFailedAttempts);
+        
+        // Show emergency reset after 2 failed attempts
+        if (newFailedAttempts >= 2) {
+          setShowEmergencyReset(true);
+        }
+        
         toast({
           title: "Error de inicio de sesión",
           description: error.message === 'Invalid login credentials' 
@@ -68,6 +80,11 @@ export default function LoginPage() {
 
       if (data.user) {
         console.log('SignIn successful');
+        
+        // Reset failed attempts on success
+        setFailedAttempts(0);
+        setShowEmergencyReset(false);
+        
         toast({
           title: "¡Bienvenido!",
           description: "Has iniciado sesión correctamente."
@@ -78,6 +95,14 @@ export default function LoginPage() {
       }
     } catch (error) {
       console.error('Login error:', error);
+      
+      const newFailedAttempts = failedAttempts + 1;
+      setFailedAttempts(newFailedAttempts);
+      
+      if (newFailedAttempts >= 2) {
+        setShowEmergencyReset(true);
+      }
+      
       toast({
         title: "Error inesperado",
         description: "Ha ocurrido un error. Inténtalo de nuevo.",
@@ -86,6 +111,40 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
       console.log('=== LOGIN ATTEMPT END ===');
+    }
+  };
+
+  const handleEmergencyReset = async () => {
+    console.log('🚨 Emergency reset triggered');
+    
+    try {
+      // Import cleanup function
+      const { forceCleanSession } = await import('@/lib/auth');
+      
+      // Force sign out
+      await supabase.auth.signOut({ scope: 'local' });
+      
+      // Clean all session data
+      forceCleanSession();
+      
+      toast({
+        title: "Sesión limpiada",
+        description: "Todos los datos de sesión han sido eliminados. Intenta iniciar sesión nuevamente.",
+      });
+      
+      // Reset states
+      setFailedAttempts(0);
+      setShowEmergencyReset(false);
+      
+      // Reload page to start fresh
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+      console.error('Error during emergency reset:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo limpiar la sesión. Intenta cerrar y abrir el navegador.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -255,6 +314,22 @@ export default function LoginPage() {
               {loading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </form>
+
+          {showEmergencyReset && (
+            <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive mb-3">
+                ¿Problemas para iniciar sesión? Puede haber datos corruptos en tu navegador.
+              </p>
+              <Button
+                type="button"
+                variant="destructive"
+                className="w-full"
+                onClick={handleEmergencyReset}
+              >
+                🔥 Limpiar datos y reintentar
+              </Button>
+            </div>
+          )}
 
           <div className="mt-6 pt-4 border-t border-line">
             <p className="text-center text-sm text-muted-foreground">
