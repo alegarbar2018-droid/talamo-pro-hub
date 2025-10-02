@@ -963,6 +963,10 @@ export type Database = {
           status: string
         }[]
       }
+      trigger_data_collection: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       user_exists: {
         Args: { p_email: string }
         Returns: boolean
