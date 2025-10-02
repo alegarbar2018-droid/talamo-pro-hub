@@ -46,20 +46,28 @@ function calculateVolatility(prices: number[]): number {
   return Math.sqrt(variance);
 }
 
-async function fetchBinanceData(symbol: string): Promise<{ price: number; rsi: number; volatility: number; volume: number }> {
-  // Fetch 1-hour klines for RSI calculation
-  const klinesResponse = await fetch(
-    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1h&limit=20`
+async function fetchCryptoData(symbol: string): Promise<{ price: number; rsi: number; volatility: number; volume: number }> {
+  // Convert BTCUSDT to BTC for CoinGecko
+  const coinId = symbol.replace('USDT', '').toLowerCase();
+  const geckoId = coinId === 'btc' ? 'bitcoin' : coinId === 'eth' ? 'ethereum' : coinId;
+  
+  // Fetch historical data (last 20 hours)
+  const historyResponse = await fetch(
+    `https://api.coingecko.com/api/v3/coins/${geckoId}/market_chart?vs_currency=usd&days=1&interval=hourly`
   );
   
-  if (!klinesResponse.ok) {
-    throw new Error(`Binance API error: ${klinesResponse.statusText}`);
+  if (!historyResponse.ok) {
+    throw new Error(`CoinGecko API error: ${historyResponse.statusText}`);
   }
 
-  const klines: BinanceKline[] = await klinesResponse.json();
+  const historyData = await historyResponse.json();
   
-  const prices = klines.map(k => parseFloat(k.close));
-  const volumes = klines.map(k => parseFloat(k.volume));
+  // Extract prices and volumes from the last 20 data points
+  const pricesData = historyData.prices.slice(-20);
+  const volumesData = historyData.total_volumes.slice(-20);
+  
+  const prices = pricesData.map((p: [number, number]) => p[1]);
+  const volumes = volumesData.map((v: [number, number]) => v[1]);
   
   const currentPrice = prices[prices.length - 1];
   const rsi = calculateRSI(prices);
@@ -99,7 +107,7 @@ Deno.serve(async (req) => {
     // Fetch data for each enabled symbol
     for (const config of configs || []) {
       try {
-        const data = await fetchBinanceData(config.symbol);
+        const data = await fetchCryptoData(config.symbol);
         
         // Store in database
         const { error: insertError } = await supabaseClient
@@ -124,7 +132,7 @@ Deno.serve(async (req) => {
           });
         }
       } catch (error) {
-        console.error(`Error fetching Binance data for ${config.symbol}:`, error);
+        console.error(`Error fetching crypto data for ${config.symbol}:`, error);
       }
     }
 
