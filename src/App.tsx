@@ -32,6 +32,7 @@ import { AdminLayout } from "./components/admin/AdminLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminUsers } from "./pages/admin/Users";
 import { AdminAnalytics } from "./pages/admin/Analytics";
+import AdminSignals from "./pages/admin/Signals";
 
 const queryClient = new QueryClient({
   defaultOptions: {
