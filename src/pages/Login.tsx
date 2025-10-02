@@ -41,15 +41,9 @@ export default function LoginPage() {
       console.log('Email:', email);
       console.log('Browser:', navigator.userAgent);
       
-      // Validate and clean any corrupted session before login
-      console.log('🔍 Validating existing session before login...');
-      const { data: { session: existingSession }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (existingSession && sessionError) {
-        console.warn('⚠️ Found corrupted session, cleaning...');
-        localStorage.clear();
-        sessionStorage.clear();
-      }
+      // Check for existing session before login
+      const { data: { session: existingSession } } = await supabase.auth.getSession();
+      console.log('Existing session found:', !!existingSession);
       
       if (existingSession) {
         console.log('Clearing existing session before new login...');
