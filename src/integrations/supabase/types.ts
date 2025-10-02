@@ -430,6 +430,39 @@ export type Database = {
         }
         Relationships: []
       }
+      market_data: {
+        Row: {
+          created_at: string
+          id: string
+          price: number
+          rsi: number | null
+          symbol: string
+          timestamp: string
+          volatility: number | null
+          volume: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          price: number
+          rsi?: number | null
+          symbol: string
+          timestamp?: string
+          volatility?: number | null
+          volume?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          price?: number
+          rsi?: number | null
+          symbol?: string
+          timestamp?: string
+          volatility?: number | null
+          volume?: number | null
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           action: string
@@ -580,21 +613,65 @@ export type Database = {
         }
         Relationships: []
       }
+      signal_automation_config: {
+        Row: {
+          cooldown_minutes: number | null
+          created_at: string
+          enabled: boolean | null
+          id: string
+          last_signal_at: string | null
+          rsi_overbought: number | null
+          rsi_oversold: number | null
+          symbol: string
+          updated_at: string
+          volatility_threshold: number | null
+        }
+        Insert: {
+          cooldown_minutes?: number | null
+          created_at?: string
+          enabled?: boolean | null
+          id?: string
+          last_signal_at?: string | null
+          rsi_overbought?: number | null
+          rsi_oversold?: number | null
+          symbol: string
+          updated_at?: string
+          volatility_threshold?: number | null
+        }
+        Update: {
+          cooldown_minutes?: number | null
+          created_at?: string
+          enabled?: boolean | null
+          id?: string
+          last_signal_at?: string | null
+          rsi_overbought?: number | null
+          rsi_oversold?: number | null
+          symbol?: string
+          updated_at?: string
+          volatility_threshold?: number | null
+        }
+        Relationships: []
+      }
       signals: {
         Row: {
           audit_trail: Json | null
           author_id: string
           created_at: string
+          entry_price: number | null
           id: string
           instrument: string
           invalidation: string
           logic: string
           media_urls: string[] | null
           published_at: string | null
+          result: string | null
           reviewer_id: string | null
           rr: number
           scheduled_at: string | null
+          source: string | null
           status: string
+          stop_loss: number | null
+          take_profit: number | null
           timeframe: string
           title: string
           updated_at: string
@@ -603,16 +680,21 @@ export type Database = {
           audit_trail?: Json | null
           author_id: string
           created_at?: string
+          entry_price?: number | null
           id?: string
           instrument: string
           invalidation: string
           logic: string
           media_urls?: string[] | null
           published_at?: string | null
+          result?: string | null
           reviewer_id?: string | null
           rr: number
           scheduled_at?: string | null
+          source?: string | null
           status?: string
+          stop_loss?: number | null
+          take_profit?: number | null
           timeframe: string
           title: string
           updated_at?: string
@@ -621,16 +703,21 @@ export type Database = {
           audit_trail?: Json | null
           author_id?: string
           created_at?: string
+          entry_price?: number | null
           id?: string
           instrument?: string
           invalidation?: string
           logic?: string
           media_urls?: string[] | null
           published_at?: string | null
+          result?: string | null
           reviewer_id?: string | null
           rr?: number
           scheduled_at?: string | null
+          source?: string | null
           status?: string
+          stop_loss?: number | null
+          take_profit?: number | null
           timeframe?: string
           title?: string
           updated_at?: string

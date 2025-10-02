@@ -53,3 +53,9 @@ verify_jwt = false
 
 [functions.partner-link]
 verify_jwt = false
+
+[functions.binance-data-collector]
+verify_jwt = false
+
+[functions.signal-automation-engine]
+verify_jwt = false
