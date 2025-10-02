@@ -119,19 +119,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      console.log('Starting sign out process...');
       
-      // Clear local storage
-      localStorage.removeItem("user");
-      localStorage.removeItem("isValidated");
-      localStorage.removeItem("partnerId");
+      // Force sign out with local scope to clear all cookies and tokens
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      if (error) {
+        console.error('Supabase signOut error:', error);
+        throw error;
+      }
       
+      console.log('Supabase signOut successful, cleaning localStorage...');
+      
+      // Clear ALL localStorage items related to auth and app state
+      const keysToRemove = Object.keys(localStorage).filter(key => 
+        key.startsWith('sb-') || 
+        ['user', 'isValidated', 'partnerId', 'supabase.auth.token'].includes(key)
+      );
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      console.log('Cleared localStorage keys:', keysToRemove);
+      
+      // Clear state immediately
       setUser(null);
       setSession(null);
       setIsValidated(false);
+      
+      console.log('Sign out completed successfully');
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Error during sign out:', error);
+      
+      // Force clear state even if signOut fails
+      setUser(null);
+      setSession(null);
+      setIsValidated(false);
+      
+      // Force clear localStorage
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-') || ['user', 'isValidated', 'partnerId'].includes(key)) {
+          localStorage.removeItem(key);
+        }
+      });
     }
   };
 

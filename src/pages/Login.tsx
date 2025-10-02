@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, ArrowLeft, X } from 'lucide-react';
 import { signIn, resetPassword } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -34,9 +35,27 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      console.log('=== LOGIN ATTEMPT START ===');
+      console.log('Email:', email);
+      console.log('Browser:', navigator.userAgent);
+      
+      // Check for existing session before login
+      const { data: { session: existingSession } } = await supabase.auth.getSession();
+      console.log('Existing session found:', !!existingSession);
+      
+      if (existingSession) {
+        console.log('Clearing existing session before new login...');
+        await supabase.auth.signOut({ scope: 'local' });
+        
+        // Small delay to ensure cleanup
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      console.log('Attempting signIn...');
       const { data, error } = await signIn(email, password);
       
       if (error) {
+        console.error('SignIn error:', error);
         toast({
           title: "Error de inicio de sesión",
           description: error.message === 'Invalid login credentials' 
@@ -48,6 +67,7 @@ export default function LoginPage() {
       }
 
       if (data.user) {
+        console.log('SignIn successful');
         toast({
           title: "¡Bienvenido!",
           description: "Has iniciado sesión correctamente."
@@ -65,6 +85,7 @@ export default function LoginPage() {
       });
     } finally {
       setLoading(false);
+      console.log('=== LOGIN ATTEMPT END ===');
     }
   };
 
