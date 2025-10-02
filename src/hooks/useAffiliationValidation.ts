@@ -13,20 +13,33 @@ export const useAffiliationValidation = () => {
     onSuccess: (uid?: string) => void,
     onNotAffiliated: () => void,
     onDemo: () => void,
-    onUserExists?: () => void
+    onUserExists?: () => void,
+    retryCount = 0
   ) => {
+    const maxRetries = 2;
     setError("");
     setLoading(true);
     
     console.info(`🔍 Starting validation for email:`, email);
+    console.info(`🌐 Browser:`, navigator.userAgent);
+    console.info(`🔄 Retry attempt: ${retryCount} of ${maxRetries}`);
     
     try {
       console.info(`📡 Calling secure-affiliation-check function with email:`, email);
       const startTime = performance.now();
       
-      const { data, error } = await supabase.functions.invoke('secure-affiliation-check', {
-        body: { email }
-      });
+      // Add explicit headers and timeout for Chrome compatibility
+      const { data, error } = await Promise.race([
+        supabase.functions.invoke('secure-affiliation-check', {
+          body: { email },
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }),
+        new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Request timeout after 30s')), 30000)
+        )
+      ]);
 
       const endTime = performance.now();
       console.info('📋 Supabase response received in', Math.round(endTime - startTime), 'ms');
@@ -35,7 +48,7 @@ export const useAffiliationValidation = () => {
         hasError: !!error,
         data: data ? JSON.stringify(data).substring(0, 300) : null,
         errorMessage: error?.message?.substring(0, 300),
-        errorDetails: error
+        errorDetails: JSON.stringify(error, null, 2)
       });
 
       // Handle structured response from secure-affiliation-check
@@ -131,7 +144,19 @@ export const useAffiliationValidation = () => {
       }
 
     } catch (err: any) {
-      console.error(`💥 Caught exception:`, err.message);
+      console.error(`💥 Caught exception:`, {
+        message: err.message,
+        name: err.name,
+        stack: err.stack?.substring(0, 200)
+      });
+      
+      // Retry logic for network errors
+      if (retryCount < maxRetries && (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('timeout'))) {
+        console.info(`🔄 Retrying request (${retryCount + 1}/${maxRetries})...`);
+        setLoading(false);
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return validateAffiliation(email, onSuccess, onNotAffiliated, onDemo, onUserExists, retryCount + 1);
+      }
       
       // Fallback: treat any exception as "not affiliated" to give user options
       console.info(`🔄 Fallback: showing not affiliated options`);
