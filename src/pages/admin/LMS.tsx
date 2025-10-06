@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, Plus } from 'lucide-react';
+import { AlertTriangle, Plus, BookOpen, List, Video } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -17,19 +17,25 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CourseForm } from '@/components/admin/CourseForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FullCourseForm } from '@/components/admin/lms/FullCourseForm';
+import { CourseModulesManager } from '@/components/admin/lms/CourseModulesManager';
 
 export const AdminLMS: React.FC = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
   const { data: courses, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin-courses', statusFilter],
+    queryKey: ['admin-lms-courses', statusFilter],
     queryFn: async () => {
       let query = supabase
-        .from('course_items')
-        .select('*')
+        .from('lms_courses')
+        .select(`
+          *,
+          course_item:course_items(*)
+        `)
         .order('created_at', { ascending: false });
 
       if (statusFilter !== 'all') {
@@ -42,31 +48,50 @@ export const AdminLMS: React.FC = () => {
     },
   });
 
-  const getStatusBadge = (status: string) => {
-    const variant = status === 'published' ? 'default' : 'secondary';
-    return <Badge variant={variant}>{t(`admin.lms.status.${status}`)}</Badge>;
-  };
-
-  const getKindBadge = (kind: string) => {
-    return <Badge variant="outline">{kind}</Badge>;
-  };
-
   const handleSuccess = () => {
     setIsModalOpen(false);
+    setSelectedCourseId(null);
     refetch();
   };
+
+  if (selectedCourseId) {
+    return (
+      <PermissionGuard resource="lms" action="manage">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setSelectedCourseId(null)}
+              >
+                ← Back to Courses
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold">Course Structure</h1>
+                <p className="text-muted-foreground">Manage modules and lessons</p>
+              </div>
+            </div>
+          </div>
+          <CourseModulesManager 
+            courseId={selectedCourseId}
+            onBack={() => setSelectedCourseId(null)}
+          />
+        </div>
+      </PermissionGuard>
+    );
+  }
 
   return (
     <PermissionGuard resource="lms" action="manage">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">{t('admin.lms.title')}</h1>
-            <p className="text-muted-foreground mt-1">{t('admin.lms.subtitle')}</p>
+            <h1 className="text-3xl font-bold">LMS Management</h1>
+            <p className="text-muted-foreground mt-1">Create and manage courses, modules, lessons and quizzes</p>
           </div>
           <Button onClick={() => setIsModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            {t('admin.lms.new_course')}
+            New Course
           </Button>
         </div>
 
@@ -76,9 +101,9 @@ export const AdminLMS: React.FC = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('admin.lms.filter.all')}</SelectItem>
-              <SelectItem value="draft">{t('admin.lms.status.draft')}</SelectItem>
-              <SelectItem value="published">{t('admin.lms.status.published')}</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="published">Published</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -98,17 +123,18 @@ export const AdminLMS: React.FC = () => {
         {error && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{t('admin.lms.error_loading')}</AlertDescription>
+            <AlertDescription>Error loading courses</AlertDescription>
           </Alert>
         )}
 
         {courses && courses.length === 0 && (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground mb-4">{t('admin.lms.no_courses')}</p>
+              <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground mb-4">No courses found</p>
               <Button onClick={() => setIsModalOpen(true)} variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
-                {t('admin.lms.create_first')}
+                Create First Course
               </Button>
             </CardContent>
           </Card>
@@ -116,34 +142,50 @@ export const AdminLMS: React.FC = () => {
 
         <div className="grid gap-4">
           {courses?.map((course) => (
-            <Card key={course.id}>
+            <Card key={course.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{course.title}</CardTitle>
-                    <div className="flex gap-2">
-                      {getKindBadge(course.kind)}
-                      {getStatusBadge(course.status)}
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-3">
+                      <BookOpen className="h-5 w-5 text-primary" />
+                      <CardTitle className="text-lg">{course.course_item?.title}</CardTitle>
                     </div>
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge variant="outline">Level {course.level}</Badge>
+                      <Badge variant={course.status === 'published' ? 'default' : 'secondary'}>
+                        {course.status}
+                      </Badge>
+                      {course.course_item?.tags?.map((tag: string) => (
+                        <Badge key={tag} variant="outline">{tag}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedCourseId(course.id)}
+                    >
+                      <List className="mr-2 h-4 w-4" />
+                      Manage Structure
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
-                    <span className="text-muted-foreground">{t('admin.lms.provider')}:</span>{' '}
-                    {course.provider}
+                    <span className="text-muted-foreground">Duration:</span>{' '}
+                    {course.course_item?.duration_min ? `${course.course_item.duration_min} min` : 'N/A'}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">{t('admin.lms.duration')}:</span>{' '}
-                    {course.duration_min ? `${course.duration_min} min` : 'N/A'}
+                    <span className="text-muted-foreground">Slug:</span>{' '}
+                    {course.slug || 'Not set'}
                   </div>
-                  {course.tags && course.tags.length > 0 && (
-                    <div className="col-span-2">
-                      <span className="text-muted-foreground">{t('admin.lms.tags')}:</span>{' '}
-                      {course.tags.join(', ')}
-                    </div>
-                  )}
+                  <div>
+                    <span className="text-muted-foreground">Created:</span>{' '}
+                    {new Date(course.created_at).toLocaleDateString()}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -153,9 +195,9 @@ export const AdminLMS: React.FC = () => {
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{t('admin.lms.new_course')}</DialogTitle>
+              <DialogTitle>Create New Course</DialogTitle>
             </DialogHeader>
-            <CourseForm
+            <FullCourseForm
               onSuccess={handleSuccess}
               onCancel={() => setIsModalOpen(false)}
             />
