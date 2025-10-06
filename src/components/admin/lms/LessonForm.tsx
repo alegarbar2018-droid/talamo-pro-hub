@@ -1,32 +1,24 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { toast } from 'sonner';
-import { Loader2, Plus, X } from 'lucide-react';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Loader2, Plus, X } from "lucide-react";
 
 const lessonSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
+  title: z.string().min(3, "Title must be at least 3 characters"),
   position: z.coerce.number().min(0),
   duration_min: z.coerce.number().optional(),
   content_md: z.string().optional(),
-  video_external_url: z.string().url().optional().or(z.literal('')),
-  status: z.enum(['draft', 'published']),
+  video_external_url: z.string().url().optional().or(z.literal("")),
+  status: z.enum(["draft", "published"]),
 });
 
 type LessonFormValues = z.infer<typeof lessonSchema>;
@@ -49,28 +41,31 @@ interface LessonFormProps {
 
 export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onCancel }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [lessonVideoFile, setLessonVideoFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
 
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
-      title: '',
+      title: "",
       position: 0,
       duration_min: 0,
-      content_md: '',
-      video_external_url: '',
-      status: 'draft',
+      content_md: "",
+      video_external_url: "",
+      status: "draft",
     },
   });
 
   const handleAddResource = () => {
-    setResources([...resources, {
-      kind: 'link',
-      title: '',
-      position: resources.length,
-    }]);
+    setResources([
+      ...resources,
+      {
+        kind: "link",
+        title: "",
+        position: resources.length,
+      },
+    ]);
   };
 
   const handleRemoveResource = (index: number) => {
@@ -90,10 +85,8 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
   };
 
   const uploadToStorage = async (file: File, bucket: string, path: string) => {
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(`public/${path}`, file, { upsert: true });
-    
+    const { data, error } = await supabase.storage.from(bucket).upload(`public/${path}`, file, { upsert: true });
+
     if (error) throw error;
     return data.path;
   };
@@ -103,34 +96,32 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
     try {
       // Upload video if provided
       let videoStorageKey = null;
-      if (videoFile) {
+      if (lessonVideoFile) {
         videoStorageKey = await uploadToStorage(
-          videoFile,
-          'lms',
-          `lessons/${Date.now()}-${videoFile.name}`
+          lessonVideoFile,
+          "lms",
+          `lessons/${Date.now()}-${lessonVideoFile.name}`,
         );
       }
 
       // Upload cover image if provided
       let coverImagePath = null;
       if (coverImage) {
-        coverImagePath = await uploadToStorage(
-          coverImage,
-          'lms-assets',
-          `covers/${Date.now()}-${coverImage.name}`
-        );
+        coverImagePath = await uploadToStorage(coverImage, "lms-assets", `covers/${Date.now()}-${coverImage.name}`);
       }
 
       // Create course_item first
       const { data: courseItem, error: itemError } = await supabase
-        .from('course_items')
-        .insert([{
-          title: data.title,
-          kind: 'lesson',
-          provider: 'internal',
-          duration_min: data.duration_min,
-          status: data.status,
-        }])
+        .from("course_items")
+        .insert([
+          {
+            title: data.title,
+            kind: "lesson",
+            provider: "internal",
+            duration_min: data.duration_min,
+            status: data.status,
+          },
+        ])
         .select()
         .single();
 
@@ -138,18 +129,20 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
 
       // Then create lesson
       const { data: lesson, error: lessonError } = await supabase
-        .from('lms_lessons')
-        .insert([{
-          module_id: moduleId,
-          item_id: courseItem.id,
-          position: data.position,
-          duration_min: data.duration_min,
-          content_md: data.content_md,
-          video_storage_key: videoStorageKey,
-          video_external_url: data.video_external_url || null,
-          cover_image: coverImagePath,
-          status: data.status,
-        }])
+        .from("lms_lessons")
+        .insert([
+          {
+            module_id: moduleId,
+            item_id: courseItem.id,
+            position: data.position,
+            duration_min: data.duration_min,
+            content_md: data.content_md,
+            video_storage_key: videoStorageKey,
+            video_external_url: data.video_external_url || null,
+            cover_image: coverImagePath,
+            status: data.status,
+          },
+        ])
         .select()
         .single();
 
@@ -158,16 +151,16 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
       // Upload and create resources
       for (const resource of resources) {
         let storageKey = resource.storage_key;
-        
+
         if (resource.file) {
           storageKey = await uploadToStorage(
             resource.file,
-            'lms-assets',
-            `lessons/${lesson.id}/${Date.now()}-${resource.file.name}`
+            "lms-assets",
+            `lessons/${lesson.id}/${Date.now()}-${resource.file.name}`,
           );
         }
 
-        await supabase.from('lms_resources').insert({
+        await supabase.from("lms_resources").insert({
           lesson_id: lesson.id,
           kind: resource.kind,
           title: resource.title,
@@ -177,11 +170,11 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
         });
       }
 
-      toast.success('Lesson created successfully');
+      toast.success("Lesson created successfully");
       onSuccess();
     } catch (error: any) {
-      console.error('Error creating lesson:', error);
-      toast.error('Failed to create lesson', {
+      console.error("Error creating lesson:", error);
+      toast.error("Failed to create lesson", {
         description: error.message,
       });
     } finally {
@@ -265,10 +258,10 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
             <FormItem>
               <FormLabel>Lesson Content (Markdown)</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="# Introduction&#10;&#10;Lesson content here..." 
+                <Textarea
+                  placeholder="# Introduction&#10;&#10;Lesson content here..."
                   className="min-h-[200px] font-mono text-sm"
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormDescription>Supports Markdown formatting</FormDescription>
@@ -283,11 +276,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
             <div className="grid gap-4 mt-2">
               <div>
                 <label className="block text-sm mb-2">Upload Video</label>
-                <Input
-                  type="file"
-                  accept="video/*"
-                  onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-                />
+                <Input type="file" accept="video/*" onChange={(e) => setLessonVideoFile(e.target.files?.[0] || null)} />
               </div>
               <FormField
                 control={form.control}
@@ -336,7 +325,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
                         <label className="text-sm font-medium">Type</label>
                         <Select
                           value={resource.kind}
-                          onValueChange={(value) => handleResourceChange(index, 'kind', value)}
+                          onValueChange={(value) => handleResourceChange(index, "kind", value)}
                         >
                           <SelectTrigger>
                             <SelectValue />
@@ -354,18 +343,18 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
                         <label className="text-sm font-medium">Title</label>
                         <Input
                           value={resource.title}
-                          onChange={(e) => handleResourceChange(index, 'title', e.target.value)}
+                          onChange={(e) => handleResourceChange(index, "title", e.target.value)}
                           placeholder="Resource title"
                         />
                       </div>
                     </div>
 
-                    {resource.kind === 'link' ? (
+                    {resource.kind === "link" ? (
                       <div>
                         <label className="text-sm font-medium">URL</label>
                         <Input
-                          value={resource.external_url || ''}
-                          onChange={(e) => handleResourceChange(index, 'external_url', e.target.value)}
+                          value={resource.external_url || ""}
+                          onChange={(e) => handleResourceChange(index, "external_url", e.target.value)}
                           placeholder="https://..."
                         />
                       </div>
@@ -382,12 +371,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
                       </div>
                     )}
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveResource(index)}
-                  >
+                  <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveResource(index)}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
