@@ -430,6 +430,276 @@ export type Database = {
         }
         Relationships: []
       }
+      lms_courses: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          level: number | null
+          slug: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          level?: number | null
+          slug?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          level?: number | null
+          slug?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_courses_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "course_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lms_lessons: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          module_id: string
+          position: number
+          quiz_id: string | null
+          resources: Json | null
+          updated_at: string
+          video_external_url: string | null
+          video_storage_key: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          module_id: string
+          position?: number
+          quiz_id?: string | null
+          resources?: Json | null
+          updated_at?: string
+          video_external_url?: string | null
+          video_storage_key?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          module_id?: string
+          position?: number
+          quiz_id?: string | null
+          resources?: Json | null
+          updated_at?: string
+          video_external_url?: string | null
+          video_storage_key?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_lms_lessons_quiz"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lms_lessons_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "course_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lms_lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "lms_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lms_modules: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          item_id: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "lms_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lms_modules_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "course_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lms_quiz_attempts: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          passed: boolean
+          quiz_id: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          created_at?: string
+          id?: string
+          passed: boolean
+          quiz_id: string
+          score: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          passed?: boolean
+          quiz_id?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lms_quiz_options: {
+        Row: {
+          created_at: string
+          id: string
+          is_correct: boolean
+          question_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lms_quiz_questions: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          question: string
+          quiz_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position?: number
+          question: string
+          quiz_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          question?: string
+          quiz_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lms_quizzes: {
+        Row: {
+          created_at: string
+          id: string
+          pass_score: number
+          time_limit_sec: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pass_score?: number
+          time_limit_sec?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pass_score?: number
+          time_limit_sec?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       market_data: {
         Row: {
           created_at: string
@@ -881,6 +1151,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: Json
       }
+      get_course_tree: {
+        Args: { course_slug_or_id: string; requesting_user_id?: string }
+        Returns: Json
+      }
       get_current_admin_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -948,9 +1222,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_lesson_complete: {
+        Args: { lesson_id_param: string }
+        Returns: Json
+      }
       requires_mfa_for_operation: {
         Args: { _operation: string }
         Returns: boolean
+      }
+      save_quiz_attempt: {
+        Args: { answers_param: Json; quiz_id_param: string }
+        Returns: Json
       }
       security_checklist: {
         Args: Record<PropertyKey, never>
