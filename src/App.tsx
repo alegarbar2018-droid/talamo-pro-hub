@@ -33,6 +33,17 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminUsers } from "./pages/admin/Users";
 import { AdminAnalytics } from "./pages/admin/Analytics";
 import AdminSignals from "./pages/admin/Signals";
+import AdminAffiliation from "./pages/admin/Affiliation";
+import AdminLMS from "./pages/admin/LMS";
+import AdminCopy from "./pages/admin/Copy";
+import AdminEAs from "./pages/admin/EAs";
+import AdminTools from "./pages/admin/Tools";
+import AdminCompetitions from "./pages/admin/Competitions";
+import AdminCommunity from "./pages/admin/Community";
+import AdminReferrals from "./pages/admin/Referrals";
+import AdminIntegrations from "./pages/admin/Integrations";
+import AdminAudit from "./pages/admin/Audit";
+import AdminSettings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,8 +95,20 @@ const App = () => (
             <Route path="/admin/*" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
-              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="affiliation" element={<AdminAffiliation />} />
+              <Route path="lms" element={<AdminLMS />} />
+              <Route path="academy" element={<Navigate to="/admin/lms" replace />} />
               <Route path="signals" element={<AdminSignals />} />
+              <Route path="copy" element={<AdminCopy />} />
+              <Route path="eas" element={<AdminEAs />} />
+              <Route path="tools" element={<AdminTools />} />
+              <Route path="competitions" element={<AdminCompetitions />} />
+              <Route path="community" element={<AdminCommunity />} />
+              <Route path="referrals" element={<AdminReferrals />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="integrations" element={<AdminIntegrations />} />
+              <Route path="audit" element={<AdminAudit />} />
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
             </Routes>
