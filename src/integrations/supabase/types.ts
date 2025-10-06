@@ -470,37 +470,49 @@ export type Database = {
       }
       lms_lessons: {
         Row: {
+          content_md: string | null
+          cover_image: string | null
           created_at: string
+          duration_min: number | null
           id: string
           item_id: string
           module_id: string
           position: number
           quiz_id: string | null
           resources: Json | null
+          status: string
           updated_at: string
           video_external_url: string | null
           video_storage_key: string | null
         }
         Insert: {
+          content_md?: string | null
+          cover_image?: string | null
           created_at?: string
+          duration_min?: number | null
           id?: string
           item_id: string
           module_id: string
           position?: number
           quiz_id?: string | null
           resources?: Json | null
+          status?: string
           updated_at?: string
           video_external_url?: string | null
           video_storage_key?: string | null
         }
         Update: {
+          content_md?: string | null
+          cover_image?: string | null
           created_at?: string
+          duration_min?: number | null
           id?: string
           item_id?: string
           module_id?: string
           position?: number
           quiz_id?: string | null
           resources?: Json | null
+          status?: string
           updated_at?: string
           video_external_url?: string | null
           video_storage_key?: string | null
@@ -575,27 +587,33 @@ export type Database = {
         Row: {
           answers: Json
           created_at: string
+          feedback: string | null
           id: string
           passed: boolean
           quiz_id: string
+          reviewed: boolean
           score: number
           user_id: string
         }
         Insert: {
           answers: Json
           created_at?: string
+          feedback?: string | null
           id?: string
           passed: boolean
           quiz_id: string
+          reviewed?: boolean
           score: number
           user_id: string
         }
         Update: {
           answers?: Json
           created_at?: string
+          feedback?: string | null
           id?: string
           passed?: boolean
           quiz_id?: string
+          reviewed?: boolean
           score?: number
           user_id?: string
         }
@@ -644,24 +662,39 @@ export type Database = {
       lms_quiz_questions: {
         Row: {
           created_at: string
+          feedback_correct: string | null
+          feedback_incorrect: string | null
           id: string
+          open_expected: string | null
+          points: number
           position: number
           question: string
           quiz_id: string
+          type: Database["public"]["Enums"]["quiz_question_type"]
         }
         Insert: {
           created_at?: string
+          feedback_correct?: string | null
+          feedback_incorrect?: string | null
           id?: string
+          open_expected?: string | null
+          points?: number
           position?: number
           question: string
           quiz_id: string
+          type?: Database["public"]["Enums"]["quiz_question_type"]
         }
         Update: {
           created_at?: string
+          feedback_correct?: string | null
+          feedback_incorrect?: string | null
           id?: string
+          open_expected?: string | null
+          points?: number
           position?: number
           question?: string
           quiz_id?: string
+          type?: Database["public"]["Enums"]["quiz_question_type"]
         }
         Relationships: [
           {
@@ -676,6 +709,7 @@ export type Database = {
       lms_quizzes: {
         Row: {
           created_at: string
+          description: string | null
           id: string
           pass_score: number
           time_limit_sec: number | null
@@ -684,6 +718,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          description?: string | null
           id?: string
           pass_score?: number
           time_limit_sec?: number | null
@@ -692,6 +727,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          description?: string | null
           id?: string
           pass_score?: number
           time_limit_sec?: number | null
@@ -699,6 +735,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      lms_resources: {
+        Row: {
+          created_at: string
+          external_url: string | null
+          id: string
+          kind: string
+          lesson_id: string
+          position: number
+          storage_key: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          external_url?: string | null
+          id?: string
+          kind: string
+          lesson_id: string
+          position?: number
+          storage_key?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          external_url?: string | null
+          id?: string
+          kind?: string
+          lesson_id?: string
+          position?: number
+          storage_key?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_resources_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lms_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       market_data: {
         Row: {
@@ -1213,6 +1293,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: {
+        Args: { uid: string }
+        Returns: boolean
+      }
       log_profile_access: {
         Args: {
           access_reason?: string
@@ -1262,6 +1346,7 @@ export type Database = {
     Enums: {
       admin_role: "ADMIN" | "ANALYST" | "CONTENT" | "SUPPORT" | "USER"
       app_role: "admin" | "trader" | "partner"
+      quiz_question_type: "single" | "multi" | "boolean" | "open"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1391,6 +1476,7 @@ export const Constants = {
     Enums: {
       admin_role: ["ADMIN", "ANALYST", "CONTENT", "SUPPORT", "USER"],
       app_role: ["admin", "trader", "partner"],
+      quiz_question_type: ["single", "multi", "boolean", "open"],
     },
   },
 } as const
