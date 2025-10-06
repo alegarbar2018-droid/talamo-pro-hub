@@ -5,10 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle, FileText, Download } from "lucide-react";
+import { ArrowLeft, CheckCircle, FileText, Download, ExternalLink, Image as ImageIcon, FileArchive } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import ReactMarkdown from 'react-markdown';
 
 const LessonView = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -87,7 +88,28 @@ const LessonView = () => {
     ? supabase.storage.from('lms').getPublicUrl(lesson.video_storage_key).data.publicUrl
     : lesson.video_external_url;
 
+  const coverImageUrl = lesson.cover_image
+    ? supabase.storage.from('lms-assets').getPublicUrl(lesson.cover_image).data.publicUrl
+    : null;
+
   const resources = lesson.resources as any[] || [];
+
+  const getResourceIcon = (kind: string) => {
+    switch (kind) {
+      case 'pdf': return <FileText className="h-5 w-5" />;
+      case 'image': return <ImageIcon className="h-5 w-5" />;
+      case 'zip': return <FileArchive className="h-5 w-5" />;
+      case 'link': return <ExternalLink className="h-5 w-5" />;
+      default: return <Download className="h-5 w-5" />;
+    }
+  };
+
+  const getResourceUrl = (resource: any) => {
+    if (resource.storage_key) {
+      return supabase.storage.from('lms-assets').getPublicUrl(resource.storage_key).data.publicUrl;
+    }
+    return resource.external_url;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,6 +135,17 @@ const LessonView = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {/* Cover Image */}
+        {coverImageUrl && (
+          <div className="rounded-lg overflow-hidden">
+            <img 
+              src={coverImageUrl} 
+              alt={lesson.course_item?.title}
+              className="w-full h-64 object-cover"
+            />
+          </div>
+        )}
+
         {/* Video Player */}
         {videoUrl && (
           <Card>
@@ -129,44 +162,54 @@ const LessonView = () => {
         )}
 
         {/* Lesson Content */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Lesson Content</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-sm max-w-none">
-              <p className="text-muted-foreground">
-                {lesson.course_item?.title || 'Watch the video above to learn more.'}
-              </p>
-              {lesson.course_item?.duration_min && (
-                <p className="text-sm text-muted-foreground">
-                  Duration: {lesson.course_item.duration_min} minutes
+        {lesson.content_md && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Lesson Content</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown>{lesson.content_md}</ReactMarkdown>
+              </div>
+              {lesson.duration_min && (
+                <p className="text-sm text-muted-foreground mt-4">
+                  Duration: {lesson.duration_min} minutes
                 </p>
               )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* Resources */}
+        {/* Resources & Materials */}
         {resources.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Resources</CardTitle>
+              <CardTitle>Resources & Materials</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {resources.map((resource: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                {resources.map((resource: any) => (
+                  <div key={resource.id} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors">
                     <div className="flex items-center gap-3">
-                      {resource.type === 'pdf' ? <FileText className="h-5 w-5" /> : <Download className="h-5 w-5" />}
-                      <span>{resource.title || `Resource ${index + 1}`}</span>
+                      {getResourceIcon(resource.kind)}
+                      <div>
+                        <p className="font-medium">{resource.title}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{resource.kind}</p>
+                      </div>
                     </div>
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => window.open(resource.url, '_blank')}
+                      onClick={() => {
+                        const url = getResourceUrl(resource);
+                        if (resource.kind === 'link') {
+                          window.open(url, '_blank');
+                        } else {
+                          window.open(url, '_blank');
+                        }
+                      }}
                     >
-                      Download
+                      {resource.kind === 'link' ? 'Open' : 'Download'}
                     </Button>
                   </div>
                 ))}
