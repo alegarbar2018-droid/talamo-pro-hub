@@ -18,53 +18,74 @@ type ModuleFormValues = z.infer<typeof moduleSchema>;
 
 interface ModuleFormProps {
   courseId: string;
+  module?: any;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const ModuleForm: React.FC<ModuleFormProps> = ({ courseId, onSuccess, onCancel }) => {
+export const ModuleForm: React.FC<ModuleFormProps> = ({ courseId, module, onSuccess, onCancel }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const form = useForm<ModuleFormValues>({
     resolver: zodResolver(moduleSchema),
     defaultValues: {
-      title: '',
-      position: 0,
+      title: module?.course_item?.title || '',
+      position: module?.position || 0,
     },
   });
 
   const onSubmit = async (data: ModuleFormValues) => {
     setIsSubmitting(true);
     try {
-      // Create course_item first
-      const { data: courseItem, error: itemError } = await supabase
-        .from('course_items')
-        .insert([{
-          title: data.title,
-          kind: 'module',
-          provider: 'internal',
-          status: 'draft',
-        }])
-        .select()
-        .single();
+      if (module?.id) {
+        // Update existing module
+        const { error: itemError } = await supabase
+          .from('course_items')
+          .update({ title: data.title })
+          .eq('id', module.item_id);
 
-      if (itemError) throw itemError;
+        if (itemError) throw itemError;
 
-      // Create module
-      const { error: moduleError } = await supabase
-        .from('lms_modules')
-        .insert([{
-          course_id: courseId,
-          item_id: courseItem.id,
-          position: data.position,
-        }]);
+        const { error: moduleError } = await supabase
+          .from('lms_modules')
+          .update({ position: data.position })
+          .eq('id', module.id);
 
-      if (moduleError) throw moduleError;
+        if (moduleError) throw moduleError;
 
-      toast.success('Module created');
+        toast.success('Module updated');
+      } else {
+        // Create course_item first
+        const { data: courseItem, error: itemError } = await supabase
+          .from('course_items')
+          .insert([{
+            title: data.title,
+            kind: 'module',
+            provider: 'internal',
+            status: 'draft',
+          }])
+          .select()
+          .single();
+
+        if (itemError) throw itemError;
+
+        // Create module
+        const { error: moduleError } = await supabase
+          .from('lms_modules')
+          .insert([{
+            course_id: courseId,
+            item_id: courseItem.id,
+            position: data.position,
+          }]);
+
+        if (moduleError) throw moduleError;
+
+        toast.success('Module created');
+      }
+      
       onSuccess();
     } catch (error: any) {
-      toast.error('Failed to create module', { description: error.message });
+      toast.error(module?.id ? 'Failed to update module' : 'Failed to create module', { description: error.message });
     } finally {
       setIsSubmitting(false);
     }
@@ -107,7 +128,7 @@ export const ModuleForm: React.FC<ModuleFormProps> = ({ courseId, onSuccess, onC
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Module
+            {module?.id ? 'Update Module' : 'Create Module'}
           </Button>
         </div>
       </form>

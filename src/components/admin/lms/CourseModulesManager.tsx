@@ -18,6 +18,7 @@ interface CourseModulesManagerProps {
 export const CourseModulesManager: React.FC<CourseModulesManagerProps> = ({ courseId, onBack }) => {
   const [isModuleModalOpen, setIsModuleModalOpen] = useState(false);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
+  const [editingModule, setEditingModule] = useState<any>(null);
 
   const { data: modules, isLoading, refetch } = useQuery({
     queryKey: ['lms-modules', courseId],
@@ -96,6 +97,16 @@ export const CourseModulesManager: React.FC<CourseModulesManagerProps> = ({ cour
                     Manage Lessons
                   </Button>
                   <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setEditingModule(module);
+                      setIsModuleModalOpen(true);
+                    }}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDeleteModule(module.id)}
@@ -124,15 +135,20 @@ export const CourseModulesManager: React.FC<CourseModulesManagerProps> = ({ cour
       <Dialog open={isModuleModalOpen} onOpenChange={setIsModuleModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Module</DialogTitle>
+            <DialogTitle>{editingModule ? 'Edit Module' : 'Add Module'}</DialogTitle>
           </DialogHeader>
           <ModuleForm
             courseId={courseId}
+            module={editingModule}
             onSuccess={() => {
               setIsModuleModalOpen(false);
+              setEditingModule(null);
               refetch();
             }}
-            onCancel={() => setIsModuleModalOpen(false)}
+            onCancel={() => {
+              setIsModuleModalOpen(false);
+              setEditingModule(null);
+            }}
           />
         </DialogContent>
       </Dialog>

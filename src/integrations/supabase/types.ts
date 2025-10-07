@@ -430,6 +430,58 @@ export type Database = {
         }
         Relationships: []
       }
+      lms_answers: {
+        Row: {
+          attempt_id: string
+          created_at: string
+          id: string
+          is_correct: boolean
+          option_id: string | null
+          question_id: string
+          text_answer: string | null
+        }
+        Insert: {
+          attempt_id: string
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          option_id?: string | null
+          question_id: string
+          text_answer?: string | null
+        }
+        Update: {
+          attempt_id?: string
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          option_id?: string | null
+          question_id?: string
+          text_answer?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lms_answers_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quiz_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lms_answers_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quiz_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lms_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "lms_quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lms_courses: {
         Row: {
           created_at: string
@@ -708,28 +760,34 @@ export type Database = {
       }
       lms_quizzes: {
         Row: {
+          attempt_limit: number | null
           created_at: string
           description: string | null
           id: string
           pass_score: number
+          shuffle_questions: boolean
           time_limit_sec: number | null
           title: string
           updated_at: string
         }
         Insert: {
+          attempt_limit?: number | null
           created_at?: string
           description?: string | null
           id?: string
           pass_score?: number
+          shuffle_questions?: boolean
           time_limit_sec?: number | null
           title: string
           updated_at?: string
         }
         Update: {
+          attempt_limit?: number | null
           created_at?: string
           description?: string | null
           id?: string
           pass_score?: number
+          shuffle_questions?: boolean
           time_limit_sec?: number | null
           title?: string
           updated_at?: string
@@ -1143,6 +1201,60 @@ export type Database = {
         }
         Relationships: []
       }
+      user_progress: {
+        Row: {
+          completed_at: string | null
+          course_id: string
+          created_at: string
+          id: string
+          item_id: string
+          item_kind: string
+          module_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          item_id: string
+          item_kind: string
+          module_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_kind?: string
+          module_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "lms_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_progress_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "lms_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1245,6 +1357,15 @@ export type Database = {
       }
       get_masked_profile: {
         Args: { target_user_id: string }
+        Returns: Json
+      }
+      get_next_item: {
+        Args: {
+          p_course_id: string
+          p_current_kind: string
+          p_current_module_id: string
+          p_current_position: number
+        }
         Returns: Json
       }
       get_profile_security_summary: {
