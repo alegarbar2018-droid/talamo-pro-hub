@@ -35,11 +35,17 @@ interface Resource {
 
 interface LessonFormProps {
   moduleId: string;
+  existingItemsCount?: number;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onCancel }) => {
+export const LessonForm: React.FC<LessonFormProps> = ({ 
+  moduleId, 
+  existingItemsCount = 0,
+  onSuccess, 
+  onCancel 
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [lessonVideoFile, setLessonVideoFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
@@ -49,7 +55,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({ moduleId, onSuccess, onC
     resolver: zodResolver(lessonSchema),
     defaultValues: {
       title: "",
-      position: 0,
+      position: existingItemsCount + 1,
       duration_min: 0,
       content_md: "",
       video_external_url: "",

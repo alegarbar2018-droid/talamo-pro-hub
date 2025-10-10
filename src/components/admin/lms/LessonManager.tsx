@@ -55,23 +55,21 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
   };
 
   // Combine lessons and quizzes into a single sorted list
-  const items = React.useMemo(() => {
-    const combined: Array<{ type: 'lesson' | 'quiz'; data: any; position: number }> = [];
-    
-    if (lessons) {
-      lessons.forEach(lesson => {
-        combined.push({ type: 'lesson', data: lesson, position: lesson.position });
-      });
-    }
-    
-    if (quizzes) {
-      quizzes.forEach(quiz => {
-        combined.push({ type: 'quiz', data: quiz, position: quiz.position || 0 });
-      });
-    }
-    
-    return combined.sort((a, b) => a.position - b.position);
-  }, [lessons, quizzes]);
+  const items: Array<{ type: 'lesson' | 'quiz'; data: any; position: number }> = [];
+  
+  if (lessons) {
+    lessons.forEach(lesson => {
+      items.push({ type: 'lesson', data: lesson, position: lesson.position });
+    });
+  }
+  
+  if (quizzes) {
+    quizzes.forEach(quiz => {
+      items.push({ type: 'quiz', data: quiz, position: quiz.position || 0 });
+    });
+  }
+  
+  items.sort((a, b) => a.position - b.position);
 
   const handleDeleteLesson = async (lessonId: string) => {
     if (!confirm('Delete this lesson?')) return;

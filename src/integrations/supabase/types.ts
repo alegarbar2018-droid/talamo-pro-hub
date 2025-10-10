@@ -764,8 +764,11 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          module_id: string | null
           pass_score: number
+          position: number
           shuffle_questions: boolean
+          status: string
           time_limit_sec: number | null
           title: string
           updated_at: string
@@ -775,8 +778,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          module_id?: string | null
           pass_score?: number
+          position?: number
           shuffle_questions?: boolean
+          status?: string
           time_limit_sec?: number | null
           title: string
           updated_at?: string
@@ -786,13 +792,24 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          module_id?: string | null
           pass_score?: number
+          position?: number
           shuffle_questions?: boolean
+          status?: string
           time_limit_sec?: number | null
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lms_quizzes_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "lms_modules"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lms_resources: {
         Row: {

@@ -45,12 +45,19 @@ interface Option {
 
 interface QuizBuilderProps {
   moduleId: string;
+  existingItemsCount?: number;
   onSuccess: () => void;
   onCancel: () => void;
   quiz?: any;
 }
 
-export const QuizBuilder: React.FC<QuizBuilderProps> = ({ moduleId, onSuccess, onCancel, quiz }) => {
+export const QuizBuilder: React.FC<QuizBuilderProps> = ({ 
+  moduleId, 
+  existingItemsCount = 0,
+  onSuccess, 
+  onCancel, 
+  quiz 
+}) => {
   const [questions, setQuestions] = useState<Question[]>(quiz?.questions || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +65,7 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({ moduleId, onSuccess, o
     resolver: zodResolver(quizSchema),
     defaultValues: {
       title: quiz?.title || '',
-      position: quiz?.position || 0,
+      position: quiz?.position || existingItemsCount + 1,
       pass_score: quiz?.pass_score || 70,
       attempt_limit: quiz?.attempt_limit || null,
       shuffle_questions: quiz?.shuffle_questions || false,
