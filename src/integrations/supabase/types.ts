@@ -684,6 +684,7 @@ export type Database = {
           created_at: string
           id: string
           is_correct: boolean
+          position: number
           question_id: string
           text: string
         }
@@ -691,6 +692,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_correct?: boolean
+          position?: number
           question_id: string
           text: string
         }
@@ -698,6 +700,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_correct?: boolean
+          position?: number
           question_id?: string
           text?: string
         }

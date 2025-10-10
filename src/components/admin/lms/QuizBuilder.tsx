@@ -220,15 +220,9 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Title</Label>
-          <Input {...form.register('title')} />
-        </div>
-        <div>
-          <Label>Position</Label>
-          <Input type="number" {...form.register('position', { valueAsNumber: true })} />
-        </div>
+      <div>
+        <Label>Title</Label>
+        <Input {...form.register('title')} />
       </div>
 
       <div className="grid grid-cols-3 gap-4">
