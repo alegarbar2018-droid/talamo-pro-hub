@@ -3,9 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Video, FileText, GripVertical, Trash2 } from 'lucide-react';
+import { Plus, Video, FileText, GripVertical, Trash2, ClipboardCheck } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { LessonForm } from './LessonForm';
+import { QuizBuilder } from './QuizBuilder';
 import { toast } from 'sonner';
 
 interface LessonManagerProps {
@@ -15,8 +16,9 @@ interface LessonManagerProps {
 
 export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }) => {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
 
-  const { data: lessons, isLoading, refetch } = useQuery({
+  const { data: lessons, isLoading: lessonsLoading, refetch: refetchLessons } = useQuery({
     queryKey: ['lms-lessons', moduleId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -32,6 +34,44 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
       return data;
     },
   });
+
+  const { data: quizzes, isLoading: quizzesLoading, refetch: refetchQuizzes } = useQuery({
+    queryKey: ['lms-quizzes', moduleId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lms_quizzes')
+        .select('*')
+        .eq('module_id', moduleId)
+        .order('position', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const refetch = () => {
+    refetchLessons();
+    refetchQuizzes();
+  };
+
+  // Combine lessons and quizzes into a single sorted list
+  const items = React.useMemo(() => {
+    const combined: Array<{ type: 'lesson' | 'quiz'; data: any; position: number }> = [];
+    
+    if (lessons) {
+      lessons.forEach(lesson => {
+        combined.push({ type: 'lesson', data: lesson, position: lesson.position });
+      });
+    }
+    
+    if (quizzes) {
+      quizzes.forEach(quiz => {
+        combined.push({ type: 'quiz', data: quiz, position: quiz.position || 0 });
+      });
+    }
+    
+    return combined.sort((a, b) => a.position - b.position);
+  }, [lessons, quizzes]);
 
   const handleDeleteLesson = async (lessonId: string) => {
     if (!confirm('Delete this lesson?')) return;
@@ -49,47 +89,90 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
     }
   };
 
+  const handleDeleteQuiz = async (quizId: string) => {
+    if (!confirm('Delete this quiz?')) return;
+
+    const { error } = await supabase
+      .from('lms_quizzes')
+      .delete()
+      .eq('id', quizId);
+
+    if (error) {
+      toast.error('Failed to delete quiz');
+    } else {
+      toast.success('Quiz deleted');
+      refetch();
+    }
+  };
+
+  const isLoading = lessonsLoading || quizzesLoading;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={onBack}>
           ← Back to Modules
         </Button>
-        <Button onClick={() => setIsLessonModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Lesson
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setIsLessonModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Lesson
+          </Button>
+          <Button onClick={() => setIsQuizModalOpen(true)} variant="outline">
+            <ClipboardCheck className="mr-2 h-4 w-4" />
+            Add Quiz
+          </Button>
+        </div>
       </div>
 
-      {isLoading && <div>Loading lessons...</div>}
+      {isLoading && <div>Loading...</div>}
 
       <div className="space-y-4">
-        {lessons?.map((lesson, index) => (
-          <Card key={lesson.id} className="hover:shadow-md transition-shadow">
+        {items.map((item, index) => (
+          <Card key={`${item.type}-${item.data.id}`} className="hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
-                  {lesson.video_storage_key || lesson.video_external_url ? (
-                    <Video className="h-5 w-5 text-primary" />
+                  {item.type === 'lesson' ? (
+                    <>
+                      {item.data.video_storage_key || item.data.video_external_url ? (
+                        <Video className="h-5 w-5 text-primary" />
+                      ) : (
+                        <FileText className="h-5 w-5 text-primary" />
+                      )}
+                      <div>
+                        <CardTitle className="text-base">
+                          Lección {index + 1}: {item.data.course_item?.title}
+                        </CardTitle>
+                        <div className="text-sm text-muted-foreground">
+                          {item.data.video_storage_key && 'Tiene video (Storage)'}
+                          {item.data.video_external_url && 'Tiene video (External)'}
+                          {item.data.quiz_id && ' • Tiene quiz'}
+                        </div>
+                      </div>
+                    </>
                   ) : (
-                    <FileText className="h-5 w-5 text-primary" />
+                    <>
+                      <ClipboardCheck className="h-5 w-5 text-primary" />
+                      <div>
+                        <CardTitle className="text-base">
+                          Quiz {index + 1}: {item.data.title}
+                        </CardTitle>
+                        <div className="text-sm text-muted-foreground">
+                          Puntaje mínimo: {item.data.pass_score}% • Estado: {item.data.status}
+                        </div>
+                      </div>
+                    </>
                   )}
-                  <div>
-                    <CardTitle className="text-base">
-                      Lesson {index + 1}: {lesson.course_item?.title}
-                    </CardTitle>
-                    <div className="text-sm text-muted-foreground">
-                      {lesson.video_storage_key && 'Has video (Storage)'}
-                      {lesson.video_external_url && 'Has video (External)'}
-                      {lesson.quiz_id && ' • Has quiz'}
-                    </div>
-                  </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleDeleteLesson(lesson.id)}
+                  onClick={() => item.type === 'lesson' 
+                    ? handleDeleteLesson(item.data.id)
+                    : handleDeleteQuiz(item.data.id)
+                  }
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
@@ -98,14 +181,20 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
           </Card>
         ))}
 
-        {lessons?.length === 0 && (
+        {items.length === 0 && (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground mb-4">No lessons yet</p>
-              <Button onClick={() => setIsLessonModalOpen(true)} variant="outline">
-                <Plus className="mr-2 h-4 w-4" />
-                Add First Lesson
-              </Button>
+              <p className="text-muted-foreground mb-4">No hay lecciones o quizzes aún</p>
+              <div className="flex gap-2 justify-center">
+                <Button onClick={() => setIsLessonModalOpen(true)} variant="outline">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Primera Lección
+                </Button>
+                <Button onClick={() => setIsQuizModalOpen(true)} variant="outline">
+                  <ClipboardCheck className="mr-2 h-4 w-4" />
+                  Agregar Primer Quiz
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -114,15 +203,33 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
       <Dialog open={isLessonModalOpen} onOpenChange={setIsLessonModalOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Lesson</DialogTitle>
+            <DialogTitle>Agregar Lección</DialogTitle>
           </DialogHeader>
           <LessonForm
             moduleId={moduleId}
+            existingItemsCount={items.length}
             onSuccess={() => {
               setIsLessonModalOpen(false);
               refetch();
             }}
             onCancel={() => setIsLessonModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isQuizModalOpen} onOpenChange={setIsQuizModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Agregar Quiz</DialogTitle>
+          </DialogHeader>
+          <QuizBuilder
+            moduleId={moduleId}
+            existingItemsCount={items.length}
+            onSuccess={() => {
+              setIsQuizModalOpen(false);
+              refetch();
+            }}
+            onCancel={() => setIsQuizModalOpen(false)}
           />
         </DialogContent>
       </Dialog>
