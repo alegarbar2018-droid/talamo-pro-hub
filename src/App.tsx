@@ -30,6 +30,7 @@ import CopyInfo from "./pages/CopyInfo";
 import ToolsInfo from "./pages/ToolsInfo";
 import CourseView from "./pages/CourseView";
 import LessonView from "./pages/LessonView";
+import QuizView from "./pages/QuizView";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminUsers } from "./pages/admin/Users";
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/academy" element={<Academy />} />
             <Route path="/academy/course/:slug" element={<CourseView />} />
             <Route path="/academy/lesson/:lessonId" element={<LessonView />} />
+            <Route path="/academy/quiz/:quizId" element={<QuizView />} />
             <Route path="/signals" element={<Signals />} />
             <Route path="/copy-trading" element={<CopyTrading />} />
             <Route path="/tools" element={<Tools />} />

@@ -17,6 +17,8 @@ interface LessonManagerProps {
 export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }) => {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [editingLesson, setEditingLesson] = useState<any>(null);
+  const [editingQuiz, setEditingQuiz] = useState<any>(null);
 
   const { data: lessons, isLoading: lessonsLoading, refetch: refetchLessons } = useQuery({
     queryKey: ['lms-lessons', moduleId],
@@ -164,16 +166,33 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
                     </>
                   )}
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => item.type === 'lesson' 
-                    ? handleDeleteLesson(item.data.id)
-                    : handleDeleteQuiz(item.data.id)
-                  }
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (item.type === 'lesson') {
+                        setEditingLesson(item.data);
+                        setIsLessonModalOpen(true);
+                      } else {
+                        setEditingQuiz(item.data);
+                        setIsQuizModalOpen(true);
+                      }
+                    }}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => item.type === 'lesson' 
+                      ? handleDeleteLesson(item.data.id)
+                      : handleDeleteQuiz(item.data.id)
+                    }
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
               </div>
             </CardHeader>
           </Card>
@@ -198,36 +217,51 @@ export const LessonManager: React.FC<LessonManagerProps> = ({ moduleId, onBack }
         )}
       </div>
 
-      <Dialog open={isLessonModalOpen} onOpenChange={setIsLessonModalOpen}>
+      <Dialog open={isLessonModalOpen} onOpenChange={(open) => {
+        setIsLessonModalOpen(open);
+        if (!open) setEditingLesson(null);
+      }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Agregar Lección</DialogTitle>
+            <DialogTitle>{editingLesson ? 'Editar Lección' : 'Agregar Lección'}</DialogTitle>
           </DialogHeader>
           <LessonForm
             moduleId={moduleId}
             existingItemsCount={items.length}
+            lesson={editingLesson}
             onSuccess={() => {
               setIsLessonModalOpen(false);
+              setEditingLesson(null);
               refetch();
             }}
-            onCancel={() => setIsLessonModalOpen(false)}
+            onCancel={() => {
+              setIsLessonModalOpen(false);
+              setEditingLesson(null);
+            }}
           />
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isQuizModalOpen} onOpenChange={setIsQuizModalOpen}>
+      <Dialog open={isQuizModalOpen} onOpenChange={(open) => {
+        setIsQuizModalOpen(open);
+        if (!open) setEditingQuiz(null);
+      }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Agregar Quiz</DialogTitle>
+            <DialogTitle>{editingQuiz ? 'Editar Quiz' : 'Agregar Quiz'}</DialogTitle>
           </DialogHeader>
           <QuizBuilder
             moduleId={moduleId}
-            existingItemsCount={items.length}
+            quiz={editingQuiz}
             onSuccess={() => {
               setIsQuizModalOpen(false);
+              setEditingQuiz(null);
               refetch();
             }}
-            onCancel={() => setIsQuizModalOpen(false)}
+            onCancel={() => {
+              setIsQuizModalOpen(false);
+              setEditingQuiz(null);
+            }}
           />
         </DialogContent>
       </Dialog>

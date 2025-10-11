@@ -36,6 +36,7 @@ interface Resource {
 interface LessonFormProps {
   moduleId: string;
   existingItemsCount?: number;
+  lesson?: any;
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -43,6 +44,7 @@ interface LessonFormProps {
 export const LessonForm: React.FC<LessonFormProps> = ({ 
   moduleId, 
   existingItemsCount = 0,
+  lesson,
   onSuccess, 
   onCancel 
 }) => {
@@ -54,12 +56,12 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
-      title: "",
-      position: existingItemsCount + 1,
-      duration_min: 0,
-      content_md: "",
-      video_external_url: "",
-      status: "draft",
+      title: lesson?.course_item?.title || "",
+      position: lesson?.position || existingItemsCount + 1,
+      duration_min: lesson?.duration_min || 0,
+      content_md: lesson?.content_md || "",
+      video_external_url: lesson?.video_external_url || "",
+      status: lesson?.status || "draft",
     },
   });
 
@@ -176,7 +178,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
         });
       }
 
-      toast.success("Lesson created successfully");
+      toast.success(lesson ? "Lesson updated successfully" : "Lesson created successfully");
       onSuccess();
     } catch (error: any) {
       console.error("Error creating lesson:", error);
@@ -378,7 +380,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Lesson
+            {lesson ? 'Update Lesson' : 'Create Lesson'}
           </Button>
         </div>
       </form>

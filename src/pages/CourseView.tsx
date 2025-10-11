@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle, PlayCircle, Lock, FolderOpen } from "lucide-react";
+import { ArrowLeft, CheckCircle, PlayCircle, Lock, FolderOpen, ClipboardCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -97,7 +97,7 @@ const CourseView = () => {
                 <div className="space-y-3">
                   {module.lessons?.map((lesson: any, lessonIndex: number) => {
                     const isCompleted = lesson.completed;
-                    const isAvailable = true; // For now, all lessons in published courses are available
+                    const isAvailable = true;
 
                     return (
                       <div
@@ -128,6 +128,48 @@ const CourseView = () => {
                                 {lesson.duration_min} min
                               </div>
                             )}
+                          </div>
+                        </div>
+                        {isCompleted && (
+                          <Badge variant="outline" className="border-success text-success">
+                            Completed
+                          </Badge>
+                        )}
+                      </div>
+                    );
+                  })}
+                  
+                  {module.quizzes?.map((quiz: any, quizIndex: number) => {
+                    const isCompleted = quiz.completed;
+                    const isAvailable = true;
+
+                    return (
+                      <div
+                        key={quiz.id}
+                        className={`flex items-center justify-between p-4 rounded-lg border ${
+                          isCompleted
+                            ? 'bg-success/5 border-success/20'
+                            : isAvailable
+                            ? 'bg-surface hover:shadow-sm cursor-pointer'
+                            : 'bg-muted/20 opacity-50'
+                        }`}
+                        onClick={() => isAvailable && navigate(`/academy/quiz/${quiz.id}`)}
+                      >
+                        <div className="flex items-center gap-3">
+                          {isCompleted ? (
+                            <CheckCircle className="h-5 w-5 text-success" />
+                          ) : isAvailable ? (
+                            <ClipboardCheck className="h-5 w-5 text-teal" />
+                          ) : (
+                            <Lock className="h-5 w-5 text-muted-foreground" />
+                          )}
+                          <div>
+                            <div className="font-medium text-foreground">
+                              Quiz: {quiz.title}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Puntaje mínimo: {quiz.pass_score}%
+                            </div>
                           </div>
                         </div>
                         {isCompleted && (
