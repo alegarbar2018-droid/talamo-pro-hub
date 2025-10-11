@@ -37,21 +37,23 @@ const courseSchema = z.object({
 type CourseFormValues = z.infer<typeof courseSchema>;
 
 interface FullCourseFormProps {
+  course?: any;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const FullCourseForm: React.FC<FullCourseFormProps> = ({ onSuccess, onCancel }) => {
+export const FullCourseForm: React.FC<FullCourseFormProps> = ({ course, onSuccess, onCancel }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
-      title: '',
-      slug: '',
-      level: 0,
-      tags: '',
-      status: 'draft',
+      title: course?.course_item?.title || '',
+      slug: course?.slug || '',
+      level: course?.level || 0,
+      duration_min: course?.course_item?.duration_min || undefined,
+      tags: course?.course_item?.tags?.join(', ') || '',
+      status: course?.status || 'draft',
     },
   });
 
@@ -60,39 +62,71 @@ export const FullCourseForm: React.FC<FullCourseFormProps> = ({ onSuccess, onCan
     try {
       const tags = data.tags ? data.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
       
-      // First create the course_item
-      const { data: courseItem, error: itemError } = await supabase
-        .from('course_items')
-        .insert([{
-          title: data.title,
-          kind: 'course',
-          provider: 'internal',
-          duration_min: data.duration_min || null,
-          tags,
-          status: data.status,
-        }])
-        .select()
-        .single();
+      if (course) {
+        // Update existing course
+        // Update course_item
+        const { error: itemError } = await supabase
+          .from('course_items')
+          .update({
+            title: data.title,
+            duration_min: data.duration_min || null,
+            tags,
+            status: data.status,
+          })
+          .eq('id', course.course_item.id);
 
-      if (itemError) throw itemError;
+        if (itemError) throw itemError;
 
-      // Then create the lms_course linking to the course_item
-      const { error: courseError } = await supabase
-        .from('lms_courses')
-        .insert([{
-          item_id: courseItem.id,
-          slug: data.slug,
-          level: data.level,
-          status: data.status,
-        }]);
+        // Update lms_course
+        const { error: courseError } = await supabase
+          .from('lms_courses')
+          .update({
+            slug: data.slug,
+            level: data.level,
+            status: data.status,
+          })
+          .eq('id', course.id);
 
-      if (courseError) throw courseError;
+        if (courseError) throw courseError;
 
-      toast.success('Course created successfully');
+        toast.success('Course updated successfully');
+      } else {
+        // Create new course
+        // First create the course_item
+        const { data: courseItem, error: itemError } = await supabase
+          .from('course_items')
+          .insert([{
+            title: data.title,
+            kind: 'course',
+            provider: 'internal',
+            duration_min: data.duration_min || null,
+            tags,
+            status: data.status,
+          }])
+          .select()
+          .single();
+
+        if (itemError) throw itemError;
+
+        // Then create the lms_course linking to the course_item
+        const { error: courseError } = await supabase
+          .from('lms_courses')
+          .insert([{
+            item_id: courseItem.id,
+            slug: data.slug,
+            level: data.level,
+            status: data.status,
+          }]);
+
+        if (courseError) throw courseError;
+
+        toast.success('Course created successfully');
+      }
+      
       onSuccess();
     } catch (error: any) {
-      console.error('Error creating course:', error);
-      toast.error('Failed to create course', {
+      console.error('Error with course:', error);
+      toast.error(`Failed to ${course ? 'update' : 'create'} course`, {
         description: error.message,
       });
     } finally {
@@ -207,7 +241,7 @@ export const FullCourseForm: React.FC<FullCourseFormProps> = ({ onSuccess, onCan
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Course
+            {course ? 'Update Course' : 'Create Course'}
           </Button>
         </div>
       </form>

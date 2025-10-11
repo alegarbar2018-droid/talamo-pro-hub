@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, Plus, BookOpen, List, Video } from 'lucide-react';
+import { AlertTriangle, Plus, BookOpen, List, Video, Pencil, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   Select,
   SelectContent,
@@ -26,6 +27,7 @@ export const AdminLMS: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
 
   const { data: courses, isLoading, error, refetch } = useQuery({
     queryKey: ['admin-lms-courses', statusFilter],
@@ -51,7 +53,36 @@ export const AdminLMS: React.FC = () => {
   const handleSuccess = () => {
     setIsModalOpen(false);
     setSelectedCourseId(null);
+    setEditingCourse(null);
     refetch();
+  };
+
+  const handleDeleteCourse = async (courseId: string, itemId: string) => {
+    if (!confirm('Delete this course? This will also delete all modules and lessons.')) return;
+
+    // Delete course (cascade will handle modules/lessons)
+    const { error: courseError } = await supabase
+      .from('lms_courses')
+      .delete()
+      .eq('id', courseId);
+
+    if (courseError) {
+      toast.error('Failed to delete course');
+      return;
+    }
+
+    // Delete course item
+    const { error: itemError } = await supabase
+      .from('course_items')
+      .delete()
+      .eq('id', itemId);
+
+    if (itemError) {
+      toast.error('Failed to delete course item');
+    } else {
+      toast.success('Course deleted successfully');
+      refetch();
+    }
   };
 
   if (selectedCourseId) {
@@ -169,6 +200,23 @@ export const AdminLMS: React.FC = () => {
                       <List className="mr-2 h-4 w-4" />
                       Manage Structure
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setEditingCourse(course);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteCourse(course.id, course.course_item?.id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
@@ -195,11 +243,15 @@ export const AdminLMS: React.FC = () => {
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create New Course</DialogTitle>
+              <DialogTitle>{editingCourse ? 'Edit Course' : 'Create New Course'}</DialogTitle>
             </DialogHeader>
             <FullCourseForm
+              course={editingCourse}
               onSuccess={handleSuccess}
-              onCancel={() => setIsModalOpen(false)}
+              onCancel={() => {
+                setIsModalOpen(false);
+                setEditingCourse(null);
+              }}
             />
           </DialogContent>
         </Dialog>

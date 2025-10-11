@@ -39,6 +39,42 @@ const LessonView = () => {
     enabled: !!lessonId,
   });
 
+  // Fetch resources separately
+  const { data: resources = [] } = useQuery({
+    queryKey: ['lesson-resources', lessonId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lms_resources')
+        .select('*')
+        .eq('lesson_id', lessonId!)
+        .order('position', { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!lessonId,
+  });
+
+  // Check if lesson is already completed
+  const { data: isCompleted } = useQuery({
+    queryKey: ['lesson-completion', lessonId, session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id || !lesson?.item_id) return false;
+
+      const { data, error } = await supabase
+        .from('course_events')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .eq('course_id', lesson.item_id)
+        .eq('verb', 'completed')
+        .limit(1);
+
+      if (error) throw error;
+      return data && data.length > 0;
+    },
+    enabled: !!session?.user?.id && !!lesson?.item_id,
+  });
+
   const markComplete = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.rpc('mark_lesson_complete', {
@@ -92,7 +128,7 @@ const LessonView = () => {
     ? supabase.storage.from('lms-assets').getPublicUrl(lesson.cover_image).data.publicUrl
     : null;
 
-  const resources = lesson.resources as any[] || [];
+  
 
   const getResourceIcon = (kind: string) => {
     switch (kind) {
@@ -219,7 +255,7 @@ const LessonView = () => {
         )}
 
         {/* Mark Complete Button */}
-        {session && (
+        {session && !isCompleted && (
           <Button
             className="w-full"
             size="lg"
@@ -229,6 +265,14 @@ const LessonView = () => {
             <CheckCircle className="mr-2 h-5 w-5" />
             Mark Lesson as Complete
           </Button>
+        )}
+
+        {/* Completed Badge */}
+        {isCompleted && (
+          <div className="flex items-center justify-center gap-2 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+            <CheckCircle className="h-5 w-5 text-green-500" />
+            <span className="text-green-500 font-medium">Lesson Completed</span>
+          </div>
         )}
       </div>
     </div>
