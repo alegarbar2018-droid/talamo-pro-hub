@@ -480,6 +480,11 @@ export const LessonForm: React.FC<LessonFormProps> = ({
                     ) : (
                       <div>
                         <label className="text-sm font-medium">Upload File</label>
+                        {resource.storage_key && !resource.file && (
+                          <p className="text-sm text-muted-foreground mb-2">
+                            Current: {resource.storage_key.split('/').pop()}
+                          </p>
+                        )}
                         <Input
                           type="file"
                           onChange={(e) => {
