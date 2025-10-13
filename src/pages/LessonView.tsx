@@ -142,7 +142,9 @@ const LessonView = () => {
 
   const getResourceUrl = (resource: any) => {
     if (resource.storage_key) {
-      return supabase.storage.from('lms-assets').getPublicUrl(resource.storage_key).data.publicUrl;
+      // Remove 'public/' prefix if present for correct URL generation
+      const cleanKey = resource.storage_key.replace(/^public\//, '');
+      return supabase.storage.from('lms-assets').getPublicUrl(cleanKey).data.publicUrl;
     }
     return resource.external_url;
   };
@@ -239,9 +241,17 @@ const LessonView = () => {
                       onClick={() => {
                         const url = getResourceUrl(resource);
                         if (resource.kind === 'link') {
-                          window.open(url, '_blank');
+                          window.open(url, '_blank', 'noopener,noreferrer');
                         } else {
-                          window.open(url, '_blank');
+                          // Create a download link
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = resource.title;
+                          link.target = '_blank';
+                          link.rel = 'noopener noreferrer';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
                         }
                       }}
                     >

@@ -103,7 +103,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
     setIsSubmitting(true);
     try {
       // Upload video if provided
-      let videoStorageKey = null;
+      let videoStorageKey = lesson?.video_storage_key || null;
       if (lessonVideoFile) {
         videoStorageKey = await uploadToStorage(
           lessonVideoFile,
@@ -113,35 +113,29 @@ export const LessonForm: React.FC<LessonFormProps> = ({
       }
 
       // Upload cover image if provided
-      let coverImagePath = null;
+      let coverImagePath = lesson?.cover_image || null;
       if (coverImage) {
         coverImagePath = await uploadToStorage(coverImage, "lms-assets", `covers/${Date.now()}-${coverImage.name}`);
       }
 
-      // Create course_item first
-      const { data: courseItem, error: itemError } = await supabase
-        .from("course_items")
-        .insert([
-          {
+      if (lesson) {
+        // UPDATE existing lesson
+        // Update course_item
+        const { error: itemError } = await supabase
+          .from("course_items")
+          .update({
             title: data.title,
-            kind: "lesson",
-            provider: "internal",
             duration_min: data.duration_min,
             status: data.status,
-          },
-        ])
-        .select()
-        .single();
+          })
+          .eq("id", lesson.item_id);
 
-      if (itemError) throw itemError;
+        if (itemError) throw itemError;
 
-      // Then create lesson
-      const { data: lesson, error: lessonError } = await supabase
-        .from("lms_lessons")
-        .insert([
-          {
-            module_id: moduleId,
-            item_id: courseItem.id,
+        // Update lesson
+        const { error: lessonError } = await supabase
+          .from("lms_lessons")
+          .update({
             position: data.position,
             duration_min: data.duration_min,
             content_md: data.content_md,
@@ -149,40 +143,111 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             video_external_url: data.video_external_url || null,
             cover_image: coverImagePath,
             status: data.status,
-          },
-        ])
-        .select()
-        .single();
+          })
+          .eq("id", lesson.id);
 
-      if (lessonError) throw lessonError;
+        if (lessonError) throw lessonError;
 
-      // Upload and create resources
-      for (const resource of resources) {
-        let storageKey = resource.storage_key;
+        // Delete existing resources and recreate them
+        const { error: deleteError } = await supabase
+          .from("lms_resources")
+          .delete()
+          .eq("lesson_id", lesson.id);
 
-        if (resource.file) {
-          storageKey = await uploadToStorage(
-            resource.file,
-            "lms-assets",
-            `lessons/${lesson.id}/${Date.now()}-${resource.file.name}`,
-          );
+        if (deleteError) throw deleteError;
+
+        // Upload and create resources
+        for (const resource of resources) {
+          let storageKey = resource.storage_key;
+
+          if (resource.file) {
+            storageKey = await uploadToStorage(
+              resource.file,
+              "lms-assets",
+              `lessons/${lesson.id}/${Date.now()}-${resource.file.name}`,
+            );
+          }
+
+          await supabase.from("lms_resources").insert({
+            lesson_id: lesson.id,
+            kind: resource.kind,
+            title: resource.title,
+            storage_key: storageKey,
+            external_url: resource.external_url,
+            position: resource.position,
+          });
         }
 
-        await supabase.from("lms_resources").insert({
-          lesson_id: lesson.id,
-          kind: resource.kind,
-          title: resource.title,
-          storage_key: storageKey,
-          external_url: resource.external_url,
-          position: resource.position,
-        });
-      }
+        toast.success("Lesson updated successfully");
+      } else {
+        // CREATE new lesson
+        // Create course_item first
+        const { data: courseItem, error: itemError } = await supabase
+          .from("course_items")
+          .insert([
+            {
+              title: data.title,
+              kind: "lesson",
+              provider: "internal",
+              duration_min: data.duration_min,
+              status: data.status,
+            },
+          ])
+          .select()
+          .single();
 
-      toast.success(lesson ? "Lesson updated successfully" : "Lesson created successfully");
+        if (itemError) throw itemError;
+
+        // Then create lesson
+        const { data: newLesson, error: lessonError } = await supabase
+          .from("lms_lessons")
+          .insert([
+            {
+              module_id: moduleId,
+              item_id: courseItem.id,
+              position: data.position,
+              duration_min: data.duration_min,
+              content_md: data.content_md,
+              video_storage_key: videoStorageKey,
+              video_external_url: data.video_external_url || null,
+              cover_image: coverImagePath,
+              status: data.status,
+            },
+          ])
+          .select()
+          .single();
+
+        if (lessonError) throw lessonError;
+
+        // Upload and create resources
+        for (const resource of resources) {
+          let storageKey = resource.storage_key;
+
+          if (resource.file) {
+            storageKey = await uploadToStorage(
+              resource.file,
+              "lms-assets",
+              `lessons/${newLesson.id}/${Date.now()}-${resource.file.name}`,
+            );
+          }
+
+          await supabase.from("lms_resources").insert({
+            lesson_id: newLesson.id,
+            kind: resource.kind,
+            title: resource.title,
+            storage_key: storageKey,
+            external_url: resource.external_url,
+            position: resource.position,
+          });
+        }
+
+        toast.success("Lesson created successfully");
+      }
+      
       onSuccess();
     } catch (error: any) {
-      console.error("Error creating lesson:", error);
-      toast.error("Failed to create lesson", {
+      console.error("Error saving lesson:", error);
+      toast.error("Failed to save lesson", {
         description: error.message,
       });
     } finally {
