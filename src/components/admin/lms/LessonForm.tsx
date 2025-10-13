@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, X, ImagePlus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 const lessonSchema = z.object({
@@ -53,6 +53,8 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   const [lessonVideoFile, setLessonVideoFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
+  const [isUploadingContentImage, setIsUploadingContentImage] = useState(false);
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Fetch existing resources when editing a lesson
   const { data: existingResources } = useQuery({
@@ -109,6 +111,67 @@ export const LessonForm: React.FC<LessonFormProps> = ({
 
   const handleRemoveResource = (index: number) => {
     setResources(resources.filter((_, i) => i !== index));
+  };
+
+  const handleInsertImageInContent = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate it's an image
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    setIsUploadingContentImage(true);
+    try {
+      // Upload to lms-assets bucket
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `lesson-content/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('lms-assets')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('lms-assets')
+        .getPublicUrl(filePath);
+
+      // Insert markdown syntax at cursor position
+      const textarea = contentTextareaRef.current;
+      if (textarea) {
+        const cursorPos = textarea.selectionStart;
+        const currentContent = form.getValues('content_md') || '';
+        const imageMarkdown = `\n![${file.name}](${publicUrl})\n`;
+        
+        const newContent = 
+          currentContent.substring(0, cursorPos) + 
+          imageMarkdown + 
+          currentContent.substring(cursorPos);
+        
+        form.setValue('content_md', newContent);
+        
+        // Set cursor after inserted image
+        setTimeout(() => {
+          textarea.focus();
+          const newCursorPos = cursorPos + imageMarkdown.length;
+          textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }, 0);
+      }
+
+      toast.success('Image inserted successfully');
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image: ' + error.message);
+    } finally {
+      setIsUploadingContentImage(false);
+      // Reset input
+      e.target.value = '';
+    }
   };
 
   const handleResourceChange = (index: number, field: string, value: any) => {
@@ -368,12 +431,35 @@ export const LessonForm: React.FC<LessonFormProps> = ({
               <FormLabel>Lesson Content (Markdown)</FormLabel>
               <FormControl>
                 <Textarea
+                  ref={contentTextareaRef}
                   placeholder="# Introduction&#10;&#10;Lesson content here..."
                   className="min-h-[200px] font-mono text-sm"
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Supports Markdown formatting</FormDescription>
+              <div className="flex items-center justify-between mt-2">
+                <FormDescription>Supports Markdown formatting</FormDescription>
+                <div>
+                  <input
+                    type="file"
+                    id="content-image-input"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleInsertImageInContent}
+                    disabled={isUploadingContentImage}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => document.getElementById('content-image-input')?.click()}
+                    disabled={isUploadingContentImage}
+                  >
+                    <ImagePlus className="w-4 h-4 mr-2" />
+                    {isUploadingContentImage ? 'Uploading...' : 'Insert Image'}
+                  </Button>
+                </div>
+              </div>
               <FormMessage />
             </FormItem>
           )}
