@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Plus, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 const lessonSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -52,6 +53,36 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   const [lessonVideoFile, setLessonVideoFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
+
+  // Fetch existing resources when editing a lesson
+  const { data: existingResources } = useQuery({
+    queryKey: ['lesson-resources', lesson?.id],
+    queryFn: async () => {
+      if (!lesson?.id) return [];
+      const { data, error } = await supabase
+        .from('lms_resources')
+        .select('*')
+        .eq('lesson_id', lesson.id)
+        .order('position');
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!lesson?.id,
+  });
+
+  // Load existing resources into state when editing
+  useEffect(() => {
+    if (existingResources && existingResources.length > 0 && resources.length === 0) {
+      setResources(existingResources.map(r => ({
+        id: r.id,
+        kind: r.kind,
+        title: r.title,
+        storage_key: r.storage_key || undefined,
+        external_url: r.external_url || undefined,
+        position: r.position,
+      })));
+    }
+  }, [existingResources]);
 
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonSchema),
@@ -148,18 +179,25 @@ export const LessonForm: React.FC<LessonFormProps> = ({
 
         if (lessonError) throw lessonError;
 
-        // Delete existing resources and recreate them
-        const { error: deleteError } = await supabase
-          .from("lms_resources")
-          .delete()
-          .eq("lesson_id", lesson.id);
+        // Handle resources - only update if there are changes
+        // Delete removed resources and update/create new ones
+        const existingResourceIds = existingResources?.map(r => r.id) || [];
+        const currentResourceIds = resources.filter(r => r.id).map(r => r.id);
+        
+        // Delete resources that were removed
+        const resourcesToDelete = existingResourceIds.filter(id => !currentResourceIds.includes(id));
+        if (resourcesToDelete.length > 0) {
+          await supabase
+            .from("lms_resources")
+            .delete()
+            .in("id", resourcesToDelete);
+        }
 
-        if (deleteError) throw deleteError;
-
-        // Upload and create resources
+        // Update or create resources
         for (const resource of resources) {
           let storageKey = resource.storage_key;
 
+          // Upload new file if provided
           if (resource.file) {
             storageKey = await uploadToStorage(
               resource.file,
@@ -168,14 +206,26 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             );
           }
 
-          await supabase.from("lms_resources").insert({
-            lesson_id: lesson.id,
-            kind: resource.kind,
-            title: resource.title,
-            storage_key: storageKey,
-            external_url: resource.external_url,
-            position: resource.position,
-          });
+          if (resource.id) {
+            // Update existing resource
+            await supabase.from("lms_resources").update({
+              kind: resource.kind,
+              title: resource.title,
+              storage_key: storageKey,
+              external_url: resource.external_url,
+              position: resource.position,
+            }).eq("id", resource.id);
+          } else {
+            // Create new resource
+            await supabase.from("lms_resources").insert({
+              lesson_id: lesson.id,
+              kind: resource.kind,
+              title: resource.title,
+              storage_key: storageKey,
+              external_url: resource.external_url,
+              position: resource.position,
+            });
+          }
         }
 
         toast.success("Lesson updated successfully");
@@ -335,6 +385,11 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             <div className="grid gap-4 mt-2">
               <div>
                 <label className="block text-sm mb-2">Upload Video</label>
+                {lesson?.video_storage_key && !lessonVideoFile && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Current: {lesson.video_storage_key.split('/').pop()}
+                  </p>
+                )}
                 <Input type="file" accept="video/*" onChange={(e) => setLessonVideoFile(e.target.files?.[0] || null)} />
               </div>
               <FormField
@@ -356,6 +411,11 @@ export const LessonForm: React.FC<LessonFormProps> = ({
 
           <div>
             <FormLabel>Cover Image (optional)</FormLabel>
+            {lesson?.cover_image && !coverImage && (
+              <p className="text-sm text-muted-foreground mb-2">
+                Current: {lesson.cover_image.split('/').pop()}
+              </p>
+            )}
             <Input
               type="file"
               accept="image/*"
