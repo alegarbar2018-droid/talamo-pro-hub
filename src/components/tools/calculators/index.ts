@@ -8,6 +8,8 @@ export { CalculatorLayout } from './CalculatorLayout';
 export { CalculatorCard } from './CalculatorCard';
 export { FormulaExplainer } from './FormulaExplainer';
 export { SymbolSelector } from './SymbolSelector';
+export { CalculatorModal } from './CalculatorModal';
+export { CalculatorEmpty } from './CalculatorEmpty';
 
 // Phase 2: Basic Calculators
 export { PositionSizeCalculator } from './PositionSizeCalculator';

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FormulaExplainer } from "./FormulaExplainer";
+import { CalculatorEmpty } from "./CalculatorEmpty";
 import type { CalculatorConfig, CalculatorResult } from "@/types/calculators";
 
 interface CalculatorLayoutProps {
@@ -164,14 +165,7 @@ export function CalculatorLayout({
           </CardHeader>
           <CardContent>
             {!showResults ? (
-              <div className="py-12 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted/20 flex items-center justify-center">
-                  <Calculator className="w-8 h-8 text-muted-foreground/50" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Completa los campos y haz clic en Calcular
-                </p>
-              </div>
+              <CalculatorEmpty />
             ) : (
               <ScrollArea className="max-h-[600px]">
                 <div className="space-y-4 pr-4">
