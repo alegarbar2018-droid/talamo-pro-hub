@@ -321,6 +321,193 @@ export const TradingJournal = () => {
         </Button>
       </div>
 
+      {/* New Entry Form - Moved to top for visibility */}
+      {showNewEntry && (
+        <Card className="p-6 border-teal/30 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold">Nueva Operación</h3>
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setShowNewEntry(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Cerrar
+            </Button>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="trade_date">Fecha y Hora</Label>
+                <Input
+                  id="trade_date"
+                  type="datetime-local"
+                  value={formData.trade_date}
+                  onChange={(e) => setFormData({ ...formData, trade_date: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instrument">Instrumento *</Label>
+                <Input
+                  id="instrument"
+                  placeholder="EURUSD, XAUUSD, etc."
+                  value={formData.instrument}
+                  onChange={(e) => setFormData({ ...formData, instrument: e.target.value.toUpperCase() })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="direction">Dirección</Label>
+                <select
+                  id="direction"
+                  className="w-full p-2 rounded-md border border-line bg-surface text-foreground"
+                  value={formData.direction}
+                  onChange={(e) => setFormData({ ...formData, direction: e.target.value as "BUY" | "SELL" })}
+                >
+                  <option value="BUY">BUY</option>
+                  <option value="SELL">SELL</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lot_size">Tamaño de Lote *</Label>
+                <Input
+                  id="lot_size"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.01"
+                  value={formData.lot_size}
+                  onChange={(e) => setFormData({ ...formData, lot_size: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="entry_price">Precio de Entrada *</Label>
+                <Input
+                  id="entry_price"
+                  type="number"
+                  step="0.00001"
+                  placeholder="1.12345"
+                  value={formData.entry_price}
+                  onChange={(e) => setFormData({ ...formData, entry_price: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="exit_price">Precio de Salida</Label>
+                <Input
+                  id="exit_price"
+                  type="number"
+                  step="0.00001"
+                  placeholder="1.12545"
+                  value={formData.exit_price}
+                  onChange={(e) => setFormData({ ...formData, exit_price: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="stop_loss">Stop Loss</Label>
+                <Input
+                  id="stop_loss"
+                  type="number"
+                  step="0.00001"
+                  placeholder="1.12000"
+                  value={formData.stop_loss}
+                  onChange={(e) => setFormData({ ...formData, stop_loss: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="take_profit">Take Profit</Label>
+                <Input
+                  id="take_profit"
+                  type="number"
+                  step="0.00001"
+                  placeholder="1.13000"
+                  value={formData.take_profit}
+                  onChange={(e) => setFormData({ ...formData, take_profit: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado</Label>
+              <select
+                id="status"
+                className="w-full p-2 rounded-md border border-line bg-surface text-foreground"
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as "open" | "closed" })}
+              >
+                <option value="open">Abierta</option>
+                <option value="closed">Cerrada</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>¿Cómo te sentías al operar?</Label>
+              <div className="flex flex-wrap gap-2">
+                {emotionOptions.map((emotion) => (
+                  <Badge
+                    key={emotion}
+                    variant={selectedEmotions.includes(emotion) ? "default" : "outline"}
+                    className={`cursor-pointer ${selectedEmotions.includes(emotion) ? 'bg-teal hover:bg-teal/90' : 'hover:bg-surface/50'}`}
+                    onClick={() => toggleEmotion(emotion)}
+                  >
+                    {emotion}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notas y Análisis</Label>
+              <Textarea
+                id="notes"
+                placeholder="¿Qué funcionó bien? ¿Qué mejorar? ¿Seguiste tu plan?"
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tags">Etiquetas (separadas por coma)</Label>
+              <Input
+                id="tags"
+                placeholder="breakout, soportes, tendencia"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <Button type="submit" className="bg-teal hover:bg-teal/90" disabled={createEntry.isPending}>
+                {createEntry.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Guardar Entrada
+                  </>
+                )}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setShowNewEntry(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
       {/* Mentor Recommendations */}
       {entries && entries.length > 0 && (
         <div className="space-y-4">
@@ -502,182 +689,6 @@ export const TradingJournal = () => {
             )}
           </Card>
         </div>
-      )}
-
-      {/* New Entry Form */}
-      {showNewEntry && (
-        <Card className="p-6">
-          <h3 className="text-xl font-semibold mb-4">Nueva Operación</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="trade_date">Fecha y Hora</Label>
-                <Input
-                  id="trade_date"
-                  type="datetime-local"
-                  value={formData.trade_date}
-                  onChange={(e) => setFormData({ ...formData, trade_date: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="instrument">Instrumento *</Label>
-                <Input
-                  id="instrument"
-                  placeholder="EURUSD, XAUUSD, etc."
-                  value={formData.instrument}
-                  onChange={(e) => setFormData({ ...formData, instrument: e.target.value.toUpperCase() })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="direction">Dirección</Label>
-                <select
-                  id="direction"
-                  className="w-full p-2 rounded-md border border-line bg-surface"
-                  value={formData.direction}
-                  onChange={(e) => setFormData({ ...formData, direction: e.target.value as "BUY" | "SELL" })}
-                >
-                  <option value="BUY">BUY</option>
-                  <option value="SELL">SELL</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="lot_size">Tamaño de Lote *</Label>
-                <Input
-                  id="lot_size"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.01"
-                  value={formData.lot_size}
-                  onChange={(e) => setFormData({ ...formData, lot_size: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="entry_price">Precio de Entrada *</Label>
-                <Input
-                  id="entry_price"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.12345"
-                  value={formData.entry_price}
-                  onChange={(e) => setFormData({ ...formData, entry_price: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="exit_price">Precio de Salida</Label>
-                <Input
-                  id="exit_price"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.12545"
-                  value={formData.exit_price}
-                  onChange={(e) => setFormData({ ...formData, exit_price: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="stop_loss">Stop Loss</Label>
-                <Input
-                  id="stop_loss"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.12000"
-                  value={formData.stop_loss}
-                  onChange={(e) => setFormData({ ...formData, stop_loss: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="take_profit">Take Profit</Label>
-                <Input
-                  id="take_profit"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.13000"
-                  value={formData.take_profit}
-                  onChange={(e) => setFormData({ ...formData, take_profit: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Estado</Label>
-              <select
-                id="status"
-                className="w-full p-2 rounded-md border border-line bg-surface"
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as "open" | "closed" })}
-              >
-                <option value="open">Abierta</option>
-                <option value="closed">Cerrada</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>¿Cómo te sentías al operar?</Label>
-              <div className="flex flex-wrap gap-2">
-                {emotionOptions.map((emotion) => (
-                  <Badge
-                    key={emotion}
-                    variant={selectedEmotions.includes(emotion) ? "default" : "outline"}
-                    className={`cursor-pointer ${selectedEmotions.includes(emotion) ? 'bg-teal hover:bg-teal/90' : 'hover:bg-surface/50'}`}
-                    onClick={() => toggleEmotion(emotion)}
-                  >
-                    {emotion}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notas y Análisis</Label>
-              <Textarea
-                id="notes"
-                placeholder="¿Qué funcionó bien? ¿Qué mejorar? ¿Seguiste tu plan?"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                rows={4}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="tags">Etiquetas (separadas por coma)</Label>
-              <Input
-                id="tags"
-                placeholder="breakout, soportes, tendencia"
-                value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <Button type="submit" className="bg-teal hover:bg-teal/90" disabled={createEntry.isPending}>
-                {createEntry.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Guardar Entrada
-                  </>
-                )}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => setShowNewEntry(false)}>
-                Cancelar
-              </Button>
-            </div>
-          </form>
-        </Card>
       )}
 
       {/* Journal Entries List */}
