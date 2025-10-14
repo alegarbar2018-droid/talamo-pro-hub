@@ -295,27 +295,40 @@ export const TradingJournal = () => {
                     </div>
                   )}
 
-                  {/* Recommendation */}
-                  <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-surface via-surface to-surface/50 border border-teal/20 shadow-lg">
-                    {/* Decorative gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal/5 via-transparent to-transparent pointer-events-none" />
+                  {/* Recommendation - Premium Style */}
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background via-surface/80 to-background border border-teal/30 shadow-2xl backdrop-blur-sm">
+                    {/* Animated gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-teal/10 via-teal/5 to-transparent opacity-50 animate-pulse" style={{ animationDuration: '3s' }} />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-teal/5 to-transparent" />
                     
-                    <div className="relative p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-teal/10 border border-teal/20">
-                          <TypeIcon className={`w-5 h-5 ${typeColor}`} />
-                        </div>
-                        <div>
-                          <Badge variant="secondary" className="capitalize text-xs">
-                            {mentorRec.type}
-                          </Badge>
-                          <p className="text-xs text-muted-foreground mt-1">Análisis personalizado</p>
+                    {/* Glow effect */}
+                    <div className="absolute -inset-[1px] bg-gradient-to-r from-teal/20 via-teal/10 to-teal/20 rounded-2xl blur-sm -z-10" />
+                    
+                    <div className="relative p-8">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-start gap-4">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-teal/10 border border-teal/30 shadow-lg">
+                            <TypeIcon className={`w-6 h-6 ${typeColor}`} />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-lg font-bold text-foreground">Análisis del Mentor</h4>
+                              <Badge variant="secondary" className="capitalize text-xs font-semibold px-2 py-0.5">
+                                {mentorRec.type}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                              <Sparkles className="w-3 h-3" />
+                              Personalizado para tu perfil
+                            </p>
+                          </div>
                         </div>
                       </div>
                       
-                      <div className="space-y-3 text-foreground leading-relaxed">
+                      {/* Content */}
+                      <div className="space-y-4 text-foreground">
                         {mentorRec.recommendation.split('\n').map((paragraph, idx) => {
-                          // Detectar títulos (texto con ** o líneas cortas que parecen títulos)
                           const isBold = paragraph.includes('**');
                           const cleanText = paragraph.replace(/\*\*/g, '');
                           
@@ -323,36 +336,48 @@ export const TradingJournal = () => {
                           
                           if (isBold) {
                             return (
-                              <h4 key={idx} className="text-base font-semibold text-teal mt-4 first:mt-0">
-                                {cleanText}
-                              </h4>
+                              <div key={idx} className="flex items-start gap-3 mt-5 first:mt-0">
+                                <div className="w-1 h-6 bg-gradient-to-b from-teal to-teal/50 rounded-full mt-0.5" />
+                                <h5 className="text-base font-bold text-teal leading-tight">
+                                  {cleanText}
+                                </h5>
+                              </div>
                             );
                           }
                           
-                          // Detectar bullets o números
                           if (cleanText.match(/^[\d\-\•\*]\s/)) {
                             return (
-                              <div key={idx} className="flex gap-3 items-start pl-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-teal mt-2 flex-shrink-0" />
-                                <p className="text-sm leading-relaxed">{cleanText.replace(/^[\d\-\•\*]\s/, '')}</p>
+                              <div key={idx} className="flex gap-3 items-start pl-3 py-1">
+                                <div className="w-2 h-2 rounded-full bg-gradient-to-br from-teal to-teal/70 mt-2 flex-shrink-0 shadow-sm" />
+                                <p className="text-sm leading-relaxed text-foreground/90">
+                                  {cleanText.replace(/^[\d\-\•\*]\s/, '')}
+                                </p>
                               </div>
                             );
                           }
                           
                           return (
-                            <p key={idx} className="text-sm leading-relaxed text-foreground/90">
+                            <p key={idx} className="text-[15px] leading-relaxed text-foreground/85 pl-3">
                               {cleanText}
                             </p>
                           );
                         })}
                       </div>
                       
-                      {/* Bottom accent */}
-                      <div className="mt-6 pt-4 border-t border-line/50">
-                        <p className="text-xs text-muted-foreground italic flex items-center gap-2">
-                          <Brain className="w-3.5 h-3.5 text-teal" />
-                          Tu mentor está analizando {entries.length} operaciones para darte el mejor consejo
-                        </p>
+                      {/* Footer */}
+                      <div className="mt-8 pt-5 border-t border-line/30">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-muted-foreground flex items-center gap-2">
+                            <Brain className="w-4 h-4 text-teal" />
+                            <span className="font-medium">
+                              {entries.length} operaciones analizadas
+                            </span>
+                          </p>
+                          <div className="flex items-center gap-1.5 text-xs text-teal/70">
+                            <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
+                            <span>AI activo</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
