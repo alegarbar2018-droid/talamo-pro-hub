@@ -27,6 +27,10 @@ export const useCompletionStats = (courseId: string) => {
   return useQuery({
     queryKey: ['completion-stats', courseId, session?.user?.id],
     queryFn: async () => {
+      if (!courseId) {
+        return { total: 0, completed: 0, percentage: 0 };
+      }
+
       const { data: courseTree, error } = await supabase.rpc('get_course_tree', {
         course_slug_or_id: courseId,
         requesting_user_id: session?.user?.id || null,
@@ -51,6 +55,7 @@ export const useCompletionStats = (courseId: string) => {
           : 0,
       };
     },
+    // Allow hook to be called always, but only fetch when we have a valid courseId
     enabled: !!courseId && !!session?.user?.id,
   });
 };

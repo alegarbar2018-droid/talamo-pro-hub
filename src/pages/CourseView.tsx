@@ -30,6 +30,13 @@ const CourseView = () => {
     enabled: !!slug,
   });
 
+  // CRITICAL: Call hooks BEFORE any early returns
+  const course = (courseTree as any)?.course;
+  const modules = (courseTree as any)?.modules || [];
+  
+  // Get completion stats (will only fetch when course.id exists)
+  const { data: completionStats } = useCompletionStats(course?.id || '');
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -41,7 +48,7 @@ const CourseView = () => {
     );
   }
 
-  if (!courseTree) {
+  if (!courseTree || !course) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card>
@@ -53,12 +60,6 @@ const CourseView = () => {
       </div>
     );
   }
-
-  const course = (courseTree as any).course;
-  const modules = (courseTree as any).modules || [];
-
-  // Get completion stats for progress bar
-  const { data: completionStats } = useCompletionStats(course.id);
 
   return (
     <div className="min-h-screen bg-background">
