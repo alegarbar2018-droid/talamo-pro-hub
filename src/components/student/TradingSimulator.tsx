@@ -134,6 +134,17 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
     return null;
   };
 
+  const getLineColor = () => {
+    if (!isRevealed) return 'hsl(174, 72%, 46%)'; // Teal vibrante antes de acción
+    
+    if (userAction === 'skip') return 'hsl(var(--muted-foreground))';
+    
+    if (pipsResult > 0) return 'hsl(var(--success))'; // Verde = profit
+    if (pipsResult < 0) return 'hsl(var(--destructive))'; // Rojo = loss
+    
+    return 'hsl(174, 72%, 46%)'; // Fallback teal
+  };
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -148,40 +159,93 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
           </div>
 
           {/* Chart */}
-          <div className="w-full h-64 bg-muted/20 rounded-lg p-4">
+          <div className="w-full h-64 bg-background/95 border border-border rounded-lg p-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke="hsl(var(--border))" 
+                  opacity={0.3}
+                />
                 <XAxis 
                   dataKey="label" 
-                  className="text-xs"
-                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  tick={{ fill: 'hsl(var(--foreground))', fontSize: 11 }}
+                  stroke="hsl(var(--border))"
                 />
                 <YAxis 
-                  domain={['dataMin - 0.001', 'dataMax + 0.001']}
-                  className="text-xs"
-                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  domain={['dataMin - 0.0005', 'dataMax + 0.0005']}
+                  tick={{ fill: 'hsl(var(--foreground))', fontSize: 11 }}
+                  tickFormatter={(value) => value.toFixed(4)}
+                  stroke="hsl(var(--border))"
+                  width={60}
                 />
                 <Tooltip
+                  formatter={(value: number) => [value.toFixed(4), 'Price']}
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--background))',
+                    backgroundColor: 'hsl(var(--popover))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '0.5rem',
                   }}
-                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                  labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 'bold' }}
                 />
+                
+                {/* Current Time Marker */}
                 <ReferenceLine 
                   x={scenarioData.historical.length} 
                   stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
                   strokeDasharray="3 3"
-                  label={{ value: 'Current', fill: 'hsl(var(--primary))' }}
+                  label={{ 
+                    value: 'NOW', 
+                    position: 'top', 
+                    fill: 'hsl(var(--primary))',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                  }}
                 />
+                
+                {/* Stop Loss Line */}
+                {scenarioData.sl && isRevealed && (
+                  <ReferenceLine 
+                    y={scenarioData.sl} 
+                    stroke="hsl(var(--destructive))" 
+                    strokeDasharray="5 5"
+                    strokeWidth={2}
+                    label={{ 
+                      value: 'SL', 
+                      position: 'right', 
+                      fill: 'hsl(var(--destructive))',
+                      fontSize: 11,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                )}
+                
+                {/* Take Profit Line */}
+                {scenarioData.tp && isRevealed && (
+                  <ReferenceLine 
+                    y={scenarioData.tp} 
+                    stroke="hsl(var(--success))" 
+                    strokeDasharray="5 5"
+                    strokeWidth={2}
+                    label={{ 
+                      value: 'TP', 
+                      position: 'right', 
+                      fill: 'hsl(var(--success))',
+                      fontSize: 11,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                )}
+                
+                {/* Price Line */}
                 <Line 
                   type="monotone" 
                   dataKey="price" 
-                  stroke={isRevealed ? 'hsl(var(--chart-3))' : 'hsl(var(--chart-1))'}
-                  strokeWidth={2}
-                  dot={false}
+                  stroke={getLineColor()}
+                  strokeWidth={3}
+                  dot={{ fill: getLineColor(), r: 3 }}
+                  activeDot={{ r: 6, fill: getLineColor() }}
                   animationDuration={isRevealed ? 1000 : 300}
                 />
               </LineChart>
