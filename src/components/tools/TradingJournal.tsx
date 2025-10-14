@@ -654,21 +654,30 @@ export const TradingJournal = () => {
                     })}
                   </div>
 
-                  {/* Footer Branding */}
-                  <div className="pt-4 mt-2 border-t border-white/15 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-white/15">
-                        <Brain className="w-4 h-4 text-white" />
+                  {/* Footer Branding with talamo.app */}
+                  <div className="pt-4 mt-2 border-t border-white/15">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 rounded-lg bg-white/15">
+                          <Brain className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-white text-xs font-semibold">Mentor AI Experto</p>
+                          <p className="text-white/70 text-[10px]">PhD Trading & Psicología</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-white text-xs font-semibold">Mentor AI Experto</p>
-                        <p className="text-white/70 text-[10px]">PhD Trading & Psicología</p>
+                      <div className="text-right">
+                        <p className="text-white/70 text-[10px]">
+                          {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-white/70 text-[10px]">
-                        {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </p>
+                    {/* talamo.app branding */}
+                    <div className="flex items-center justify-center pt-3 border-t border-white/10">
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                        <p className="text-white font-bold text-sm tracking-wide">talamo.app</p>
+                      </div>
                     </div>
                   </div>
                 </div>
