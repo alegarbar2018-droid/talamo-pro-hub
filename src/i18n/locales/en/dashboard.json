@@ -4,6 +4,11 @@
   "subtitle": "Professional trading, no empty promises",
   "welcome_back": "Welcome",
   "progress_summary": "Here's a summary of your progress and recent activities",
+  "greetings": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
   "status": {
     "validated": "Validated",
     "demo": "Demo"

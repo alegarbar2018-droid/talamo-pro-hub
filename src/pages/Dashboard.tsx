@@ -99,6 +99,14 @@ const Dashboard = () => {
   const quizSuccessRate = dashboardStats?.quizSuccessRate || 0;
   const completedLessons = dashboardStats?.completedLessons || 0;
 
+  // Helper for dynamic greeting
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t("dashboard:greetings.morning");
+    if (hour < 18) return t("dashboard:greetings.afternoon");
+    return t("dashboard:greetings.evening");
+  };
+
   const quickActions = [
     {
       title: t("dashboard:modules.academy.title"),
@@ -218,109 +226,189 @@ const Dashboard = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">
-            {t("dashboard:welcome_back")}, {user.profile?.first_name ? `${user.profile.first_name} ${user.profile.last_name || ''}`.trim() : user.email?.split('@')[0] || 'Usuario'}
-          </h2>
-          <p className="text-muted-foreground">
-            {t("dashboard:progress_summary")}
-          </p>
+        {/* Hero Section Premium */}
+        <div className="relative mb-12 overflow-hidden rounded-2xl bg-gradient-to-br from-teal/10 via-surface to-cyan/10 p-8 border border-teal/20 animate-fade-in">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-teal/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-teal to-cyan flex items-center justify-center text-3xl font-bold text-white shadow-lg ring-4 ring-teal/20">
+              {user.profile?.first_name?.[0]?.toUpperCase() || user.email?.[0].toUpperCase()}
+            </div>
+            
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground mb-1">
+                {getGreeting()}
+              </p>
+              <h1 className="text-4xl font-bold text-foreground mb-2">
+                {user.profile?.first_name || user.email?.split('@')[0] || 'Trader'}
+              </h1>
+              <div className="flex flex-wrap items-center gap-4">
+                <Badge variant="outline" className="border-teal text-teal">
+                  {isValidated || user.isAffiliated ? "✓ Cuenta Validada" : "Demo"}
+                </Badge>
+                <span className="text-sm text-muted-foreground">
+                  🔥 {completedLessons} lecciones completadas
+                </span>
+              </div>
+            </div>
+            
+            <div className="text-right">
+              <p className="text-3xl font-bold text-teal">{academyProgress}%</p>
+              <p className="text-xs text-muted-foreground">Progreso total</p>
+            </div>
+          </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats Cards con Glassmorphism */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
-            <Card key={index} className="border-line bg-surface">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-xs text-teal">{stat.trend}</p>
+            <Card 
+              key={index} 
+              className="group relative overflow-hidden border-line/50 bg-surface/50 backdrop-blur-xl hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 dashboard-card"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-cyan/0 group-hover:from-teal/10 group-hover:to-cyan/10 transition-all duration-500" />
+              
+              <CardContent className="relative z-10 p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-xl bg-teal/10 group-hover:bg-teal/20 transition-colors">
+                    <stat.icon className="h-6 w-6 text-teal group-hover:scale-110 transition-transform" />
                   </div>
-                  <stat.icon className="h-8 w-8 text-teal" />
+                  <Badge variant="secondary" className="text-xs">
+                    +12% ↗
+                  </Badge>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+                  <p className="text-3xl font-bold text-foreground mb-2">{stat.value}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000" style={{width: '65%'}} />
+                    </div>
+                    <span className="text-xs text-teal whitespace-nowrap">{stat.trend}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions con Hover Effects Avanzados */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickActions.map((action, index) => (
             <Card 
               key={index} 
-              className="border-line bg-surface hover:shadow-glow-subtle transition-all cursor-pointer"
+              className="group relative overflow-hidden border-line bg-surface hover:border-teal/50 transition-all duration-300 cursor-pointer dashboard-card"
               onClick={action.action}
             >
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <action.icon className="h-6 w-6 text-teal" />
-                  {action.badge && (
-                    <Badge variant="secondary" className="text-xs">
-                      {action.badge}
-                    </Badge>
-                  )}
-                </div>
-                <CardTitle className="text-lg text-foreground">{action.title}</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  {action.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {action.progress && (
-                  <div className="space-y-2">
-                    <Progress value={action.progress} className="h-2" />
-                    <p className="text-xs text-muted-foreground">{action.progress}% {t("dashboard:modules.academy.completed")}</p>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-[-2px] bg-gradient-to-br from-teal via-cyan to-teal rounded-lg blur-sm" />
+              </div>
+              
+              <div className="relative bg-surface rounded-lg">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                      <action.icon className="h-6 w-6 text-teal" />
+                    </div>
+                    {action.badge && (
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs animate-pulse bg-teal/10 text-teal border-teal/30"
+                      >
+                        {action.badge}
+                      </Badge>
+                    )}
                   </div>
-                )}
-                <Button variant="ghost" size="sm" className="w-full mt-2 text-teal hover:bg-teal/10">
-                  {t("dashboard:actions.go")} <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </CardContent>
+                  
+                  <CardTitle className="text-lg text-foreground group-hover:text-teal transition-colors">
+                    {action.title}
+                  </CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground">
+                    {action.description}
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="pt-0">
+                  {action.progress !== undefined && (
+                    <div className="space-y-2 mb-4">
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000"
+                          style={{width: `${action.progress}%`}}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {action.progress}% completado
+                      </p>
+                    </div>
+                  )}
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full text-teal hover:bg-teal/10 group-hover:translate-x-1 transition-transform"
+                  >
+                    {t("dashboard:actions.go")} 
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </CardContent>
+              </div>
             </Card>
           ))}
         </div>
 
-        {/* Recent Activity */}
+        {/* Recent Activity & Checklist Mejorados */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Activity */}
-          <Card className="border-line bg-surface">
+          {/* Activity Timeline */}
+          <Card className="border-line bg-surface/80 backdrop-blur-sm dashboard-card">
             <CardHeader>
-              <CardTitle className="text-foreground flex items-center gap-2">
-                <Activity className="h-5 w-5 text-teal" />
-                Recent Activity
-              </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Your latest learning activities
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-foreground flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-teal" />
+                    Actividad Reciente
+                  </CardTitle>
+                  <CardDescription>Tus últimas acciones</CardDescription>
+                </div>
+                <Badge variant="outline" className="text-teal border-teal">
+                  {recentActivities.length} actividades
+                </Badge>
+              </div>
             </CardHeader>
+            
             <CardContent>
-              <div className="space-y-3">
+              <div className="relative space-y-4">
+                {recentActivities.length > 0 && (
+                  <div className="absolute left-6 top-4 bottom-4 w-px bg-gradient-to-b from-teal via-cyan to-transparent" />
+                )}
+                
                 {recentActivities.length > 0 ? (
                   recentActivities.map((activity, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-background border border-line"
+                      className="relative flex items-start gap-4 p-4 rounded-lg bg-background/50 border border-line/50 hover:border-teal/30 transition-colors animate-fade-in"
+                      style={{animationDelay: `${index * 100}ms`}}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="relative z-10 p-2 rounded-full bg-teal/20 ring-4 ring-surface">
                         <BookOpen className="h-4 w-4 text-teal" />
-                        <div>
-                          <p className="text-sm font-medium text-foreground">{activity.title}</p>
-                          <p className="text-xs text-muted-foreground capitalize">
-                            {activity.action}
-                          </p>
-                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">{activity.time}</p>
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {activity.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground capitalize">
+                          {activity.action} • {activity.time}
+                        </p>
                       </div>
+                      
+                      <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    No recent activity yet
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    No hay actividad reciente aún
                   </p>
                 )}
               </div>
@@ -329,16 +417,16 @@ const Dashboard = () => {
                 className="w-full mt-4 border-teal text-teal hover:bg-teal/10"
                 onClick={() => navigate("/academy")}
               >
-                Go to Academy
+                Ir a Academia
               </Button>
             </CardContent>
           </Card>
 
-          {/* Checklist */}
-          <Card className="border-line bg-surface">
+          {/* Checklist Mejorado */}
+          <Card className="border-line bg-surface/80 backdrop-blur-sm dashboard-card">
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-teal" />
+                <Target className="h-5 w-5 text-teal" />
                 {t("dashboard:checklist.title")}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
@@ -346,17 +434,27 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {checklistItems.map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                  <div 
+                    key={index} 
+                    className="group flex items-center gap-3 p-3 rounded-lg bg-background/50 border border-line/50 hover:border-teal/30 transition-all animate-fade-in"
+                    style={{animationDelay: `${index * 80}ms`}}
+                  >
                     {item.done ? (
-                      <CheckCircle className="h-5 w-5 text-success" />
+                      <div className="relative flex items-center justify-center">
+                        <div className="absolute w-6 h-6 bg-success/20 rounded-full animate-pulse" />
+                        <CheckCircle className="h-5 w-5 text-success relative z-10" />
+                      </div>
                     ) : (
-                      <div className="h-5 w-5 rounded-full border-2 border-muted" />
+                      <div className="h-5 w-5 rounded-full border-2 border-muted group-hover:border-teal/50 transition-colors" />
                     )}
-                    <span className={`text-sm ${item.done ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                    <span className={`text-sm flex-1 transition-all ${item.done ? 'text-muted-foreground line-through' : 'text-foreground group-hover:text-teal'}`}>
                       {item.task}
                     </span>
+                    {!item.done && (
+                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    )}
                   </div>
                 ))}
               </div>
@@ -364,14 +462,23 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Risk Warning */}
-        <Card className="border-warning/20 bg-warning/5 mt-8">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
-              <div className="space-y-2">
-                <h3 className="font-semibold text-foreground">{t("dashboard:risk_warning.title")}</h3>
-                <p className="text-sm text-muted-foreground">
+        {/* Risk Warning Premium */}
+        <Card className="relative overflow-hidden border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-orange-500/5 mt-8 dashboard-card">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
+          
+          <CardContent className="relative z-10 p-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-amber-500/10">
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
+              </div>
+              <div className="flex-1 space-y-2">
+                <h3 className="font-semibold text-foreground flex items-center gap-2">
+                  {t("dashboard:risk_warning.title")}
+                  <Badge variant="outline" className="border-amber-500 text-amber-500">
+                    Importante
+                  </Badge>
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {t("dashboard:risk_warning.text")}
                 </p>
               </div>
