@@ -1,3 +1,2 @@
-export { ContractSpecCard } from "./ContractSpecCard";
-export { ContractSpecifications } from "./ContractSpecifications";
+export { ContractSpecDrawer } from "./ContractSpecDrawer";
 export { SpecificationRow } from "./SpecificationRow";

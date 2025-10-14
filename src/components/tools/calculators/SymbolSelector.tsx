@@ -9,13 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useContractSpecs } from "@/hooks/useContractSpec";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, FileText } from "lucide-react";
 
 interface SymbolSelectorProps {
   value: string;
   onValueChange: (value: string) => void;
+  onViewSpec?: (symbol: string) => void;
   label?: string;
   placeholder?: string;
   className?: string;
@@ -24,6 +26,7 @@ interface SymbolSelectorProps {
 export function SymbolSelector({
   value,
   onValueChange,
+  onViewSpec,
   label = "Símbolo",
   placeholder = "Selecciona un instrumento",
   className = "",
@@ -68,30 +71,46 @@ export function SymbolSelector({
   return (
     <div className={`space-y-2 ${className}`}>
       <Label>{label}</Label>
-      <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="bg-input border-line/50">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {Object.entries(groupedSpecs).map(([assetClass, classSpecs]) => (
-            <SelectGroup key={assetClass}>
-              <SelectLabel className="text-teal font-semibold">
-                {assetClass}
-              </SelectLabel>
-              {classSpecs.map((spec) => (
-                <SelectItem key={spec.id} value={spec.symbol}>
-                  <div className="flex items-center justify-between gap-2 w-full">
-                    <span className="font-medium">{spec.symbol}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {spec.name}
-                    </span>
-                  </div>
-                </SelectItem>
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <Select value={value} onValueChange={onValueChange}>
+            <SelectTrigger className="bg-input border-line/50">
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(groupedSpecs).map(([assetClass, classSpecs]) => (
+                <SelectGroup key={assetClass}>
+                  <SelectLabel className="text-teal font-semibold">
+                    {assetClass}
+                  </SelectLabel>
+                  {classSpecs.map((spec) => (
+                    <SelectItem key={spec.id} value={spec.symbol}>
+                      <div className="flex items-center justify-between gap-2 w-full">
+                        <span className="font-medium">{spec.symbol}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {spec.name}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               ))}
-            </SelectGroup>
-          ))}
-        </SelectContent>
-      </Select>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {value && onViewSpec && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onViewSpec(value)}
+            className="h-10 border-teal/30 hover:bg-teal/10 shrink-0"
+          >
+            <FileText className="w-4 h-4 mr-1" />
+            Specs
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

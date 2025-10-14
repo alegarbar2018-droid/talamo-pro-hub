@@ -1,15 +1,15 @@
-import { TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { TrendingUp, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalculatorLayout } from "./CalculatorLayout";
 import { useCalculator } from "@/hooks/useCalculator";
 import { SymbolSelector } from "./SymbolSelector";
+import { ContractSpecDrawer } from "../specifications/ContractSpecDrawer";
 import { useContractSpec, getPipSize } from "@/hooks/useContractSpec";
 import type { CalculatorConfig, CalculatorResult } from "@/types/calculators";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
-import { useEffect } from "react";
 
 const config: CalculatorConfig = {
   id: 'profit-loss',
@@ -159,6 +159,8 @@ export function ProfitLossCalculator() {
   const calculator = useCalculator(config, calculateProfitLoss);
   const symbol = calculator.getInputValue('symbol') as string;
   const { data: contractSpec } = useContractSpec(symbol);
+  const [showSpecDrawer, setShowSpecDrawer] = useState(false);
+  const [selectedSymbol, setSelectedSymbol] = useState("");
 
   useEffect(() => {
     if (contractSpec) {
@@ -192,7 +194,14 @@ export function ProfitLossCalculator() {
 
         <SymbolSelector
           value={calculator.getInputValue('symbol') as string}
-          onValueChange={(value) => calculator.updateInput('symbol', value)}
+          onValueChange={(value) => {
+            calculator.updateInput('symbol', value);
+            setSelectedSymbol(value);
+          }}
+          onViewSpec={(sym) => {
+            setSelectedSymbol(sym);
+            setShowSpecDrawer(true);
+          }}
         />
 
         {contractSpec && (
@@ -258,14 +267,21 @@ export function ProfitLossCalculator() {
   );
 
   return (
-    <CalculatorLayout
-      config={config}
-      inputs={InputsSection}
-      results={calculator.state.results}
-      onCalculate={calculator.calculate}
-      onReset={calculator.reset}
-      isCalculating={calculator.state.isCalculating}
-      showResults={calculator.state.results.length > 0}
-    />
+    <>
+      <CalculatorLayout
+        config={config}
+        inputs={InputsSection}
+        results={calculator.state.results}
+        onCalculate={calculator.calculate}
+        onReset={calculator.reset}
+        isCalculating={calculator.state.isCalculating}
+        showResults={calculator.state.results.length > 0}
+      />
+      <ContractSpecDrawer
+        symbol={selectedSymbol}
+        open={showSpecDrawer}
+        onOpenChange={setShowSpecDrawer}
+      />
+    </>
   );
 }

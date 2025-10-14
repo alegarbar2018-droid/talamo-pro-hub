@@ -6,6 +6,9 @@ export interface ContractSpec {
   symbol: string;
   name: string;
   asset_class: string;
+  underlying_asset?: string;
+  base_currency: string;
+  quote_currency?: string;
   contract_size: number;
   pip_value: number;
   pip_position: number;
