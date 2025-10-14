@@ -295,39 +295,42 @@ export const TradingJournal = () => {
                     </div>
                   )}
 
-                  {/* Recommendation - Premium Style */}
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background via-surface/80 to-background border border-teal/30 shadow-2xl backdrop-blur-sm">
-                    {/* Animated gradient background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal/10 via-teal/5 to-transparent opacity-50 animate-pulse" style={{ animationDuration: '3s' }} />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-teal/5 to-transparent" />
+                  {/* Recommendation - Instagram Style */}
+                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal via-teal/90 to-teal/80 shadow-2xl">
+                    {/* Animated gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 animate-pulse" style={{ animationDuration: '4s' }} />
                     
-                    {/* Glow effect */}
-                    <div className="absolute -inset-[1px] bg-gradient-to-r from-teal/20 via-teal/10 to-teal/20 rounded-2xl blur-sm -z-10" />
+                    {/* Decorative elements */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
                     
-                    <div className="relative p-8">
-                      {/* Header */}
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="flex items-start gap-4">
-                          <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-teal/10 border border-teal/30 shadow-lg">
-                            <TypeIcon className={`w-6 h-6 ${typeColor}`} />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="text-lg font-bold text-foreground">Análisis del Mentor</h4>
-                              <Badge variant="secondary" className="capitalize text-xs font-semibold px-2 py-0.5">
-                                {mentorRec.type}
-                              </Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                              <Sparkles className="w-3 h-3" />
-                              Personalizado para tu perfil
-                            </p>
+                    <div className="relative p-10 md:p-12">
+                      {/* Quote mark decorative */}
+                      <div className="absolute top-8 left-8 text-white/20 text-6xl font-serif leading-none">"</div>
+                      
+                      {/* Header with icon */}
+                      <div className="flex items-start gap-4 mb-8 relative">
+                        <div className="p-4 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg">
+                          <TypeIcon className="w-8 h-8 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight">
+                            Tu Mentor AI
+                          </h4>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-white/20 text-white border-white/30 capitalize backdrop-blur-sm">
+                              {mentorRec.type}
+                            </Badge>
+                            <span className="text-white/90 text-sm flex items-center gap-1.5">
+                              <Sparkles className="w-3.5 h-3.5" />
+                              Análisis Personalizado
+                            </span>
                           </div>
                         </div>
                       </div>
                       
-                      {/* Content */}
-                      <div className="space-y-4 text-foreground">
+                      {/* Content - Clean and readable */}
+                      <div className="space-y-6 text-white relative">
                         {mentorRec.recommendation.split('\n').map((paragraph, idx) => {
                           const isBold = paragraph.includes('**');
                           const cleanText = paragraph.replace(/\*\*/g, '');
@@ -336,20 +339,22 @@ export const TradingJournal = () => {
                           
                           if (isBold) {
                             return (
-                              <div key={idx} className="flex items-start gap-3 mt-5 first:mt-0">
-                                <div className="w-1 h-6 bg-gradient-to-b from-teal to-teal/50 rounded-full mt-0.5" />
-                                <h5 className="text-base font-bold text-teal leading-tight">
-                                  {cleanText}
-                                </h5>
+                              <div key={idx} className="mt-8 first:mt-0">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="h-[3px] w-12 bg-white/40 rounded-full" />
+                                  <h5 className="text-xl md:text-2xl font-bold text-white leading-tight">
+                                    {cleanText}
+                                  </h5>
+                                </div>
                               </div>
                             );
                           }
                           
                           if (cleanText.match(/^[\d\-\•\*]\s/)) {
                             return (
-                              <div key={idx} className="flex gap-3 items-start pl-3 py-1">
-                                <div className="w-2 h-2 rounded-full bg-gradient-to-br from-teal to-teal/70 mt-2 flex-shrink-0 shadow-sm" />
-                                <p className="text-sm leading-relaxed text-foreground/90">
+                              <div key={idx} className="flex gap-4 items-start py-2">
+                                <div className="w-2.5 h-2.5 rounded-full bg-white/80 mt-2.5 flex-shrink-0 shadow-lg" />
+                                <p className="text-base md:text-lg leading-relaxed text-white/95 font-medium">
                                   {cleanText.replace(/^[\d\-\•\*]\s/, '')}
                                 </p>
                               </div>
@@ -357,28 +362,38 @@ export const TradingJournal = () => {
                           }
                           
                           return (
-                            <p key={idx} className="text-[15px] leading-relaxed text-foreground/85 pl-3">
+                            <p key={idx} className="text-base md:text-lg leading-relaxed text-white/90">
                               {cleanText}
                             </p>
                           );
                         })}
                       </div>
                       
-                      {/* Footer */}
-                      <div className="mt-8 pt-5 border-t border-line/30">
+                      {/* Footer - Branding */}
+                      <div className="mt-10 pt-6 border-t border-white/20">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs text-muted-foreground flex items-center gap-2">
-                            <Brain className="w-4 h-4 text-teal" />
-                            <span className="font-medium">
-                              {entries.length} operaciones analizadas
-                            </span>
-                          </p>
-                          <div className="flex items-center gap-1.5 text-xs text-teal/70">
-                            <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-                            <span>AI activo</span>
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm">
+                              <Brain className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-white font-semibold text-sm">
+                                {entries.length} operaciones analizadas
+                              </p>
+                              <p className="text-white/70 text-xs">
+                                Basado en tu historial real
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-lg" />
+                            <span className="text-white text-xs font-medium">En vivo</span>
                           </div>
                         </div>
                       </div>
+                      
+                      {/* Closing quote mark */}
+                      <div className="absolute bottom-8 right-8 text-white/20 text-6xl font-serif leading-none">"</div>
                     </div>
                   </div>
 
