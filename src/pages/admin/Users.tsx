@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
+import { UserProgressView } from '@/components/admin/UserProgressView';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -440,13 +441,19 @@ export const AdminUsers: React.FC = () => {
                                            {t('admin:users.details.not_verified')}
                                          </span>
                                        </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </SheetContent>
+                                     )}
+                                   </div>
+                                 </div>
+
+                                 {/* User Progress Section */}
+                                 <div className="mt-6 pt-6 border-t">
+                                   <h4 className="text-sm font-medium mb-4">Academy Progress</h4>
+                                   <UserProgressView userId={selectedUser.user_id} />
+                                 </div>
+                               </div>
+                             </div>
+                           )}
+                         </SheetContent>
                       </Sheet>
                     </div>
                   </TableCell>

@@ -43,18 +43,30 @@ export const AdminDashboard: React.FC = () => {
   const { data: metrics, isLoading } = useQuery({
     queryKey: ['admin-dashboard-metrics'],
     queryFn: async () => {
-      const [usersResult, affiliatedResult, signalsResult, coursesResult] = await Promise.all([
+      const [
+        usersResult, 
+        affiliatedResult, 
+        completedLessonsResult,
+        quizAttemptsResult
+      ] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('affiliations').select('id', { count: 'exact', head: true }).eq('is_affiliated', true),
-        supabase.from('signals').select('id', { count: 'exact', head: true }).eq('status', 'published').gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
-        supabase.from('course_events').select('id', { count: 'exact', head: true }).eq('verb', 'completed').gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
+        supabase.from('course_events').select('id', { count: 'exact', head: true })
+          .eq('verb', 'completed')
+          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
+        supabase.from('lms_quiz_attempts').select('id, passed')
+          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
       ]);
+
+      const totalQuizzes = quizAttemptsResult.data?.length || 0;
+      const passedQuizzes = quizAttemptsResult.data?.filter(q => q.passed).length || 0;
+      const quizPassRate = totalQuizzes > 0 ? Math.round((passedQuizzes / totalQuizzes) * 100) : 0;
 
       return {
         totalUsers: usersResult.count || 0,
         affiliatedUsers: affiliatedResult.count || 0,
-        recentSignals: signalsResult.count || 0,
-        completedCourses: coursesResult.count || 0,
+        completedLessonsThisMonth: completedLessonsResult.count || 0,
+        quizPassRate,
       };
     },
   });
@@ -113,19 +125,19 @@ export const AdminDashboard: React.FC = () => {
       trendUp: true,
     },
     {
-      title: 'Señales (30d)',
-      value: metrics?.recentSignals || 0,
-      description: 'Señales publicadas',
-      icon: TrendingUp,
-      trend: '+23%',
-      trendUp: true,
-    },
-    {
-      title: 'Cursos Completados',
-      value: metrics?.completedCourses || 0,
+      title: 'Lecciones Completadas',
+      value: metrics?.completedLessonsThisMonth || 0,
       description: 'Últimos 30 días',
       icon: BookOpen,
       trend: '+15%',
+      trendUp: true,
+    },
+    {
+      title: 'Tasa de Aprobación Quizzes',
+      value: `${metrics?.quizPassRate || 0}%`,
+      description: 'Últimos 30 días',
+      icon: TrendingUp,
+      trend: '+8%',
       trendUp: true,
     },
   ];
