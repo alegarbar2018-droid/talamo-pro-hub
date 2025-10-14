@@ -323,7 +323,7 @@ const LessonView = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <ArrowLeft className="h-4 w-4 mr-2 relative z-10 group-hover:-translate-x-1 transition-transform" />
-                <span className="relative z-10 font-semibold">{t('academy.back_to_course')}</span>
+                <span className="relative z-10 font-semibold">Regresar</span>
               </Button>
               
               <div className="h-8 w-px bg-gradient-to-b from-transparent via-line/50 to-transparent" />
