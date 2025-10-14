@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,12 @@ import {
   Shield,
   Eye,
   Loader2,
+  Share2,
+  Download,
+  RefreshCw,
 } from "lucide-react";
 import { format } from "date-fns";
+import { toPng } from "html-to-image";
 
 interface JournalEntry {
   id: string;
@@ -78,8 +82,10 @@ const typeColors = {
 export const TradingJournal = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const cardRef = useRef<HTMLDivElement>(null);
   const [showNewEntry, setShowNewEntry] = useState(false);
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
+  const [isSharing, setIsSharing] = useState(false);
   const [formData, setFormData] = useState({
     trade_date: format(new Date(), "yyyy-MM-dd'T'HH:mm"),
     instrument: "",
@@ -216,6 +222,74 @@ export const TradingJournal = () => {
     );
   };
 
+  const handleShareCard = async () => {
+    if (!cardRef.current) return;
+    
+    setIsSharing(true);
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: '#0a0a0a',
+      });
+      
+      // Try to use Web Share API if available
+      if (navigator.share && navigator.canShare) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], 'mentor-analysis.png', { type: 'image/png' });
+        
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Mi Análisis de Trading',
+            text: 'Análisis de mi mentor AI de trading',
+          });
+          toast({
+            title: "Compartido exitosamente",
+            description: "La tarjeta ha sido compartida",
+          });
+          return;
+        }
+      }
+      
+      // Fallback: download the image
+      const link = document.createElement('a');
+      link.download = 'mentor-analysis.png';
+      link.href = dataUrl;
+      link.click();
+      
+      toast({
+        title: "Imagen descargada",
+        description: "Puedes compartirla desde tu galería",
+      });
+    } catch (error) {
+      console.error('Error sharing card:', error);
+      toast({
+        title: "Error al compartir",
+        description: "No se pudo compartir la tarjeta. Intenta nuevamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const handleRegenerateAnalysis = async () => {
+    try {
+      await refetchMentor();
+      toast({
+        title: "Análisis actualizado",
+        description: "Se ha generado un nuevo análisis de tus operaciones",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el análisis. Intenta nuevamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const TypeIcon = mentorRec?.type ? typeIcons[mentorRec.type as keyof typeof typeIcons] || Lightbulb : Lightbulb;
   const typeColor = mentorRec?.type ? typeColors[mentorRec.type as keyof typeof typeColors] || "text-teal" : "text-teal";
 
@@ -243,139 +317,185 @@ export const TradingJournal = () => {
 
       {/* Mentor Recommendations */}
       {entries && entries.length > 0 && (
-        <Card className="p-6 bg-gradient-to-br from-teal/5 to-surface border-teal/20">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-lg bg-teal/10">
-              <Sparkles className="w-6 h-6 text-teal" />
-            </div>
-            <div className="flex-1 space-y-4">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-1">
-                  Recomendaciones de tu Mentor AI
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Análisis basado en tus últimas {entries.length} operaciones
-                </p>
-              </div>
-
-              {isLoadingMentor ? (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Analizando tu journal...</span>
+        <div className="space-y-4">
+          {/* Statistics Overview */}
+          {mentorRec?.statistics && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Card className="p-4 bg-gradient-to-br from-surface to-surface/50">
+                <div className="text-xs text-muted-foreground mb-1">Operaciones</div>
+                <div className="text-2xl font-bold text-foreground">
+                  {mentorRec.statistics.totalTrades}
                 </div>
-              ) : mentorRec ? (
-                <div className="space-y-4">
-                  {/* Statistics */}
-                  {mentorRec.statistics && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="p-3 rounded-lg bg-surface/50 border border-line/50">
-                        <div className="text-sm text-muted-foreground">Operaciones</div>
-                        <div className="text-xl font-bold text-foreground">
-                          {mentorRec.statistics.totalTrades}
-                        </div>
+              </Card>
+              <Card className="p-4 bg-gradient-to-br from-teal/10 to-teal/5">
+                <div className="text-xs text-muted-foreground mb-1">Win Rate</div>
+                <div className="text-2xl font-bold text-teal">
+                  {mentorRec.statistics.winRate}%
+                </div>
+              </Card>
+              <Card className="p-4 bg-gradient-to-br from-surface to-surface/50">
+                <div className="text-xs text-muted-foreground mb-1">P&L Total</div>
+                <div className={`text-2xl font-bold ${parseFloat(mentorRec.statistics.totalProfit) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  ${mentorRec.statistics.totalProfit}
+                </div>
+              </Card>
+              <Card className="p-4 bg-gradient-to-br from-surface to-surface/50">
+                <div className="text-xs text-muted-foreground mb-1">Profit Factor</div>
+                <div className="text-2xl font-bold text-foreground">
+                  {mentorRec.statistics.profitFactor}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Mentor Card */}
+          <Card className="overflow-hidden bg-background border-line/50">
+            <div className="p-4 border-b border-line/50 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-teal/10">
+                  <Brain className="w-5 h-5 text-teal" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Análisis de tu Mentor AI</h3>
+                  <p className="text-xs text-muted-foreground">Basado en {entries.length} operaciones</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleRegenerateAnalysis}
+                  variant="ghost"
+                  size="sm"
+                  disabled={isLoadingMentor}
+                  className="hover:bg-surface"
+                >
+                  {isLoadingMentor ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4" />
+                  )}
+                </Button>
+                <Button
+                  onClick={handleShareCard}
+                  variant="ghost"
+                  size="sm"
+                  disabled={isSharing || !mentorRec}
+                  className="hover:bg-surface"
+                >
+                  {isSharing ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Share2 className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {isLoadingMentor ? (
+              <div className="flex items-center justify-center gap-2 p-12 text-muted-foreground">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Analizando tu journal...</span>
+              </div>
+            ) : mentorRec ? (
+              <div ref={cardRef} className="relative overflow-hidden bg-gradient-to-br from-teal via-teal/95 to-teal/90">
+                {/* Subtle patterns */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.08),transparent_50%)]" />
+                
+                <div className="relative p-6 space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20">
+                        <TypeIcon className="w-6 h-6 text-white" />
                       </div>
-                      <div className="p-3 rounded-lg bg-surface/50 border border-line/50">
-                        <div className="text-sm text-muted-foreground">Win Rate</div>
-                        <div className="text-xl font-bold text-teal">
-                          {mentorRec.statistics.winRate}%
-                        </div>
-                      </div>
-                      <div className="p-3 rounded-lg bg-surface/50 border border-line/50">
-                        <div className="text-sm text-muted-foreground">P&L Total</div>
-                        <div className={`text-xl font-bold ${parseFloat(mentorRec.statistics.totalProfit) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                          ${mentorRec.statistics.totalProfit}
-                        </div>
-                      </div>
-                      <div className="p-3 rounded-lg bg-surface/50 border border-line/50">
-                        <div className="text-sm text-muted-foreground">Profit Factor</div>
-                        <div className="text-xl font-bold text-foreground">
-                          {mentorRec.statistics.profitFactor}
-                        </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-white">Diagnóstico Profesional</h4>
+                        <Badge className="mt-1.5 bg-white/15 text-white text-xs border-white/25 capitalize backdrop-blur-sm">
+                          {mentorRec.type}
+                        </Badge>
                       </div>
                     </div>
-                  )}
-
-                  {/* Recommendation - Compact Card */}
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal via-teal/95 to-teal border border-teal/30 shadow-xl">
-                    {/* Subtle overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent" />
-                    
-                    <div className="relative p-6">
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2.5 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30">
-                            <TypeIcon className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-bold text-white">Análisis AI</h4>
-                            <Badge className="mt-1 bg-white/20 text-white text-xs border-white/30 capitalize">
-                              {mentorRec.type}
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/20 backdrop-blur-sm">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                          <span className="text-white text-xs font-medium">{entries.length} ops</span>
-                        </div>
-                      </div>
-                      
-                      {/* Content - Compact */}
-                      <div className="space-y-3 text-white">
-                        {mentorRec.recommendation.split('\n').map((paragraph, idx) => {
-                          const isBold = paragraph.includes('**');
-                          const cleanText = paragraph.replace(/\*\*/g, '');
-                          
-                          if (cleanText.trim() === '') return null;
-                          
-                          if (isBold) {
-                            return (
-                              <h5 key={idx} className="text-base font-bold text-white mt-4 first:mt-0 flex items-center gap-2">
-                                <div className="h-[2px] w-8 bg-white/40 rounded-full" />
-                                {cleanText}
-                              </h5>
-                            );
-                          }
-                          
-                          if (cleanText.match(/^[\d\-\•\*]\s/)) {
-                            return (
-                              <div key={idx} className="flex gap-2.5 items-start">
-                                <div className="w-1.5 h-1.5 rounded-full bg-white/70 mt-2 flex-shrink-0" />
-                                <p className="text-sm leading-relaxed text-white/95">
-                                  {cleanText.replace(/^[\d\-\•\*]\s/, '')}
-                                </p>
-                              </div>
-                            );
-                          }
-                          
-                          return (
-                            <p key={idx} className="text-sm leading-relaxed text-white/90">
-                              {cleanText}
-                            </p>
-                          );
-                        })}
-                      </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20">
+                      <div className="w-2 h-2 rounded-full bg-green-300 animate-pulse shadow-lg" />
+                      <span className="text-white text-xs font-medium">{entries.length} ops</span>
                     </div>
                   </div>
+                  
+                  {/* Content */}
+                  <div className="space-y-3 text-white">
+                    {mentorRec.recommendation.split('\n').map((paragraph, idx) => {
+                      const isBold = paragraph.includes('**');
+                      const cleanText = paragraph.replace(/\*\*/g, '');
+                      
+                      if (cleanText.trim() === '') return null;
+                      
+                      if (isBold) {
+                        return (
+                          <div key={idx} className="mt-5 first:mt-0">
+                            <div className="flex items-center gap-2.5 mb-2">
+                              <div className="h-[2.5px] w-10 bg-white/50 rounded-full" />
+                              <h5 className="text-base font-bold text-white leading-tight">
+                                {cleanText}
+                              </h5>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      if (cleanText.match(/^[\d\-\•\*]\s/)) {
+                        return (
+                          <div key={idx} className="flex gap-3 items-start pl-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-white/80 mt-2 flex-shrink-0 shadow-sm" />
+                            <p className="text-sm leading-relaxed text-white/95 font-medium">
+                              {cleanText.replace(/^[\d\-\•\*]\s/, '')}
+                            </p>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <p key={idx} className="text-sm leading-relaxed text-white/90 pl-2">
+                          {cleanText}
+                        </p>
+                      );
+                    })}
+                  </div>
 
-                  <Button
-                    onClick={() => refetchMentor()}
-                    variant="outline"
-                    size="sm"
-                    className="border-teal/30 hover:bg-teal/10"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Actualizar Recomendaciones
-                  </Button>
+                  {/* Footer Branding */}
+                  <div className="pt-4 mt-2 border-t border-white/15 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-1.5 rounded-lg bg-white/15">
+                        <Brain className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-white text-xs font-semibold">Mentor AI Experto</p>
+                        <p className="text-white/70 text-[10px]">PhD Trading & Psicología</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-white/70 text-[10px]">
+                        {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <p className="text-muted-foreground">
-                  No se pudieron cargar las recomendaciones. Intenta nuevamente.
-                </p>
-              )}
-            </div>
-          </div>
-        </Card>
+              </div>
+            ) : (
+              <div className="p-8 text-center text-muted-foreground">
+                <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No se pudieron cargar las recomendaciones</p>
+                <Button
+                  onClick={handleRegenerateAnalysis}
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                >
+                  Reintentar
+                </Button>
+              </div>
+            )}
+          </Card>
+        </div>
       )}
 
       {/* New Entry Form */}
