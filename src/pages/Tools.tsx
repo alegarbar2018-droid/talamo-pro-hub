@@ -2,20 +2,33 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardNavigation from "@/components/DashboardNavigation";
-import { Calculator, ArrowRight, TrendingUp, DollarSign, PieChart, Target, BarChart3, Activity, Zap, FileText, Wrench } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { ArrowRight, Calculator, FileText, BookOpen, Target } from "lucide-react";
+import { ToolsOverview } from "@/components/tools/ToolsOverview";
+import { ExplainerCard } from "@/components/tools/ExplainerCard";
 import { RiskCalculator } from "@/components/tools/RiskCalculator";
-import { useTranslation } from "react-i18next";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Tools = () => {
-  const { t } = useTranslation(['tools']);
-  const [activeCalculator, setActiveCalculator] = useState("risk-calculator");
-  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // Fetch calculator configs
+  const { data: calculatorConfigs, isLoading: calculatorsLoading } = useQuery({
+    queryKey: ["calculator_configs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("calculator_configs")
+        .select("*")
+        .eq("status", "active")
+        .order("position", { ascending: true });
+      if (error) throw error;
+      return data;
+    }
+  });
 
   // Fetch contracts
   const { data: contracts, isLoading: contractsLoading } = useQuery({
@@ -45,19 +58,9 @@ const Tools = () => {
     }
   });
 
-  // Fetch calculator configs
-  const { data: calculatorConfigs, isLoading: calculatorsLoading } = useQuery({
-    queryKey: ["calculator_configs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("calculator_configs")
-        .select("*")
-        .eq("status", "active")
-        .order("position", { ascending: true });
-      if (error) throw error;
-      return data;
-    }
-  });
+  // Group calculators by category
+  const basicCalculators = calculatorConfigs?.filter(c => c.category === "Básicas") || [];
+  const advancedCalculators = calculatorConfigs?.filter(c => c.category !== "Básicas") || [];
 
   // Group contracts by asset_class
   const groupedContracts = contracts?.reduce((acc, contract) => {
@@ -77,19 +80,8 @@ const Tools = () => {
     return acc;
   }, {} as Record<string, typeof formulas>);
 
-  // Use calculatorConfigs from DB or fallback
-  const calculators = calculatorConfigs || [
-    { id: "risk-calculator", calculator_id: "risk-calculator", name: t('tools:tools.risk_calculator'), icon: "Target", description: "Calcula el tamaño de posición óptimo", category: "Gestión de Riesgo", status: "active" }
-  ];
-
-  const filteredCalculators = filterCategory
-    ? calculators.filter(calc => calc.category === filterCategory)
-    : calculators;
-
-  const categories = Array.from(new Set(calculators.map(c => c.category)));
-
   const getIconComponent = (iconName: string) => {
-    const icons: Record<string, any> = { Target, Activity, DollarSign, TrendingUp, BarChart3, PieChart, Zap, FileText, Calculator };
+    const icons: Record<string, any> = { Target, Calculator, FileText, BookOpen };
     return icons[iconName] || Calculator;
   };
 
@@ -97,266 +89,325 @@ const Tools = () => {
     <div className="min-h-screen bg-background">
       <DashboardNavigation />
       
-      {/* Hero Section Premium */}
-      <div className="relative overflow-hidden border-b border-line/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-surface to-accent/5" />
-        <div className="absolute top-10 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: "1s"}} />
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Button variant="ghost" onClick={() => window.history.back()} className="mb-6">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-primary/5 via-surface to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Button variant="ghost" onClick={() => window.history.back()} className="mb-4">
             <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
-            {t('tools:back_to_dashboard')}
+            Dashboard
           </Button>
-          <div className="text-center">
-            <Badge variant="outline" className="mb-4 border-primary/30 text-primary">
-              <Wrench className="h-3 w-3 mr-1" />
-              Professional Tools
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              {t('tools:title')}
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Herramientas de Trading
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('tools:subtitle')}
+            <p className="text-muted-foreground">
+              Calculadoras profesionales, especificaciones técnicas y fórmulas explicadas
             </p>
           </div>
         </div>
       </div>
 
-      {/* Main Content with Sidebar */}
-      <div className="flex max-w-7xl mx-auto">
-        {/* Sidebar Filters */}
-        <aside className="hidden lg:block w-64 border-r border-line bg-surface/30 min-h-screen sticky top-14 p-6 space-y-6">
-          <div>
-            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-              <Calculator className="h-4 w-4 text-primary" />
-              Categorías
-            </h3>
-            <div className="space-y-2">
-              <Button
-                variant={filterCategory === null ? "default" : "ghost"}
-                size="sm"
-                className="w-full justify-start"
-                onClick={() => setFilterCategory(null)}
-              >
-                Todas
-              </Button>
-              {categories.map((cat) => (
-                <Button
-                  key={cat}
-                  variant={filterCategory === cat ? "default" : "ghost"}
-                  size="sm"
-                  className="w-full justify-start"
-                  onClick={() => setFilterCategory(cat)}
-                >
-                  {cat}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </aside>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-8">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="calculators">Calculadoras</TabsTrigger>
+            <TabsTrigger value="contracts">Contratos</TabsTrigger>
+            <TabsTrigger value="formulas">Fórmulas</TabsTrigger>
+          </TabsList>
 
-        {/* Main Content Area */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-          {/* Calculators Section */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-foreground">Calculadoras</h2>
-              <Badge variant="outline">{filteredCalculators.length} disponibles</Badge>
-            </div>
-            
-            {calculatorsLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[...Array(4)].map((_, i) => (
-                  <Skeleton key={i} className="h-48" />
-                ))}
-              </div>
-            ) : (
-              <Accordion type="single" collapsible className="space-y-4">
-                {categories.map((category) => {
-                  const categoryCalcs = filteredCalculators.filter(c => c.category === category);
-                  if (categoryCalcs.length === 0) return null;
+          {/* Overview Tab */}
+          <TabsContent value="overview">
+            <ToolsOverview
+              onNavigateToCalculators={() => setActiveTab("calculators")}
+              onNavigateToContracts={() => setActiveTab("contracts")}
+              onNavigateToFormulas={() => setActiveTab("formulas")}
+            />
+          </TabsContent>
 
-                  return (
-                    <AccordionItem key={category} value={category} className="border border-line rounded-lg bg-surface/50 px-6">
-                      <AccordionTrigger className="hover:no-underline">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-primary/10">
-                            <Calculator className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="text-left">
-                            <h3 className="font-semibold text-foreground">{category}</h3>
-                            <p className="text-sm text-muted-foreground">{categoryCalcs.length} calculadora(s)</p>
-                          </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pt-4">
-                        <div className="grid grid-cols-1 gap-4">
-                          {categoryCalcs.map((calc) => {
-                            const Icon = getIconComponent(calc.icon);
-                            const isDisabled = calc.status !== "active";
-                            
-                            return (
-                              <Card
-                                key={calc.id}
-                                className={`group transition-all duration-300 ${
-                                  isDisabled
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer hover:shadow-lg hover:border-primary/50"
-                                }`}
-                                onClick={() => !isDisabled && setActiveCalculator(calc.calculator_id)}
-                              >
-                                <CardHeader className="pb-3">
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex items-center gap-3">
-                                      <div className="p-2 rounded-lg bg-primary/10">
-                                        <Icon className="h-5 w-5 text-primary" />
-                                      </div>
-                                      <div>
-                                        <CardTitle className="text-base">{calc.name}</CardTitle>
-                                        <CardDescription className="text-sm mt-1">{calc.description}</CardDescription>
-                                      </div>
-                                    </div>
-                                    {isDisabled && (
-                                      <Badge variant="secondary">Próximamente</Badge>
-                                    )}
-                                  </div>
-                                </CardHeader>
-                              </Card>
-                            );
-                          })}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
-                })}
-              </Accordion>
-            )}
+          {/* Calculadoras Tab */}
+          <TabsContent value="calculators" className="space-y-8">
+            {/* Intro Card */}
+            <ExplainerCard
+              title="Calculadoras de Trading"
+              description="Herramientas para calcular tamaño de posición, riesgo, P&L y más en segundos."
+              icon={<Calculator className="h-6 w-6 text-primary" />}
+              whenToUse={[
+                "Antes de abrir cualquier trade",
+                "Para verificar tu exposición total",
+                "Al planificar escenarios de drawdown"
+              ]}
+              whatYouNeed={[
+                "Saldo de cuenta actual",
+                "% de riesgo por operación",
+                "Especificaciones del contrato"
+              ]}
+              primaryCTA={{
+                label: "Comenzar a calcular",
+                onClick: () => {}
+              }}
+              secondaryCTA={{
+                label: "Ver en Academia",
+                href: "/academy"
+              }}
+            />
 
-            {/* Active Calculator Display */}
-            {activeCalculator === "risk-calculator" && (
-              <div className="mt-8">
-                <RiskCalculator />
-              </div>
-            )}
-          </section>
-
-          {/* Contract Specifications Section */}
-          <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <FileText className="h-6 w-6 text-primary" />
-              Especificaciones de Contratos
-            </h2>
-            
-            {contractsLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[...Array(4)].map((_, i) => (
-                  <Skeleton key={i} className="h-40" />
-                ))}
-              </div>
-            ) : (
-              <Accordion type="single" collapsible className="space-y-4">
-                {groupedContracts && Object.entries(groupedContracts).map(([assetClass, items]) => (
-                  <AccordionItem key={assetClass} value={assetClass} className="border border-line rounded-lg bg-surface/50 px-6">
-                    <AccordionTrigger>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="capitalize">{assetClass}</Badge>
-                        <span className="text-sm text-muted-foreground">{items.length} contrato(s)</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {items.map((contract) => (
-                          <Card key={contract.id} className="border-line">
-                            <CardHeader>
-                              <CardTitle className="text-base">{contract.symbol}</CardTitle>
-                              <CardDescription>{contract.name}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-2 text-sm">
-                              <div className="grid grid-cols-2 gap-2">
-                                <div>
-                                  <span className="text-muted-foreground">Contract Size:</span>
-                                  <p className="font-medium">{contract.contract_size}</p>
-                                </div>
-                                <div>
-                                  <span className="text-muted-foreground">Pip Value:</span>
-                                  <p className="font-medium">{contract.pip_value}</p>
-                                </div>
-                                <div>
-                                  <span className="text-muted-foreground">Min/Max Lot:</span>
-                                  <p className="font-medium">{contract.min_lot} - {contract.max_lot}</p>
-                                </div>
-                                <div>
-                                  <span className="text-muted-foreground">Leverage:</span>
-                                  <p className="font-medium">1:{contract.leverage_max}</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            )}
-          </section>
-
-          {/* Trading Formulas Section */}
-          <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Calculator className="h-6 w-6 text-primary" />
-              Biblioteca de Fórmulas
-            </h2>
-            
-            {formulasLoading ? (
+            {/* Básicas */}
+            {basicCalculators.length > 0 && (
               <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-foreground">Calculadoras Básicas</h3>
+                  <Badge variant="outline">{basicCalculators.length} disponibles</Badge>
+                </div>
+                
+                {calculatorsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[...Array(4)].map((_, i) => (
+                      <Skeleton key={i} className="h-48" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {basicCalculators.map((calc) => {
+                      const Icon = getIconComponent(calc.icon);
+                      return (
+                        <Card key={calc.id} className="hover:shadow-lg transition-shadow">
+                          <CardHeader>
+                            <div className="flex items-center gap-3">
+                              <div className="p-3 rounded-lg bg-primary/10">
+                                <Icon className="h-6 w-6 text-primary" />
+                              </div>
+                              <div>
+                                <CardTitle>{calc.name}</CardTitle>
+                                <CardDescription>{calc.description}</CardDescription>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <Button className="w-full">
+                              Abrir
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Avanzadas */}
+            {advancedCalculators.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-foreground">Calculadoras Avanzadas</h3>
+                  <Badge variant="secondary">{advancedCalculators.length} disponibles</Badge>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {advancedCalculators.map((calc) => {
+                    const Icon = getIconComponent(calc.icon);
+                    const isComingSoon = calc.status === "coming_soon";
+                    
+                    return (
+                      <Card key={calc.id} className={isComingSoon ? "opacity-60" : "hover:shadow-lg transition-shadow"}>
+                        <CardHeader>
+                          <div className="flex items-center gap-3">
+                            <div className="p-3 rounded-lg bg-accent/10">
+                              <Icon className="h-6 w-6 text-accent" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <CardTitle>{calc.name}</CardTitle>
+                                {isComingSoon && <Badge variant="outline">Próximamente</Badge>}
+                              </div>
+                              <CardDescription>{calc.description}</CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <Button className="w-full" disabled={isComingSoon}>
+                            {isComingSoon ? "Próximamente" : "Abrir"}
+                            {!isComingSoon && <ArrowRight className="ml-2 h-4 w-4" />}
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Demo: Risk Calculator */}
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-foreground">Demo: Calculadora de Riesgo</h3>
+              <RiskCalculator />
+            </div>
+          </TabsContent>
+
+          {/* Contratos Tab */}
+          <TabsContent value="contracts" className="space-y-8">
+            {/* Intro Card */}
+            <ExplainerCard
+              title="Especificaciones de Contratos"
+              description="La 'cédula técnica' completa de cada símbolo: contract size, pip value, swaps, horarios."
+              icon={<FileText className="h-6 w-6 text-primary" />}
+              whenToUse={[
+                "Al operar un nuevo símbolo por primera vez",
+                "Para calcular costos overnight (swaps)",
+                "Verificar horarios de trading del instrumento"
+              ]}
+              whatYouNeed={[
+                "Nombre o símbolo del instrumento",
+                "Tipo de cuenta (estándar, pro, etc.)"
+              ]}
+              primaryCTA={{
+                label: "Buscar contrato",
+                onClick: () => {}
+              }}
+            />
+
+            {contractsLoading ? (
+              <div className="grid gap-4">
+                {[...Array(6)].map((_, i) => (
                   <Skeleton key={i} className="h-32" />
                 ))}
               </div>
-            ) : (
-              <Accordion type="single" collapsible className="space-y-4">
-                {groupedFormulas && Object.entries(groupedFormulas).map(([category, items]) => (
-                  <AccordionItem key={category} value={category} className="border border-line rounded-lg bg-surface/50 px-6">
-                    <AccordionTrigger>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="capitalize">{category}</Badge>
-                        <span className="text-sm text-muted-foreground">{items.length} fórmula(s)</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-4 space-y-4">
-                      {items.map((formula) => (
-                        <Card key={formula.id} className="border-line">
+            ) : groupedContracts && Object.keys(groupedContracts).length > 0 ? (
+              <div className="space-y-8">
+                {Object.entries(groupedContracts).map(([assetClass, contractList]) => (
+                  <div key={assetClass} className="space-y-4">
+                    <h3 className="text-xl font-semibold text-foreground capitalize">
+                      {assetClass}
+                      <Badge variant="outline" className="ml-3">{contractList.length}</Badge>
+                    </h3>
+                    <div className="grid gap-4">
+                      {contractList.map((contract) => (
+                        <Card key={contract.id}>
                           <CardHeader>
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-center justify-between">
                               <div>
-                                <CardTitle className="text-base">{formula.name}</CardTitle>
-                                <CardDescription className="mt-1">{formula.description}</CardDescription>
+                                <CardTitle className="font-mono">{contract.symbol}</CardTitle>
+                                <CardDescription>{contract.name}</CardDescription>
                               </div>
-                              <Badge variant="secondary">{formula.difficulty}</Badge>
+                              <Badge variant="default">Activo</Badge>
                             </div>
                           </CardHeader>
-                          <CardContent className="space-y-3">
-                            <div className="p-4 rounded-lg bg-muted/50 font-mono text-sm">
-                              {formula.formula_plain}
+                          <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">Contract Size:</span>
+                              <p className="font-semibold">{contract.contract_size.toLocaleString()}</p>
                             </div>
-                            {formula.explanation && (
-                              <p className="text-sm text-muted-foreground">{formula.explanation}</p>
-                            )}
+                            <div>
+                              <span className="text-muted-foreground">Pip Value:</span>
+                              <p className="font-semibold">${contract.pip_value}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Min/Max Lot:</span>
+                              <p className="font-semibold">{contract.min_lot} - {contract.max_lot}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Leverage:</span>
+                              <p className="font-semibold">1:{contract.leverage_max}</p>
+                            </div>
                           </CardContent>
                         </Card>
                       ))}
-                    </AccordionContent>
-                  </AccordionItem>
+                    </div>
+                  </div>
                 ))}
-              </Accordion>
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No hay contratos disponibles</p>
+                </CardContent>
+              </Card>
             )}
-          </section>
+          </TabsContent>
 
-          {/* Trading Disclaimer */}
-          <TradingDisclaimer context="tools" variant="compact" showCollapsible={true} />
-        </main>
+          {/* Fórmulas Tab */}
+          <TabsContent value="formulas" className="space-y-8">
+            {/* Intro Card */}
+            <ExplainerCard
+              title="Glosario de Fórmulas de Trading"
+              description="Definiciones claras con ejemplos prácticos para entender el 'por qué' detrás de cada cálculo."
+              icon={<BookOpen className="h-6 w-6 text-primary" />}
+              whenToUse={[
+                "Para aprender nuevas fórmulas de trading",
+                "Al revisar tu estrategia de gestión de riesgo",
+                "Cuando necesitas un recordatorio rápido"
+              ]}
+              whatYouNeed={[
+                "Concepto o término que quieres aprender",
+                "Tiempo para leer ejemplos y casos de uso"
+              ]}
+              primaryCTA={{
+                label: "Explorar fórmulas",
+                onClick: () => {}
+              }}
+              secondaryCTA={{
+                label: "Ver en Academia",
+                href: "/academy"
+              }}
+            />
+
+            {formulasLoading ? (
+              <div className="grid gap-4">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-28" />
+                ))}
+              </div>
+            ) : groupedFormulas && Object.keys(groupedFormulas).length > 0 ? (
+              <div className="space-y-8">
+                {Object.entries(groupedFormulas).map(([category, formulaList]) => (
+                  <div key={category} className="space-y-4">
+                    <h3 className="text-xl font-semibold text-foreground capitalize">
+                      {category.replace('_', ' ')}
+                      <Badge variant="outline" className="ml-3">{formulaList.length}</Badge>
+                    </h3>
+                    <div className="grid gap-4">
+                      {formulaList.map((formula) => (
+                        <Card key={formula.id}>
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <CardTitle>{formula.name}</CardTitle>
+                              <Badge variant="outline" className="capitalize">
+                                {formula.difficulty}
+                              </Badge>
+                            </div>
+                            <CardDescription>{formula.description}</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            <div className="p-3 bg-muted rounded-lg">
+                              <code className="text-sm font-mono">{formula.formula_plain}</code>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{formula.explanation}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No hay fórmulas disponibles</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Disclaimer */}
+        <div className="mt-12">
+          <TradingDisclaimer />
+        </div>
       </div>
     </div>
   );

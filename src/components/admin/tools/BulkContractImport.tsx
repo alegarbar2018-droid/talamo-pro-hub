@@ -167,8 +167,9 @@ const BulkContractImport = ({ onSuccess, onCancel }: BulkContractImportProps) =>
   return (
     <div className="space-y-6">
       <Tabs defaultValue="import" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="import">Importar</TabsTrigger>
+          <TabsTrigger value="preview">Vista Previa</TabsTrigger>
           <TabsTrigger value="guide">Guía de Sintaxis</TabsTrigger>
         </TabsList>
 
@@ -265,10 +266,59 @@ const BulkContractImport = ({ onSuccess, onCancel }: BulkContractImportProps) =>
           )}
         </TabsContent>
 
+        <TabsContent value="preview" className="space-y-4">
+          {parsedContracts.length > 0 ? (
+            <div className="space-y-4">
+              <Alert>
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription>
+                  <strong>Contratos válidos: {parsedContracts.length}</strong> - Listos para importar
+                </AlertDescription>
+              </Alert>
+              
+              <div className="border rounded-lg overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted">
+                    <tr>
+                      <th className="px-4 py-2 text-left">Símbolo</th>
+                      <th className="px-4 py-2 text-left">Nombre</th>
+                      <th className="px-4 py-2 text-left">Clase</th>
+                      <th className="px-4 py-2 text-left">Contract Size</th>
+                      <th className="px-4 py-2 text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {parsedContracts.map((contract, idx) => (
+                      <tr key={idx} className="border-t">
+                        <td className="px-4 py-2 font-mono font-semibold">{contract.symbol}</td>
+                        <td className="px-4 py-2">{contract.name}</td>
+                        <td className="px-4 py-2 capitalize">{contract.asset_class}</td>
+                        <td className="px-4 py-2">{contract.contract_size.toLocaleString()}</td>
+                        <td className="px-4 py-2">
+                          <Badge variant={contract.status === 'active' ? 'default' : 'secondary'}>
+                            {contract.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Sin datos para previsualizar.</strong> Pega tus contratos en la pestaña "Importar" y presiona "Validar" para ver la vista previa.
+              </AlertDescription>
+            </Alert>
+          )}
+        </TabsContent>
+
         <TabsContent value="guide">
           <Card>
             <CardHeader>
-              <CardTitle>Guía de Sintaxis YAML</CardTitle>
+              <CardTitle>Guía de Sintaxis - Bulk Import de Contratos v2</CardTitle>
               <CardDescription>
                 Usa este formato para importar múltiples contratos a la vez
               </CardDescription>
