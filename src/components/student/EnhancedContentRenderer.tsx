@@ -8,6 +8,13 @@ interface EnhancedContentRendererProps {
 }
 
 export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = ({ content }) => {
+  const h2Counter = React.useRef(0);
+  
+  // Reset counter on each render
+  React.useEffect(() => {
+    h2Counter.current = 0;
+  }, [content]);
+  
   const parseContent = (markdown: string) => {
     const sections: JSX.Element[] = [];
     let currentIndex = 0;
@@ -32,7 +39,20 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
         if (normalContent.trim()) {
           sections.push(
             <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
-              <ReactMarkdown>{normalContent}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  h2: ({ children, ...props }) => {
+                    const id = `topic-h2-${h2Counter.current++}`;
+                    return (
+                      <h2 id={id} data-topic-id={id} {...props}>
+                        {children}
+                      </h2>
+                    );
+                  },
+                }}
+              >
+                {normalContent}
+              </ReactMarkdown>
             </div>
           );
         }
@@ -78,7 +98,20 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
       if (remaining.trim()) {
         sections.push(
           <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
-            <ReactMarkdown>{remaining}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                h2: ({ children, ...props }) => {
+                  const id = `topic-h2-${h2Counter.current++}`;
+                  return (
+                    <h2 id={id} data-topic-id={id} {...props}>
+                      {children}
+                    </h2>
+                  );
+                },
+              }}
+            >
+              {remaining}
+            </ReactMarkdown>
           </div>
         );
       }
@@ -86,9 +119,23 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
 
     // If no special blocks found, render as normal markdown
     if (sections.length === 0) {
+      h2Counter.current = 0; // Reset counter
       return [
         <div key="md-default" className="prose prose-sm max-w-none dark:prose-invert">
-          <ReactMarkdown>{markdown}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              h2: ({ children, ...props }) => {
+                const id = `topic-h2-${h2Counter.current++}`;
+                return (
+                  <h2 id={id} data-topic-id={id} {...props}>
+                    {children}
+                  </h2>
+                );
+              },
+            }}
+          >
+            {markdown}
+          </ReactMarkdown>
         </div>
       ];
     }

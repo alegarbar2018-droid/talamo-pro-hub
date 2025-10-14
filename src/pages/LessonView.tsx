@@ -180,9 +180,9 @@ const LessonView = () => {
       rootMargin: '0px',
     });
 
-    // Observe all content sections
-    const contentSection = document.querySelector('[data-topic-id="topic-content"]');
-    if (contentSection) observer.observe(contentSection);
+    // Observe all content sections with data-topic-id
+    const contentSections = document.querySelectorAll('[data-topic-id]');
+    contentSections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
   }, [tocEnabled, markTopicComplete, lesson]);
@@ -198,18 +198,6 @@ const LessonView = () => {
     window.addEventListener('quiz-completed', handleQuizComplete);
     return () => window.removeEventListener('quiz-completed', handleQuizComplete);
   }, [tocEnabled, markTopicComplete]);
-
-  // Listen to progress updates - ALWAYS run hook, condition inside
-  useEffect(() => {
-    if (!tocEnabled) return;
-    
-    const handleProgressUpdate = () => {
-      queryClient.invalidateQueries({ queryKey: ['lesson-topics', lessonId] });
-    };
-    
-    window.addEventListener('lesson-progress-updated', handleProgressUpdate);
-    return () => window.removeEventListener('lesson-progress-updated', handleProgressUpdate);
-  }, [tocEnabled, queryClient, lessonId]);
 
   // ============================================
   // END HOOKS SECTION
@@ -272,12 +260,27 @@ const LessonView = () => {
 
   const handleTopicClick = (topicId: string) => {
     setActiveTopicId(topicId);
-    const el = getTopicRef(topicId);
+    
+    // First try to get from registered refs
+    let el = getTopicRef(topicId);
+    
+    // Fallback: try to find by data-topic-id attribute
+    if (!el) {
+      el = document.querySelector(`[data-topic-id="${topicId}"]`) as HTMLElement;
+    }
+    
+    // Fallback: for h2 topics, find by id in the rendered markdown
+    if (!el && topicId.startsWith('topic-h2-')) {
+      const h2Elements = document.querySelectorAll('.prose h2');
+      const index = parseInt(topicId.replace('topic-h2-', ''), 10);
+      el = h2Elements[index] as HTMLElement;
+    }
+    
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       el.classList.add('ring-2', 'ring-teal', 'ring-offset-2');
       setTimeout(() => {
-        el.classList.remove('ring-2', 'ring-teal', 'ring-offset-2');
+        el?.classList.remove('ring-2', 'ring-teal', 'ring-offset-2');
       }, 2000);
     }
   };

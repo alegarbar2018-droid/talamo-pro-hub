@@ -5,7 +5,7 @@
  * any schema changes. Generates deterministic anchors and titles.
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getLessonProgress, updateTopicProgress } from '@/lib/lessonTracking';
 import { isFeatureEnabled } from '@/lib/flags';
@@ -87,6 +87,21 @@ export function useLessonTopics(lesson: LessonPayload | null | undefined, resour
   const { t } = useTranslation();
   const tocEnabled = isFeatureEnabled('academy.lesson_toc');
   const topicRefs = useMemo(() => new Map<string, HTMLElement | null>(), []);
+  const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Listen to progress updates and force re-render
+  useEffect(() => {
+    if (!tocEnabled) return;
+    
+    const handleProgressUpdate = (e: any) => {
+      if (lesson && e.detail?.lessonId === lesson.id) {
+        setRefreshKey(prev => prev + 1);
+      }
+    };
+    
+    window.addEventListener('lesson-progress-updated', handleProgressUpdate);
+    return () => window.removeEventListener('lesson-progress-updated', handleProgressUpdate);
+  }, [tocEnabled, lesson]);
   
   const topics = useMemo(() => {
     // If feature is disabled, return empty array
@@ -149,7 +164,7 @@ export function useLessonTopics(lesson: LessonPayload | null | undefined, resour
     }
     
     return result;
-  }, [tocEnabled, lesson, resources, t]);
+  }, [tocEnabled, lesson, resources, t, refreshKey]);
   
   const completedCount = useMemo(() => {
     if (!tocEnabled) return 0;
