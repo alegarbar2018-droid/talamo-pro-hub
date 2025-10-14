@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardNavigation from "@/components/DashboardNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -87,8 +86,6 @@ const Tools = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNavigation />
-      
       {/* Hero Section */}
       <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-primary/5 via-surface to-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
