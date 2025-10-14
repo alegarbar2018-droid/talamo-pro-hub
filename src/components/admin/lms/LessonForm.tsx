@@ -10,8 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Plus, X, ImagePlus } from "lucide-react";
+import { Loader2, Plus, X, ImagePlus, HelpCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 
 const lessonSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -54,6 +55,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
   const [isUploadingContentImage, setIsUploadingContentImage] = useState(false);
+  const [showSyntaxGuide, setShowSyntaxGuide] = useState(false);
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Fetch existing resources when editing a lesson
@@ -428,17 +430,88 @@ export const LessonForm: React.FC<LessonFormProps> = ({
           name="content_md"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Lesson Content (Markdown)</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Lesson Content (Markdown)</FormLabel>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSyntaxGuide(!showSyntaxGuide)}
+                >
+                  <HelpCircle className="w-4 h-4 mr-1" />
+                  Syntax Guide
+                </Button>
+              </div>
+
+              {showSyntaxGuide && (
+                <Collapsible open={showSyntaxGuide} className="border rounded-lg p-4 bg-muted/50 mb-2">
+                  <CollapsibleContent>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <h4 className="font-semibold mb-1">📚 Accordion (Collapsible Sections)</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::accordion
+## Section Title 1
+Content here...
+
+## Section Title 2
+More content...
+:::`}
+                        </pre>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-1">📑 Tabs</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::tabs
+[label="Tab 1"]
+Content for tab 1...
+
+[label="Tab 2"]
+Content for tab 2...
+:::`}
+                        </pre>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-1">🔄 Flip Card (Question/Answer)</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::flipcard
+[front]
+Question or term
+
+[back]
+Answer or definition
+:::`}
+                        </pre>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-1">⚠️ Callout (Highlighted Messages)</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::callout type="warning"
+Important message here!
+:::`}
+                        </pre>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Types: info, warning, success, danger
+                        </p>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+
               <FormControl>
                 <Textarea
                   ref={contentTextareaRef}
-                  placeholder="# Introduction&#10;&#10;Lesson content here..."
+                  placeholder="# Introduction&#10;&#10;Lesson content here...&#10;&#10;:::callout type=&quot;info&quot;&#10;💡 Use the Syntax Guide above for interactive elements!&#10;:::"
                   className="min-h-[200px] font-mono text-sm"
                   {...field}
                 />
               </FormControl>
               <div className="flex items-center justify-between mt-2">
-                <FormDescription>Supports Markdown formatting</FormDescription>
+                <FormDescription>Supports Markdown + Interactive Components</FormDescription>
                 <div>
                   <input
                     type="file"

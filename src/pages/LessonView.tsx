@@ -10,7 +10,7 @@ import { QuizView } from "@/components/student/QuizView";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import ReactMarkdown from 'react-markdown';
+import { EnhancedContentRenderer } from "@/components/student/EnhancedContentRenderer";
 
 const LessonView = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -215,9 +215,7 @@ const LessonView = () => {
               <CardTitle>Lesson Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm max-w-none dark:prose-invert">
-                <ReactMarkdown>{lesson.content_md}</ReactMarkdown>
-              </div>
+              <EnhancedContentRenderer content={lesson.content_md} />
               {lesson.duration_min && (
                 <p className="text-sm text-muted-foreground mt-4">
                   Duration: {lesson.duration_min} minutes
