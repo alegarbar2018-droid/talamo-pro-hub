@@ -24,6 +24,8 @@ import { useTranslation } from "react-i18next";
 import { formatDateTime } from "@/lib/locale";
 import AffiliationGate from "@/components/AffiliationGate";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const { user, isValidated, signOut, loading } = useAuth();
@@ -32,6 +34,18 @@ const Dashboard = () => {
   
   // Real data queries
   const { data: dashboardStats, isLoading: statsLoading } = useDashboardStats();
+  
+  // Fetch published courses count for badge
+  const { data: publishedCoursesCount } = useQuery({
+    queryKey: ['published-courses-count'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('lms_courses')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published');
+      return count || 0;
+    }
+  });
 
   useEffect(() => {
     console.log('Dashboard - Auth state changed:', { 
@@ -92,7 +106,10 @@ const Dashboard = () => {
       icon: BookOpen,
       progress: academyProgress,
       action: () => navigate("/academy"),
-      color: "teal"
+      color: "teal",
+      badge: publishedCoursesCount && publishedCoursesCount > 0 
+        ? `${publishedCoursesCount} ${publishedCoursesCount === 1 ? 'course' : 'courses'}` 
+        : undefined
     },
     {
       title: t("dashboard:modules.signals.title"),

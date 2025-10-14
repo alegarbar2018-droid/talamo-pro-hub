@@ -89,7 +89,15 @@ export const FullCourseForm: React.FC<FullCourseFormProps> = ({ course, onSucces
 
         if (courseError) throw courseError;
 
-        toast.success('Course updated successfully');
+        if (data.status === 'draft') {
+          toast.success('Course updated as draft', {
+            description: 'Students won\'t see this course until you publish it.',
+          });
+        } else {
+          toast.success('Course published!', {
+            description: 'Students can now access this course.',
+          });
+        }
       } else {
         // Create new course
         // First create the course_item
@@ -120,7 +128,16 @@ export const FullCourseForm: React.FC<FullCourseFormProps> = ({ course, onSucces
 
         if (courseError) throw courseError;
 
-        toast.success('Course created successfully');
+        if (data.status === 'draft') {
+          toast.info('Course saved as draft', {
+            description: 'Students won\'t see this course until you publish it.',
+            duration: 5000,
+          });
+        } else {
+          toast.success('Course published!', {
+            description: 'Students can now access this course.',
+          });
+        }
       }
       
       onSuccess();

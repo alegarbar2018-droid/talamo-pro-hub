@@ -18,12 +18,17 @@ import { useNavigate } from "react-router-dom";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { useObservability } from "@/components/business/ObservabilityProvider";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserCourseProgress } from "@/hooks/useDashboardStats";
 
 const Academy = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['academy']);
   const { trackPageView } = useObservability();
   const { session } = useAuth();
+  const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+  
+  // Get user's progress for all courses
+  const { data: coursesProgress } = useUserCourseProgress();
 
   useEffect(() => {
     trackPageView('academy');
@@ -67,6 +72,11 @@ const Academy = () => {
     navigate(`/academy/course/${courseSlug}`);
   };
 
+  // Filter courses by level
+  const filteredCourses = selectedLevel 
+    ? courses?.filter(c => c.level === selectedLevel)
+    : courses;
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -100,18 +110,66 @@ const Academy = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Level Filter */}
+        {courses && courses.length > 0 && (
+          <div className="flex gap-2 mb-6">
+            <Button
+              variant={selectedLevel === null ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setSelectedLevel(null)}
+            >
+              All Levels
+            </Button>
+            {[0, 1, 2, 3, 4].map(level => {
+              const levelCount = courses.filter(c => c.level === level).length;
+              if (levelCount === 0) return null;
+              return (
+                <Button
+                  key={level}
+                  variant={selectedLevel === level ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSelectedLevel(level)}
+                >
+                  Level {level} ({levelCount})
+                </Button>
+              );
+            })}
+          </div>
+        )}
+
         {courses && courses.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-2">No courses available yet</p>
-              <p className="text-sm text-muted-foreground">Check back soon!</p>
+              <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Courses Published Yet</h3>
+              <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+                Our team is preparing amazing content for you. <br />
+                Check back soon or contact support if you need assistance.
+              </p>
+              {session?.user && (
+                <div className="space-y-2">
+                  <Button onClick={() => navigate('/dashboard')}>
+                    Back to Dashboard
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-4">
+                    Are you an admin? 
+                    <Button 
+                      variant="link" 
+                      className="text-teal p-0 ml-1 h-auto"
+                      onClick={() => navigate('/admin/lms')}
+                    >
+                      Publish courses here
+                    </Button>
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses?.map((course) => {
+            {filteredCourses?.map((course) => {
               const isUnlocked = true; // For now, all published courses are unlocked
+              const courseProgress = coursesProgress?.find(cp => cp.id === course.id);
 
               return (
                 <Card 
@@ -151,6 +209,17 @@ const Academy = () => {
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="h-4 w-4" />
                           {course.course_item.duration_min} minutes
+                        </div>
+                      )}
+                      
+                      {/* User Progress */}
+                      {courseProgress && courseProgress.progress > 0 && (
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>Your Progress</span>
+                            <span className="text-teal font-medium">{courseProgress.progress}%</span>
+                          </div>
+                          <Progress value={courseProgress.progress} className="h-1.5" />
                         </div>
                       )}
                       

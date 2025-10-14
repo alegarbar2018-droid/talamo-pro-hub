@@ -88,7 +88,15 @@ const LessonView = () => {
     onSuccess: () => {
       toast.success('Lesson marked as complete!');
       queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+      queryClient.invalidateQueries({ queryKey: ['lesson-completion', lessonId] });
       queryClient.invalidateQueries({ queryKey: ['user-completed-lessons'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['user-all-courses-progress'] });
+      
+      // Invalidate course tree if we know the course
+      if (lesson?.module?.course?.id) {
+        queryClient.invalidateQueries({ queryKey: ['course-tree', lesson.module.course.id] });
+      }
     },
     onError: (error: any) => {
       toast.error('Failed to mark lesson complete', {

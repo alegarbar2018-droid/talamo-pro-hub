@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, Plus, BookOpen, List, Video, Pencil, Trash2 } from 'lucide-react';
+import { AlertTriangle, Plus, BookOpen, List, Video, Pencil, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Select,
@@ -183,8 +183,11 @@ export const AdminLMS: React.FC = () => {
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       <Badge variant="outline">Level {course.level}</Badge>
-                      <Badge variant={course.status === 'published' ? 'default' : 'secondary'}>
-                        {course.status}
+                      <Badge 
+                        variant={course.status === 'published' ? 'default' : 'outline'}
+                        className={course.status === 'published' ? 'bg-green-500/20 text-green-500 border-green-500/30' : ''}
+                      >
+                        {course.status === 'published' ? '✓ Published' : '○ Draft'}
                       </Badge>
                       {course.course_item?.tags?.map((tag: string) => (
                         <Badge key={tag} variant="outline">{tag}</Badge>
@@ -192,6 +195,20 @@ export const AdminLMS: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    {course.status === 'published' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(`/academy/course/${course.slug}`, '_blank');
+                        }}
+                        className="text-teal hover:bg-teal/10"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        Preview
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
