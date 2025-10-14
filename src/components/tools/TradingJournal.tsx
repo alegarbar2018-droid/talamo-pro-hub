@@ -307,7 +307,13 @@ export const TradingJournal = () => {
           </div>
         </div>
         <Button
-          onClick={() => setShowNewEntry(!showNewEntry)}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Nueva Entrada clicked, current state:", showNewEntry);
+            setShowNewEntry(!showNewEntry);
+          }}
           className="bg-teal hover:bg-teal/90"
         >
           <Plus className="w-4 h-4 mr-2" />
