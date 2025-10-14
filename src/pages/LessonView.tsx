@@ -17,6 +17,11 @@ import { isFeatureEnabled } from "@/lib/flags";
 import { updateTopicProgress } from "@/lib/lessonTracking";
 
 const LessonView = () => {
+  // ============================================
+  // HOOKS SECTION - ALL HOOKS MUST BE HERE
+  // (before any conditional returns)
+  // ============================================
+  
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
@@ -63,7 +68,7 @@ const LessonView = () => {
     enabled: !!lessonId,
   });
 
-  // TOC Adapter
+  // TOC Adapter - ALWAYS called, returns empty when flag is off
   const { topics, completedCount, total, progress, markTopicComplete, registerTopicRef, getTopicRef } = useLessonTopics(lesson, resources);
 
   // Check if lesson is already completed
@@ -115,6 +120,39 @@ const LessonView = () => {
     },
   });
 
+  // Video progress tracking - ALWAYS run hook, condition inside
+  useEffect(() => {
+    if (!tocEnabled || !videoRef.current) return;
+    
+    const video = videoRef.current;
+    const handleTimeUpdate = () => {
+      const progress = (video.currentTime / video.duration) * 100;
+      if (progress >= 80) {
+        markTopicComplete('topic-video');
+      }
+    };
+    
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    return () => video.removeEventListener('timeupdate', handleTimeUpdate);
+  }, [tocEnabled, markTopicComplete]);
+
+  // Listen to progress updates - ALWAYS run hook, condition inside
+  useEffect(() => {
+    if (!tocEnabled) return;
+    
+    const handleProgressUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ['lesson-topics', lessonId] });
+    };
+    
+    window.addEventListener('lesson-progress-updated', handleProgressUpdate);
+    return () => window.removeEventListener('lesson-progress-updated', handleProgressUpdate);
+  }, [tocEnabled, queryClient, lessonId]);
+
+  // ============================================
+  // END HOOKS SECTION
+  // Conditional returns are safe after this point
+  // ============================================
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -139,6 +177,10 @@ const LessonView = () => {
     );
   }
 
+  // ============================================
+  // DERIVED VALUES (after hooks, before render)
+  // ============================================
+
   const videoUrl = lesson.video_storage_key
     ? supabase.storage.from('lms').getPublicUrl(lesson.video_storage_key).data.publicUrl
     : lesson.video_external_url;
@@ -146,8 +188,6 @@ const LessonView = () => {
   const coverImageUrl = lesson.cover_image
     ? supabase.storage.from('lms-assets').getPublicUrl(lesson.cover_image).data.publicUrl
     : null;
-
-  
 
   const getResourceIcon = (kind: string) => {
     switch (kind) {
@@ -161,20 +201,17 @@ const LessonView = () => {
 
   const getResourceUrl = (resource: any) => {
     if (resource.storage_key) {
-      // Remove 'public/' prefix if present for correct URL generation
       const cleanKey = resource.storage_key.replace(/^public\//, '');
       return supabase.storage.from('lms-assets').getPublicUrl(cleanKey).data.publicUrl;
     }
     return resource.external_url;
   };
 
-  // Smooth scroll to topic
   const handleTopicClick = (topicId: string) => {
     setActiveTopicId(topicId);
     const el = getTopicRef(topicId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Temporary highlight
       el.classList.add('ring-2', 'ring-teal', 'ring-offset-2');
       setTimeout(() => {
         el.classList.remove('ring-2', 'ring-teal', 'ring-offset-2');
@@ -182,33 +219,9 @@ const LessonView = () => {
     }
   };
 
-  // Video progress tracking (always run hook, condition inside)
-  useEffect(() => {
-    if (!tocEnabled || !videoRef.current) return;
-    
-    const video = videoRef.current;
-    const handleTimeUpdate = () => {
-      const progress = (video.currentTime / video.duration) * 100;
-      if (progress >= 80) {
-        markTopicComplete('topic-video');
-      }
-    };
-    
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    return () => video.removeEventListener('timeupdate', handleTimeUpdate);
-  }, [tocEnabled, markTopicComplete]);
-
-  // Listen to progress updates (always run hook, condition inside)
-  useEffect(() => {
-    if (!tocEnabled) return;
-    
-    const handleProgressUpdate = () => {
-      queryClient.invalidateQueries({ queryKey: ['lesson-topics', lessonId] });
-    };
-    
-    window.addEventListener('lesson-progress-updated', handleProgressUpdate);
-    return () => window.removeEventListener('lesson-progress-updated', handleProgressUpdate);
-  }, [tocEnabled, queryClient, lessonId]);
+  // ============================================
+  // MAIN RENDER
+  // ============================================
 
   return (
     <div className="min-h-screen bg-background flex">
