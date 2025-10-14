@@ -147,12 +147,12 @@ export function LessonTOCSidebar(props: LessonTOCSidebarProps) {
       <Sheet>
         <SheetTrigger asChild>
           <Button
-            variant="outline"
-            size="icon"
-            className="fixed bottom-4 right-4 z-50 rounded-full shadow-lg"
+            size="lg"
+            className="fixed bottom-6 right-6 z-50 rounded-full shadow-2xl bg-teal hover:bg-teal/90 text-white gap-2 px-6 h-14"
             aria-label={t('academy.lesson.toc_toggle', 'Toggle table of contents')}
           >
             <Menu className="h-5 w-5" />
+            <span className="font-semibold">Contenido</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[80vh]">

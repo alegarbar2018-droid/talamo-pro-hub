@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle, FileText, Download, ExternalLink, Image as ImageIcon, FileArchive } from "lucide-react";
+import { ArrowLeft, CheckCircle, FileText, Download, ExternalLink, Image as ImageIcon, FileArchive, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { QuizView } from "@/components/student/QuizView";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -26,9 +27,27 @@ const LessonView = () => {
   const navigate = useNavigate();
   const { session } = useAuth();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [activeTopicId, setActiveTopicId] = useState<string>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const tocEnabled = isFeatureEnabled('academy.lesson_toc');
+  
+  // Badge onboarding state
+  const [showNewBadge, setShowNewBadge] = useState(() => {
+    const viewCount = parseInt(localStorage.getItem('toc_view_count') || '0', 10);
+    return viewCount < 3;
+  });
+
+  useEffect(() => {
+    if (tocEnabled && showNewBadge) {
+      const viewCount = parseInt(localStorage.getItem('toc_view_count') || '0', 10);
+      const newCount = viewCount + 1;
+      localStorage.setItem('toc_view_count', newCount.toString());
+      if (newCount >= 3) {
+        setTimeout(() => setShowNewBadge(false), 5000);
+      }
+    }
+  }, [tocEnabled, showNewBadge]);
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ['lesson', lessonId],
@@ -250,8 +269,16 @@ const LessonView = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Course
               </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">{lesson.course_item?.title}</h1>
+              <div className="flex-1">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold text-foreground">{lesson.course_item?.title}</h1>
+                  {tocEnabled && showNewBadge && (
+                    <Badge className="bg-teal/10 text-teal border-teal/20 gap-1 animate-pulse">
+                      <Sparkles className="h-3 w-3" />
+                      {t('academy.lesson.new_feature', '¡Nuevo!')}
+                    </Badge>
+                  )}
+                </div>
                 <div className="text-sm text-muted-foreground mt-1">
                   {lesson.module?.course?.level && `Level ${lesson.module.course.level}`}
                 </div>

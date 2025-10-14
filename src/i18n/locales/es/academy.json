@@ -20,13 +20,15 @@
     "content": "Contenido de la Lección",
     "resource": "Recurso",
     "quiz": "Quiz",
-    "toc_title": "Contenido",
+    "toc_title": "Contenido de la Lección",
     "progress": "Progreso",
     "completed": "completado",
     "toc_nav": "Navegación de lección",
     "toc_toggle": "Alternar tabla de contenidos",
     "toc_expand": "Expandir contenido",
-    "toc_collapse": "Colapsar contenido"
+    "toc_collapse": "Colapsar contenido",
+    "topics_completed": "temas completados",
+    "new_feature": "¡Nuevo!"
   },
   "progress": {
     "title": "Tu Progreso General",
