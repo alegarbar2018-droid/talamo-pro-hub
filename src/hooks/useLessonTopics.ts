@@ -5,9 +5,10 @@
  * any schema changes. Generates deterministic anchors and titles.
  */
 
-import { useMemo, useCallback, useEffect } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getLessonProgress, updateTopicProgress } from '@/lib/lessonTracking';
+import { isFeatureEnabled } from '@/lib/flags';
 
 export type TopicType = 'video' | 'content' | 'resource' | 'quiz' | 'other';
 
@@ -84,10 +85,12 @@ function parseContentTopics(content: string): Array<{ id: string; title: string;
 
 export function useLessonTopics(lesson: LessonPayload | null | undefined, resources: any[] = []): LessonTopicsResult {
   const { t } = useTranslation();
+  const tocEnabled = isFeatureEnabled('academy.lesson_toc');
   const topicRefs = useMemo(() => new Map<string, HTMLElement | null>(), []);
   
   const topics = useMemo(() => {
-    if (!lesson) return [];
+    // If feature is disabled, return empty array
+    if (!tocEnabled || !lesson) return [];
     
     const result: Topic[] = [];
     const progress = getLessonProgress(lesson.id);
@@ -146,19 +149,20 @@ export function useLessonTopics(lesson: LessonPayload | null | undefined, resour
     }
     
     return result;
-  }, [lesson, resources, t]);
+  }, [tocEnabled, lesson, resources, t]);
   
   const completedCount = useMemo(() => {
+    if (!tocEnabled) return 0;
     return topics.filter(t => t.completed).length;
-  }, [topics]);
+  }, [tocEnabled, topics]);
   
-  const total = topics.length;
-  const progress = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  const total = tocEnabled ? topics.length : 0;
+  const progress = tocEnabled && total > 0 ? Math.round((completedCount / total) * 100) : 0;
   
   const markTopicComplete = useCallback((topicId: string) => {
-    if (!lesson) return;
+    if (!tocEnabled || !lesson) return;
     updateTopicProgress(lesson.id, topicId, true);
-  }, [lesson]);
+  }, [tocEnabled, lesson]);
   
   const registerTopicRef = useCallback((topicId: string, el: HTMLElement | null) => {
     topicRefs.set(topicId, el);

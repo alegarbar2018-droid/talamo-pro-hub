@@ -182,9 +182,9 @@ const LessonView = () => {
     }
   };
 
-  // Video progress tracking
+  // Video progress tracking (always run hook, condition inside)
   useEffect(() => {
-    if (!videoRef.current || !tocEnabled) return;
+    if (!tocEnabled || !videoRef.current) return;
     
     const video = videoRef.current;
     const handleTimeUpdate = () => {
@@ -198,7 +198,7 @@ const LessonView = () => {
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
   }, [tocEnabled, markTopicComplete]);
 
-  // Listen to progress updates
+  // Listen to progress updates (always run hook, condition inside)
   useEffect(() => {
     if (!tocEnabled) return;
     
