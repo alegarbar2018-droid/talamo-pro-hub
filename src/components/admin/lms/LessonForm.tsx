@@ -501,10 +501,21 @@ Important message here!
                       <div>
                         <h4 className="font-semibold mb-1">📊 Trading Simulator (Interactive)</h4>
                         <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
-{`:::trading-sim asset="EURUSD" scenario="uptrend"
+{`:::trading-sim asset="EURUSD" scenario="uptrend_pullback"
+[educational_context]
+{
+  "concept": "Identificación de Tendencia Alcista",
+  "whatToLook": [
+    "Máximos más altos (HH)",
+    "Mínimos más altos (HL)",
+    "Rebote en zona de soporte"
+  ],
+  "hint": "En tendencia alcista, busca COMPRAR en pullbacks"
+}
+
 [scenario_data]
 {
-  "historical": [1.0850, 1.0870, 1.0890],
+  "historical": [1.0800, 1.0820, 1.0850, 1.0880, 1.0900],
   "current": 1.0900,
   "future": [1.0920, 1.0950, 1.0970],
   "correct_action": "buy",
@@ -513,21 +524,48 @@ Important message here!
   "tp": 1.0970
 }
 
+[annotations]
+{
+  "higherHighs": [1, 3, 4],
+  "higherLows": [0, 2],
+  "support": 1.0850,
+  "resistance": 1.0980
+}
+
 [question]
-What would you do in this situation?
+Analiza el gráfico paso a paso:
+
+1. **Tendencia**: ¿Observas HH y HL?
+2. **Contexto**: El precio rebotó en soporte
+3. **Decisión**: ¿Cuál es tu acción?
 
 [feedback_buy]
-✅ Correct! The price went up +70 pips.
+✅ **¡Excelente decisión!**
+
+**¿Por qué fue correcta?**
+1. Identificaste la tendencia alcista (HH y HL)
+2. El precio rebotó en soporte (1.0850)
+3. Entraste alineado con la tendencia
+
+**Resultado:** +70 pips de ganancia
 
 [feedback_sell]
-❌ Wrong! The price increased.
+❌ **Decisión incorrecta**
+
+Vendiste CONTRA la tendencia alcista.
+El precio subió +70 pips, causando pérdida.
+
+**Regla:** NUNCA vendas en tendencia alcista sin confirmación de reversión.
 
 [feedback_skip]
-⚠️ You missed +70 pips opportunity.
+⚠️ **Oportunidad perdida**
+
+Esta era una configuración de alta probabilidad (+70 pips).
+Todos los criterios estaban alineados para una compra.
 :::`}
                         </pre>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Actions: buy, sell, skip | correct_action determines result
+                          Soporta contexto educativo, anotaciones visuales (HH/HL, soporte/resistencia), y feedback estructurado
                         </p>
                       </div>
                     </div>
