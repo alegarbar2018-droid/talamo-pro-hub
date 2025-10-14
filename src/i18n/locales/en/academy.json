@@ -15,7 +15,18 @@
     "key_concepts": "key concepts",
     "view_content": "View content",
     "mark_completed": "Mark completed",
-    "completed_badge": "Completed"
+    "completed_badge": "Completed",
+    "video": "Video",
+    "content": "Lesson Content",
+    "resource": "Resource",
+    "quiz": "Quiz",
+    "toc_title": "Contents",
+    "progress": "Progress",
+    "completed": "completed",
+    "toc_nav": "Lesson navigation",
+    "toc_toggle": "Toggle table of contents",
+    "toc_expand": "Expand contents",
+    "toc_collapse": "Collapse contents"
   },
   "progress": {
     "title": "Your Overall Progress",

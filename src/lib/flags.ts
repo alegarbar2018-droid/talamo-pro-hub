@@ -7,6 +7,7 @@
 
 export type TalamoFlag = 
   | 'academy_v1'      // Academia module
+  | 'academy.lesson_toc' // TOC Sidebar with progress tracking
   | 'signals_v1'      // Trading signals module  
   | 'copy_v1'         // Copy trading module
   | 'rbac_v1'         // Advanced RBAC system
@@ -39,6 +40,7 @@ function parseFlags(): Set<TalamoFlag> {
 function isValidFlag(flag: string): flag is TalamoFlag {
   const validFlags: TalamoFlag[] = [
     'academy_v1',
+    'academy.lesson_toc',
     'signals_v1', 
     'copy_v1',
     'rbac_v1',

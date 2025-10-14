@@ -15,7 +15,18 @@
     "key_concepts": "conceptos clave",
     "view_content": "Ver contenido",
     "mark_completed": "Marcar completada",
-    "completed_badge": "Completada"
+    "completed_badge": "Completada",
+    "video": "Video",
+    "content": "Contenido de la Lección",
+    "resource": "Recurso",
+    "quiz": "Quiz",
+    "toc_title": "Contenido",
+    "progress": "Progreso",
+    "completed": "completado",
+    "toc_nav": "Navegación de lección",
+    "toc_toggle": "Alternar tabla de contenidos",
+    "toc_expand": "Expandir contenido",
+    "toc_collapse": "Colapsar contenido"
   },
   "progress": {
     "title": "Tu Progreso General",
