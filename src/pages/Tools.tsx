@@ -6,6 +6,7 @@ import { ArrowRight, Calculator, TrendingUp, Wallet, DollarSign, Target, Clock, 
 import { ToolsOverview } from "@/components/tools/ToolsOverview";
 import { CalculatorCard } from "@/components/tools/calculators/CalculatorCard";
 import { CalculatorModal } from "@/components/tools/calculators/CalculatorModal";
+import { ContractSpecifications } from "@/components/tools/specifications";
 import {
   PositionSizeCalculator,
   PipValueCalculator,
@@ -161,6 +162,9 @@ const Tools = () => {
             <TabsTrigger value="calculators" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
               Calculadoras
             </TabsTrigger>
+            <TabsTrigger value="specifications" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
+              Especificaciones
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -227,6 +231,11 @@ const Tools = () => {
                 ))}
               </div>
             </section>
+          </TabsContent>
+
+          {/* Especificaciones Tab */}
+          <TabsContent value="specifications">
+            <ContractSpecifications />
           </TabsContent>
         </Tabs>
 

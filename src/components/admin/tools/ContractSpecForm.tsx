@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ContractSpecGuide } from "./ContractSpecGuide";
 
 const contractSchema = z.object({
   symbol: z.string().min(1, "Símbolo es requerido").toUpperCase(),
   name: z.string().min(1, "Nombre es requerido"),
+  underlying_asset: z.string().optional(),
   asset_class: z.enum(["forex", "crypto", "indices", "commodities", "stocks"]),
   contract_size: z.coerce.number().positive("Debe ser mayor a 0"),
   pip_value: z.coerce.number().positive("Debe ser mayor a 0"),
@@ -20,6 +22,10 @@ const contractSchema = z.object({
   spread_typical: z.coerce.number().positive().optional(),
   margin_percentage: z.coerce.number().positive().optional(),
   leverage_max: z.coerce.number().int().positive().default(500),
+  base_currency: z.string().min(1, "Moneda base es requerida").default("USD"),
+  quote_currency: z.string().optional(),
+  swap_long: z.coerce.number().optional(),
+  swap_short: z.coerce.number().optional(),
   status: z.enum(["active", "inactive"]).default("active"),
 });
 
@@ -40,6 +46,7 @@ export function ContractSpecForm({ onSuccess, onCancel }: ContractSpecFormProps)
       min_lot: 0.01,
       max_lot: 100,
       leverage_max: 500,
+      base_currency: "USD",
       status: "active",
     },
   });
@@ -69,6 +76,8 @@ export function ContractSpecForm({ onSuccess, onCancel }: ContractSpecFormProps)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <ContractSpecGuide />
+        
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -92,6 +101,20 @@ export function ContractSpecForm({ onSuccess, onCancel }: ContractSpecFormProps)
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
                   <Input placeholder="Euro vs US Dollar" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="underlying_asset"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Activo Subyacente</FormLabel>
+                <FormControl>
+                  <Input placeholder="Par de divisas EUR/USD" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -188,6 +211,98 @@ export function ContractSpecForm({ onSuccess, onCancel }: ContractSpecFormProps)
                 <FormControl>
                   <Input type="number" placeholder="500" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="base_currency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Moneda Base</FormLabel>
+                <FormControl>
+                  <Input placeholder="EUR" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="quote_currency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Moneda de Cotización</FormLabel>
+                <FormControl>
+                  <Input placeholder="USD" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="swap_long"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Swap Long (puntos)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.01" placeholder="-0.5" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="swap_short"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Swap Short (puntos)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.01" placeholder="0.3" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="margin_percentage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Margen Requerido (%)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.01" placeholder="0.2" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estado</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="active">Activo</SelectItem>
+                    <SelectItem value="inactive">Inactivo</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

@@ -349,6 +349,7 @@ export type Database = {
       contract_specifications: {
         Row: {
           asset_class: string
+          base_currency: string
           contract_size: number
           created_at: string
           id: string
@@ -361,16 +362,19 @@ export type Database = {
           name: string
           pip_position: number
           pip_value: number
+          quote_currency: string | null
           spread_typical: number | null
           status: string
           swap_long: number | null
           swap_short: number | null
           symbol: string
           trading_hours: Json | null
+          underlying_asset: string | null
           updated_at: string
         }
         Insert: {
           asset_class: string
+          base_currency?: string
           contract_size: number
           created_at?: string
           id?: string
@@ -383,16 +387,19 @@ export type Database = {
           name: string
           pip_position?: number
           pip_value: number
+          quote_currency?: string | null
           spread_typical?: number | null
           status?: string
           swap_long?: number | null
           swap_short?: number | null
           symbol: string
           trading_hours?: Json | null
+          underlying_asset?: string | null
           updated_at?: string
         }
         Update: {
           asset_class?: string
+          base_currency?: string
           contract_size?: number
           created_at?: string
           id?: string
@@ -405,12 +412,14 @@ export type Database = {
           name?: string
           pip_position?: number
           pip_value?: number
+          quote_currency?: string | null
           spread_typical?: number | null
           status?: string
           swap_long?: number | null
           swap_short?: number | null
           symbol?: string
           trading_hours?: Json | null
+          underlying_asset?: string | null
           updated_at?: string
         }
         Relationships: []
