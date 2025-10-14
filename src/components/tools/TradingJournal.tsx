@@ -296,15 +296,64 @@ export const TradingJournal = () => {
                   )}
 
                   {/* Recommendation */}
-                  <div className="p-4 rounded-lg bg-surface/50 border border-line/50">
-                    <div className="flex items-center gap-2 mb-3">
-                      <TypeIcon className={`w-5 h-5 ${typeColor}`} />
-                      <Badge variant="secondary" className="capitalize">
-                        {mentorRec.type}
-                      </Badge>
-                    </div>
-                    <div className="prose prose-sm max-w-none text-foreground whitespace-pre-line">
-                      {mentorRec.recommendation}
+                  <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-surface via-surface to-surface/50 border border-teal/20 shadow-lg">
+                    {/* Decorative gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-teal/5 via-transparent to-transparent pointer-events-none" />
+                    
+                    <div className="relative p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-teal/10 border border-teal/20">
+                          <TypeIcon className={`w-5 h-5 ${typeColor}`} />
+                        </div>
+                        <div>
+                          <Badge variant="secondary" className="capitalize text-xs">
+                            {mentorRec.type}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground mt-1">Análisis personalizado</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3 text-foreground leading-relaxed">
+                        {mentorRec.recommendation.split('\n').map((paragraph, idx) => {
+                          // Detectar títulos (texto con ** o líneas cortas que parecen títulos)
+                          const isBold = paragraph.includes('**');
+                          const cleanText = paragraph.replace(/\*\*/g, '');
+                          
+                          if (cleanText.trim() === '') return null;
+                          
+                          if (isBold) {
+                            return (
+                              <h4 key={idx} className="text-base font-semibold text-teal mt-4 first:mt-0">
+                                {cleanText}
+                              </h4>
+                            );
+                          }
+                          
+                          // Detectar bullets o números
+                          if (cleanText.match(/^[\d\-\•\*]\s/)) {
+                            return (
+                              <div key={idx} className="flex gap-3 items-start pl-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-teal mt-2 flex-shrink-0" />
+                                <p className="text-sm leading-relaxed">{cleanText.replace(/^[\d\-\•\*]\s/, '')}</p>
+                              </div>
+                            );
+                          }
+                          
+                          return (
+                            <p key={idx} className="text-sm leading-relaxed text-foreground/90">
+                              {cleanText}
+                            </p>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Bottom accent */}
+                      <div className="mt-6 pt-4 border-t border-line/50">
+                        <p className="text-xs text-muted-foreground italic flex items-center gap-2">
+                          <Brain className="w-3.5 h-3.5 text-teal" />
+                          Tu mentor está analizando {entries.length} operaciones para darte el mejor consejo
+                        </p>
+                      </div>
                     </div>
                   </div>
 
