@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, CheckCircle, FileText, Download, ExternalLink, Image as ImageIcon, FileArchive } from "lucide-react";
+import { QuizView } from "@/components/student/QuizView";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -260,6 +261,27 @@ const LessonView = () => {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Quiz Section */}
+        {lesson.quiz_id && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Quiz</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <QuizView 
+                quizId={lesson.quiz_id}
+                lessonId={lessonId}
+                onComplete={() => {
+                  toast.success('Quiz completed! Lesson progress updated.');
+                  queryClient.invalidateQueries({ queryKey: ['lesson', lessonId] });
+                  queryClient.invalidateQueries({ queryKey: ['lesson-completion', lessonId] });
+                  queryClient.invalidateQueries({ queryKey: ['user-progress'] });
+                }}
+              />
             </CardContent>
           </Card>
         )}

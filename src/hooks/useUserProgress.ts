@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useUserProgress = (courseId: string) => {
   return useQuery({
@@ -17,6 +18,40 @@ export const useUserProgress = (courseId: string) => {
       if (error) throw error;
       return data || [];
     },
+  });
+};
+
+export const useCompletionStats = (courseId: string) => {
+  const { session } = useAuth();
+
+  return useQuery({
+    queryKey: ['completion-stats', courseId, session?.user?.id],
+    queryFn: async () => {
+      const { data: courseTree, error } = await supabase.rpc('get_course_tree', {
+        course_slug_or_id: courseId,
+        requesting_user_id: session?.user?.id || null,
+      });
+
+      if (error) throw error;
+
+      // Type assertion for RPC response
+      const tree = courseTree as any;
+      const modules = tree?.modules || [];
+      const allItems = modules.flatMap((m: any) => [
+        ...(m.lessons || []),
+        ...(m.quizzes || [])
+      ]);
+      const completedItems = allItems.filter((item: any) => item.completed);
+
+      return {
+        total: allItems.length,
+        completed: completedItems.length,
+        percentage: allItems.length > 0 
+          ? Math.round((completedItems.length / allItems.length) * 100) 
+          : 0,
+      };
+    },
+    enabled: !!courseId && !!session?.user?.id,
   });
 };
 

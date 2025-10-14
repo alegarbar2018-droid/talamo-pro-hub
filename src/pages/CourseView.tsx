@@ -5,9 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, CheckCircle, PlayCircle, Lock, FolderOpen, ClipboardCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCompletionStats } from "@/hooks/useUserProgress";
 
 const CourseView = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -55,6 +57,9 @@ const CourseView = () => {
   const course = (courseTree as any).course;
   const modules = (courseTree as any).modules || [];
 
+  // Get completion stats for progress bar
+  const { data: completionStats } = useCompletionStats(course.id);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b border-line bg-surface">
@@ -83,6 +88,24 @@ const CourseView = () => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
+          {/* Course Progress */}
+          {completionStats && completionStats.total > 0 && (
+            <Card className="border-teal/20">
+              <CardContent className="pt-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-foreground">Course Progress</span>
+                    <span className="text-teal font-bold text-lg">{completionStats.percentage}%</span>
+                  </div>
+                  <Progress value={completionStats.percentage} className="h-2" />
+                  <p className="text-sm text-muted-foreground">
+                    {completionStats.completed} of {completionStats.total} items completed
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {modules.map((module: any, moduleIndex: number) => (
             <Card key={module.id} className="border-line">
               <CardHeader>

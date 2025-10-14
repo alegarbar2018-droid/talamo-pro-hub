@@ -114,17 +114,23 @@ export const QuizView: React.FC<QuizViewProps> = ({ quizId, lessonId, onComplete
 
     setIsSubmitting(true);
 
-    const answersArray = Object.entries(answers).map(([questionId, value]) => ({
-      question_id: questionId,
-      option_id: typeof value === 'string' ? value : undefined,
-      text_answer: typeof value === 'object' && !Array.isArray(value) ? value : undefined,
-    }));
+    // Format answers for save_quiz_attempt RPC
+    const answersArray = Object.entries(answers).map(([questionId, value]) => {
+      if (typeof value === 'string') {
+        // Single choice or boolean - single option_id
+        return { question_id: questionId, option_id: value };
+      } else if (Array.isArray(value)) {
+        // Multi-choice - array of option_ids
+        return { question_id: questionId, option_ids: value };
+      } else {
+        // Open-ended - text answer
+        return { question_id: questionId, text_answer: value };
+      }
+    });
 
-    const { data, error } = await supabase.functions.invoke('grade-quiz', {
-      body: {
-        quiz_id: quizId,
-        answers: answersArray,
-      },
+    const { data, error } = await supabase.rpc('save_quiz_attempt', {
+      quiz_id_param: quizId,
+      answers_param: answersArray,
     });
 
     setIsSubmitting(false);
@@ -134,15 +140,24 @@ export const QuizView: React.FC<QuizViewProps> = ({ quizId, lessonId, onComplete
       return;
     }
 
-    setResult(data);
+    // Type assertion for RPC response
+    const result = data as any;
 
-    if (data.is_passed) {
-      toast.success(`Quiz passed! Score: ${data.score}%`);
+    // Map RPC response to component state
+    setResult({
+      ...result,
+      is_passed: result.passed,
+      correct: result.correct,
+      total: result.total,
+    });
+
+    if (result.passed) {
+      toast.success(`Quiz passed! Score: ${result.score}%`);
       if (onComplete) {
         setTimeout(() => onComplete(), 2000);
       }
     } else {
-      toast.error(`Quiz not passed. Score: ${data.score}%`);
+      toast.error(`Quiz not passed. Score: ${result.score}%`);
     }
   };
 
