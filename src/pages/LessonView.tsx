@@ -212,8 +212,8 @@ const LessonView = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* TOC Sidebar (conditionally rendered) */}
-      {tocEnabled && (
+      {/* TOC Sidebar (always rendered, hidden when disabled) */}
+      {tocEnabled ? (
         <LessonTOCSidebar
           topics={topics}
           completedCount={completedCount}
@@ -222,7 +222,7 @@ const LessonView = () => {
           onTopicClick={handleTopicClick}
           activeTopicId={activeTopicId}
         />
-      )}
+      ) : null}
 
       {/* Main Content */}
       <div className="flex-1">

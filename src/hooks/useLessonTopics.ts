@@ -165,12 +165,14 @@ export function useLessonTopics(lesson: LessonPayload | null | undefined, resour
   }, [tocEnabled, lesson]);
   
   const registerTopicRef = useCallback((topicId: string, el: HTMLElement | null) => {
+    if (!tocEnabled) return;
     topicRefs.set(topicId, el);
-  }, [topicRefs]);
+  }, [tocEnabled, topicRefs]);
   
   const getTopicRef = useCallback((topicId: string) => {
+    if (!tocEnabled) return null;
     return topicRefs.get(topicId) || null;
-  }, [topicRefs]);
+  }, [tocEnabled, topicRefs]);
   
   return {
     topics,

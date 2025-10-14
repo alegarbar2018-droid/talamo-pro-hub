@@ -5,13 +5,14 @@
  * Mobile: Bottom sheet/drawer
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Menu, CheckCircle2, Circle, ChevronRight, Video, FileText, Download, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { Topic } from '@/hooks/useLessonTopics';
 
 interface LessonTOCSidebarProps {
@@ -73,7 +74,7 @@ function SidebarContent({
       <div className="flex-1 overflow-y-auto p-2">
         <nav aria-label={t('academy.lesson.toc_nav', 'Navegación de lección')}>
           <ul className="space-y-1">
-            {topics.map((topic, idx) => {
+            {topics.map((topic) => {
               const isActive = activeTopicId === topic.id;
               return (
                 <li key={topic.id}>
@@ -128,23 +129,17 @@ function SidebarContent({
 
 export function LessonTOCSidebar(props: LessonTOCSidebarProps) {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    return localStorage.getItem(COLLAPSED_KEY) === 'true';
+    const stored = localStorage.getItem(COLLAPSED_KEY);
+    return stored === 'true';
   });
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(COLLAPSED_KEY, isCollapsed.toString());
-  }, [isCollapsed]);
-
-  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+  const toggleCollapse = () => {
+    const newValue = !isCollapsed;
+    setIsCollapsed(newValue);
+    localStorage.setItem(COLLAPSED_KEY, newValue.toString());
+  };
 
   // Mobile: Sheet/Drawer
   if (isMobile) {
