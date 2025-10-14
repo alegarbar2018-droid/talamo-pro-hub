@@ -3,9 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, TrendingUp, Wallet, DollarSign, Target, Clock, Scale } from "lucide-react";
-import { ToolsOverview } from "@/components/tools/ToolsOverview";
-import { CalculatorCard } from "@/components/tools/calculators/CalculatorCard";
 import { CalculatorModal } from "@/components/tools/calculators/CalculatorModal";
+import { ToolsOverview } from "@/components/tools/ToolsOverview";
+import { ContractSpecifications } from "@/components/tools/specifications";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import {
   PositionSizeCalculator,
   PipValueCalculator,
@@ -15,7 +16,7 @@ import {
   SwapCalculator,
   RRCalculator,
 } from "@/components/tools/calculators";
-import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { CalculatorCard } from "@/components/tools/calculators/CalculatorCard";
 
 const calculators = [
   {
@@ -161,6 +162,9 @@ const Tools = () => {
             <TabsTrigger value="calculators" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
               Calculadoras
             </TabsTrigger>
+            <TabsTrigger value="specifications" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
+              Especificaciones
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -227,6 +231,11 @@ const Tools = () => {
                 ))}
               </div>
             </section>
+          </TabsContent>
+
+          {/* Especificaciones Tab */}
+          <TabsContent value="specifications" className="space-y-6">
+            <ContractSpecifications />
           </TabsContent>
         </Tabs>
 

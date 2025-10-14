@@ -79,14 +79,6 @@ export function ContractSpecDrawer({ symbol, open, onOpenChange }: ContractSpecD
               </TabsList>
 
               <TabsContent value="general" className="space-y-1 mt-4">
-                {spec.underlying_asset && (
-                  <SpecificationRow
-                    label="Activo Subyacente"
-                    value={spec.underlying_asset}
-                    icon={Package}
-                    tooltip="El mercado o valor real al que se refiere este CFD"
-                  />
-                )}
                 <SpecificationRow
                   label="Clase de Activo"
                   value={spec.asset_class}
