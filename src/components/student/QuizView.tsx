@@ -153,6 +153,10 @@ export const QuizView: React.FC<QuizViewProps> = ({ quizId, lessonId, onComplete
 
     if (result.passed) {
       toast.success(`Quiz passed! Score: ${result.score}%`);
+      
+      // Emit custom event for auto-tracking
+      window.dispatchEvent(new CustomEvent('quiz-completed'));
+      
       if (onComplete) {
         setTimeout(() => onComplete(), 2000);
       }

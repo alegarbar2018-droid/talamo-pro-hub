@@ -139,20 +139,64 @@ const LessonView = () => {
     },
   });
 
-  // Video progress tracking - ALWAYS run hook, condition inside
+  // Video progress tracking with 90% threshold
   useEffect(() => {
     if (!tocEnabled || !videoRef.current) return;
     
     const video = videoRef.current;
     const handleTimeUpdate = () => {
       const progress = (video.currentTime / video.duration) * 100;
-      if (progress >= 80) {
+      if (progress >= 90) {
         markTopicComplete('topic-video');
       }
     };
     
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
+  }, [tocEnabled, markTopicComplete]);
+
+  // Intersection Observer for content sections auto-tracking
+  useEffect(() => {
+    if (!tocEnabled) return;
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          const topicId = entry.target.getAttribute('data-topic-id');
+          if (topicId) {
+            // Delay to ensure user actually reads content
+            setTimeout(() => {
+              if (entry.isIntersecting) {
+                markTopicComplete(topicId);
+              }
+            }, 2000);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, {
+      threshold: 0.6,
+      rootMargin: '0px',
+    });
+
+    // Observe all content sections
+    const contentSection = document.querySelector('[data-topic-id="topic-content"]');
+    if (contentSection) observer.observe(contentSection);
+
+    return () => observer.disconnect();
+  }, [tocEnabled, markTopicComplete, lesson]);
+
+  // Listen for quiz completion event
+  useEffect(() => {
+    if (!tocEnabled) return;
+
+    const handleQuizComplete = () => {
+      markTopicComplete('topic-quiz');
+    };
+
+    window.addEventListener('quiz-completed', handleQuizComplete);
+    return () => window.removeEventListener('quiz-completed', handleQuizComplete);
   }, [tocEnabled, markTopicComplete]);
 
   // Listen to progress updates - ALWAYS run hook, condition inside
@@ -264,12 +308,19 @@ const LessonView = () => {
             <div className="flex items-center gap-5 py-6">
               <Button 
                 variant="ghost" 
-                onClick={() => navigate(-1)}
+                onClick={() => {
+                  const courseId = lesson.module?.course?.id;
+                  if (courseId) {
+                    navigate(`/academy/course/${courseId}`);
+                  } else {
+                    navigate('/academy');
+                  }
+                }}
                 className="text-teal hover:bg-teal/10 hover:text-teal-ink transition-all rounded-xl group relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <ArrowLeft className="h-4 w-4 mr-2 relative z-10 group-hover:-translate-x-1 transition-transform" />
-                <span className="relative z-10 font-semibold">Back to Course</span>
+                <span className="relative z-10 font-semibold">{t('academy.lesson.back_to_course')}</span>
               </Button>
               
               <div className="h-8 w-px bg-gradient-to-b from-transparent via-line/50 to-transparent" />
@@ -332,7 +383,11 @@ const LessonView = () => {
 
           {/* Lesson Content */}
           {lesson.content_md && (
-            <div ref={(el) => tocEnabled && registerTopicRef('topic-content', el)} className="animate-slide-up">
+            <div 
+              ref={(el) => tocEnabled && registerTopicRef('topic-content', el)} 
+              data-topic-id="topic-content"
+              className="animate-slide-up"
+            >
               <Card className="content-card">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-3">
