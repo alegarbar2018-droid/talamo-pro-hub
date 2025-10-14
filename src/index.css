@@ -57,9 +57,12 @@
     --glow-subtle: 0 0 10px hsl(var(--teal) / 0.1);
     --glow-intense: 0 0 40px hsl(var(--teal) / 0.5);
     --shadow-glow-subtle: 0 4px 20px hsl(var(--teal) / 0.15);
+    --shadow-elevated: 0 10px 40px -10px hsl(0 0% 0% / 0.4);
+    --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.2);
     --gradient-primary: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--teal-dark)));
     --gradient-surface: linear-gradient(135deg, hsl(var(--surface)), hsl(222 20% 6%));
     --gradient-glow: radial-gradient(circle at center, hsl(var(--teal) / 0.1), transparent 70%);
+    --gradient-accent: linear-gradient(135deg, hsl(var(--teal) / 0.15), hsl(var(--teal) / 0.05));
     
     /* Trading Platform Specific */
     --profit: 142 76% 36%;
@@ -70,6 +73,11 @@
     --risk-low: 142 76% 36%;
     --risk-medium: 45 93% 58%;
     --risk-high: 0 84.2% 60.2%;
+    
+    /* Academy Specific */
+    --academy-progress-bg: 222 20% 8%;
+    --academy-progress-fill: var(--teal);
+    --academy-topic-hover: 222 20% 14%;
   }
 }
 
@@ -81,6 +89,24 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+  
+  /* Custom scrollbar for academy sidebar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--surface));
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--teal) / 0.3);
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--teal) / 0.5);
+  }
 }
 
 @layer components {
@@ -89,17 +115,41 @@
   }
   
   .card-glow {
-    @apply shadow-glow-subtle hover:shadow-glow transition-all duration-300;
+    @apply shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-all duration-300;
   }
   
   .btn-primary {
     @apply bg-gradient-primary hover:shadow-glow transition-all duration-300;
+  }
+  
+  .topic-item {
+    @apply transition-all duration-200 hover:scale-[1.02] hover:bg-[hsl(var(--academy-topic-hover))];
+  }
+  
+  .sidebar-header {
+    @apply bg-gradient-to-br from-surface to-[hsl(222_20%_6%)] backdrop-blur-sm;
+  }
+  
+  .progress-ring {
+    @apply relative overflow-hidden rounded-full;
+  }
+  
+  .content-card {
+    @apply bg-surface/50 backdrop-blur-sm border border-line/50 rounded-lg shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-teal/30 transition-all duration-300;
   }
 }
 
 @layer utilities {
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
   }
   
   .animate-pulse {
@@ -115,6 +165,28 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

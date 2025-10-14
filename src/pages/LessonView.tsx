@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle, FileText, Download, ExternalLink, Image as ImageIcon, FileArchive, Sparkles } from "lucide-react";
+import { ArrowLeft, CheckCircle, FileText, Download, ExternalLink, Image as ImageIcon, FileArchive, Sparkles, HelpCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { QuizView } from "@/components/student/QuizView";
 import { useAuth } from "@/contexts/AuthContext";
@@ -243,7 +243,7 @@ const LessonView = () => {
   // ============================================
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-[hsl(222_20%_5%)] flex">
       {/* TOC Sidebar - Always rendered to maintain hook count, but hidden via CSS when disabled */}
       <div className={tocEnabled ? 'block' : 'hidden'}>
         <LessonTOCSidebar
@@ -257,57 +257,59 @@ const LessonView = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1">
-        <div className="border-b border-line bg-surface">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-4 py-4">
+      <div className="flex-1 overflow-auto">
+        <div className="sticky top-0 z-40 border-b border-line/30 bg-surface/80 backdrop-blur-xl shadow-sm">
+          <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10">
+            <div className="flex items-center gap-4 py-5">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate(-1)}
-                className="text-teal hover:bg-teal/10"
+                className="text-teal hover:bg-teal/10 hover:text-teal-ink transition-all rounded-xl"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Course
               </Button>
               <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold text-foreground">{lesson.course_item?.title}</h1>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h1 className="text-3xl font-bold text-foreground tracking-tight">{lesson.course_item?.title}</h1>
                   {tocEnabled && showNewBadge && (
-                    <Badge className="bg-teal/10 text-teal border-teal/20 gap-1 animate-pulse">
-                      <Sparkles className="h-3 w-3" />
-                      {t('academy.lesson.new_feature', '¡Nuevo!')}
+                    <Badge className="bg-gradient-primary text-white border-teal/20 gap-1.5 animate-pulse shadow-glow-subtle px-3 py-1">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      <span className="font-semibold">{t('academy.lesson.new_feature', '¡Nuevo!')}</span>
                     </Badge>
                   )}
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {lesson.module?.course?.level && `Level ${lesson.module.course.level}`}
-                </div>
+                {lesson.module?.course?.level && (
+                  <div className="text-sm text-muted-foreground mt-2 font-medium">
+                    Level {lesson.module.course.level}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10 py-10 space-y-8">
           {/* Cover Image */}
           {coverImageUrl && (
-            <div className="rounded-lg overflow-hidden">
+            <div className="rounded-2xl overflow-hidden shadow-lg animate-fade-in ring-1 ring-line/20">
               <img 
                 src={coverImageUrl} 
                 alt={lesson.course_item?.title}
-                className="w-full h-64 object-cover"
+                className="w-full h-72 object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
           )}
 
           {/* Video Player */}
           {videoUrl && (
-            <div ref={(el) => tocEnabled && registerTopicRef('topic-video', el)}>
-              <Card>
+            <div ref={(el) => tocEnabled && registerTopicRef('topic-video', el)} className="animate-slide-up">
+              <Card className="content-card overflow-hidden">
                 <CardContent className="p-0">
                   <video
                     ref={videoRef}
                     controls
-                    className="w-full aspect-video bg-black"
+                    className="w-full aspect-video bg-black rounded-t-lg"
                     src={videoUrl}
                   >
                     Your browser does not support the video tag.
@@ -319,17 +321,25 @@ const LessonView = () => {
 
           {/* Lesson Content */}
           {lesson.content_md && (
-            <div ref={(el) => tocEnabled && registerTopicRef('topic-content', el)}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Lesson Content</CardTitle>
+            <div ref={(el) => tocEnabled && registerTopicRef('topic-content', el)} className="animate-slide-up">
+              <Card className="content-card">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+                      <FileText className="h-5 w-5 text-white" />
+                    </div>
+                    <CardTitle className="text-xl">Lesson Content</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="prose prose-invert max-w-none">
                   <EnhancedContentRenderer content={lesson.content_md} />
                   {lesson.duration_min && (
-                    <p className="text-sm text-muted-foreground mt-4">
-                      Duration: {lesson.duration_min} minutes
-                    </p>
+                    <div className="mt-6 pt-6 border-t border-line/30 flex items-center gap-2 text-sm text-muted-foreground">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="font-medium">Duration: {lesson.duration_min} minutes</span>
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -338,63 +348,77 @@ const LessonView = () => {
 
           {/* Resources & Materials */}
           {resources.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Resources & Materials</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {resources.map((resource: any) => (
-                    <div 
-                      key={resource.id} 
-                      ref={(el) => tocEnabled && registerTopicRef(`topic-resource-${resource.id}`, el)}
-                      className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        {getResourceIcon(resource.kind)}
-                        <div>
-                          <p className="font-medium">{resource.title}</p>
-                          <p className="text-xs text-muted-foreground capitalize">{resource.kind}</p>
-                        </div>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const url = getResourceUrl(resource);
-                          if (tocEnabled) {
-                            markTopicComplete(`topic-resource-${resource.id}`);
-                          }
-                          if (resource.kind === 'link') {
-                            window.open(url, '_blank', 'noopener,noreferrer');
-                          } else {
-                            // Create a download link
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.download = resource.title;
-                            link.target = '_blank';
-                            link.rel = 'noopener noreferrer';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                          }
-                        }}
-                      >
-                        {resource.kind === 'link' ? 'Open' : 'Download'}
-                      </Button>
+            <div className="animate-slide-up">
+              <Card className="content-card">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+                      <Download className="h-5 w-5 text-white" />
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    <CardTitle className="text-xl">Resources & Materials</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {resources.map((resource: any, index: number) => (
+                      <div 
+                        key={resource.id} 
+                        ref={(el) => tocEnabled && registerTopicRef(`topic-resource-${resource.id}`, el)}
+                        className="group flex items-center justify-between p-4 border border-line/30 rounded-xl hover:bg-gradient-accent hover:border-teal/30 transition-all duration-300 hover:shadow-md animate-fade-in"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="h-11 w-11 rounded-lg bg-surface/50 flex items-center justify-center text-teal-ink group-hover:bg-teal/10 group-hover:text-teal transition-all">
+                            {getResourceIcon(resource.kind)}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-foreground group-hover:text-teal-ink transition-colors">{resource.title}</p>
+                            <p className="text-xs text-muted-foreground capitalize mt-0.5">{resource.kind}</p>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-gradient-primary hover:shadow-glow-subtle text-white border-none"
+                          onClick={() => {
+                            const url = getResourceUrl(resource);
+                            if (tocEnabled) {
+                              markTopicComplete(`topic-resource-${resource.id}`);
+                            }
+                            if (resource.kind === 'link') {
+                              window.open(url, '_blank', 'noopener,noreferrer');
+                            } else {
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = resource.title;
+                              link.target = '_blank';
+                              link.rel = 'noopener noreferrer';
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            }
+                          }}
+                        >
+                          {resource.kind === 'link' ? 'Open' : 'Download'}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {/* Quiz Section */}
           {lesson.quiz_id && (
-            <div ref={(el) => tocEnabled && registerTopicRef('topic-quiz', el)}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quiz</CardTitle>
+            <div ref={(el) => tocEnabled && registerTopicRef('topic-quiz', el)} className="animate-slide-up">
+              <Card className="content-card">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+                      <HelpCircle className="h-5 w-5 text-white" />
+                    </div>
+                    <CardTitle className="text-xl">Quiz</CardTitle>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <QuizView 
@@ -418,8 +442,7 @@ const LessonView = () => {
           {/* Mark Complete Button */}
           {session && !isCompleted && (
             <Button
-              className="w-full"
-              size="lg"
+              className="w-full bg-gradient-primary hover:shadow-glow-intense text-white border-none h-14 text-base font-semibold rounded-xl animate-fade-in"
               onClick={() => markComplete.mutate()}
               disabled={markComplete.isPending}
             >
@@ -430,9 +453,9 @@ const LessonView = () => {
 
           {/* Completed Badge */}
           {isCompleted && (
-            <div className="flex items-center justify-center gap-2 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <span className="text-green-500 font-medium">Lesson Completed</span>
+            <div className="flex items-center justify-center gap-3 p-5 bg-gradient-to-r from-success/20 to-success/10 border border-success/30 rounded-xl shadow-lg animate-scale-in">
+              <CheckCircle className="h-6 w-6 text-success" />
+              <span className="text-success font-bold text-lg">Lesson Completed</span>
             </div>
           )}
         </div>
