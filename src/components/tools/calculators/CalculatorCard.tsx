@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Lock } from "lucide-react";
+import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 
 interface CalculatorCardProps {
@@ -54,12 +55,18 @@ export function CalculatorCard({
   };
 
   return (
-    <Card
-      className="group relative overflow-hidden border-line/50 bg-surface/30 backdrop-blur-sm transition-all duration-300 hover:border-teal/30 hover:shadow-glow-subtle hover:-translate-y-1 cursor-pointer"
-      onClick={onOpen}
+    <motion.div
+      whileHover={{ scale: 1.02, y: -4 }}
+      transition={{ duration: 0.2 }}
     >
-      {/* Gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-teal/0 group-hover:from-teal/5 group-hover:to-teal/10 transition-all duration-300 pointer-events-none" />
+      <Card
+        className="group relative overflow-hidden border-line/50 bg-surface/30 backdrop-blur-sm transition-all duration-300 hover:border-teal/30 hover:shadow-glow-subtle cursor-pointer"
+        onClick={onOpen}
+        role="article"
+        aria-label={`${title} calculator card`}
+      >
+        {/* Gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-teal/0 group-hover:from-teal/5 group-hover:to-teal/10 transition-all duration-300 pointer-events-none" />
 
       <CardHeader className="relative">
         <div className="flex items-start justify-between gap-4 mb-3">
@@ -124,11 +131,13 @@ export function CalculatorCard({
             e.stopPropagation();
             onOpen();
           }}
+          aria-label={`Open ${title} calculator`}
         >
           <span>Abrir calculadora</span>
           <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </Button>
       </CardContent>
     </Card>
+    </motion.div>
   );
 }

@@ -3,6 +3,7 @@ import { X, Share2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CalculatorModalProps {
   isOpen: boolean;
@@ -69,15 +70,27 @@ export function CalculatorModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl h-[95vh] md:h-[90vh] p-0 gap-0 bg-background border-line/50">
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-line/50 bg-surface/95 backdrop-blur-sm">
+      <DialogContent 
+        className="max-w-7xl h-[95vh] md:h-[90vh] p-0 gap-0 bg-background border-line/50"
+        aria-describedby="calculator-modal-description"
+      >
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Header */}
+              <div className="sticky top-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 border-b border-line/50 bg-surface/95 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
               className="hover:bg-muted/50"
+              aria-label="Close calculator"
             >
               <X className="w-5 h-5" />
             </Button>
@@ -89,6 +102,7 @@ export function CalculatorModal({
             size="sm"
             onClick={handleShare}
             className="border-line/50 hover:bg-muted/50"
+            aria-label="Share calculator link"
           >
             <Share2 className="w-4 h-4 mr-2" />
             Compartir
@@ -96,9 +110,18 @@ export function CalculatorModal({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto p-4 md:p-6 custom-scrollbar">
+        <motion.div 
+          className="overflow-y-auto p-4 md:p-6 custom-scrollbar"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          id="calculator-modal-description"
+        >
           {children}
-        </div>
+        </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </DialogContent>
     </Dialog>
   );

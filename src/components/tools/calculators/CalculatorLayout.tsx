@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FormulaExplainer } from "./FormulaExplainer";
 import { CalculatorEmpty } from "./CalculatorEmpty";
+import { motion } from "framer-motion";
 import type { CalculatorConfig, CalculatorResult } from "@/types/calculators";
 
 interface CalculatorLayoutProps {
@@ -74,7 +75,12 @@ export function CalculatorLayout({
   return (
     <div className={`grid lg:grid-cols-[1fr,400px] gap-6 ${className}`}>
       {/* Left Column: Inputs & Formula */}
-      <div className="space-y-6">
+      <motion.div 
+        className="space-y-6"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         {/* Header */}
         <div className="space-y-3">
           <div className="flex items-start gap-4">
@@ -118,7 +124,9 @@ export function CalculatorLayout({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {inputs}
+            <div role="form" aria-label={`${config.title} calculator inputs`}>
+              {inputs}
+            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
@@ -126,6 +134,7 @@ export function CalculatorLayout({
                 onClick={onCalculate}
                 disabled={isCalculating}
                 className="flex-1 bg-gradient-to-r from-teal to-teal-dark hover:shadow-glow-subtle transition-all"
+                aria-label="Calculate results"
               >
                 {isCalculating ? (
                   <>
@@ -143,6 +152,7 @@ export function CalculatorLayout({
                 onClick={onReset}
                 variant="outline"
                 className="border-line/50 hover:bg-surface/50"
+                aria-label="Reset calculator"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
@@ -152,10 +162,15 @@ export function CalculatorLayout({
 
         {/* Formula Explainer */}
         <FormulaExplainer formula={config.formula} />
-      </div>
+      </motion.div>
 
       {/* Right Column: Results (Sticky) */}
-      <div className="lg:sticky lg:top-6 lg:h-fit">
+      <motion.div 
+        className="lg:sticky lg:top-6 lg:h-fit"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
         <Card className="border-line/50 bg-gradient-to-br from-surface/50 to-surface/30 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-lg">Resultados</CardTitle>
@@ -164,57 +179,62 @@ export function CalculatorLayout({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {!showResults ? (
-              <CalculatorEmpty />
-            ) : (
-              <ScrollArea className="max-h-[600px]">
-                <div className="space-y-4 pr-4">
-                  {results.map((result) => (
-                    <div
-                      key={result.id}
-                      className={`p-4 rounded-lg border transition-all ${
-                        result.highlight
-                          ? 'bg-gradient-to-br from-teal/10 to-teal/5 border-teal/30 shadow-glow-subtle'
-                          : 'bg-muted/20 border-line/30'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-xs text-muted-foreground font-medium">
-                          {result.label}
-                        </p>
-                        {result.tooltip && (
-                          <span className="text-xs text-muted-foreground/50">ⓘ</span>
-                        )}
-                      </div>
-                      <p
-                        className={`text-2xl font-bold ${
+            <div role="region" aria-label="Calculation results" aria-live="polite">
+              {!showResults ? (
+                <CalculatorEmpty />
+              ) : (
+                <ScrollArea className="max-h-[600px]">
+                  <div className="space-y-4 pr-4">
+                    {results.map((result, index) => (
+                      <motion.div
+                        key={result.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2, delay: index * 0.05 }}
+                        className={`p-4 rounded-lg border transition-all ${
                           result.highlight
-                            ? 'bg-gradient-to-r from-teal to-teal-dark bg-clip-text text-transparent'
-                            : getSentimentColor(result.sentiment)
+                            ? 'bg-gradient-to-br from-teal/10 to-teal/5 border-teal/30 shadow-glow-subtle'
+                            : 'bg-muted/20 border-line/30'
                         }`}
                       >
-                        {typeof result.value === 'number'
-                          ? result.value.toFixed(result.decimals)
-                          : result.value}
-                        {result.unit && (
-                          <span className="text-sm font-normal text-muted-foreground ml-1">
-                            {result.unit}
-                          </span>
-                        )}
-                      </p>
-                      {result.tooltip && (
-                        <p className="text-xs text-muted-foreground/70 mt-2">
-                          {result.tooltip}
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <p className="text-xs text-muted-foreground font-medium">
+                            {result.label}
+                          </p>
+                          {result.tooltip && (
+                            <span className="text-xs text-muted-foreground/50" aria-label="More information">ⓘ</span>
+                          )}
+                        </div>
+                        <p
+                          className={`text-2xl font-bold ${
+                            result.highlight
+                              ? 'bg-gradient-to-r from-teal to-teal-dark bg-clip-text text-transparent'
+                              : getSentimentColor(result.sentiment)
+                          }`}
+                        >
+                          {typeof result.value === 'number'
+                            ? result.value.toFixed(result.decimals)
+                            : result.value}
+                          {result.unit && (
+                            <span className="text-sm font-normal text-muted-foreground ml-1">
+                              {result.unit}
+                            </span>
+                          )}
                         </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
+                        {result.tooltip && (
+                          <p className="text-xs text-muted-foreground/70 mt-2">
+                            {result.tooltip}
+                          </p>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
     </div>
   );
 }
