@@ -1,158 +1,224 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
-import { supabase } from '@/integrations/supabase/client';
-import { PermissionGuard } from '@/components/admin/PermissionGuard';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, Plus, ExternalLink } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ToolForm } from '@/components/admin/ToolForm';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ContractSpecForm } from "@/components/admin/tools/ContractSpecForm";
+import { FormulaForm } from "@/components/admin/tools/FormulaForm";
+import { PermissionGuard } from "@/components/admin/PermissionGuard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Plus, FileText, Calculator, DollarSign } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-export const AdminTools: React.FC = () => {
-  const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+export default function AdminTools() {
+  const [activeTab, setActiveTab] = useState("contracts");
+  const [isNewContractModalOpen, setIsNewContractModalOpen] = useState(false);
+  const [isNewFormulaModalOpen, setIsNewFormulaModalOpen] = useState(false);
 
-  const { data: tools, isLoading, error, refetch } = useQuery({
-    queryKey: ['admin-tools', statusFilter],
+  const { data: contracts, isLoading: loadingContracts, refetch: refetchContracts } = useQuery({
+    queryKey: ["admin-contracts"],
     queryFn: async () => {
-      let query = supabase
-        .from('tools')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await supabase
+        .from("contract_specifications")
+        .select("*")
+        .order("symbol", { ascending: true });
       if (error) throw error;
       return data;
     },
   });
 
-  const getStatusBadge = (status: string) => {
-    const variant = status === 'active' ? 'default' : 'secondary';
-    return <Badge variant={variant}>{t(`admin.tools.status.${status}`)}</Badge>;
-  };
+  const { data: formulas, isLoading: loadingFormulas, refetch: refetchFormulas } = useQuery({
+    queryKey: ["admin-formulas"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trading_formulas")
+        .select("*")
+        .order("category", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
 
-  const handleSuccess = () => {
-    setIsModalOpen(false);
-    refetch();
-  };
+  const { data: calculators, isLoading: loadingCalculators, refetch: refetchCalculators } = useQuery({
+    queryKey: ["admin-calculators"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("calculator_configs")
+        .select("*")
+        .order("position", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
 
   return (
     <PermissionGuard resource="tools" action="manage">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">{t('admin.tools.title')}</h1>
-            <p className="text-muted-foreground mt-1">{t('admin.tools.subtitle')}</p>
+            <h1 className="text-3xl font-bold">Gestión de Herramientas</h1>
+            <p className="text-muted-foreground mt-1">
+              Administra contratos, fórmulas y configuraciones de calculadoras
+            </p>
           </div>
-          <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {t('admin.tools.new_tool')}
-          </Button>
         </div>
 
-        <div className="flex gap-4">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('admin.tools.filter.all')}</SelectItem>
-              <SelectItem value="active">{t('admin.tools.status.active')}</SelectItem>
-              <SelectItem value="inactive">{t('admin.tools.status.inactive')}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="contracts">
+              <DollarSign className="w-4 h-4 mr-2" />
+              Contratos
+            </TabsTrigger>
+            <TabsTrigger value="formulas">
+              <FileText className="w-4 h-4 mr-2" />
+              Fórmulas
+            </TabsTrigger>
+            <TabsTrigger value="calculators">
+              <Calculator className="w-4 h-4 mr-2" />
+              Calculadoras
+            </TabsTrigger>
+          </TabsList>
 
-        {isLoading && (
-          <div className="grid gap-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <Skeleton className="h-20 w-full" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{t('admin.tools.error_loading')}</AlertDescription>
-          </Alert>
-        )}
-
-        {tools && tools.length === 0 && (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground mb-4">{t('admin.tools.no_tools')}</p>
-              <Button onClick={() => setIsModalOpen(true)} variant="outline">
-                <Plus className="mr-2 h-4 w-4" />
-                {t('admin.tools.create_first')}
+          {/* Contracts Tab */}
+          <TabsContent value="contracts" className="space-y-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setIsNewContractModalOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Nuevo Contrato
               </Button>
-            </CardContent>
-          </Card>
-        )}
+            </div>
 
-        <div className="grid gap-4">
-          {tools?.map((tool) => (
-            <Card key={tool.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{tool.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{tool.description}</p>
-                  </div>
-                  {getStatusBadge(tool.status)}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm">
-                    <Badge variant="outline">{tool.category}</Badge>
-                  </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={tool.url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      {t('admin.tools.visit')}
-                    </a>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+            {loadingContracts ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-24 w-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {contracts?.map((contract) => (
+                  <Card key={contract.id}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">{contract.symbol}</CardTitle>
+                        <Badge variant={contract.status === 'active' ? 'default' : 'secondary'}>
+                          {contract.status}
+                        </Badge>
+                      </div>
+                      <CardDescription>{contract.name}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-sm space-y-1">
+                      <p><strong>Clase:</strong> {contract.asset_class}</p>
+                      <p><strong>Pip Value:</strong> ${contract.pip_value}</p>
+                      <p><strong>Contract Size:</strong> {contract.contract_size}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
 
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-2xl">
+          {/* Formulas Tab */}
+          <TabsContent value="formulas" className="space-y-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setIsNewFormulaModalOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Fórmula
+              </Button>
+            </div>
+
+            {loadingFormulas ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-32 w-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {formulas?.map((formula) => (
+                  <Card key={formula.id}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle>{formula.name}</CardTitle>
+                        <div className="flex gap-2">
+                          <Badge>{formula.category}</Badge>
+                          <Badge variant="outline">{formula.difficulty}</Badge>
+                        </div>
+                      </div>
+                      <CardDescription>{formula.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <code className="block p-3 bg-muted rounded text-sm">
+                        {formula.formula_plain}
+                      </code>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Calculators Tab */}
+          <TabsContent value="calculators" className="space-y-4">
+            {loadingCalculators ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-24 w-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {calculators?.map((calc) => (
+                  <Card key={calc.id}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle>{calc.name}</CardTitle>
+                        <Badge>{calc.category}</Badge>
+                      </div>
+                      <CardDescription>{calc.description}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Contract Dialog */}
+        <Dialog open={isNewContractModalOpen} onOpenChange={setIsNewContractModalOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{t('admin.tools.new_tool')}</DialogTitle>
+              <DialogTitle>Nuevo Contrato</DialogTitle>
             </DialogHeader>
-            <ToolForm
-              onSuccess={handleSuccess}
-              onCancel={() => setIsModalOpen(false)}
+            <ContractSpecForm
+              onSuccess={() => {
+                setIsNewContractModalOpen(false);
+                refetchContracts();
+              }}
+              onCancel={() => setIsNewContractModalOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+
+        {/* Formula Dialog */}
+        <Dialog open={isNewFormulaModalOpen} onOpenChange={setIsNewFormulaModalOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Nueva Fórmula</DialogTitle>
+            </DialogHeader>
+            <FormulaForm
+              onSuccess={() => {
+                setIsNewFormulaModalOpen(false);
+                refetchFormulas();
+              }}
+              onCancel={() => setIsNewFormulaModalOpen(false)}
             />
           </DialogContent>
         </Dialog>
       </div>
     </PermissionGuard>
   );
-};
-
-export default AdminTools;
+}

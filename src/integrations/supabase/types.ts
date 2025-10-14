@@ -251,6 +251,68 @@ export type Database = {
         }
         Relationships: []
       }
+      calculator_configs: {
+        Row: {
+          calculation_logic: Json
+          calculator_id: string
+          category: string
+          created_at: string
+          description: string
+          formula_id: string | null
+          icon: string
+          id: string
+          input_fields: Json
+          name: string
+          output_format: Json
+          position: number
+          requires_contracts: boolean | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          calculation_logic: Json
+          calculator_id: string
+          category: string
+          created_at?: string
+          description: string
+          formula_id?: string | null
+          icon?: string
+          id?: string
+          input_fields: Json
+          name: string
+          output_format: Json
+          position?: number
+          requires_contracts?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          calculation_logic?: Json
+          calculator_id?: string
+          category?: string
+          created_at?: string
+          description?: string
+          formula_id?: string | null
+          icon?: string
+          id?: string
+          input_fields?: Json
+          name?: string
+          output_format?: Json
+          position?: number
+          requires_contracts?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calculator_configs_formula_id_fkey"
+            columns: ["formula_id"]
+            isOneToOne: false
+            referencedRelation: "trading_formulas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competitions: {
         Row: {
           created_at: string
@@ -280,6 +342,75 @@ export type Database = {
           rules?: string
           starts_at?: string
           status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      contract_specifications: {
+        Row: {
+          asset_class: string
+          contract_size: number
+          created_at: string
+          id: string
+          leverage_max: number | null
+          lot_step: number
+          margin_percentage: number | null
+          max_lot: number
+          metadata: Json | null
+          min_lot: number
+          name: string
+          pip_position: number
+          pip_value: number
+          spread_typical: number | null
+          status: string
+          swap_long: number | null
+          swap_short: number | null
+          symbol: string
+          trading_hours: Json | null
+          updated_at: string
+        }
+        Insert: {
+          asset_class: string
+          contract_size: number
+          created_at?: string
+          id?: string
+          leverage_max?: number | null
+          lot_step?: number
+          margin_percentage?: number | null
+          max_lot?: number
+          metadata?: Json | null
+          min_lot?: number
+          name: string
+          pip_position?: number
+          pip_value: number
+          spread_typical?: number | null
+          status?: string
+          swap_long?: number | null
+          swap_short?: number | null
+          symbol: string
+          trading_hours?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          asset_class?: string
+          contract_size?: number
+          created_at?: string
+          id?: string
+          leverage_max?: number | null
+          lot_step?: number
+          margin_percentage?: number | null
+          max_lot?: number
+          metadata?: Json | null
+          min_lot?: number
+          name?: string
+          pip_position?: number
+          pip_value?: number
+          spread_typical?: number | null
+          status?: string
+          swap_long?: number | null
+          swap_short?: number | null
+          symbol?: string
+          trading_hours?: Json | null
           updated_at?: string
         }
         Relationships: []
@@ -1218,6 +1349,63 @@ export type Database = {
           status?: string
           updated_at?: string
           url?: string
+        }
+        Relationships: []
+      }
+      trading_formulas: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          difficulty: string
+          example_inputs: Json | null
+          example_output: Json | null
+          explanation: string
+          formula_latex: string | null
+          formula_plain: string
+          id: string
+          name: string
+          related_calculators: string[] | null
+          slug: string
+          status: string
+          updated_at: string
+          variables: Json
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          difficulty?: string
+          example_inputs?: Json | null
+          example_output?: Json | null
+          explanation: string
+          formula_latex?: string | null
+          formula_plain: string
+          id?: string
+          name: string
+          related_calculators?: string[] | null
+          slug: string
+          status?: string
+          updated_at?: string
+          variables: Json
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          difficulty?: string
+          example_inputs?: Json | null
+          example_output?: Json | null
+          explanation?: string
+          formula_latex?: string | null
+          formula_plain?: string
+          id?: string
+          name?: string
+          related_calculators?: string[] | null
+          slug?: string
+          status?: string
+          updated_at?: string
+          variables?: Json
         }
         Relationships: []
       }

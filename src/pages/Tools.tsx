@@ -1,470 +1,209 @@
-import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { ArrowLeft, Calculator, TrendingUp, Shield, DollarSign, PieChart, Activity, Target, BarChart3, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { 
-  Calculator, 
-  ArrowLeft,
-  TrendingDown,
-  BookOpen,
-  Lock,
-  AlertTriangle,
-  Target,
-  BarChart3,
-  Activity,
-  Settings
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RiskCalculator } from "@/components/tools/RiskCalculator";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
-import { useObservability } from "@/components/business/ObservabilityProvider";
+import Navigation from "@/components/Navigation";
 
-const Tools = () => {
-  const navigate = useNavigate();
-  const { t } = useTranslation(['tools']);
-  const { trackPageView, trackInteraction } = useObservability();
-  const [riskCalc, setRiskCalc] = useState({
-    balance: "",
-    riskPercent: "",
-    slPips: "",
-    pipValue: "0.1"
-  });
-  const [calcResult, setCalcResult] = useState<number | null>(null);
+export default function Tools() {
+  const [activeTab, setActiveTab] = useState("risk-calculator");
 
-  const [journalEntry, setJournalEntry] = useState({
-    date: new Date().toISOString().split('T')[0],
-    pair: "",
-    entry: "",
-    exit: "",
-    result: "",
-    notes: "",
-    tags: ""
-  });
-
-  useEffect(() => {
-    trackPageView('tools');
-  }, [trackPageView]);
-
-  const calculateLotSize = () => {
-    const balance = parseFloat(riskCalc.balance);
-    const riskPercent = parseFloat(riskCalc.riskPercent);
-    const slPips = parseFloat(riskCalc.slPips);
-    const pipValue = parseFloat(riskCalc.pipValue);
-
-    if (!balance || !riskPercent || !slPips || !pipValue) {
-      alert(t('tools:alerts.complete_fields'));
-      return;
-    }
-
-    if (slPips <= 0) {
-      alert(t('tools:alerts.sl_positive'));
-      return;
-    }
-
-    const riskAmount = (balance * riskPercent) / 100;
-    const lotSize = riskAmount / (slPips * pipValue);
-    
-    setCalcResult(Math.round(lotSize * 100) / 100);
-    trackInteraction('risk_calculator_used', 'calculate', { 
-      balance, 
-      riskPercent, 
-      slPips, 
-      lotSize: Math.round(lotSize * 100) / 100 
-    });
-  };
-
-  const saveJournalEntry = () => {
-    // Mock save to localStorage
-    const entries = JSON.parse(localStorage.getItem("journalEntries") || "[]");
-    const newEntry = {
-      ...journalEntry,
-      id: Date.now(),
-      timestamp: new Date().toISOString()
-    };
-    entries.push(newEntry);
-    localStorage.setItem("journalEntries", JSON.stringify(entries));
-    
-    // Reset form
-    setJournalEntry({
-      date: new Date().toISOString().split('T')[0],
-      pair: "",
-      entry: "",
-      exit: "",
-      result: "",
-      notes: "",
-      tags: ""
-    });
-    
-    alert(t('tools:alerts.entry_saved'));
-    trackInteraction('journal_entry_saved', 'submit', { pair: journalEntry.pair });
-  };
-
-  const tools = [
+  const calculators = [
     {
       id: "risk-calculator",
       name: "Calculadora de Riesgo",
-      description: "Calcula el tamaño de posición óptimo",
       icon: Calculator,
-      available: true
+      description: "Determina el tamaño óptimo de posición según tu riesgo",
+      category: "risk",
     },
     {
-      id: "dd-panel", 
-      name: "Panel de Drawdown",
-      description: "Simulador de drawdown y recuperación",
-      icon: TrendingDown,
-      available: true
+      id: "pip-calculator",
+      name: "Calculadora de Pips",
+      icon: TrendingUp,
+      description: "Calcula el valor monetario de los pips",
+      category: "risk",
+      disabled: true,
     },
     {
-      id: "journal",
-      name: "Journal de Trading", 
-      description: "Registro de operaciones y aprendizajes",
-      icon: BookOpen,
-      available: true
+      id: "margin-calculator",
+      name: "Calculadora de Margen",
+      icon: Shield,
+      description: "Calcula el margen requerido para tu operación",
+      category: "risk",
+      disabled: true,
     },
     {
-      id: "audit",
-      name: "Auditoría MT4/MT5",
-      description: "Análisis de cuentas de trading (Solo lectura)",
+      id: "profit-loss",
+      name: "Calculadora P/L",
+      icon: DollarSign,
+      description: "Calcula ganancias y pérdidas potenciales",
+      category: "analysis",
+      disabled: true,
+    },
+    {
+      id: "position-sizing",
+      name: "Tamaño de Posición",
+      icon: PieChart,
+      description: "Calcula tamaño óptimo basado en múltiples factores",
+      category: "analysis",
+      disabled: true,
+    },
+    {
+      id: "compound-growth",
+      name: "Crecimiento Compuesto",
+      icon: Activity,
+      description: "Proyecta el crecimiento de tu cuenta",
+      category: "planning",
+      disabled: true,
+    },
+    {
+      id: "risk-reward",
+      name: "Riesgo/Beneficio",
+      icon: Target,
+      description: "Calcula la relación riesgo-beneficio",
+      category: "planning",
+      disabled: true,
+    },
+    {
+      id: "break-even",
+      name: "Punto de Equilibrio",
       icon: BarChart3,
-      available: false
-    }
+      description: "Calcula el win rate necesario para break-even",
+      category: "advanced",
+      disabled: true,
+    },
+    {
+      id: "kelly-criterion",
+      name: "Criterio de Kelly",
+      icon: Zap,
+      description: "Optimiza el tamaño de posición según probabilidades",
+      category: "advanced",
+      disabled: true,
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-line bg-surface">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{t('tools:title')}</h1>
-              <p className="text-muted-foreground">{t('tools:subtitle')}</p>
-            </div>
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/dashboard")}
-              className="text-teal hover:bg-teal/10"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('tools:back_to_dashboard')}
+      <Navigation />
+      
+      {/* Hero Premium */}
+      <section className="relative py-20 overflow-hidden bg-gradient-to-br from-surface via-background to-surface">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(6,182,212,0.1),transparent_50%)]" />
+        
+        <div className="container mx-auto px-4 relative">
+          <Link to="/dashboard">
+            <Button variant="ghost" size="sm" className="mb-8 hover:bg-surface/80">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al Dashboard
             </Button>
+          </Link>
+
+          <div className="max-w-3xl">
+            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent">
+              Herramientas de Trading
+            </h1>
+            <p className="text-xl text-muted-foreground mb-6">
+              Suite profesional de calculadoras para optimizar tus operaciones
+            </p>
+            
+            <div className="flex gap-4">
+              <Card className="flex-1 bg-surface/50 backdrop-blur-sm border-line/50">
+                <CardContent className="pt-6 text-center">
+                  <Calculator className="w-8 h-8 mx-auto mb-2 text-teal" />
+                  <p className="text-2xl font-bold">{calculators.length}</p>
+                  <p className="text-sm text-muted-foreground">Calculadoras</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="flex-1 bg-surface/50 backdrop-blur-sm border-line/50">
+                <CardContent className="pt-6 text-center">
+                  <Zap className="w-8 h-8 mx-auto mb-2 text-cyan" />
+                  <p className="text-2xl font-bold">100%</p>
+                  <p className="text-sm text-muted-foreground">Precisión</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs defaultValue="risk-calculator" className="space-y-6">
-          {/* Tools Navigation */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {tools.map((tool) => (
-              <TabsList key={tool.id} className="h-auto p-0 bg-transparent">
-                <TabsTrigger 
-                  value={tool.id}
-                  disabled={!tool.available}
-                  className="w-full h-auto p-4 flex flex-col items-center gap-2 data-[state=active]:bg-surface data-[state=active]:border-teal data-[state=active]:border"
+      {/* Calculators Grid & Content */}
+      <section className="container mx-auto px-4 py-12">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          {/* Calculator Selector */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {calculators.map((calc) => {
+              const Icon = calc.icon;
+              const isActive = activeTab === calc.id;
+              
+              return (
+                <Card
+                  key={calc.id}
+                  className={`cursor-pointer transition-all duration-300 border-2 ${
+                    calc.disabled 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : isActive
+                      ? 'border-teal bg-gradient-to-br from-teal/10 to-cyan/10'
+                      : 'border-line hover:border-teal/50 hover:bg-surface/50'
+                  }`}
+                  onClick={() => !calc.disabled && setActiveTab(calc.id)}
                 >
-                  <tool.icon className={`h-6 w-6 ${tool.available ? 'text-teal' : 'text-muted-foreground'}`} />
-                  <div className="text-center">
-                    <div className={`font-medium ${tool.available ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {tool.name}
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-3 rounded-lg ${
+                        isActive ? 'bg-gradient-to-br from-teal to-cyan' : 'bg-surface'
+                      }`}>
+                        <Icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-foreground'}`} />
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">{calc.name}</CardTitle>
+                        {calc.disabled && (
+                          <span className="text-xs text-muted-foreground">Próximamente</span>
+                        )}
+                      </div>
                     </div>
-                    {!tool.available && (
-                      <Lock className="h-3 w-3 mx-auto mt-1 text-muted-foreground" />
-                    )}
-                  </div>
-                </TabsTrigger>
-              </TabsList>
-            ))}
+                    <CardDescription className="mt-2">{calc.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              );
+            })}
           </div>
 
-          {/* Risk Calculator */}
-          <TabsContent value="risk-calculator">
-            <Card className="border-line bg-surface">
-              <CardHeader>
-                <CardTitle className="text-foreground flex items-center gap-2">
-                  <Calculator className="h-5 w-5 text-teal" />
-                  Calculadora de Riesgo
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Determina el tamaño de posición óptimo basado en tu gestión de riesgo
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="balance" className="text-foreground">Balance de cuenta ($)</Label>
-                      <Input
-                        id="balance"
-                        type="number"
-                        placeholder="10000"
-                        value={riskCalc.balance}
-                        onChange={(e) => setRiskCalc({...riskCalc, balance: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="risk" className="text-foreground">Riesgo por trade (%)</Label>
-                      <Input
-                        id="risk"
-                        type="number"
-                        placeholder="1"
-                        value={riskCalc.riskPercent}
-                        onChange={(e) => setRiskCalc({...riskCalc, riskPercent: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="sl" className="text-foreground">Stop Loss (pips)</Label>
-                      <Input
-                        id="sl"
-                        type="number"
-                        placeholder="50"
-                        value={riskCalc.slPips}
-                        onChange={(e) => setRiskCalc({...riskCalc, slPips: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="pipValue" className="text-foreground">Valor del pip</Label>
-                      <Select value={riskCalc.pipValue} onValueChange={(value) => 
-                        setRiskCalc({...riskCalc, pipValue: value})
-                      }>
-                        <SelectTrigger className="bg-input border-line">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0.1">0.1 (EURUSD, GBPUSD)</SelectItem>
-                          <SelectItem value="0.01">0.01 (USDJPY)</SelectItem>
-                          <SelectItem value="1">1.0 (XAUUSD)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <Button 
-                      onClick={calculateLotSize}
-                      className="w-full bg-gradient-primary hover:shadow-glow"
-                    >
-                      <Target className="h-4 w-4 mr-2" />
-                      Calcular Tamaño de Posición
-                    </Button>
+          {/* Calculator Content */}
+          <Card className="border-line bg-surface/30 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl">
+                {calculators.find(c => c.id === activeTab)?.name}
+              </CardTitle>
+              <CardDescription>
+                {calculators.find(c => c.id === activeTab)?.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TabsContent value="risk-calculator" className="mt-0">
+                <RiskCalculator />
+              </TabsContent>
+              
+              {calculators.filter(c => c.disabled).map(calc => (
+                <TabsContent key={calc.id} value={calc.id} className="mt-0">
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">
+                      Esta calculadora estará disponible próximamente
+                    </p>
                   </div>
-
-                  <div className="space-y-4">
-                    {calcResult !== null && (
-                      <Card className="border-teal/30 bg-teal/5">
-                        <CardContent className="p-6 text-center">
-                          <div className="text-2xl font-bold text-teal mb-2">
-                            {calcResult} lotes
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Tamaño de posición recomendado
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    <Alert className="border-warning/20 bg-warning/10">
-                      <AlertTriangle className="h-4 w-4 text-warning" />
-                      <AlertDescription className="text-foreground">
-                        <strong>Recomendación:</strong> No arriesgue más del 1-2% de su capital por operación. 
-                        Esta calculadora es una guía, siempre ajuste según su estrategia.
-                      </AlertDescription>
-                    </Alert>
-
-                    <div className="text-sm text-muted-foreground space-y-2">
-                      <h4 className="font-semibold text-foreground">Cómo usar:</h4>
-                      <ul className="space-y-1">
-                        <li>• Ingrese su balance actual</li>
-                        <li>• Defina su % de riesgo por trade</li>
-                        <li>• Especifique la distancia del SL</li>
-                        <li>• Seleccione el valor del pip</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Drawdown Panel */}
-          <TabsContent value="dd-panel">
-            <Card className="border-line bg-surface">
-              <CardHeader>
-                <CardTitle className="text-foreground flex items-center gap-2">
-                  <TrendingDown className="h-5 w-5 text-teal" />
-                  Panel de Drawdown
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Simula escenarios de drawdown y planifica la recuperación
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Activity className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Simulador de Drawdown
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Herramienta para analizar el impacto de rachas perdedoras y planificar la recuperación
-                  </p>
-                  <Button variant="outline" className="border-teal text-teal hover:bg-teal/10">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Configurar simulación
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Trading Journal */}
-          <TabsContent value="journal">
-            <Card className="border-line bg-surface">
-              <CardHeader>
-                <CardTitle className="text-foreground flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-teal" />
-                  Journal de Trading
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Registra tus operaciones y reflexiones para mejorar continuamente
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="date" className="text-foreground">Fecha</Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={journalEntry.date}
-                        onChange={(e) => setJournalEntry({...journalEntry, date: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="pair" className="text-foreground">Instrumento</Label>
-                      <Input
-                        id="pair"
-                        placeholder="EURUSD"
-                        value={journalEntry.pair}
-                        onChange={(e) => setJournalEntry({...journalEntry, pair: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="entry" className="text-foreground">Entrada</Label>
-                        <Input
-                          id="entry"
-                          placeholder="1.0850"
-                          value={journalEntry.entry}
-                          onChange={(e) => setJournalEntry({...journalEntry, entry: e.target.value})}
-                          className="bg-input border-line focus:border-teal"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="exit" className="text-foreground">Salida</Label>
-                        <Input
-                          id="exit"
-                          placeholder="1.0920"
-                          value={journalEntry.exit}
-                          onChange={(e) => setJournalEntry({...journalEntry, exit: e.target.value})}
-                          className="bg-input border-line focus:border-teal"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="result" className="text-foreground">Resultado ($)</Label>
-                      <Input
-                        id="result"
-                        placeholder="+120"
-                        value={journalEntry.result}
-                        onChange={(e) => setJournalEntry({...journalEntry, result: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="notes" className="text-foreground">Notas y reflexiones</Label>
-                      <textarea
-                        id="notes"
-                        rows={6}
-                        placeholder="¿Qué funcionó bien? ¿Qué puedes mejorar? ¿Seguiste tu plan?"
-                        value={journalEntry.notes}
-                        onChange={(e) => setJournalEntry({...journalEntry, notes: e.target.value})}
-                        className="w-full bg-input border-line focus:border-teal rounded-md p-3 text-foreground placeholder-muted-foreground"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="tags" className="text-foreground">Etiquetas (separadas por comas)</Label>
-                      <Input
-                        id="tags"
-                        placeholder="ruptura, disciplina, análisis"
-                        value={journalEntry.tags}
-                        onChange={(e) => setJournalEntry({...journalEntry, tags: e.target.value})}
-                        className="bg-input border-line focus:border-teal"
-                      />
-                    </div>
-
-                    <Button 
-                      onClick={saveJournalEntry}
-                      className="w-full bg-gradient-primary hover:shadow-glow"
-                    >
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Guardar en Journal
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Audit Tool */}
-          <TabsContent value="audit">
-            <Card className="border-line bg-surface opacity-50">
-              <CardContent className="text-center py-12">
-                <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Auditoría MT4/MT5
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Herramienta para análisis de cuentas reales (solo lectura). Próximamente disponible.
-                </p>
-                <Alert className="border-warning/20 bg-warning/10 max-w-md mx-auto">
-                  <AlertTriangle className="h-4 w-4 text-warning" />
-                  <AlertDescription className="text-foreground text-sm">
-                    Esta función estará disponible próximamente. Permitirá auditar cuentas MT4/MT5 
-                    con acceso de solo lectura (investor password).
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </TabsContent>
+              ))}
+            </CardContent>
+          </Card>
         </Tabs>
 
-        {/* Trading Disclaimer */}
-        <TradingDisclaimer 
-          context="tools" 
-          variant="compact" 
-          showCollapsible={true}
-          className="mt-8"
-        />
-      </div>
+        <div className="mt-12">
+          <TradingDisclaimer />
+        </div>
+      </section>
     </div>
   );
-};
-
-export default Tools;
+}
