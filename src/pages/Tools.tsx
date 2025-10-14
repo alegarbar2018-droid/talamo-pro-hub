@@ -6,6 +6,7 @@ import { ArrowRight, Calculator, TrendingUp, Wallet, DollarSign, Target, Clock, 
 import { CalculatorModal } from "@/components/tools/calculators/CalculatorModal";
 import { ToolsOverview } from "@/components/tools/ToolsOverview";
 import { ContractSpecifications } from "@/components/tools/specifications";
+import { TradingFormulasGuide } from "@/components/tools/TradingFormulasGuide";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import {
   PositionSizeCalculator,
@@ -162,6 +163,9 @@ const Tools = () => {
             <TabsTrigger value="calculators" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
               Calculadoras
             </TabsTrigger>
+            <TabsTrigger value="formulas" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
+              Fórmulas
+            </TabsTrigger>
             <TabsTrigger value="specifications" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
               Especificaciones
             </TabsTrigger>
@@ -231,6 +235,11 @@ const Tools = () => {
                 ))}
               </div>
             </section>
+          </TabsContent>
+
+          {/* Fórmulas Tab */}
+          <TabsContent value="formulas" className="space-y-6">
+            <TradingFormulasGuide />
           </TabsContent>
 
           {/* Especificaciones Tab */}
