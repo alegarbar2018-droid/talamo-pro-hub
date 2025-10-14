@@ -497,6 +497,39 @@ Important message here!
                           Types: info, warning, success, danger
                         </p>
                       </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-1">📊 Trading Simulator (Interactive)</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::trading-sim asset="EURUSD" scenario="uptrend"
+[scenario_data]
+{
+  "historical": [1.0850, 1.0870, 1.0890],
+  "current": 1.0900,
+  "future": [1.0920, 1.0950, 1.0970],
+  "correct_action": "buy",
+  "entry": 1.0900,
+  "sl": 1.0870,
+  "tp": 1.0970
+}
+
+[question]
+What would you do in this situation?
+
+[feedback_buy]
+✅ Correct! The price went up +70 pips.
+
+[feedback_sell]
+❌ Wrong! The price increased.
+
+[feedback_skip]
+⚠️ You missed +70 pips opportunity.
+:::`}
+                        </pre>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Actions: buy, sell, skip | correct_action determines result
+                        </p>
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>

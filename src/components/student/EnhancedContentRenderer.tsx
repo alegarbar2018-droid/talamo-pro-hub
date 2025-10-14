@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { FlipCard, ContentAccordion, ContentTabs, Callout } from './InteractiveContent';
+import { TradingSimulator } from './TradingSimulator';
 
 interface EnhancedContentRendererProps {
   content: string;
@@ -13,7 +14,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
     let keyCounter = 0;
 
     // Regex para detectar bloques especiales con sintaxis :::type ... :::
-    const blockRegex = /:::(accordion|tabs|flipcard|callout)([^\n]*)\n([\s\S]*?):::/g;
+    const blockRegex = /:::(accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?):::/g;
     
     let match;
     const matches: RegExpExecArray[] = [];
@@ -53,6 +54,9 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
             break;
           case 'callout':
             sections.push(renderCallout(attributes, blockContent, keyCounter++));
+            break;
+          case 'trading-sim':
+            sections.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
             break;
         }
       } catch (error) {
@@ -175,6 +179,55 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
         <ReactMarkdown>{content.trim()}</ReactMarkdown>
       </Callout>
     );
+  };
+
+  const renderTradingSimulator = (attributes: string, content: string, key: number) => {
+    try {
+      // Extract asset and scenario from attributes
+      const assetMatch = attributes.match(/asset="([^"]+)"/);
+      const scenarioMatch = attributes.match(/scenario="([^"]+)"/);
+      
+      const asset = assetMatch?.[1] || 'Asset';
+      const scenario = scenarioMatch?.[1] || 'scenario';
+
+      // Extract sections using regex
+      const scenarioDataMatch = content.match(/\[scenario_data\]\s*\n([\s\S]*?)(?=\n\[|$)/);
+      const questionMatch = content.match(/\[question\]\s*\n([\s\S]*?)(?=\n\[|$)/);
+      const feedbackBuyMatch = content.match(/\[feedback_buy\]\s*\n([\s\S]*?)(?=\n\[|$)/);
+      const feedbackSellMatch = content.match(/\[feedback_sell\]\s*\n([\s\S]*?)(?=\n\[|$)/);
+      const feedbackSkipMatch = content.match(/\[feedback_skip\]\s*\n([\s\S]*?)(?=\n\[|$)/);
+
+      // Parse scenario data JSON
+      const scenarioDataStr = scenarioDataMatch?.[1]?.trim() || '{}';
+      const scenarioData = JSON.parse(scenarioDataStr);
+
+      const question = questionMatch?.[1]?.trim() || 'What would you do?';
+      const feedbackBuy = feedbackBuyMatch?.[1]?.trim() || 'You chose to buy.';
+      const feedbackSell = feedbackSellMatch?.[1]?.trim() || 'You chose to sell.';
+      const feedbackSkip = feedbackSkipMatch?.[1]?.trim() || 'You chose to skip.';
+
+      return (
+        <TradingSimulator
+          key={`trading-sim-${key}`}
+          asset={asset}
+          scenario={scenario}
+          scenarioData={scenarioData}
+          question={question}
+          feedbackBuy={feedbackBuy}
+          feedbackSell={feedbackSell}
+          feedbackSkip={feedbackSkip}
+        />
+      );
+    } catch (error) {
+      console.error('Error parsing trading-sim block:', error);
+      // Fallback to showing raw content
+      return (
+        <div key={`trading-sim-error-${key}`} className="p-4 bg-destructive/10 border border-destructive rounded-lg">
+          <p className="text-sm text-destructive font-semibold">Error loading trading simulator</p>
+          <pre className="text-xs mt-2 overflow-x-auto">{content}</pre>
+        </div>
+      );
+    }
   };
 
   return <div className="space-y-4">{parseContent(content)}</div>;
