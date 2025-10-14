@@ -65,3 +65,6 @@ verify_jwt = false
 
 [[functions.signal-automation-engine.schedule]]
 cron = "*/5 * * * *"
+
+[functions.journal-mentor]
+verify_jwt = true

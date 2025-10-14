@@ -570,6 +570,108 @@ export type Database = {
         }
         Relationships: []
       }
+      journal_entries: {
+        Row: {
+          closed_at: string | null
+          commission: number | null
+          created_at: string | null
+          direction: string
+          emotions: string[] | null
+          entry_price: number
+          exit_price: number | null
+          id: string
+          instrument: string
+          lot_size: number
+          notes: string | null
+          result: number | null
+          result_pips: number | null
+          screenshots: string[] | null
+          status: string
+          stop_loss: number | null
+          swap: number | null
+          tags: string[] | null
+          take_profit: number | null
+          trade_date: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          commission?: number | null
+          created_at?: string | null
+          direction: string
+          emotions?: string[] | null
+          entry_price: number
+          exit_price?: number | null
+          id?: string
+          instrument: string
+          lot_size: number
+          notes?: string | null
+          result?: number | null
+          result_pips?: number | null
+          screenshots?: string[] | null
+          status?: string
+          stop_loss?: number | null
+          swap?: number | null
+          tags?: string[] | null
+          take_profit?: number | null
+          trade_date: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          commission?: number | null
+          created_at?: string | null
+          direction?: string
+          emotions?: string[] | null
+          entry_price?: number
+          exit_price?: number | null
+          id?: string
+          instrument?: string
+          lot_size?: number
+          notes?: string | null
+          result?: number | null
+          result_pips?: number | null
+          screenshots?: string[] | null
+          status?: string
+          stop_loss?: number | null
+          swap?: number | null
+          tags?: string[] | null
+          take_profit?: number | null
+          trade_date?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      journal_recommendations: {
+        Row: {
+          based_on_entries: string[] | null
+          created_at: string | null
+          id: string
+          recommendation_text: string
+          recommendation_type: string
+          user_id: string
+        }
+        Insert: {
+          based_on_entries?: string[] | null
+          created_at?: string | null
+          id?: string
+          recommendation_text: string
+          recommendation_type: string
+          user_id: string
+        }
+        Update: {
+          based_on_entries?: string[] | null
+          created_at?: string | null
+          id?: string
+          recommendation_text?: string
+          recommendation_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lms_answers: {
         Row: {
           attempt_id: string
