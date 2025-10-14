@@ -235,10 +235,9 @@ const AdminTools = () => {
               )}
             </TabsContent>
           </Tabs>
-        </div>
 
-        {/* Modals */}
-        <Dialog open={isNewContractModalOpen} onOpenChange={setIsNewContractModalOpen}>
+          {/* Modals */}
+          <Dialog open={isNewContractModalOpen} onOpenChange={setIsNewContractModalOpen}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Crear Nueva Especificación de Contrato</DialogTitle>
@@ -291,7 +290,7 @@ const AdminTools = () => {
             />
           </DialogContent>
         </Dialog>
-      </div>
+        </div>
     </PermissionGuard>
   );
 };
