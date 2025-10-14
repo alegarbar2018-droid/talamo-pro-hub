@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +24,23 @@ interface TradingSimulatorProps {
   feedbackBuy: string;
   feedbackSell: string;
   feedbackSkip: string;
+  educationalContext?: {
+    concept: string;
+    whatToLook: string[];
+    hint?: string;
+  };
+  annotations?: {
+    higherHighs?: number[];
+    higherLows?: number[];
+    support?: number;
+    resistance?: number;
+    trendLine?: {
+      startIdx: number;
+      startPrice: number;
+      endIdx: number;
+      endPrice: number;
+    };
+  };
 }
 
 type UserAction = 'idle' | 'buy' | 'sell' | 'skip';
@@ -35,7 +53,10 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
   feedbackBuy,
   feedbackSell,
   feedbackSkip,
+  educationalContext,
+  annotations,
 }) => {
+  const { t } = useTranslation('academy');
   const [userAction, setUserAction] = useState<UserAction>('idle');
   const [isRevealed, setIsRevealed] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -110,7 +131,7 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
       return (
         <Badge variant="outline" className="text-base px-4 py-2">
           <AlertCircle className="w-5 h-5 mr-2" />
-          Opportunity {isCorrect ? 'Correctly' : ''} Skipped
+          {t('simulator.opportunity_skipped')} {isCorrect ? t('simulator.correctly') : ''}
         </Badge>
       );
     }
@@ -153,10 +174,34 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">{asset}</h3>
-              <p className="text-sm text-muted-foreground">Scenario: {scenario}</p>
+              <p className="text-sm text-muted-foreground">{t('simulator.scenario')}: {scenario}</p>
             </div>
             {isRevealed && getResultBadge()}
           </div>
+
+          {/* Educational Context Section */}
+          {educationalContext && (
+            <div className="mb-4 p-4 bg-primary/5 border-l-4 border-primary rounded-lg">
+              <h4 className="font-semibold text-primary mb-2 flex items-center gap-2">
+                <span>📚</span>
+                <span>{t('simulator.concept')}: {educationalContext.concept}</span>
+              </h4>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium">{t('simulator.what_to_look')}</p>
+                <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                  {educationalContext.whatToLook.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+                {educationalContext.hint && (
+                  <p className="mt-3 text-primary italic flex items-center gap-2">
+                    <span>💡</span>
+                    <span>{t('simulator.hint')}: {educationalContext.hint}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Chart */}
           <div className="w-full h-64 bg-background/95 border border-border rounded-lg p-4">
@@ -196,13 +241,81 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
                   strokeWidth={2}
                   strokeDasharray="3 3"
                   label={{ 
-                    value: 'NOW', 
+                    value: t('simulator.now'), 
                     position: 'top', 
                     fill: 'hsl(var(--primary))',
                     fontSize: 12,
                     fontWeight: 'bold'
                   }}
                 />
+                
+                {/* Support Level */}
+                {annotations?.support && (
+                  <ReferenceLine 
+                    y={annotations.support}
+                    stroke="hsl(var(--success))"
+                    strokeDasharray="3 3"
+                    strokeWidth={1.5}
+                    label={{
+                      value: t('simulator.support'),
+                      position: 'left',
+                      fill: 'hsl(var(--success))',
+                      fontSize: 10,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                )}
+                
+                {/* Resistance Level */}
+                {annotations?.resistance && (
+                  <ReferenceLine 
+                    y={annotations.resistance}
+                    stroke="hsl(var(--destructive))"
+                    strokeDasharray="3 3"
+                    strokeWidth={1.5}
+                    label={{
+                      value: t('simulator.resistance'),
+                      position: 'left',
+                      fill: 'hsl(var(--destructive))',
+                      fontSize: 10,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                )}
+                
+                {/* Higher Highs Markers */}
+                {annotations?.higherHighs?.map((idx) => (
+                  <ReferenceLine
+                    key={`hh-${idx}`}
+                    x={idx}
+                    stroke="hsl(var(--success))"
+                    strokeWidth={2}
+                    label={{
+                      value: 'HH',
+                      position: 'top',
+                      fill: 'hsl(var(--success))',
+                      fontSize: 9,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                ))}
+                
+                {/* Higher Lows Markers */}
+                {annotations?.higherLows?.map((idx) => (
+                  <ReferenceLine
+                    key={`hl-${idx}`}
+                    x={idx}
+                    stroke="hsl(var(--chart-2))"
+                    strokeWidth={2}
+                    label={{
+                      value: 'HL',
+                      position: 'bottom',
+                      fill: 'hsl(var(--chart-2))',
+                      fontSize: 9,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                ))}
                 
                 {/* Stop Loss Line */}
                 {scenarioData.sl && isRevealed && (
@@ -255,27 +368,31 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
           {/* Question or Result */}
           {userAction === 'idle' && (
             <div className="space-y-4">
-              <p className="text-center font-medium">{question}</p>
+              <div className="bg-muted/30 p-4 rounded-lg border border-border">
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown>{question}</ReactMarkdown>
+                </div>
+              </div>
               <div className="flex gap-3 justify-center">
                 <Button
                   onClick={() => handleAction('buy')}
                   className="bg-success hover:bg-success/90 text-success-foreground"
                 >
                   <TrendingUp className="w-4 h-4 mr-2" />
-                  BUY
+                  {t('simulator.buy')}
                 </Button>
                 <Button
                   onClick={() => handleAction('sell')}
                   className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 >
                   <TrendingDown className="w-4 h-4 mr-2" />
-                  SELL
+                  {t('simulator.sell')}
                 </Button>
                 <Button
                   onClick={() => handleAction('skip')}
                   variant="outline"
                 >
-                  SKIP
+                  {t('simulator.skip')}
                 </Button>
               </div>
             </div>
@@ -300,25 +417,25 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
                   <CollapsibleTrigger asChild>
                     <Button variant="outline" className="w-full">
                       <ChevronDown className={`w-4 h-4 mr-2 transition-transform ${showExplanation ? 'rotate-180' : ''}`} />
-                      {showExplanation ? 'Hide' : 'Show'} Risk Management Details
+                      {showExplanation ? t('simulator.hide') : t('simulator.show')} {t('simulator.risk_management')}
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 p-4 bg-muted/50 rounded-lg space-y-2 text-sm">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-muted-foreground">Entry Price:</span>
+                        <span className="text-muted-foreground">{t('simulator.entry_price')}:</span>
                         <p className="font-mono font-semibold">{scenarioData.entry?.toFixed(4)}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Current Price:</span>
+                        <span className="text-muted-foreground">{t('simulator.current_price')}:</span>
                         <p className="font-mono font-semibold">{scenarioData.current.toFixed(4)}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Stop Loss:</span>
+                        <span className="text-muted-foreground">{t('simulator.stop_loss')}:</span>
                         <p className="font-mono font-semibold text-destructive">{scenarioData.sl.toFixed(4)}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Take Profit:</span>
+                        <span className="text-muted-foreground">{t('simulator.take_profit')}:</span>
                         <p className="font-mono font-semibold text-success">{scenarioData.tp.toFixed(4)}</p>
                       </div>
                     </div>
@@ -336,14 +453,14 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
                 variant="secondary"
                 className="w-full"
               >
-                Try Another Scenario
+                {t('simulator.try_again')}
               </Button>
             </div>
           )}
 
           {userAction !== 'idle' && !isRevealed && (
             <div className="flex items-center justify-center py-4">
-              <div className="animate-pulse text-muted-foreground">Revealing price action...</div>
+              <div className="animate-pulse text-muted-foreground">{t('simulator.revealing')}</div>
             </div>
           )}
         </div>

@@ -191,15 +191,29 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
       const scenario = scenarioMatch?.[1] || 'scenario';
 
       // Extract sections using regex
+      const educationalContextMatch = content.match(/\[educational_context\]\s*\n([\s\S]*?)(?=\n\[|$)/);
       const scenarioDataMatch = content.match(/\[scenario_data\]\s*\n([\s\S]*?)(?=\n\[|$)/);
+      const annotationsMatch = content.match(/\[annotations\]\s*\n([\s\S]*?)(?=\n\[|$)/);
       const questionMatch = content.match(/\[question\]\s*\n([\s\S]*?)(?=\n\[|$)/);
       const feedbackBuyMatch = content.match(/\[feedback_buy\]\s*\n([\s\S]*?)(?=\n\[|$)/);
       const feedbackSellMatch = content.match(/\[feedback_sell\]\s*\n([\s\S]*?)(?=\n\[|$)/);
       const feedbackSkipMatch = content.match(/\[feedback_skip\]\s*\n([\s\S]*?)(?=\n\[|$)/);
 
-      // Parse scenario data JSON
+      // Parse JSON sections
       const scenarioDataStr = scenarioDataMatch?.[1]?.trim() || '{}';
       const scenarioData = JSON.parse(scenarioDataStr);
+
+      let educationalContext;
+      if (educationalContextMatch?.[1]) {
+        const educationalContextStr = educationalContextMatch[1].trim();
+        educationalContext = JSON.parse(educationalContextStr);
+      }
+
+      let annotations;
+      if (annotationsMatch?.[1]) {
+        const annotationsStr = annotationsMatch[1].trim();
+        annotations = JSON.parse(annotationsStr);
+      }
 
       const question = questionMatch?.[1]?.trim() || 'What would you do?';
       const feedbackBuy = feedbackBuyMatch?.[1]?.trim() || 'You chose to buy.';
@@ -216,6 +230,8 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
           feedbackBuy={feedbackBuy}
           feedbackSell={feedbackSell}
           feedbackSkip={feedbackSkip}
+          educationalContext={educationalContext}
+          annotations={annotations}
         />
       );
     } catch (error) {

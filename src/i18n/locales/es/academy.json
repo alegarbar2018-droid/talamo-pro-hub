@@ -24,5 +24,28 @@
     "levels_completed": "Niveles completados",
     "total_progress": "Progreso total",
     "lessons": "lecciones"
+  },
+  "simulator": {
+    "concept": "Concepto",
+    "what_to_look": "¿Qué observar en el gráfico?",
+    "hint": "Pista",
+    "scenario": "Escenario",
+    "buy": "COMPRAR",
+    "sell": "VENDER",
+    "skip": "OMITIR",
+    "revealing": "Revelando movimiento del precio...",
+    "try_again": "Intentar otro escenario",
+    "risk_management": "Detalles de Gestión de Riesgo",
+    "show": "Mostrar",
+    "hide": "Ocultar",
+    "entry_price": "Precio de Entrada",
+    "current_price": "Precio Actual",
+    "stop_loss": "Stop Loss",
+    "take_profit": "Take Profit",
+    "opportunity_skipped": "Oportunidad omitida",
+    "correctly": "correctamente",
+    "support": "Soporte",
+    "resistance": "Resistencia",
+    "now": "AHORA"
   }
 }
