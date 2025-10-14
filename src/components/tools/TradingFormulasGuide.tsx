@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import {
   Calculator,
   Target,
@@ -13,24 +15,26 @@ import {
   Activity,
   Info,
   Lightbulb,
+  HelpCircle,
 } from "lucide-react";
 
 export function TradingFormulasGuide() {
   return (
-    <div className="space-y-8 pb-12">
-      {/* Header */}
-      <div className="text-center space-y-3">
-        <h2 className="text-3xl font-bold">Fórmulas y Especificaciones de Trading</h2>
-        <p className="text-muted-foreground max-w-3xl mx-auto">
-          Guía completa de fórmulas, tamaños de contrato y especificaciones técnicas para operar con confianza y precisión
-        </p>
-      </div>
+    <TooltipProvider>
+      <div className="space-y-8 pb-12">
+        {/* Header */}
+        <div className="text-center space-y-3">
+          <h2 className="text-3xl font-bold">Fórmulas y Especificaciones de Trading</h2>
+          <p className="text-muted-foreground max-w-3xl mx-auto">
+            Guía completa de fórmulas, tamaños de contrato y especificaciones técnicas para operar con confianza y precisión
+          </p>
+        </div>
 
       {/* Pip Size and Point Size */}
       <section className="animate-fade-in">
         <div className="flex items-center gap-2 mb-5">
           <Target className="w-6 h-6 text-primary" />
-          <h3 className="text-2xl font-bold">Pip Size y Point Size</h3>
+          <h3 className="text-2xl font-bold">Tamaño de Pip y Point</h3>
         </div>
         <p className="text-muted-foreground mb-6">
           Comprende la precisión de precios según el tipo de instrumento que operas
@@ -40,44 +44,97 @@ export function TradingFormulasGuide() {
             <thead>
               <tr className="bg-muted/50">
                 <th className="border border-border p-4 text-left font-semibold"></th>
-                <th className="border border-border p-4 text-center font-semibold">Standard Currencies</th>
-                <th className="border border-border p-4 text-center font-semibold">Gold, Silver, JPY</th>
-                <th className="border border-border p-4 text-center font-semibold">Cryptocurrencies</th>
+                <th className="border border-border p-4 text-center font-semibold">
+                  Pares de Divisas Estándar
+                </th>
+                <th className="border border-border p-4 text-center font-semibold">
+                  Oro, Plata, JPY
+                </th>
+                <th className="border border-border p-4 text-center font-semibold">
+                  Criptomonedas
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="border border-border p-4 font-medium bg-muted/30">Price format</td>
+                <td className="border border-border p-4 font-medium bg-muted/30">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Formato de Precio
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Cómo se muestra el precio del instrumento en tu plataforma de trading</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
                 <td className="border border-border p-4 text-center">EURUSD: 1.21568</td>
                 <td className="border border-border p-4 text-center">USDJPY: 113.115</td>
                 <td className="border border-border p-4 text-center">BTCUSD: 6845.25</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium bg-muted/30">Pip</td>
-                <td className="border border-border p-4 text-center font-mono">4th decimal</td>
-                <td className="border border-border p-4 text-center font-mono">2nd decimal</td>
-                <td className="border border-border p-4 text-center font-mono">1st decimal</td>
+                <td className="border border-border p-4 font-medium bg-muted/30">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Pip
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Unidad de medida estándar para cambios de precio en trading</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 text-center font-mono">4to decimal</td>
+                <td className="border border-border p-4 text-center font-mono">2do decimal</td>
+                <td className="border border-border p-4 text-center font-mono">1er decimal</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium bg-muted/30">Point</td>
-                <td className="border border-border p-4 text-center font-mono">5th decimal</td>
-                <td className="border border-border p-4 text-center font-mono">3rd decimal</td>
-                <td className="border border-border p-4 text-center font-mono">2nd decimal</td>
+                <td className="border border-border p-4 font-medium bg-muted/30">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Point
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Unidad más pequeña de cambio de precio, 1/10 de un pip</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 text-center font-mono">5to decimal</td>
+                <td className="border border-border p-4 text-center font-mono">3er decimal</td>
+                <td className="border border-border p-4 text-center font-mono">2do decimal</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium bg-muted/30">Pip Size</td>
+                <td className="border border-border p-4 font-medium bg-muted/30">
+                  <Badge variant="outline">Tamaño de Pip</Badge>
+                </td>
                 <td className="border border-border p-4 text-center font-mono text-primary font-bold">0.0001</td>
                 <td className="border border-border p-4 text-center font-mono text-primary font-bold">0.01</td>
                 <td className="border border-border p-4 text-center font-mono text-primary font-bold">0.1</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium bg-muted/30">Point Size</td>
+                <td className="border border-border p-4 font-medium bg-muted/30">
+                  <Badge variant="secondary">Tamaño de Point</Badge>
+                </td>
                 <td className="border border-border p-4 text-center font-mono text-muted-foreground">0.00001</td>
                 <td className="border border-border p-4 text-center font-mono text-muted-foreground">0.001</td>
                 <td className="border border-border p-4 text-center font-mono text-muted-foreground">0.01</td>
               </tr>
             </tbody>
           </table>
+          <div className="mt-4 p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+            <div className="flex gap-2 items-start">
+              <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm space-y-1">
+                <p className="font-medium">¿Qué es un Pip?</p>
+                <p className="text-muted-foreground">
+                  Un <strong>pip</strong> (percentage in point) es la unidad estándar para medir cambios de precio. 
+                  Por ejemplo, si EUR/USD se mueve de 1.2150 a 1.2151, ha subido 1 pip. 
+                  El <strong>point</strong> es una fracción más pequeña (1/10 de pip) para mayor precisión.
+                </p>
+              </div>
+            </div>
+          </div>
         </Card>
       </section>
 
@@ -96,36 +153,76 @@ export function TradingFormulasGuide() {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="bg-muted/50">
-                <th className="border border-border p-4 text-left font-semibold">Trading Instrument</th>
-                <th className="border border-border p-4 text-left font-semibold">Contract Size</th>
-                <th className="border border-border p-4 text-left font-semibold bg-destructive/10">Exceptions</th>
+                <th className="border border-border p-4 text-left font-semibold">Instrumento de Trading</th>
+                <th className="border border-border p-4 text-left font-semibold">Tamaño de Contrato</th>
+                <th className="border border-border p-4 text-left font-semibold bg-amber-500/10">Excepciones</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="border border-border p-4 font-medium">Currency Pairs</td>
-                <td className="border border-border p-4">100,000 of the Base Currency</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Pares de Divisas
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">EUR/USD, GBP/USD, USD/JPY, etc.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4">100,000 de la Moneda Base</td>
                 <td className="border border-border p-4 text-center text-muted-foreground">-</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Metals</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Metales
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Metales preciosos: Oro, Plata, Platino, Paladio</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
                 <td className="border border-border p-4">
                   <div className="space-y-1">
-                    <div>Gold (XAU): <span className="font-mono text-primary">100 Troy Ounces</span></div>
-                    <div>Silver (XAG): <span className="font-mono text-primary">5000 Troy Ounces</span></div>
-                    <div>Platinum (XPT): <span className="font-mono text-primary">100 Troy Ounces</span></div>
-                    <div>Palladium (XPD): <span className="font-mono text-primary">100 Troy Ounces</span></div>
+                    <div>Oro (XAU): <span className="font-mono text-primary">100 Onzas Troy</span></div>
+                    <div>Plata (XAG): <span className="font-mono text-primary">5000 Onzas Troy</span></div>
+                    <div>Platino (XPT): <span className="font-mono text-primary">100 Onzas Troy</span></div>
+                    <div>Paladio (XPD): <span className="font-mono text-primary">100 Onzas Troy</span></div>
                   </div>
                 </td>
                 <td className="border border-border p-4 text-center text-muted-foreground">-</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Cryptocurrencies</td>
-                <td className="border border-border p-4 font-mono">1 coin</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Criptomonedas
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Bitcoin, Ethereum, y otras criptomonedas</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">1 moneda</td>
                 <td className="border border-border p-4 text-center text-muted-foreground">-</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Indices</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Índices
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">S&P 500, Dow Jones, NASDAQ, etc.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
                 <td className="border border-border p-4 font-mono">1</td>
                 <td className="border border-border p-4">
                   <ul className="text-xs space-y-1 list-disc list-inside">
@@ -136,17 +233,50 @@ export function TradingFormulasGuide() {
                 </td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Stocks</td>
-                <td className="border border-border p-4 font-mono">100 shares</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Acciones
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Acciones de empresas como Apple, Tesla, Amazon, etc.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">100 acciones</td>
                 <td className="border border-border p-4 text-center text-muted-foreground">-</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Energies</td>
-                <td className="border border-border p-4 font-mono">1000 BBL (Barrels)</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Energías
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Petróleo crudo, gas natural, etc.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">1000 BBL (Barriles)</td>
                 <td className="border border-border p-4 text-center text-muted-foreground">-</td>
               </tr>
             </tbody>
           </table>
+          <div className="mt-4 p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+            <div className="flex gap-2 items-start">
+              <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm space-y-1">
+                <p className="font-medium">¿Por qué es importante el Tamaño de Contrato?</p>
+                <p className="text-muted-foreground">
+                  Cuando operas 1 lote de EUR/USD, estás controlando 100,000 euros. El tamaño del contrato determina 
+                  cuánto capital estás moviendo y, por lo tanto, el riesgo de tu operación. Siempre verifica el tamaño 
+                  de contrato antes de operar un nuevo instrumento.
+                </p>
+              </div>
+            </div>
+          </div>
         </Card>
       </section>
 
@@ -165,49 +295,111 @@ export function TradingFormulasGuide() {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="bg-muted/50">
-                <th className="border border-border p-4 text-left font-semibold">Parameter</th>
-                <th className="border border-border p-4 text-left font-semibold">Formula</th>
-                <th className="border border-border p-4 text-left font-semibold">Measure</th>
+                <th className="border border-border p-4 text-left font-semibold">Parámetro</th>
+                <th className="border border-border p-4 text-left font-semibold">Fórmula</th>
+                <th className="border border-border p-4 text-left font-semibold">Unidad de Medida</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="border border-border p-4 font-medium">Trading Volume</td>
-                <td className="border border-border p-4 font-mono">Lots × Contract Size</td>
-                <td className="border border-border p-4">Base Currency</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Volumen de Trading
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Cantidad total de unidades que controlas en tu operación</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">Lotes × Tamaño de Contrato</td>
+                <td className="border border-border p-4">Moneda Base</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Spread</td>
-                <td className="border border-border p-4 font-mono">(Ask Price - Bid Price) / Pip Size</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Spread
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Diferencia entre el precio de compra y venta. Es el costo de abrir una posición</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">(Precio Ask - Precio Bid) / Tamaño de Pip</td>
                 <td className="border border-border p-4">Pips</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Margin</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Margen
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Cantidad de dinero que necesitas tener bloqueada para mantener una posición abierta</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
                 <td className="border border-border p-4">
                   <div className="space-y-1">
-                    <div className="font-mono">(Lots × Contract Size) / Leverage</div>
+                    <div className="font-mono">(Lotes × Tamaño de Contrato) / Apalancamiento</div>
                     <div className="text-xs text-muted-foreground mt-2">
-                      <span className="font-medium">Converting Margin to Account Currency</span> depends on currencies and instrument involved.
+                      <span className="font-medium">La conversión a tu moneda de cuenta</span> depende de las monedas y el instrumento involucrado.
                     </div>
                   </div>
                 </td>
                 <td className="border border-border p-4">
-                  <div>Calculated in Base currency.</div>
-                  <div className="text-xs text-muted-foreground">Held in account currency.</div>
+                  <div>Calculado en moneda base.</div>
+                  <div className="text-xs text-muted-foreground">Mantenido en moneda de cuenta.</div>
                 </td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Free Margin</td>
-                <td className="border border-border p-4 font-mono">Equity - Margin</td>
-                <td className="border border-border p-4">Account Currency</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Margen Libre
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Dinero disponible en tu cuenta para abrir nuevas posiciones</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">Equity - Margen</td>
+                <td className="border border-border p-4">Moneda de Cuenta</td>
               </tr>
               <tr>
-                <td className="border border-border p-4 font-medium">Pip Value</td>
-                <td className="border border-border p-4 font-mono">Lots × Contract Size × Pip Size</td>
-                <td className="border border-border p-4">Quote Currency</td>
+                <td className="border border-border p-4 font-medium">
+                  <Tooltip>
+                    <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                      Valor del Pip
+                      <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs">Cuánto dinero ganas o pierdes por cada pip de movimiento en el precio</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </td>
+                <td className="border border-border p-4 font-mono">Lotes × Tamaño de Contrato × Tamaño de Pip</td>
+                <td className="border border-border p-4">Moneda de Cotización</td>
               </tr>
             </tbody>
           </table>
+          <div className="mt-4 p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+            <div className="flex gap-2 items-start">
+              <Lightbulb className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm space-y-1">
+                <p className="font-medium">Consejo para Principiantes</p>
+                <p className="text-muted-foreground">
+                  No necesitas memorizar todas estas fórmulas. La mayoría de plataformas calculan estos valores automáticamente. 
+                  Sin embargo, entender cómo funcionan te ayuda a tomar mejores decisiones de trading y gestionar tu riesgo correctamente.
+                </p>
+              </div>
+            </div>
+          </div>
         </Card>
       </section>
 
@@ -226,55 +418,69 @@ export function TradingFormulasGuide() {
           <Card className="p-5">
             <h4 className="font-semibold mb-3 flex items-center gap-2">
               <Percent className="h-5 w-5 text-primary" />
-              Margin Level
+              Nivel de Margen
             </h4>
             <div className="space-y-3">
               <div className="font-mono text-sm bg-muted/50 p-3 rounded border border-border">
-                (Equity / Margin) × 100
+                (Equity / Margen) × 100
               </div>
               <div className="text-xs text-muted-foreground">
-                <span className="font-medium">Measure:</span> %
+                <span className="font-medium">Unidad:</span> %
               </div>
               <p className="text-xs text-muted-foreground">
-                El Margin Level indica qué tan cerca estás de un margin call. <span className="font-semibold text-amber-600">Mantén siempre por encima de 100%</span>.
+                El Nivel de Margen indica qué tan cerca estás de un margin call. <span className="font-semibold text-amber-600">Mantén siempre por encima de 100%</span>.
               </p>
+              <div className="text-xs bg-amber-500/10 p-2 rounded border border-amber-500/20">
+                <strong>⚠️ Importante:</strong> Si cae por debajo de 100%, el broker puede cerrar tus posiciones automáticamente.
+              </div>
             </div>
           </Card>
 
           <Card className="p-5">
             <h4 className="font-semibold mb-3 flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
-              Cost of Spread
+              Costo del Spread
             </h4>
             <div className="space-y-3">
               <div className="font-mono text-sm bg-muted/50 p-3 rounded border border-border">
-                Spread in pips × Pip value
+                Spread en pips × Valor del pip
               </div>
               <div className="text-xs text-muted-foreground">
-                <span className="font-medium">Measure:</span> Quote Currency
+                <span className="font-medium">Unidad:</span> Moneda de Cotización
               </div>
               <p className="text-xs text-muted-foreground">
                 Costo inmediato de entrar en una operación. Inclúyelo en tu análisis riesgo/beneficio.
               </p>
+              <div className="text-xs bg-blue-500/10 p-2 rounded border border-blue-500/20">
+                <strong>Ejemplo:</strong> Si el spread es 2 pips y el valor del pip es $10, pagas $20 al abrir la posición.
+              </div>
             </div>
           </Card>
 
           <Card className="p-5">
             <h4 className="font-semibold mb-3 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-primary" />
-              Slippage Rule
+              <Tooltip>
+                <TooltipTrigger className="flex items-center gap-1 cursor-help">
+                  Regla de Slippage
+                  <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">Diferencia entre el precio solicitado y el precio ejecutado en una orden</p>
+                </TooltipContent>
+              </Tooltip>
             </h4>
             <div className="space-y-3">
               <div className="space-y-2 text-xs">
                 <div className="bg-muted/50 p-2 rounded border border-border">
-                  <span className="font-medium">|RP - MP|</span>/pip size ≤ Range: Order at <span className="font-mono text-primary">MP</span>
+                  <span className="font-medium">|PS - PM|</span>/tamaño pip ≤ Rango: Orden a <span className="font-mono text-primary">PM</span>
                 </div>
                 <div className="bg-muted/50 p-2 rounded border border-border">
-                  <span className="font-medium">|RP - MP|</span>/pip size &gt; Range: Order at <span className="font-mono text-primary">RP</span>
+                  <span className="font-medium">|PS - PM|</span>/tamaño pip &gt; Rango: Orden a <span className="font-mono text-primary">PS</span>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
-                <span className="font-medium">RP:</span> Request Price | <span className="font-medium">MP:</span> Market Price
+                <span className="font-medium">PS:</span> Precio Solicitado | <span className="font-medium">PM:</span> Precio de Mercado
               </p>
             </div>
           </Card>
@@ -287,10 +493,19 @@ export function TradingFormulasGuide() {
       <section className="animate-fade-in">
         <div className="flex items-center gap-2 mb-5">
           <TrendingUp className="w-6 h-6 text-primary" />
-          <h3 className="text-2xl font-bold">Cálculo de Profit/Loss (TP, SL y SO)</h3>
+          <h3 className="text-2xl font-bold">Cálculo de Ganancias/Pérdidas (TP, SL y SO)</h3>
         </div>
         <p className="text-muted-foreground mb-6">
-          Aprende a calcular correctamente tus niveles de Take Profit, Stop Loss y Stop Out
+          Aprende a calcular correctamente tus niveles de <Tooltip>
+            <TooltipTrigger className="underline decoration-dotted cursor-help">Take Profit (TP)</TooltipTrigger>
+            <TooltipContent><p className="max-w-xs">Precio al que quieres cerrar con ganancia</p></TooltipContent>
+          </Tooltip>, <Tooltip>
+            <TooltipTrigger className="underline decoration-dotted cursor-help">Stop Loss (SL)</TooltipTrigger>
+            <TooltipContent><p className="max-w-xs">Precio al que quieres cerrar para limitar pérdidas</p></TooltipContent>
+          </Tooltip> y <Tooltip>
+            <TooltipTrigger className="underline decoration-dotted cursor-help">Stop Out (SO)</TooltipTrigger>
+            <TooltipContent><p className="max-w-xs">Precio al que el broker cierra automáticamente tu posición</p></TooltipContent>
+          </Tooltip>
         </p>
         <Card className="p-8 bg-gradient-to-br from-blue-500/5 via-primary/5 to-transparent border-blue-500/20">
           <div className="space-y-8">
@@ -298,15 +513,19 @@ export function TradingFormulasGuide() {
             <div>
               <h4 className="font-bold text-lg mb-4 text-blue-700 dark:text-blue-400 flex items-center gap-2">
                 <Calculator className="w-5 h-5" />
-                Step 1: Calcular el cambio de precio
+                Paso 1: Calcular el cambio de precio
               </h4>
               <p className="text-sm mb-3">Usa esta fórmula para encontrar el cambio de precio:</p>
               <div className="font-mono text-base bg-muted/50 p-4 rounded-lg border border-border mb-3">
-                (Profit or Loss / Pip Value) × Pip Size
+                (Ganancia o Pérdida / Valor del Pip) × Tamaño del Pip
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 Esto te dice cuántos puntos de precio equivalen a tu ganancia o pérdida deseada.
               </p>
+              <div className="text-xs bg-blue-500/10 p-3 rounded border border-blue-500/20">
+                <strong>Ejemplo práctico:</strong> Si quieres ganar $100 y cada pip vale $10, necesitas un movimiento de: 
+                ($100 / $10) × 0.0001 = 10 pips de movimiento.
+              </div>
             </div>
 
             <Separator />
@@ -315,7 +534,7 @@ export function TradingFormulasGuide() {
             <div>
               <h4 className="font-bold text-lg mb-4 text-blue-700 dark:text-blue-400 flex items-center gap-2">
                 <Target className="w-5 h-5" />
-                Step 2 (solo con precio de apertura)
+                Paso 2 (solo con precio de apertura)
               </h4>
               <p className="text-sm mb-4">Calcula TP, SL y SO de la siguiente manera:</p>
               
@@ -323,31 +542,37 @@ export function TradingFormulasGuide() {
                 <div className="bg-teal/5 border border-teal/30 rounded-lg p-5">
                   <p className="font-semibold text-sm mb-3 text-teal flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" />
-                    Buy orders (Compra)
+                    Órdenes de Compra (BUY)
                   </p>
                   <ul className="text-sm space-y-2">
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      TP = Opening price + Price change
+                      TP = Precio de apertura + Cambio de precio
                     </li>
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      SL/SO = Opening price - Price change
+                      SL/SO = Precio de apertura - Cambio de precio
                     </li>
                   </ul>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    <strong>Por qué:</strong> Al comprar, ganas cuando el precio sube, por eso el TP está arriba.
+                  </p>
                 </div>
                 
                 <div className="bg-red-500/5 border border-red-500/30 rounded-lg p-5">
                   <p className="font-semibold text-sm mb-3 text-red-600 dark:text-red-400 flex items-center gap-2">
                     <Activity className="w-4 h-4" />
-                    Sell orders (Venta)
+                    Órdenes de Venta (SELL)
                   </p>
                   <ul className="text-sm space-y-2">
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      TP = Opening price - Price change
+                      TP = Precio de apertura - Cambio de precio
                     </li>
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      SL/SO = Opening price + Price change
+                      SL/SO = Precio de apertura + Cambio de precio
                     </li>
                   </ul>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    <strong>Por qué:</strong> Al vender, ganas cuando el precio baja, por eso el TP está abajo.
+                  </p>
                 </div>
               </div>
             </div>
@@ -358,23 +583,23 @@ export function TradingFormulasGuide() {
             <div>
               <h4 className="font-bold text-lg mb-4 text-blue-700 dark:text-blue-400 flex items-center gap-2">
                 <Activity className="w-5 h-5" />
-                Step 2 (con precio actual del mercado)
+                Paso 2 (con precio actual del mercado)
               </h4>
-              <p className="text-sm mb-2 text-destructive font-medium">*Not relevant during on-boarding assessment</p>
+              <p className="text-sm mb-2 text-destructive font-medium">*No relevante durante evaluación de incorporación</p>
               <p className="text-sm mb-4">Basado en el precio actual del mercado:</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-teal/5 border border-teal/30 rounded-lg p-5">
                   <p className="font-semibold text-sm mb-3 text-teal flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" />
-                    Buy orders
+                    Órdenes de Compra (BUY)
                   </p>
                   <ul className="text-sm space-y-2">
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      TP = Closing price (bid) + Price change
+                      TP = Precio cierre (bid) + Cambio de precio
                     </li>
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      SL/SO = Closing price (bid) - Price change
+                      SL/SO = Precio cierre (bid) - Cambio de precio
                     </li>
                   </ul>
                 </div>
@@ -382,14 +607,14 @@ export function TradingFormulasGuide() {
                 <div className="bg-red-500/5 border border-red-500/30 rounded-lg p-5">
                   <p className="font-semibold text-sm mb-3 text-red-600 dark:text-red-400 flex items-center gap-2">
                     <Activity className="w-4 h-4" />
-                    Sell orders
+                    Órdenes de Venta (SELL)
                   </p>
                   <ul className="text-sm space-y-2">
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      TP = Closing price (ask) - Price change
+                      TP = Precio cierre (ask) - Cambio de precio
                     </li>
                     <li className="font-mono text-xs bg-background/50 p-2 rounded">
-                      SL/SO = Closing price (ask) + Price change
+                      SL/SO = Precio cierre (ask) + Cambio de precio
                     </li>
                   </ul>
                 </div>
@@ -402,22 +627,27 @@ export function TradingFormulasGuide() {
             <div className="bg-primary/10 p-6 rounded-lg border border-primary/30">
               <h5 className="font-bold text-base mb-4 text-primary flex items-center gap-2">
                 <Calculator className="w-5 h-5" />
-                Fórmula Completa: Price Change in Pips × Pip Value
+                Fórmula Completa: Cambio de Precio en Pips × Valor del Pip
               </h5>
               <div className="space-y-4">
                 <div>
-                  <p className="font-semibold mb-3">Step 1: Calculate Price Change in Pips</p>
+                  <p className="font-semibold mb-3">Paso 1: Calcular el Cambio de Precio en Pips</p>
                   <ul className="list-disc list-inside space-y-2 text-sm">
-                    <li>For <span className="font-semibold text-teal">BUY</span>: <span className="font-mono text-xs">[Closing Price (BID) - Opening Price (ASK)] / Pip size</span></li>
-                    <li>For <span className="font-semibold text-red-600">SELL</span>: <span className="font-mono text-xs">[Opening Price (BID) - Closing Price (ASK)] / Pip size</span></li>
+                    <li>Para <span className="font-semibold text-teal">COMPRA</span>: <span className="font-mono text-xs">[Precio Cierre (BID) - Precio Apertura (ASK)] / Tamaño de Pip</span></li>
+                    <li>Para <span className="font-semibold text-red-600">VENTA</span>: <span className="font-mono text-xs">[Precio Apertura (BID) - Precio Cierre (ASK)] / Tamaño de Pip</span></li>
                   </ul>
                 </div>
                 
                 <div>
-                  <p className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Step 2: Multiply by Pip Value</p>
+                  <p className="font-semibold mb-2 text-blue-600 dark:text-blue-400">Paso 2: Multiplicar por el Valor del Pip</p>
                   <p className="text-sm text-muted-foreground">
                     El resultado te da tu ganancia o pérdida en la moneda cotizada (Quote Currency).
                   </p>
+                </div>
+                
+                <div className="text-xs bg-blue-500/10 p-3 rounded border border-blue-500/20 mt-3">
+                  <strong>Nota importante:</strong> Recuerda usar el precio <strong>BID</strong> (venta) para compras y 
+                  el precio <strong>ASK</strong> (compra) para ventas al calcular el cierre de posición.
                 </div>
               </div>
             </div>
@@ -434,7 +664,10 @@ export function TradingFormulasGuide() {
           <h3 className="text-2xl font-bold">Cálculo de Swap (Costos Overnight)</h3>
         </div>
         <p className="text-muted-foreground mb-6">
-          Costos de financiamiento cuando mantienes posiciones abiertas de un día para otro
+          Los <Tooltip>
+            <TooltipTrigger className="underline decoration-dotted cursor-help font-medium">swaps</TooltipTrigger>
+            <TooltipContent><p className="max-w-xs">Costos o beneficios de mantener una posición abierta de un día para otro</p></TooltipContent>
+          </Tooltip> son costos (o ganancias) de financiamiento cuando mantienes posiciones abiertas de un día para otro
         </p>
         <Card className="p-8 bg-gradient-to-br from-accent/5 to-transparent">
           <div className="space-y-6">
@@ -444,10 +677,24 @@ export function TradingFormulasGuide() {
                 Fórmula de Swap
               </h4>
               <div className="font-mono text-base bg-muted/50 p-4 rounded-lg border border-border">
-                Swap size (long/short) × Number of days × Pip Value
+                Tamaño de Swap (largo/corto) × Número de días × Valor del Pip
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                <span className="font-medium">Measure:</span> Quote Currency
+                <span className="font-medium">Unidad de medida:</span> Moneda de Cotización
+              </p>
+            </div>
+
+            <Separator />
+            
+            <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-lg">
+              <div className="flex gap-2 items-start mb-3">
+                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <p className="font-semibold text-sm">Ejemplo Práctico</p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Si abres 1 lote de EUR/USD con un swap de -0.5 pips, y el valor del pip es $10, 
+                pagarás <strong>$5 por cada noche</strong> que mantengas la posición abierta. 
+                Después de 3 noches, habrás pagado $15 en swaps.
               </p>
             </div>
 
@@ -461,38 +708,41 @@ export function TradingFormulasGuide() {
               <ul className="text-sm space-y-3">
                 <li className="flex items-start gap-3">
                   <Clock className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span>Charged at <span className="font-semibold">22:00 GMT +0</span> in Winter, <span className="font-semibold">21:00 GMT +0</span> in Summer</span>
+                  <span>Se cobra a las <span className="font-semibold">22:00 GMT +0</span> en Invierno, <span className="font-semibold">21:00 GMT +0</span> en Verano</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span>Triple swap for <span className="font-semibold">forex & metals</span> on <span className="font-semibold text-amber-700 dark:text-amber-400">Wednesdays</span></span>
+                  <span>Swap triple para <span className="font-semibold">forex y metales</span> los <span className="font-semibold text-amber-700 dark:text-amber-400">Miércoles</span></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span>Triple swap for <span className="font-semibold">other instruments</span> on <span className="font-semibold text-amber-700 dark:text-amber-400">Fridays</span></span>
+                  <span>Swap triple para <span className="font-semibold">otros instrumentos</span> los <span className="font-semibold text-amber-700 dark:text-amber-400">Viernes</span></span>
                 </li>
               </ul>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-teal/5 border border-teal/20 rounded-lg p-4">
-                <p className="font-semibold mb-2 text-teal">Buy orders:</p>
-                <p className="text-sm text-muted-foreground">Use Long swap rate</p>
+                <p className="font-semibold mb-2 text-teal">Órdenes de Compra (Buy):</p>
+                <p className="text-sm text-muted-foreground">Usa la tasa de swap <strong>Long</strong> (largo)</p>
               </div>
               <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-4">
-                <p className="font-semibold mb-2 text-red-600 dark:text-red-400">Sell orders:</p>
-                <p className="text-sm text-muted-foreground">Use Short swap rate</p>
+                <p className="font-semibold mb-2 text-red-600 dark:text-red-400">Órdenes de Venta (Sell):</p>
+                <p className="text-sm text-muted-foreground">Usa la tasa de swap <strong>Short</strong> (corto)</p>
               </div>
             </div>
 
             <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-lg">
               <div className="flex gap-3 mb-3">
                 <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <p className="font-medium text-sm text-blue-700 dark:text-blue-400">Tip profesional:</p>
+                <p className="font-medium text-sm text-blue-700 dark:text-blue-400">Consejo Profesional:</p>
               </div>
               <p className="text-sm text-muted-foreground ml-8">
                 Si mantienes posiciones durante varios días, los swaps pueden sumar significativamente. 
-                Considera los swaps positivos para estrategias de carry trade y swaps negativos como un costo adicional en tus operaciones.
+                Considera los swaps positivos para estrategias de <Tooltip>
+                  <TooltipTrigger className="underline decoration-dotted cursor-help font-medium">carry trade</TooltipTrigger>
+                  <TooltipContent><p className="max-w-xs">Estrategia que busca ganar con los swaps positivos entre pares de divisas</p></TooltipContent>
+                </Tooltip> y swaps negativos como un costo adicional en tus operaciones.
               </p>
             </div>
           </div>
@@ -512,5 +762,6 @@ export function TradingFormulasGuide() {
         </div>
       </Card>
     </div>
+    </TooltipProvider>
   );
 }
