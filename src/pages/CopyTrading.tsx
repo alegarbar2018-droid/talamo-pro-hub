@@ -1,181 +1,448 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Shield, TrendingUp, Users, Sparkles, UserCircle } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { 
+  Users, 
+  ArrowLeft,
+  TrendingUp,
+  TrendingDown,
+  Shield,
+  AlertTriangle,
+  Activity,
+  BarChart3,
+  Target,
+  CheckCircle,
+  Settings,
+  PieChart
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
-import { withPageTracking } from "@/components/business/ObservabilityProvider";
-import { useObservability } from "@/components/business/ObservabilityProvider";
-import { supabase } from "@/integrations/supabase/client";
-import { CopyStrategy, StrategyRecommendation } from "@/modules/copy/types";
-import { CopyTradingIntro } from "@/components/copy/CopyTradingIntro";
-import { StrategyEvaluationGuide } from "@/components/copy/StrategyEvaluationGuide";
-import { StrategyCard } from "@/components/copy/StrategyCard";
-import { StrategyDetailModal } from "@/components/copy/StrategyDetailModal";
-import { InvestorProfileWizard } from "@/components/copy/InvestorProfileWizard";
-import { FundingInstructionsCard } from "@/components/copy/FundingInstructionsCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useObservability, withPageTracking } from "@/components/business/ObservabilityProvider";
 
-function CopyTrading() {
+const CopyTrading = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const { trackEvent } = useObservability();
-  const [strategies, setStrategies] = useState<CopyStrategy[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedStrategy, setSelectedStrategy] = useState<CopyStrategy | null>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [isWizardOpen, setIsWizardOpen] = useState(false);
-  const [recommendations, setRecommendations] = useState<StrategyRecommendation[]>([]);
+  const { t } = useTranslation(['copy']);
+  const { trackInteraction, trackBusinessEvent } = useObservability();
+  const [followedStrategies, setFollowedStrategies] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchStrategies();
-    trackEvent('page_viewed', { page_name: 'copy_trading' });
-  }, []);
+  // Track page view
+  React.useEffect(() => {
+    trackBusinessEvent('copy_strategy_followed', { 
+      page: 'copy_trading',
+      followed_strategies_count: followedStrategies.length
+    });
+  }, [trackBusinessEvent, followedStrategies.length]);
 
-  const fetchStrategies = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('copy_strategies')
-        .select('*')
-        .eq('status', 'active')
-        .order('total_return_percentage', { ascending: false });
+  const strategies = [
+    {
+      id: "conservative",
+      name: "Estrategia Conservadora",
+      description: "Enfoque de bajo riesgo con gestión defensiva de capital",
+      riskTier: "Conservador",
+      riskColor: "success",
+      pf: 1.68,
+      maxDD: 8.2,
+      greenMonthsPct: 78,
+      monthlyReturn: 4.2,
+      winRate: 73,
+      avgRR: 1.5,
+      totalTrades: 284,
+      verification: "Verificada",
+      description_long: "Esta estrategia se centra en la preservación del capital con crecimiento constante. Utiliza análisis técnico conservador y nunca arriesga más del 1% por operación.",
+      instruments: ["EURUSD", "GBPUSD", "USDJPY"],
+      timeframes: ["H4", "D1"],
+      minBalance: 1000
+    },
+    {
+      id: "moderate", 
+      name: "Estrategia Moderada",
+      description: "Balance entre crecimiento y protección del capital",
+      riskTier: "Moderado", 
+      riskColor: "warning",
+      pf: 2.24,
+      maxDD: 15.3,
+      greenMonthsPct: 71,
+      monthlyReturn: 7.8,
+      winRate: 65,
+      avgRR: 2.1,
+      totalTrades: 198,
+      verification: "Verificada",
+      description_long: "Estrategia balanceada que busca un crecimiento sostenible con riesgo controlado. Combina múltiples timeframes y técnicas de análisis.",
+      instruments: ["XAUUSD", "EURUSD", "GBPJPY"],
+      timeframes: ["H1", "H4"],
+      minBalance: 2000
+    },
+    {
+      id: "aggressive",
+      name: "Estrategia Agresiva", 
+      description: "Máximo potencial de crecimiento con mayor exposición al riesgo",
+      riskTier: "Agresivo",
+      riskColor: "destructive",
+      pf: 3.12,
+      maxDD: 24.7,
+      greenMonthsPct: 64,
+      monthlyReturn: 12.1,
+      winRate: 58,
+      avgRR: 2.8,
+      totalTrades: 156,
+      verification: "Beta",
+      description_long: "Estrategia de alto rendimiento para traders experimentados. Utiliza apalancamiento mayor y técnicas avanzadas de trading.",
+      instruments: ["XAUUSD", "GBPJPY", "USDCAD", "BITCOIN"],
+      timeframes: ["M15", "H1"],
+      minBalance: 5000
+    }
+  ];
 
-      if (error) throw error;
-      setStrategies((data || []) as CopyStrategy[]);
-    } catch (error) {
-      console.error('Error fetching strategies:', error);
-    } finally {
-      setLoading(false);
+  const getRiskColor = (riskColor: string) => {
+    switch (riskColor) {
+      case "success": return "text-success border-success/30 bg-success/10";
+      case "warning": return "text-warning border-warning/30 bg-warning/10";
+      case "destructive": return "text-destructive border-destructive/30 bg-destructive/10";
+      default: return "text-muted-foreground border-muted/30 bg-muted/10";
     }
   };
 
-  const handleViewDetails = (strategy: CopyStrategy) => {
-    setSelectedStrategy(strategy);
-    setIsDetailModalOpen(true);
-    trackEvent('strategy_viewed', { strategy_id: strategy.id });
-  };
-
-  const handleRecommendations = (recs: StrategyRecommendation[]) => {
-    setRecommendations(recs);
-    setIsWizardOpen(false);
-    trackEvent('profile_completed', { recommendations_count: recs.length });
+  const toggleFollow = (strategyId: string) => {
+    const wasFollowed = followedStrategies.includes(strategyId);
+    
+    if (wasFollowed) {
+      setFollowedStrategies(followedStrategies.filter(id => id !== strategyId));
+      trackInteraction('strategy_card', 'unfollow', { strategy_id: strategyId });
+    } else {
+      setFollowedStrategies([...followedStrategies, strategyId]);
+      trackInteraction('strategy_card', 'follow', { strategy_id: strategyId });
+      trackBusinessEvent('copy_strategy_followed', { 
+        strategy_id: strategyId,
+        strategy_name: strategies.find(s => s.id === strategyId)?.name 
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-background via-background to-primary/5 border-b border-primary/10">
-        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,black)]" />
-        <div className="absolute top-20 -right-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-background via-success/5 to-primary/5">
+        {/* Decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-success/10 rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
+        </div>
         
-        <div className="container relative mx-auto px-4 py-12">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/dashboard')}
-            className="mb-6 gap-2 hover:gap-3 transition-all group"
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/dashboard")}
+            className="mb-8 hover:bg-surface/80 backdrop-blur-sm group"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            {t("copy.back_to_dashboard")}
+            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            {t('copy:back_to_dashboard')}
           </Button>
-
-          <div className="max-w-4xl">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="relative">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                <div className="absolute inset-0 w-3 h-3 bg-green-500 rounded-full animate-ping" />
-              </div>
-              <span className="text-sm font-medium text-muted-foreground">
-                {t("copy.subtitle")}
-              </span>
+          
+          <div className="space-y-6 max-w-4xl">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-success/20 via-success/10 to-transparent border border-success/30 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <span className="text-sm font-medium text-success">Copy Trading Profesional</span>
             </div>
-
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
-              {t("copy.title")}
-            </h1>
-
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-primary/10">
-                <Shield className="w-8 h-8 text-primary flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">Verified Traders</div>
-                  <div className="text-sm text-muted-foreground">Proven track records</div>
-                </div>
+            
+            {/* Main heading */}
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+                {t('copy:title')}
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-3xl">
+                {t('copy:subtitle')}{" "}
+                <span className="text-success font-medium">verificadas y auditadas</span>
+              </p>
+            </div>
+            
+            {/* Feature highlights */}
+            <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <Users className="w-4 h-4 text-success" />
+                <span className="text-sm text-muted-foreground">3 Estrategias</span>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-primary/10">
-                <TrendingUp className="w-8 h-8 text-primary flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">Transparent</div>
-                  <div className="text-sm text-muted-foreground">Full history visible</div>
-                </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <Shield className="w-4 h-4 text-success" />
+                <span className="text-sm text-muted-foreground">Verificadas</span>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-primary/10">
-                <Users className="w-8 h-8 text-primary flex-shrink-0" />
-                <div>
-                  <div className="font-semibold">Control Total</div>
-                  <div className="text-sm text-muted-foreground">You decide everything</div>
-                </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <BarChart3 className="w-4 h-4 text-success" />
+                <span className="text-sm text-muted-foreground">Métricas en Tiempo Real</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <CopyTradingIntro />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Risk Warning */}
+        <TradingDisclaimer 
+          variant="full"
+          context="copy-trading"
+          showCollapsible={true}
+          className="mb-6"
+        />
 
-        <div className="flex justify-center">
-          <Button size="lg" onClick={() => setIsWizardOpen(true)} className="gap-2">
-            <UserCircle className="w-5 h-5" />
-            {t("copy.wizard.title")}
-          </Button>
+        {/* Overview Stats */}
+        {followedStrategies.length > 0 && (
+          <Card className="border-line bg-surface mb-6">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Activity className="h-5 w-5 text-teal" />
+                {t('copy:active_strategies.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-teal">{followedStrategies.length}</div>
+                  <div className="text-sm text-muted-foreground">{t('copy:active_strategies.followed')}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-success">+8.4%</div>
+                  <div className="text-sm text-muted-foreground">{t('copy:active_strategies.estimated_return')}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-teal">12.3%</div>
+                  <div className="text-sm text-muted-foreground">{t('copy:active_strategies.max_drawdown')}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Strategies Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+          {strategies.map((strategy) => {
+            const isFollowed = followedStrategies.includes(strategy.id);
+            
+            return (
+              <Card 
+                key={strategy.id} 
+                className={`border-line transition-all ${
+                  isFollowed 
+                    ? 'bg-teal/5 border-teal/30 shadow-glow-subtle' 
+                    : 'bg-surface hover:shadow-glow-subtle'
+                }`}
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-foreground flex items-center gap-2">
+                        <Users className="h-5 w-5 text-teal" />
+                        {strategy.name}
+                      </CardTitle>
+                      <CardDescription className="text-muted-foreground">
+                        {strategy.description}
+                      </CardDescription>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Badge className={getRiskColor(strategy.riskColor)}>
+                        {strategy.riskTier}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {strategy.verification}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  {/* Key Metrics */}
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Profit Factor:</span>
+                      <div className="font-bold text-foreground">{strategy.pf}</div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Max DD:</span>
+                      <div className="font-bold text-destructive">{strategy.maxDD}%</div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Meses verdes:</span>
+                      <div className="font-bold text-success">{strategy.greenMonthsPct}%</div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Retorno mensual:</span>
+                      <div className="font-bold text-teal">{strategy.monthlyReturn}%</div>
+                    </div>
+                  </div>
+                  
+                  {/* Performance Indicators */}
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">Win Rate</span>
+                        <span className="text-foreground">{strategy.winRate}%</span>
+                      </div>
+                      <Progress value={strategy.winRate} className="h-2" />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">RR Promedio:</span>
+                        <div className="font-medium text-foreground">1:{strategy.avgRR}</div>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Total trades:</span>
+                        <div className="font-medium text-foreground">{strategy.totalTrades}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Instruments */}
+                  <div>
+                    <span className="text-sm text-muted-foreground">Instrumentos:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {strategy.instruments.map((instrument) => (
+                        <Badge key={instrument} variant="outline" className="text-xs">
+                          {instrument}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={() => toggleFollow(strategy.id)}
+                      className={`flex-1 ${
+                        isFollowed 
+                          ? 'bg-teal/20 text-teal border-teal hover:bg-teal/30' 
+                          : 'bg-gradient-primary hover:shadow-glow'
+                      }`}
+                      variant={isFollowed ? "outline" : "default"}
+                      aria-label={
+                        isFollowed 
+                          ? `Dejar de seguir la estrategia ${strategy.name}`
+                          : `Configurar copia de la estrategia ${strategy.name}`
+                      }
+                    >
+                      {isFollowed ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Siguiendo
+                        </>
+                      ) : (
+                        "Configurar copia"
+                      )}
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="border-line"
+                      onClick={() => {
+                        trackInteraction('strategy_card', 'view_chart', {
+                          strategy_id: strategy.id,
+                          strategy_name: strategy.name
+                        });
+                      }}
+                      aria-label={`Ver gráfico de rendimiento de ${strategy.name}`}
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  {/* Balance mínimo */}
+                  <div className="text-xs text-muted-foreground pt-2 border-t border-line">
+                    Balance mínimo recomendado: ${strategy.minBalance.toLocaleString()}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        <StrategyEvaluationGuide />
+        {/* Risk Management Section */}
+        <Card className="border-line bg-surface">
+          <CardHeader>
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <Shield className="h-5 w-5 text-teal" />
+              Gestión de Riesgo en Copy Trading
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Lineamientos importantes para el copy trading seguro
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Reglas de oro</h4>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Target className="h-4 w-4 mt-0.5 text-teal flex-shrink-0" />
+                    Nunca arriesgue más del 2-5% de su capital total
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Target className="h-4 w-4 mt-0.5 text-teal flex-shrink-0" />
+                    Diversifique entre múltiples estrategias
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Target className="h-4 w-4 mt-0.5 text-teal flex-shrink-0" />
+                    Establezca límites de drawdown máximo
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Target className="h-4 w-4 mt-0.5 text-teal flex-shrink-0" />
+                    Monitoree regularmente el rendimiento
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Configuración recomendada</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Estrategia Conservadora:</span>
+                    <span className="text-foreground">40-60% del capital</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Estrategia Moderada:</span>
+                    <span className="text-foreground">30-40% del capital</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Estrategia Agresiva:</span>
+                    <span className="text-foreground">10-20% del capital</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full border-teal text-teal hover:bg-teal/10"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configurar límites de riesgo
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div>
-          <h2 className="text-2xl font-bold mb-6">Available Strategies</h2>
-          {loading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map(i => <Skeleton key={i} className="h-96" />)}
+        {/* Disclaimer */}
+        <Card className="border-warning/20 bg-warning/5 mt-6">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+              <div className="space-y-2">
+                <h3 className="font-semibold text-foreground">Importante sobre Copy Trading</h3>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>• El copy trading no requiere acceso directo a su cuenta de trading</p>
+                  <p>• Las señales se proporcionan para que usted ejecute manualmente</p>
+                  <p>• Tálamo nunca opera directamente en su cuenta</p>
+                  <p>• Usted mantiene control total sobre sus operaciones en todo momento</p>
+                  <p>• Los resultados mostrados son simulaciones basadas en datos históricos</p>
+                </div>
+              </div>
             </div>
-          ) : strategies.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              No active strategies available
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {strategies.map(strategy => (
-                <StrategyCard 
-                  key={strategy.id} 
-                  strategy={strategy}
-                  onViewDetails={handleViewDetails}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <FundingInstructionsCard />
-        <TradingDisclaimer />
+          </CardContent>
+        </Card>
       </div>
-
-      <StrategyDetailModal 
-        strategy={selectedStrategy}
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-      />
-
-      <InvestorProfileWizard
-        isOpen={isWizardOpen}
-        onClose={() => setIsWizardOpen(false)}
-        strategies={strategies}
-        onRecommendationsReady={handleRecommendations}
-      />
     </div>
   );
-}
+};
 
-export default withPageTracking(CopyTrading, 'CopyTrading');
+export default withPageTracking(CopyTrading, 'copy-trading');

@@ -8,12 +8,6 @@
 export type TraderStatus = 'active' | 'inactive' | 'suspended';
 export type TradeStatus = 'open' | 'closed' | 'pending';
 export type TradeResult = 'profit' | 'loss' | 'breakeven';
-export type AccountType = 'social' | 'standard' | 'pro';
-export type BillingPeriod = 'daily' | 'weekly' | 'monthly' | 'quarterly';
-export type StrategyStatus = 'draft' | 'active' | 'inactive';
-export type RiskProfile = 'conservative' | 'moderate' | 'aggressive';
-export type OrderType = 'buy' | 'sell';
-export type OrderStatus = 'open' | 'closed' | 'pending';
 
 export interface CopyTrader {
   id: string;
@@ -151,66 +145,6 @@ export interface CopyTradingStats {
   avg_trader_return_percentage: number;
   top_performers: CopyTrader[];
   recent_trades: CopyTrade[];
-}
-
-// Copy Strategy (from database)
-export interface CopyStrategy {
-  id: string;
-  trader_name: string;
-  trader_bio?: string;
-  trader_avatar_url?: string;
-  account_type: AccountType;
-  strategy_equity: number;
-  min_investment: number;
-  performance_fee: number;
-  leverage: number;
-  billing_period: BillingPeriod;
-  symbols_traded: string[];
-  cumulative_return_data?: Array<{ date: string; return: number }>;
-  total_return_percentage?: number;
-  monthly_return_percentage?: number;
-  win_rate?: number;
-  profit_factor?: number;
-  max_drawdown?: number;
-  total_trades?: number;
-  strategy_link: string;
-  status: StrategyStatus;
-  created_at: string;
-  updated_at: string;
-  created_by?: string;
-}
-
-// Strategy Order (from database)
-export interface StrategyOrder {
-  id: string;
-  strategy_id: string;
-  symbol: string;
-  order_type: OrderType;
-  open_price: number;
-  close_price?: number;
-  volume: number;
-  profit_loss?: number;
-  opened_at: string;
-  closed_at?: string;
-  status: OrderStatus;
-  created_at: string;
-}
-
-// Investor Profile
-export interface InvestorProfile {
-  riskProfile: RiskProfile;
-  totalInvestment: number;
-  experience: 'beginner' | 'intermediate' | 'advanced';
-  riskTolerance: number; // 1-10
-  investmentHorizon: 'short' | 'medium' | 'long';
-}
-
-// Strategy Recommendation
-export interface StrategyRecommendation {
-  strategy: CopyStrategy;
-  recommendedAmount: number;
-  percentage: number;
-  reason: string;
 }
 
 // Mock data interface for development
