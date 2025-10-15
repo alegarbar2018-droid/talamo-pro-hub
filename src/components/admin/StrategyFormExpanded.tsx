@@ -18,22 +18,20 @@ import { parseStrategySyntaxGuide, validateAvatarURL } from '@/lib/parseStrategy
 import type { CopyStrategy } from '@/modules/copy/types';
 
 const strategySchema = z.object({
-  name: z.string().min(3, 'Mínimo 3 caracteres').max(100, 'Máximo 100 caracteres'),
-  description: z.string().min(10, 'Mínimo 10 caracteres').max(500, 'Máximo 500 caracteres'),
-  photo_url: z.string().url('URL inválida').optional().or(z.literal('')),
+  trader_name: z.string().min(3, 'Mínimo 3 caracteres').max(100, 'Máximo 100 caracteres'),
+  trader_bio: z.string().min(10, 'Mínimo 10 caracteres').max(500, 'Máximo 500 caracteres').optional(),
+  trader_avatar_url: z.string().url('URL inválida').optional().or(z.literal('')),
   account_type: z.enum(['Social Standard', 'Pro']),
   strategy_equity: z.number().positive('Debe ser mayor a 0'),
   min_investment: z.number().min(10, 'Mínimo $10'),
   performance_fee_pct: z.number().min(0).max(100),
   leverage: z.number().int().positive(),
-  billing_period: z.enum(['Weekly', 'Monthly', 'Quarterly']),
-  symbols: z.array(z.string()).min(1, 'Al menos 1 símbolo'),
-  external_link: z.string().url('URL inválida'),
-  risk_band: z.enum(['Conservador', 'Moderado', 'Agresivo']).optional(),
+  billing_period: z.enum(['weekly', 'monthly', 'quarterly']),
+  symbols_traded: z.array(z.string()).min(1, 'Al menos 1 símbolo'),
+  strategy_link: z.string().url('URL inválida'),
   profit_factor: z.number().optional(),
   max_drawdown: z.number().optional(),
   win_rate: z.number().optional(),
-  cagr: z.number().optional(),
   total_trades: z.number().int().optional(),
 });
 
@@ -57,8 +55,6 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<StrategyFormData>({
     resolver: zodResolver(strategySchema),
     defaultValues: {
-      name: strategy?.name || '',
-      description: strategy?.description || '',
       trader_name: strategy?.trader_name || '',
       trader_bio: strategy?.trader_bio || '',
       trader_avatar_url: strategy?.trader_avatar_url || '',
@@ -70,7 +66,6 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
       billing_period: strategy?.billing_period || 'monthly',
       symbols_traded: strategy?.symbols_traded || [],
       strategy_link: strategy?.strategy_link || '',
-      risk_band: strategy?.risk_band,
       profit_factor: strategy?.profit_factor,
       max_drawdown: strategy?.max_drawdown,
       win_rate: strategy?.win_rate,
@@ -78,7 +73,7 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
     }
   });
   
-  const symbols = watch('symbols_traded') || [];
+  const symbols = (watch('symbols_traded') as string[]) || [];
   
   const handleAvatarUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -128,13 +123,13 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
     
     const upper = currentSymbol.toUpperCase().trim();
     if (!symbols.includes(upper)) {
-      setValue('symbols', [...symbols, upper]);
+      setValue('symbols_traded', [...symbols, upper]);
       setCurrentSymbol('');
     }
   };
   
   const handleRemoveSymbol = (symbol: string) => {
-    setValue('symbols', symbols.filter(s => s !== symbol));
+    setValue('symbols_traded', symbols.filter(s => s !== symbol));
   };
   
   const handleImportSyntax = () => {
@@ -183,29 +178,19 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
         return;
       }
       
-      // Generar slug
-      const slug = data.name
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      
-      // Agregar UTM al external_link
+      // Agregar UTM al strategy_link
       const utmParams = new URLSearchParams({
         utm_source: 'talamo',
         utm_medium: 'copy',
         utm_campaign: 'dir'
       });
-      const separator = data.external_link.includes('?') ? '&' : '?';
-      const externalLinkWithUTM = `${data.external_link}${separator}${utmParams.toString()}`;
+      const separator = data.strategy_link.includes('?') ? '&' : '?';
+      const strategyLinkWithUTM = `${data.strategy_link}${separator}${utmParams.toString()}`;
       
       const payload = {
         ...data,
-        slug,
-        photo_url: photoUrl || null,
-        external_link: externalLinkWithUTM,
-        cumulative_return_series: null, // TODO: Editor JSON separado
+        trader_avatar_url: photoUrl || null,
+        strategy_link: strategyLinkWithUTM,
         status: 'draft'
       };
       
@@ -272,15 +257,15 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="name">Nombre *</Label>
-              <Input id="name" {...register('name')} />
-              {errors.name && <p className="text-xs text-destructive mt-1">{errors.name.message}</p>}
+              <Label htmlFor="trader_name">Nombre del Trader *</Label>
+              <Input id="trader_name" {...register('trader_name')} />
+              {errors.trader_name && <p className="text-xs text-destructive mt-1">{errors.trader_name.message}</p>}
             </div>
             
             <div>
-              <Label htmlFor="description">Descripción * (10-500 caracteres)</Label>
-              <Textarea id="description" {...register('description')} rows={3} />
-              {errors.description && <p className="text-xs text-destructive mt-1">{errors.description.message}</p>}
+              <Label htmlFor="trader_bio">Biografía (opcional)</Label>
+              <Textarea id="trader_bio" {...register('trader_bio')} rows={3} />
+              {errors.trader_bio && <p className="text-xs text-destructive mt-1">{errors.trader_bio.message}</p>}
             </div>
             
             <div>
@@ -369,16 +354,16 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
             <div>
               <Label htmlFor="billing_period">Período de Facturación *</Label>
               <Select
-                value={watch('billing_period')}
+                value={watch('billing_period') as string}
                 onValueChange={(v) => setValue('billing_period', v as any)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Weekly">Semanal</SelectItem>
-                  <SelectItem value="Monthly">Mensual</SelectItem>
-                  <SelectItem value="Quarterly">Trimestral</SelectItem>
+                  <SelectItem value="weekly">Semanal</SelectItem>
+                  <SelectItem value="monthly">Mensual</SelectItem>
+                  <SelectItem value="quarterly">Trimestral</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -415,41 +400,24 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
                   </Badge>
                 ))}
               </div>
-              {errors.symbols && <p className="text-xs text-destructive mt-1">{errors.symbols.message}</p>}
+              {errors.symbols_traded && <p className="text-xs text-destructive mt-1">{errors.symbols_traded.message}</p>}
             </div>
             
             <div>
-              <Label htmlFor="external_link">Link a Estrategia en Exness *</Label>
-              <Input id="external_link" {...register('external_link')} />
+              <Label htmlFor="strategy_link">Link a Estrategia en Exness *</Label>
+              <Input id="strategy_link" {...register('strategy_link')} />
               <p className="text-xs text-muted-foreground mt-1">Se agregarán parámetros UTM automáticamente</p>
-              {errors.external_link && <p className="text-xs text-destructive mt-1">{errors.external_link.message}</p>}
+              {errors.strategy_link && <p className="text-xs text-destructive mt-1">{errors.strategy_link.message}</p>}
             </div>
           </CardContent>
         </Card>
         
-        {/* KPIs & Risk */}
+        {/* KPIs (Risk band es auto-calculado) */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">KPIs y Clasificación de Riesgo (Opcionales)</CardTitle>
+            <CardTitle className="text-base">KPIs (Opcionales)</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="risk_band">Banda de Riesgo</Label>
-              <Select
-                value={watch('risk_band') || ''}
-                onValueChange={(v) => setValue('risk_band', v === '' ? undefined : v as any)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Auto-calculado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Auto-calculado</SelectItem>
-                  <SelectItem value="Conservador">Conservador</SelectItem>
-                  <SelectItem value="Moderado">Moderado</SelectItem>
-                  <SelectItem value="Agresivo">Agresivo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             
             <div>
               <Label htmlFor="profit_factor">Profit Factor</Label>
@@ -478,16 +446,6 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
                 type="number"
                 step="0.01"
                 {...register('win_rate', { valueAsNumber: true })}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="cagr">CAGR (%)</Label>
-              <Input
-                id="cagr"
-                type="number"
-                step="0.01"
-                {...register('cagr', { valueAsNumber: true })}
               />
             </div>
             
