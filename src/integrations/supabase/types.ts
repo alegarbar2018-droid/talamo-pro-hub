@@ -1694,6 +1694,7 @@ export type Database = {
           audit_trail: Json | null
           author_id: string
           created_at: string
+          dedup_key: string | null
           entry_price: number | null
           id: string
           instrument: string
@@ -1717,6 +1718,7 @@ export type Database = {
           audit_trail?: Json | null
           author_id: string
           created_at?: string
+          dedup_key?: string | null
           entry_price?: number | null
           id?: string
           instrument: string
@@ -1740,6 +1742,7 @@ export type Database = {
           audit_trail?: Json | null
           author_id?: string
           created_at?: string
+          dedup_key?: string | null
           entry_price?: number | null
           id?: string
           instrument?: string
@@ -2157,6 +2160,7 @@ export type Database = {
       admin_role: "ADMIN" | "ANALYST" | "CONTENT" | "SUPPORT" | "USER"
       app_role: "admin" | "trader" | "partner"
       quiz_question_type: "single" | "multi" | "boolean" | "open"
+      signal_source: "manual" | "mt5_ea" | "api"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2287,6 +2291,7 @@ export const Constants = {
       admin_role: ["ADMIN", "ANALYST", "CONTENT", "SUPPORT", "USER"],
       app_role: ["admin", "trader", "partner"],
       quiz_question_type: ["single", "multi", "boolean", "open"],
+      signal_source: ["manual", "mt5_ea", "api"],
     },
   },
 } as const
