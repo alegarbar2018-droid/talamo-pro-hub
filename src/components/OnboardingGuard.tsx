@@ -11,8 +11,8 @@ export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({ children }) =>
   const { user, loading } = useAuth();
   const location = useLocation();
   
-  // Mientras carga la autenticación
-  if (loading) {
+  // Mientras carga la autenticación O el perfil no está disponible
+  if (loading || (user && !user.profile)) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -26,11 +26,12 @@ export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({ children }) =>
   }
   
   // Si el usuario NO completó el onboarding, redirigir a onboarding
-  const onboardingCompleted = (user.profile as any)?.onboarding_completed;
-  if (!onboardingCompleted) {
+  // Solo redirigir si tenemos el perfil cargado y NO está completado
+  const onboardingCompleted = user.profile?.onboarding_completed;
+  if (onboardingCompleted === false) {
     return <Navigate to="/onboarding-welcome" replace />;
   }
   
-  // Si completó el onboarding, mostrar el contenido protegido
+  // Si completó el onboarding o no hay información de onboarding, mostrar el contenido
   return <>{children}</>;
 };
