@@ -1562,10 +1562,13 @@ export type Database = {
       }
       profiles: {
         Row: {
+          availability: string | null
           avatar_url: string | null
           bio: string | null
+          capital_band: string | null
           created_at: string
           email: string | null
+          experience_score: number | null
           first_name: string | null
           goal: string | null
           id: string
@@ -1574,16 +1577,25 @@ export type Database = {
           last_name: string | null
           level: string | null
           notification_preferences: Json | null
+          onboarding_completed: boolean | null
+          onboarding_completed_at: string | null
           phone: string | null
+          platform_preference: string | null
+          recommended_account: string | null
+          recommended_route: string | null
           risk_tolerance: string | null
+          trading_style: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          availability?: string | null
           avatar_url?: string | null
           bio?: string | null
+          capital_band?: string | null
           created_at?: string
           email?: string | null
+          experience_score?: number | null
           first_name?: string | null
           goal?: string | null
           id?: string
@@ -1592,16 +1604,25 @@ export type Database = {
           last_name?: string | null
           level?: string | null
           notification_preferences?: Json | null
+          onboarding_completed?: boolean | null
+          onboarding_completed_at?: string | null
           phone?: string | null
+          platform_preference?: string | null
+          recommended_account?: string | null
+          recommended_route?: string | null
           risk_tolerance?: string | null
+          trading_style?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          availability?: string | null
           avatar_url?: string | null
           bio?: string | null
+          capital_band?: string | null
           created_at?: string
           email?: string | null
+          experience_score?: number | null
           first_name?: string | null
           goal?: string | null
           id?: string
@@ -1610,8 +1631,14 @@ export type Database = {
           last_name?: string | null
           level?: string | null
           notification_preferences?: Json | null
+          onboarding_completed?: boolean | null
+          onboarding_completed_at?: string | null
           phone?: string | null
+          platform_preference?: string | null
+          recommended_account?: string | null
+          recommended_route?: string | null
           risk_tolerance?: string | null
+          trading_style?: string | null
           updated_at?: string
           user_id?: string
         }

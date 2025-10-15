@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ObservabilityProvider } from "@/components/business/ObservabilityProvider";
+import { OnboardingGuard } from "@/components/OnboardingGuard";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -15,6 +16,7 @@ import AuthForgot from "./pages/AuthForgot";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
+import OnboardingWelcome from "./pages/OnboardingWelcome";
 import Dashboard from "./pages/Dashboard";
 import Academy from "./pages/Academy";
 import Signals from "./pages/Signals";
@@ -76,16 +78,19 @@ const App: React.FC = () => {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/academy" element={<Academy />} />
-            <Route path="/academy/course/:slug" element={<CourseView />} />
-            <Route path="/academy/lesson/:lessonId" element={<LessonView />} />
-            <Route path="/academy/quiz/:quizId" element={<QuizView />} />
-            <Route path="/signals" element={<Signals />} />
-            <Route path="/copy-trading" element={<CopyTrading />} />
+            <Route path="/onboarding-welcome" element={<OnboardingWelcome />} />
+            
+            {/* Protected routes - require onboarding completion */}
+            <Route path="/dashboard" element={<OnboardingGuard><Dashboard /></OnboardingGuard>} />
+            <Route path="/academy" element={<OnboardingGuard><Academy /></OnboardingGuard>} />
+            <Route path="/academy/course/:slug" element={<OnboardingGuard><CourseView /></OnboardingGuard>} />
+            <Route path="/academy/lesson/:lessonId" element={<OnboardingGuard><LessonView /></OnboardingGuard>} />
+            <Route path="/academy/quiz/:quizId" element={<OnboardingGuard><QuizView /></OnboardingGuard>} />
+            <Route path="/signals" element={<OnboardingGuard><Signals /></OnboardingGuard>} />
+            <Route path="/copy-trading" element={<OnboardingGuard><CopyTrading /></OnboardingGuard>} />
             <Route path="/CopyTrading" element={<Navigate to="/copy-trading" replace />} />
-            <Route path="/tools" element={<Tools />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/tools" element={<OnboardingGuard><Tools /></OnboardingGuard>} />
+            <Route path="/settings" element={<OnboardingGuard><Settings /></OnboardingGuard>} />
             <Route path="/access" element={<AccessWizard />} />
             
             {/* Public info pages */}
@@ -102,7 +107,7 @@ const App: React.FC = () => {
             
             <Route path="/auth/exness" element={<ExnessRedirect />} />
             <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
-            <Route path="/admin/*" element={<AdminLayout />}>
+            <Route path="/admin/*" element={<OnboardingGuard><AdminLayout /></OnboardingGuard>}>
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="affiliation" element={<AdminAffiliation />} />
