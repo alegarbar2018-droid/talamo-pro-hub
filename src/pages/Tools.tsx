@@ -183,8 +183,10 @@ const Tools = () => {
           <TabsContent value="overview" className="space-y-8">
             <ToolsOverview
               onNavigateToCalculators={() => setActiveTab("calculators")}
-              onNavigateToContracts={() => {}}
-              onNavigateToFormulas={() => {}}
+              onNavigateToContracts={() => setActiveTab("specifications")}
+              onNavigateToFormulas={() => setActiveTab("formulas")}
+              onNavigateToJournal={() => setActiveTab("journal")}
+              onNavigateToAudit={() => setActiveTab("audit")}
             />
           </TabsContent>
 

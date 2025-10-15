@@ -120,6 +120,8 @@ const Tools = () => {
               onNavigateToCalculators={() => setActiveTab("calculators")}
               onNavigateToContracts={() => setActiveTab("contracts")}
               onNavigateToFormulas={() => setActiveTab("formulas")}
+              onNavigateToJournal={() => {}}
+              onNavigateToAudit={() => {}}
             />
           </TabsContent>
 

@@ -1,16 +1,20 @@
 import { ExplainerCard } from "./ExplainerCard";
-import { Calculator, FileText, BookOpen } from "lucide-react";
+import { Calculator, FileText, BookOpen, Notebook, BarChart3 } from "lucide-react";
 
 interface ToolsOverviewProps {
   onNavigateToCalculators: () => void;
   onNavigateToContracts: () => void;
   onNavigateToFormulas: () => void;
+  onNavigateToJournal: () => void;
+  onNavigateToAudit: () => void;
 }
 
 export function ToolsOverview({
   onNavigateToCalculators,
   onNavigateToContracts,
   onNavigateToFormulas,
+  onNavigateToJournal,
+  onNavigateToAudit,
 }: ToolsOverviewProps) {
   return (
     <div className="space-y-12">
@@ -44,7 +48,7 @@ export function ToolsOverview({
       </div>
 
       {/* Tools Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Calculadoras */}
         <ExplainerCard
           title="Calculadoras de Trading"
@@ -126,6 +130,64 @@ export function ToolsOverview({
           }}
           badge={{
             label: "Básica",
+            variant: "default"
+          }}
+        />
+
+        {/* Trading Journal */}
+        <ExplainerCard
+          title="Diario de Trading"
+          description="Registra cada operación, documenta tu proceso y transforma la experiencia en conocimiento medible."
+          icon={<Notebook className="h-6 w-6 text-primary" />}
+          whenToUse={[
+            "Inmediatamente después de cerrar una operación",
+            "Para documentar decisiones en tiempo real",
+            "Al analizar patrones de comportamiento recurrentes",
+            "Antes de sesiones de revisión semanal/mensual",
+            "Para identificar errores y fortalezas sistemáticas"
+          ]}
+          whatYouNeed={[
+            "Detalles de entrada, salida y resultado",
+            "Estado emocional antes/durante la operación",
+            "Razones que justificaron la decisión",
+            "Capturas de pantalla del setup (recomendado)",
+            "Etiquetas para categorizar (breakout, scalping, etc.)"
+          ]}
+          primaryCTA={{
+            label: "Abrir Diario",
+            onClick: onNavigateToJournal
+          }}
+          badge={{
+            label: "Básica",
+            variant: "default"
+          }}
+        />
+
+        {/* MT4/MT5 Audit */}
+        <ExplainerCard
+          title="Auditoría MT4/MT5"
+          description="Conecta tu cuenta en modo lectura y obtén análisis profesional de tu historial: métricas, curva de equity y estadísticas verificables."
+          icon={<BarChart3 className="h-6 w-6 text-primary" />}
+          whenToUse={[
+            "Para auditar tu performance real sin sesgos",
+            "Al postularte a fondos de prop trading",
+            "Cuando necesitas verificar métricas objetivas (win rate, drawdown)",
+            "Para validar si tu estrategia es rentable a largo plazo",
+            "Al buscar mejorar basándote en datos concretos"
+          ]}
+          whatYouNeed={[
+            "Cuenta MT4 o MT5 activa con Exness",
+            "Contraseña de inversionista (solo lectura)",
+            "Número de cuenta y servidor",
+            "Historial de al menos 30 operaciones (recomendado)",
+            "Verificación mediante orden temporal (proceso guiado)"
+          ]}
+          primaryCTA={{
+            label: "Conectar Cuenta",
+            onClick: onNavigateToAudit
+          }}
+          badge={{
+            label: "Avanzada",
             variant: "default"
           }}
         />
