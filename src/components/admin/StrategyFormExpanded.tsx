@@ -52,32 +52,33 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
   const [syntaxInput, setSyntaxInput] = useState('');
   const [currentSymbol, setCurrentSymbol] = useState('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(strategy?.photo_url);
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(strategy?.trader_avatar_url);
   
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<StrategyFormData>({
     resolver: zodResolver(strategySchema),
     defaultValues: {
       name: strategy?.name || '',
       description: strategy?.description || '',
-      photo_url: strategy?.photo_url || '',
+      trader_name: strategy?.trader_name || '',
+      trader_bio: strategy?.trader_bio || '',
+      trader_avatar_url: strategy?.trader_avatar_url || '',
       account_type: strategy?.account_type || 'Social Standard',
       strategy_equity: strategy?.strategy_equity || 1000,
       min_investment: strategy?.min_investment || 10,
       performance_fee_pct: strategy?.performance_fee_pct || 20,
       leverage: strategy?.leverage || 100,
-      billing_period: strategy?.billing_period || 'Monthly',
-      symbols: strategy?.symbols || [],
-      external_link: strategy?.external_link || '',
+      billing_period: strategy?.billing_period || 'monthly',
+      symbols_traded: strategy?.symbols_traded || [],
+      strategy_link: strategy?.strategy_link || '',
       risk_band: strategy?.risk_band,
       profit_factor: strategy?.profit_factor,
       max_drawdown: strategy?.max_drawdown,
       win_rate: strategy?.win_rate,
-      cagr: strategy?.cagr,
       total_trades: strategy?.total_trades,
     }
   });
   
-  const symbols = watch('symbols') || [];
+  const symbols = watch('symbols_traded') || [];
   
   const handleAvatarUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -147,8 +148,8 @@ export const StrategyFormExpanded = ({ onSuccess, onCancel, strategy }: Strategy
         }
       });
       
-      if (parsed.photo_url) {
-        setAvatarPreview(parsed.photo_url);
+      if (parsed.trader_avatar_url) {
+        setAvatarPreview(parsed.trader_avatar_url);
       }
       
       setShowSyntaxGuide(false);

@@ -27,9 +27,39 @@
     "loading": "Loading strategies..."
   },
   "strategy_card": {
+    "by": "By",
     "min_investment": "Min Investment",
     "fee": "Fee",
-    "follow": "Follow on Exness"
+    "follow": "Follow on Exness",
+    "win_rate": "Win Rate",
+    "monthly_return": "Monthly Return",
+    "symbols": "Symbols",
+    "leverage": "Leverage",
+    "equity": "Strategy Equity",
+    "billing": "Billing"
+  },
+  "funding": {
+    "title": "How to Fund your Investment Wallet",
+    "subtitle": "Minimum deposit: $10 USD. Funds appear instantly.",
+    "mobile_tab": "Mobile App",
+    "web_tab": "Web",
+    "mobile_title": "From Exness Copy Trading App",
+    "mobile_step1": "Download and install \"Exness Copy Trading\" app (iOS/Android)",
+    "mobile_step2": "Log in with your Exness credentials",
+    "mobile_step3": "Go to the Profile tab",
+    "mobile_step4": "Under \"Investment wallet\", select Deposit",
+    "mobile_step5": "Choose a payment method from the list",
+    "mobile_step6": "Enter amount (minimum $10 USD) and confirm",
+    "mobile_step7": "Done! Funds appear instantly",
+    "web_title": "From Personal Area Web",
+    "web_step1": "Log in at my.exness.com",
+    "web_step2": "Go to Copy Trading (or Social Trading) tab",
+    "web_step3": "Click Assets tab",
+    "web_step4": "In \"Investment wallet\", click Deposit",
+    "web_step5": "Select payment method and enter amount",
+    "web_step6": "Complete payment details and confirm",
+    "web_step7": "Follow instructions until complete",
+    "note": "💡 Tip: Once funded, you can distribute your funds among strategies you choose from Tálamo."
   },
   "gating": {
     "title": "Affiliation Status",
@@ -44,5 +74,15 @@
     "risk": "Trading involves significant risk of loss. Past performance does not guarantee future results.",
     "educational": "This content is educational. It does not constitute financial advice or investment recommendation.",
     "affiliation": "Access to copy trading requires an affiliated and verified account."
+  },
+  "risk": {
+    "conservative": "Conservative",
+    "moderate": "Moderate",
+    "aggressive": "Aggressive"
+  },
+  "billing": {
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly"
   }
 }

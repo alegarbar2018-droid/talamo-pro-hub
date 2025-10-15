@@ -1,18 +1,18 @@
-import type { InvestorProfile, InvestorRiskProfile, CopyStrategy, StrategyAllocation, RiskBand } from '@/modules/copy/types';
+import type { InvestorProfile, InvestorRiskProfile, CopyStrategy, StrategyAllocation } from '@/modules/copy/types';
 
 /**
  * Verifica si una estrategia es compatible con el perfil de riesgo del inversionista
  */
 function isCompatibleRiskBand(
-  strategyBand: RiskBand | undefined,
+  strategyBand: 'conservative' | 'moderate' | 'aggressive' | undefined,
   investorProfile: InvestorRiskProfile
 ): boolean {
   if (!strategyBand) return true; // Si no tiene band, asumimos compatible
   
   const riskMapping = {
-    conservative: ['Conservador'],
-    moderate: ['Conservador', 'Moderado'],
-    aggressive: ['Conservador', 'Moderado', 'Agresivo']
+    conservative: ['conservative'],
+    moderate: ['conservative', 'moderate'],
+    aggressive: ['conservative', 'moderate', 'aggressive']
   };
   
   return riskMapping[investorProfile].includes(strategyBand);
@@ -96,7 +96,7 @@ export function recommendStrategies(
     // Verificar que no tenga demasiado overlap con estrategias ya seleccionadas
     let hasHighOverlap = false;
     for (const existing of selected) {
-      const overlap = calculateSymbolOverlap(strategy.symbols, existing.symbols);
+      const overlap = calculateSymbolOverlap(strategy.symbols_traded || [], existing.symbols_traded || []);
       if (overlap > 0.6) { // Más del 60% de overlap = rechazar
         hasHighOverlap = true;
         break;
@@ -168,9 +168,9 @@ function generateAllocationReason(strategy: CopyStrategy, profile: InvestorRiskP
   const reasons: string[] = [];
   
   // Razón de perfil
-  if (strategy.risk_band === 'Conservador' && profile === 'conservative') {
+  if (strategy.risk_band === 'conservative' && profile === 'conservative') {
     reasons.push('Alineado con tu perfil conservador');
-  } else if (strategy.risk_band === 'Moderado') {
+  } else if (strategy.risk_band === 'moderate') {
     reasons.push('Balance entre riesgo y retorno');
   }
   
@@ -184,7 +184,7 @@ function generateAllocationReason(strategy: CopyStrategy, profile: InvestorRiskP
   }
   
   // Razón de símbolos
-  if (strategy.symbols.length > 3) {
+  if (strategy.symbols_traded && strategy.symbols_traded.length > 3) {
     reasons.push('Diversificación multi-activo');
   }
   

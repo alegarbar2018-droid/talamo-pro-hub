@@ -7,9 +7,8 @@
 
 // Account & Status Types
 export type AccountType = 'Social Standard' | 'Pro';
-export type BillingPeriod = 'Weekly' | 'Monthly' | 'Quarterly';
+export type BillingPeriod = 'weekly' | 'monthly' | 'quarterly';
 export type StrategyStatus = 'draft' | 'published' | 'archived';
-export type RiskBand = 'Conservador' | 'Moderado' | 'Agresivo';
 export type OrderSide = 'BUY' | 'SELL';
 export type OrderStatus = 'open' | 'closed' | 'pending';
 
@@ -27,12 +26,13 @@ export interface CumulativeReturnPoint {
 // Main Strategy Interface (DB + FE)
 export interface CopyStrategy {
   id: string;
-  slug: string;
   
   // Trader Info
   name: string;
   description: string;
-  photo_url?: string;
+  trader_name: string;
+  trader_bio?: string;
+  trader_avatar_url?: string;
   
   // Account & Investment
   account_type: AccountType;
@@ -43,26 +43,27 @@ export interface CopyStrategy {
   billing_period: BillingPeriod;
   
   // Performance Data
-  cumulative_return_series?: CumulativeReturnPoint[];
-  symbols: string[];
+  cumulative_return_data?: CumulativeReturnPoint[];
+  symbols_traded: string[];
+  monthly_return_percentage?: number;
+  total_return_percentage?: number;
   
   // KPIs (calculated)
   profit_factor?: number;
   max_drawdown?: number;
   win_rate?: number;
-  cagr?: number;
   total_trades?: number;
   
   // Risk Classification
-  risk_band?: RiskBand;
+  risk_band?: 'conservative' | 'moderate' | 'aggressive';
   
   // External Link (with UTM)
-  external_link: string;
+  strategy_link: string;
   
   // Status & Metadata
   status: StrategyStatus;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   created_by?: string;
 }
 

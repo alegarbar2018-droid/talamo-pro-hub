@@ -27,9 +27,39 @@
     "loading": "Carregando estratégias..."
   },
   "strategy_card": {
+    "by": "Por",
     "min_investment": "Investimento Mín",
     "fee": "Taxa",
-    "follow": "Seguir na Exness"
+    "follow": "Seguir na Exness",
+    "win_rate": "Win Rate",
+    "monthly_return": "Ret. Mensal",
+    "symbols": "Símbolos",
+    "leverage": "Apalancamento",
+    "equity": "Strategy Equity",
+    "billing": "Faturamento"
+  },
+  "funding": {
+    "title": "Como Carregar sua Wallet de Investidor",
+    "subtitle": "Depósito mínimo: $10 USD. Os fundos aparecem instantaneamente.",
+    "mobile_tab": "App Móvel",
+    "web_tab": "Web",
+    "mobile_title": "Desde o App Exness Copy Trading",
+    "mobile_step1": "Baixe e instale o app \"Exness Copy Trading\" (iOS/Android)",
+    "mobile_step2": "Faça login com suas credenciais Exness",
+    "mobile_step3": "Vá para a aba Profile (Perfil)",
+    "mobile_step4": "Em \"Investment wallet\", selecione Deposit (Depositar)",
+    "mobile_step5": "Escolha um método de pagamento da lista",
+    "mobile_step6": "Digite o valor (mínimo $10 USD) e confirme",
+    "mobile_step7": "Pronto! Os fundos aparecem instantaneamente",
+    "web_title": "Desde a Personal Area Web",
+    "web_step1": "Faça login em my.exness.com",
+    "web_step2": "Vá para a aba Copy Trading (ou Social Trading)",
+    "web_step3": "Clique na aba Assets (Ativos)",
+    "web_step4": "Em \"Investment wallet\", clique em Deposit",
+    "web_step5": "Selecione o método de pagamento e digite o valor",
+    "web_step6": "Complete os detalhes de pagamento e confirme",
+    "web_step7": "Siga as instruções até finalizar",
+    "note": "💡 Dica: Uma vez carregado, você pode distribuir seus fundos entre as estratégias que escolher desde Tálamo."
   },
   "gating": {
     "title": "Status de Afiliação",
@@ -44,5 +74,15 @@
     "risk": "Trading envolve risco significativo de perda. Desempenho passado não garante resultados futuros.",
     "educational": "Este conteúdo é educacional. Não constitui aconselhamento financeiro ou recomendação de investimento.",
     "affiliation": "O acesso ao copy trading requer uma conta afiliada e verificada."
+  },
+  "risk": {
+    "conservative": "Conservador",
+    "moderate": "Moderado",
+    "aggressive": "Agressivo"
+  },
+  "billing": {
+    "weekly": "Semanal",
+    "monthly": "Mensal",
+    "quarterly": "Trimestral"
   }
 }

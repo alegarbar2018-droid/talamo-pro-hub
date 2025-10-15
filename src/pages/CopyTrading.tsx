@@ -5,18 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { withPageTracking } from '@/components/business/ObservabilityProvider';
-import { useObservability } from '@/components/business/ObservabilityProvider';
 import { 
   CopyTradingIntro, 
   StrategyEvaluationGuide, 
   InvestorProfileWizard,
-  AffiliationGateBlock 
+  FundingInstructions,
+  StrategyCard
 } from '@/components/copy';
 import type { CopyStrategy } from '@/modules/copy/types';
+import { User } from 'lucide-react';
 
 const CopyTrading: React.FC = () => {
   const { t } = useTranslation(['copy', 'common']);
-  const { trackEvent } = useObservability();
   
   const [wizardOpen, setWizardOpen] = useState(false);
   
@@ -37,7 +37,6 @@ const CopyTrading: React.FC = () => {
 
   // Track page view
   React.useEffect(() => {
-    // Simplificado para evitar error de tipos
     console.log('Copy Trading page viewed', { strategies_count: strategies.length });
   }, [strategies.length]);
 
@@ -88,7 +87,8 @@ const CopyTrading: React.FC = () => {
             onClick={() => setWizardOpen(true)}
             className="gap-2"
           >
-            {t('copy.wizard.actions.profile_button')}
+            <User className="h-5 w-5" />
+            {t('copy:wizard.actions.profile_button')}
           </Button>
         </div>
         
@@ -96,50 +96,23 @@ const CopyTrading: React.FC = () => {
 
         {/* D. Catálogo de Estrategias */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">{t('copy.catalog.title')}</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('copy:catalog.title')}</h2>
           
           {isLoading ? (
-            <p className="text-center text-muted-foreground py-12">{t('copy.catalog.loading')}</p>
+            <p className="text-center text-muted-foreground py-12">{t('copy:catalog.loading')}</p>
           ) : strategies.length === 0 ? (
-            <p className="text-center text-muted-foreground py-12">{t('copy.catalog.empty')}</p>
+            <p className="text-center text-muted-foreground py-12">{t('copy:catalog.empty')}</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {strategies.map((strategy) => (
-                <div key={strategy.id} className="p-4 border border-line rounded-lg bg-surface/50">
-                  <h3 className="font-semibold text-lg mb-2">{strategy.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{strategy.description}</p>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t('copy.strategy_card.min_investment')}:</span>
-                      <span className="font-medium">${strategy.min_investment}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t('copy.strategy_card.fee')}:</span>
-                      <span className="font-medium">{strategy.performance_fee_pct}%</span>
-                    </div>
-                    {strategy.profit_factor && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">PF:</span>
-                        <span className="font-medium">{strategy.profit_factor}x</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <Button 
-                    className="w-full mt-4"
-                    onClick={() => window.open(strategy.external_link, '_blank')}
-                  >
-                    {t('copy.strategy_card.follow')}
-                  </Button>
-                </div>
+                <StrategyCard key={strategy.id} strategy={strategy} />
               ))}
             </div>
           )}
         </div>
 
-        {/* F. Disclaimers + Gating */}
-        <AffiliationGateBlock />
+        {/* E. Instrucciones de Fondeo */}
+        <FundingInstructions />
         
         <TradingDisclaimer variant="full" />
       </div>
@@ -150,7 +123,7 @@ const CopyTrading: React.FC = () => {
         onClose={() => setWizardOpen(false)}
         onComplete={(allocations) => {
           console.log('Allocations:', allocations);
-          // TODO: Mostrar modal con resultados o navegar
+          setWizardOpen(false);
         }}
       />
     </div>

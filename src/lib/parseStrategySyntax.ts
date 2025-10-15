@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CopyStrategy, AccountType, BillingPeriod, RiskBand, CumulativeReturnPoint } from '@/modules/copy/types';
+import type { CopyStrategy, AccountType, BillingPeriod, CumulativeReturnPoint } from '@/modules/copy/types';
 
 // Schema de validación
 const strategySyntaxSchema = z.object({
@@ -55,13 +55,13 @@ function addUTMParams(url: string): string {
 /**
  * Calcula risk_band basado en max_drawdown y leverage
  */
-function calculateRiskBand(maxDrawdown?: number, leverage?: number): RiskBand | undefined {
+function calculateRiskBand(maxDrawdown?: number, leverage?: number): 'conservative' | 'moderate' | 'aggressive' | undefined {
   if (!maxDrawdown) return undefined;
   
   // Reglas simples basadas en DD
-  if (maxDrawdown < 15) return 'Conservador';
-  if (maxDrawdown < 25) return 'Moderado';
-  return 'Agresivo';
+  if (maxDrawdown < 15) return 'conservative';
+  if (maxDrawdown < 25) return 'moderate';
+  return 'aggressive';
 }
 
 /**
@@ -134,6 +134,9 @@ export function parseStrategySyntaxGuide(
     name: rawData.name,
     description: rawData.description,
     photo_url: rawData.photo_url || rawData.photoUrl,
+    trader_name: rawData.trader_name || rawData.traderName || rawData.name,
+    trader_bio: rawData.trader_bio || rawData.traderBio,
+    trader_avatar_url: rawData.trader_avatar_url || rawData.traderAvatarUrl || rawData.photo_url || rawData.photoUrl,
     account_type: rawData.account_type || rawData.accountType,
     strategy_equity: rawData.strategy_equity || rawData.strategyEquity,
     min_investment: rawData.min_investment || rawData.minInvestment,
@@ -163,32 +166,36 @@ export function parseStrategySyntaxGuide(
   // Calcular risk_band si no existe
   const riskBand = validated.risk_band || calculateRiskBand(validated.max_drawdown, validated.leverage);
   
-  // Sanitizar descripción (remover HTML peligroso)
   const cleanDescription = validated.description
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
     .trim();
   
+  const cleanName = validated.name.trim();
+  
   return {
-    slug,
-    name: validated.name,
+    id: '',
+    name: cleanName,
     description: cleanDescription,
-    photo_url: validated.photo_url,
+    trader_name: normalized.trader_name || cleanName,
+    trader_bio: normalized.trader_bio,
+    trader_avatar_url: normalized.trader_avatar_url,
     account_type: validated.account_type as AccountType,
     strategy_equity: validated.strategy_equity,
     min_investment: validated.min_investment,
     performance_fee_pct: validated.performance_fee_pct,
     leverage: validated.leverage,
-    billing_period: validated.billing_period as BillingPeriod,
-    symbols: validated.symbols,
-    external_link: externalLinkWithUTM,
-    risk_band: riskBand,
+    billing_period: validated.billing_period.toLowerCase() as BillingPeriod,
+    symbols_traded: validated.symbols,
+    strategy_link: externalLinkWithUTM,
+    risk_band: riskBand === 'Conservador' ? 'conservative' : 
+               riskBand === 'Moderado' ? 'moderate' : 
+               riskBand === 'Agresivo' ? 'aggressive' : undefined,
     profit_factor: validated.profit_factor,
     max_drawdown: validated.max_drawdown,
     win_rate: validated.win_rate,
-    cagr: validated.cagr,
     total_trades: validated.total_trades,
-    cumulative_return_series: validated.cumulative_return_series as CumulativeReturnPoint[] | undefined,
+    cumulative_return_data: validated.cumulative_return_series as CumulativeReturnPoint[] | undefined,
     status: 'draft' // Siempre draft al importar
   };
 }
