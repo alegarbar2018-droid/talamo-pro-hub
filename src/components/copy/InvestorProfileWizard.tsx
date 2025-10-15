@@ -1,14 +1,17 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, DollarSign, TrendingUp } from 'lucide-react';
-import type { InvestorProfile, InvestorRiskProfile, StrategyAllocation } from '@/modules/copy/types';
+import { ArrowRight, ArrowLeft, DollarSign, TrendingUp, Loader2 } from 'lucide-react';
+import { recommendStrategies } from '@/lib/recommendStrategies';
+import type { InvestorProfile, InvestorRiskProfile, StrategyAllocation, CopyStrategy } from '@/modules/copy/types';
 
 interface InvestorProfileWizardProps {
   open: boolean;
@@ -18,6 +21,7 @@ interface InvestorProfileWizardProps {
 
 export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorProfileWizardProps) => {
   const [step, setStep] = useState(1);
+  const [allocations, setAllocations] = useState<StrategyAllocation[]>([]);
   const [profile, setProfile] = useState<InvestorProfile>({
     risk_profile: 'moderate',
     total_investment: 100,
@@ -25,8 +29,30 @@ export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorPro
     risk_tolerance: 5,
     investment_horizon: 'medium'
   });
+  
+  // Fetch estrategias publicadas
+  const { data: strategies, isLoading: loadingStrategies } = useQuery({
+    queryKey: ['published-strategies'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('copy_strategies' as any)
+        .select('*')
+        .eq('status', 'published');
+      
+      if (error) throw error;
+      return data as any[] as CopyStrategy[];
+    },
+    enabled: open && step === 3
+  });
 
   const handleNext = () => {
+    if (step === 2) {
+      // Calcular asignaciones al pasar de step 2 a 3
+      if (strategies && strategies.length > 0) {
+        const recommended = recommendStrategies(profile, strategies);
+        setAllocations(recommended);
+      }
+    }
     if (step < 3) setStep(step + 1);
   };
 
@@ -35,10 +61,9 @@ export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorPro
   };
 
   const handleComplete = () => {
-    // TODO: Calcular asignaciones con algoritmo
-    const mockAllocations: StrategyAllocation[] = [];
-    onComplete?.(mockAllocations);
+    onComplete?.(allocations);
     onClose();
+    setStep(1); // Reset para próxima vez
   };
 
   const updateProfile = (updates: Partial<InvestorProfile>) => {
@@ -200,14 +225,57 @@ export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorPro
                 </p>
               </div>
 
-              <Card className="p-4 bg-muted/50">
-                <p className="text-sm text-muted-foreground text-center">
-                  Calculando asignaciones óptimas...
-                </p>
-                <p className="text-xs text-muted-foreground text-center mt-2">
-                  (Implementación pendiente - Fase 5)
-                </p>
-              </Card>
+              {loadingStrategies ? (
+                <Card className="p-4 bg-muted/50">
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <p className="text-sm text-muted-foreground">Calculando asignaciones óptimas...</p>
+                  </div>
+                </Card>
+              ) : allocations.length === 0 ? (
+                <Card className="p-4 bg-muted/50">
+                  <p className="text-sm text-muted-foreground text-center">
+                    No se encontraron estrategias compatibles con tu perfil.
+                  </p>
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    Intenta ajustar tu monto de inversión o perfil de riesgo.
+                  </p>
+                </Card>
+              ) : (
+                <div className="space-y-3">
+                  {allocations.map((allocation) => (
+                    <Card key={allocation.strategy.id} className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h4 className="font-semibold text-sm">{allocation.strategy.name}</h4>
+                          <p className="text-xs text-muted-foreground">{allocation.strategy.description}</p>
+                        </div>
+                        <Badge variant="outline">{allocation.strategy.risk_band}</Badge>
+                      </div>
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">Monto sugerido:</span>
+                          <span className="font-semibold ml-2">${allocation.suggested_amount}</span>
+                          <span className="text-muted-foreground ml-1">({allocation.percentage}%)</span>
+                        </div>
+                      </div>
+                      {allocation.reason && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {allocation.reason}
+                        </p>
+                      )}
+                    </Card>
+                  ))}
+                  
+                  <Card className="p-4 bg-primary/5 border-primary/20">
+                    <p className="text-xs text-muted-foreground">
+                      <strong>Nota educativa:</strong> Esta es una sugerencia basada en tu perfil. 
+                      Puedes ajustar montos manualmente. Recuerda diversificar y no asignar más del 40% 
+                      a una sola estrategia.
+                    </p>
+                  </Card>
+                </div>
+              )}
             </div>
           )}
         </div>

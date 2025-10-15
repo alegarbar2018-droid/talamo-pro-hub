@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { StrategyForm } from '@/components/admin/StrategyForm';
+import { StrategyFormExpanded } from '@/components/admin/StrategyFormExpanded';
 
 export const AdminCopy: React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ export const AdminCopy: React.FC = () => {
     queryKey: ['admin-strategies', statusFilter],
     queryFn: async () => {
       let query = supabase
-        .from('strategies')
+        .from('copy_strategies' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -111,7 +111,7 @@ export const AdminCopy: React.FC = () => {
         )}
 
         <div className="grid gap-4">
-          {strategies?.map((strategy) => (
+          {strategies?.map((strategy: any) => (
             <Card key={strategy.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -125,18 +125,17 @@ export const AdminCopy: React.FC = () => {
               <CardContent>
                 <div className="grid grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-muted-foreground">{t('admin.copy.risk_tier')}:</span>{' '}
-                    <Badge variant="outline">{strategy.risk_tier}</Badge>
+                    <span className="text-muted-foreground">Risk:</span>{' '}
+                    <Badge variant="outline">{strategy.risk_band || 'N/A'}</Badge>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">PF:</span> {strategy.pf}x
+                    <span className="text-muted-foreground">PF:</span> {strategy.profit_factor ? `${strategy.profit_factor}x` : 'N/A'}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Max DD:</span> {strategy.max_dd}%
+                    <span className="text-muted-foreground">Max DD:</span> {strategy.max_drawdown ? `${strategy.max_drawdown}%` : 'N/A'}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">{t('admin.copy.green_months')}:</span>{' '}
-                    {strategy.green_months_pct}%
+                    <span className="text-muted-foreground">Min Investment:</span> ${strategy.min_investment}
                   </div>
                 </div>
               </CardContent>
@@ -145,11 +144,11 @@ export const AdminCopy: React.FC = () => {
         </div>
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{t('admin.copy.new_strategy')}</DialogTitle>
             </DialogHeader>
-            <StrategyForm
+            <StrategyFormExpanded
               onSuccess={handleSuccess}
               onCancel={() => setIsModalOpen(false)}
             />
