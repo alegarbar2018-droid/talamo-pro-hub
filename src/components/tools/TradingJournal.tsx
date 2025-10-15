@@ -325,190 +325,294 @@ export const TradingJournal = () => {
         </Button>
       </div>
 
-      {/* New Entry Form - Moved to top for visibility */}
+      {/* New Entry Form - Enhanced Experience */}
       {showNewEntry && (
-        <Card className="p-6 border-teal/30 shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold">Nueva Operación</h3>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm"
-              onClick={() => setShowNewEntry(false)}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Cerrar
-            </Button>
-          </div>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="relative overflow-hidden border-teal/30 shadow-2xl animate-fade-in">
+          {/* Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-teal/5 via-transparent to-purple-500/5 pointer-events-none" />
+          
+          <div className="relative p-8">
+            {/* Header with emotion */}
+            <div className="flex items-start justify-between mb-8">
               <div className="space-y-2">
-                <Label htmlFor="trade_date">Fecha y Hora</Label>
-                <Input
-                  id="trade_date"
-                  type="datetime-local"
-                  value={formData.trade_date}
-                  onChange={(e) => setFormData({ ...formData, trade_date: e.target.value })}
-                  required
-                />
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-teal/20 border border-teal/30">
+                    <Sparkles className="w-5 h-5 text-teal" />
+                  </div>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-teal to-purple-500 bg-clip-text text-transparent">
+                    Registra tu Operación
+                  </h3>
+                </div>
+                <p className="text-sm text-muted-foreground ml-11">
+                  Cada operación es una oportunidad de aprendizaje 📈
+                </p>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="instrument">Instrumento *</Label>
-                <Input
-                  id="instrument"
-                  placeholder="EURUSD, XAUUSD, etc."
-                  value={formData.instrument}
-                  onChange={(e) => setFormData({ ...formData, instrument: e.target.value.toUpperCase() })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="direction">Dirección</Label>
-                <select
-                  id="direction"
-                  className="w-full p-2 rounded-md border border-line bg-surface text-foreground"
-                  value={formData.direction}
-                  onChange={(e) => setFormData({ ...formData, direction: e.target.value as "BUY" | "SELL" })}
-                >
-                  <option value="BUY">BUY</option>
-                  <option value="SELL">SELL</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="lot_size">Tamaño de Lote *</Label>
-                <Input
-                  id="lot_size"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.01"
-                  value={formData.lot_size}
-                  onChange={(e) => setFormData({ ...formData, lot_size: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="entry_price">Precio de Entrada *</Label>
-                <Input
-                  id="entry_price"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.12345"
-                  value={formData.entry_price}
-                  onChange={(e) => setFormData({ ...formData, entry_price: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="exit_price">Precio de Salida</Label>
-                <Input
-                  id="exit_price"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.12545"
-                  value={formData.exit_price}
-                  onChange={(e) => setFormData({ ...formData, exit_price: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="stop_loss">Stop Loss</Label>
-                <Input
-                  id="stop_loss"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.12000"
-                  value={formData.stop_loss}
-                  onChange={(e) => setFormData({ ...formData, stop_loss: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="take_profit">Take Profit</Label>
-                <Input
-                  id="take_profit"
-                  type="number"
-                  step="0.00001"
-                  placeholder="1.13000"
-                  value={formData.take_profit}
-                  onChange={(e) => setFormData({ ...formData, take_profit: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Estado</Label>
-              <select
-                id="status"
-                className="w-full p-2 rounded-md border border-line bg-surface text-foreground"
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as "open" | "closed" })}
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setShowNewEntry(false)}
+                className="text-muted-foreground hover:text-foreground"
               >
-                <option value="open">Abierta</option>
-                <option value="closed">Cerrada</option>
-              </select>
+                ✕
+              </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label>¿Cómo te sentías al operar?</Label>
-              <div className="flex flex-wrap gap-2">
-                {emotionOptions.map((emotion) => (
-                  <Badge
-                    key={emotion}
-                    variant={selectedEmotions.includes(emotion) ? "default" : "outline"}
-                    className={`cursor-pointer ${selectedEmotions.includes(emotion) ? 'bg-teal hover:bg-teal/90' : 'hover:bg-surface/50'}`}
-                    onClick={() => toggleEmotion(emotion)}
-                  >
-                    {emotion}
-                  </Badge>
-                ))}
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Trade Details Section */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-sm font-semibold text-teal">
+                  <Target className="w-4 h-4" />
+                  <span>Detalles de la Operación</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2 group">
+                    <Label htmlFor="instrument" className="flex items-center gap-2">
+                      <span>¿Qué instrumento? 🎯</span>
+                    </Label>
+                    <Input
+                      id="instrument"
+                      placeholder="EURUSD, XAUUSD, BTCUSD..."
+                      value={formData.instrument}
+                      onChange={(e) => setFormData({ ...formData, instrument: e.target.value.toUpperCase() })}
+                      className="border-line/50 focus:border-teal transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="direction" className="flex items-center gap-2">
+                      <span>Dirección</span>
+                    </Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        variant={formData.direction === "BUY" ? "default" : "outline"}
+                        className={formData.direction === "BUY" ? "bg-green-500 hover:bg-green-600" : ""}
+                        onClick={() => setFormData({ ...formData, direction: "BUY" })}
+                      >
+                        <TrendingUp className="w-4 h-4 mr-2" />
+                        BUY
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={formData.direction === "SELL" ? "default" : "outline"}
+                        className={formData.direction === "SELL" ? "bg-red-500 hover:bg-red-600" : ""}
+                        onClick={() => setFormData({ ...formData, direction: "SELL" })}
+                      >
+                        <TrendingDown className="w-4 h-4 mr-2" />
+                        SELL
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lot_size" className="flex items-center gap-2">
+                      <DollarSign className="w-3 h-3" />
+                      <span>Tamaño de Lote</span>
+                    </Label>
+                    <Input
+                      id="lot_size"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.10"
+                      value={formData.lot_size}
+                      onChange={(e) => setFormData({ ...formData, lot_size: e.target.value })}
+                      className="border-line/50 focus:border-teal transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="trade_date" className="flex items-center gap-2">
+                      <Calendar className="w-3 h-3" />
+                      <span>Fecha y Hora</span>
+                    </Label>
+                    <Input
+                      id="trade_date"
+                      type="datetime-local"
+                      value={formData.trade_date}
+                      onChange={(e) => setFormData({ ...formData, trade_date: e.target.value })}
+                      className="border-line/50 focus:border-teal transition-all"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notas y Análisis</Label>
-              <Textarea
-                id="notes"
-                placeholder="¿Qué funcionó bien? ¿Qué mejorar? ¿Seguiste tu plan?"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                rows={4}
-              />
-            </div>
+              <Separator className="bg-line/30" />
 
-            <div className="space-y-2">
-              <Label htmlFor="tags">Etiquetas (separadas por coma)</Label>
-              <Input
-                id="tags"
-                placeholder="breakout, soportes, tendencia"
-                value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              />
-            </div>
+              {/* Price Levels Section */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-sm font-semibold text-purple-500">
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Niveles de Precio</span>
+                </div>
 
-            <div className="flex gap-3">
-              <Button type="submit" className="bg-teal hover:bg-teal/90" disabled={createEntry.isPending}>
-                {createEntry.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Guardar Entrada
-                  </>
-                )}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => setShowNewEntry(false)}>
-                Cancelar
-              </Button>
-            </div>
-          </form>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="entry_price">Precio de Entrada</Label>
+                    <Input
+                      id="entry_price"
+                      type="number"
+                      step="0.00001"
+                      placeholder="1.12345"
+                      value={formData.entry_price}
+                      onChange={(e) => setFormData({ ...formData, entry_price: e.target.value })}
+                      className="border-line/50 focus:border-teal transition-all font-mono"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="exit_price">Precio de Salida</Label>
+                    <Input
+                      id="exit_price"
+                      type="number"
+                      step="0.00001"
+                      placeholder="1.12545 (opcional)"
+                      value={formData.exit_price}
+                      onChange={(e) => setFormData({ ...formData, exit_price: e.target.value })}
+                      className="border-line/50 focus:border-teal transition-all font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="stop_loss" className="text-red-500">Stop Loss 🛡️</Label>
+                    <Input
+                      id="stop_loss"
+                      type="number"
+                      step="0.00001"
+                      placeholder="Protege tu capital"
+                      value={formData.stop_loss}
+                      onChange={(e) => setFormData({ ...formData, stop_loss: e.target.value })}
+                      className="border-line/50 focus:border-red-500/50 transition-all font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="take_profit" className="text-green-500">Take Profit 🎯</Label>
+                    <Input
+                      id="take_profit"
+                      type="number"
+                      step="0.00001"
+                      placeholder="Tu objetivo"
+                      value={formData.take_profit}
+                      onChange={(e) => setFormData({ ...formData, take_profit: e.target.value })}
+                      className="border-line/50 focus:border-green-500/50 transition-all font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <Separator className="bg-line/30" />
+
+              {/* Emotional & Analysis Section */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-sm font-semibold text-teal">
+                  <Brain className="w-4 h-4" />
+                  <span>Estado Mental & Análisis</span>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <Label className="flex items-center gap-2">
+                      <span>¿Cómo te sentías? 💭</span>
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {emotionOptions.map((emotion) => (
+                        <Badge
+                          key={emotion}
+                          variant={selectedEmotions.includes(emotion) ? "default" : "outline"}
+                          className={`cursor-pointer transition-all hover-scale ${
+                            selectedEmotions.includes(emotion) 
+                              ? 'bg-teal hover:bg-teal/90 shadow-lg shadow-teal/20' 
+                              : 'hover:bg-surface/50 hover:border-teal/30'
+                          }`}
+                          onClick={() => toggleEmotion(emotion)}
+                        >
+                          {emotion}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="notes" className="flex items-center gap-2">
+                      <Lightbulb className="w-3 h-3" />
+                      <span>Tus insights y reflexiones</span>
+                    </Label>
+                    <Textarea
+                      id="notes"
+                      placeholder="¿Qué aprendiste? ¿Seguiste tu plan? ¿Qué harías diferente?..."
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      rows={4}
+                      className="border-line/50 focus:border-teal transition-all resize-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="tags">Etiquetas (separadas por coma)</Label>
+                      <Input
+                        id="tags"
+                        placeholder="breakout, tendencia, alta probabilidad..."
+                        value={formData.tags}
+                        onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                        className="border-line/50 focus:border-teal transition-all"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Estado de la Operación</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant={formData.status === "open" ? "default" : "outline"}
+                          className={formData.status === "open" ? "bg-blue-500 hover:bg-blue-600" : ""}
+                          onClick={() => setFormData({ ...formData, status: "open" })}
+                        >
+                          Abierta
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.status === "closed" ? "default" : "outline"}
+                          className={formData.status === "closed" ? "bg-gray-500 hover:bg-gray-600" : ""}
+                          onClick={() => setFormData({ ...formData, status: "closed" })}
+                        >
+                          Cerrada
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-gradient-to-r from-teal to-purple-500 hover:from-teal/90 hover:to-purple-500/90 shadow-lg shadow-teal/20 hover-scale" 
+                  disabled={createEntry.isPending}
+                  size="lg"
+                >
+                  {createEntry.isPending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Guardar en mi Journal
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
         </Card>
       )}
 
