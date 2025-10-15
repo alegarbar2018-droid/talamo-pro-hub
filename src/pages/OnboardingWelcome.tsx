@@ -382,18 +382,31 @@ const OnboardingWelcome = () => {
             <div className="space-y-4">
               <h2 className="text-3xl font-bold">¡Tu plan está listo!</h2>
               
-              <div className="p-8 rounded-2xl bg-accent border-2 border-primary/20">
-                <div className="space-y-4">
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-1">Cuenta recomendada</div>
-                    <div className="text-2xl font-bold text-primary">{recommendation.account}</div>
+              <div className="relative p-10 rounded-3xl bg-gradient-to-br from-accent via-accent to-accent/50 border border-primary/30 shadow-2xl shadow-primary/10 overflow-hidden backdrop-blur-sm animate-scale-in">
+                {/* Premium background effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+                
+                <div className="relative space-y-6">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                      <Sparkles className="h-3 w-3 text-primary" />
+                      <span className="text-xs font-medium text-primary">Recomendación personalizada</span>
+                    </div>
+                    <div className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
+                      {recommendation.account}
+                    </div>
                   </div>
                   
-                  <p className="text-muted-foreground">{recommendation.reason}</p>
+                  <p className="text-base leading-relaxed text-foreground/80">{recommendation.reason}</p>
                   
-                  <div className="pt-4 border-t">
-                    <div className="text-sm text-muted-foreground mb-1">Tu siguiente paso</div>
-                    <div className="text-lg font-semibold">
+                  <div className="pt-6 border-t border-border/50">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                      <span className="text-sm font-medium text-muted-foreground">Tu siguiente paso</span>
+                    </div>
+                    <div className="text-xl font-semibold text-foreground">
                       {goal === 'copiar' && 'Explorar estrategias de Copy Trading'}
                       {goal === 'aprender' && 'Comenzar la Academia de Trading'}
                       {goal === 'operar' && 'Acceder a herramientas y señales'}
