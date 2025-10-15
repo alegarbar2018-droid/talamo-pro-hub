@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
 import { 
   AlertTriangle, 
   Plus, 
@@ -20,7 +21,8 @@ import {
   Trash2,
   CheckCircle2,
   Clock,
-  Filter
+  Filter,
+  Upload
 } from 'lucide-react';
 import {
   Select,
@@ -34,8 +36,10 @@ import { StrategyFormExpanded } from '@/components/admin/StrategyFormExpanded';
 
 export const AdminCopy: React.FC = () => {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [publishingId, setPublishingId] = useState<string | null>(null);
 
   const { data: strategies, isLoading, error, refetch } = useQuery({
     queryKey: ['admin-strategies', statusFilter],
@@ -63,6 +67,34 @@ export const AdminCopy: React.FC = () => {
   const handleSuccess = () => {
     setIsModalOpen(false);
     refetch();
+  };
+
+  const handlePublish = async (strategyId: string) => {
+    setPublishingId(strategyId);
+    try {
+      const { error } = await supabase
+        .from('copy_strategies' as any)
+        .update({ status: 'published' })
+        .eq('id', strategyId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Estrategia publicada",
+        description: "La estrategia ahora está visible para los usuarios",
+      });
+      
+      refetch();
+    } catch (error) {
+      console.error('Error publishing strategy:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo publicar la estrategia",
+        variant: "destructive",
+      });
+    } finally {
+      setPublishingId(null);
+    }
   };
 
   return (
@@ -286,22 +318,36 @@ export const AdminCopy: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Detalles adicionales */}
-                <div className="flex flex-wrap gap-2 pt-4 border-t">
-                  <Badge variant="outline" className="gap-1">
-                    <BarChart3 className="h-3 w-3" />
-                    {strategy.account_type}
-                  </Badge>
-                  <Badge variant="outline" className="gap-1">
-                    <Clock className="h-3 w-3" />
-                    {strategy.billing_period}
-                  </Badge>
-                  <Badge variant="outline" className="gap-1">
-                    Riesgo: {strategy.risk_band || 'Auto'}
-                  </Badge>
-                  <Badge variant="outline" className="gap-1">
-                    {strategy.symbols_traded?.length || 0} símbolos
-                  </Badge>
+                {/* Detalles adicionales y acciones */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="gap-1">
+                      <BarChart3 className="h-3 w-3" />
+                      {strategy.account_type}
+                    </Badge>
+                    <Badge variant="outline" className="gap-1">
+                      <Clock className="h-3 w-3" />
+                      {strategy.billing_period}
+                    </Badge>
+                    <Badge variant="outline" className="gap-1">
+                      Riesgo: {strategy.risk_band || 'Auto'}
+                    </Badge>
+                    <Badge variant="outline" className="gap-1">
+                      {strategy.symbols_traded?.length || 0} símbolos
+                    </Badge>
+                  </div>
+                  
+                  {strategy.status === 'draft' && (
+                    <Button
+                      onClick={() => handlePublish(strategy.id)}
+                      disabled={publishingId === strategy.id}
+                      className="gap-2"
+                      size="sm"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {publishingId === strategy.id ? 'Publicando...' : 'Publicar'}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
