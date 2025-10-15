@@ -158,26 +158,46 @@ const Tools = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="bg-surface/50 border border-line/50">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="calculators" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
-              Calculadoras
-            </TabsTrigger>
-            <TabsTrigger value="formulas" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
-              Fórmulas
-            </TabsTrigger>
-            <TabsTrigger value="specifications" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
-              Especificaciones
-            </TabsTrigger>
-            <TabsTrigger value="journal" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
-              Journal
-            </TabsTrigger>
-            <TabsTrigger value="audit" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
-              Audit
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex justify-center mb-8">
+            <TabsList className="bg-gradient-to-br from-surface via-surface/95 to-surface/90 backdrop-blur-sm border border-line/50 shadow-lg p-1.5 rounded-xl inline-flex gap-1">
+              <TabsTrigger 
+                value="overview" 
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger 
+                value="calculators" 
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+              >
+                Calculadoras
+              </TabsTrigger>
+              <TabsTrigger 
+                value="formulas" 
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+              >
+                Fórmulas
+              </TabsTrigger>
+              <TabsTrigger 
+                value="specifications" 
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+              >
+                Especificaciones
+              </TabsTrigger>
+              <TabsTrigger 
+                value="journal" 
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+              >
+                Journal
+              </TabsTrigger>
+              <TabsTrigger 
+                value="audit" 
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+              >
+                Audit
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-8">
