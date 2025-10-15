@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Shield, TrendingUp, Users, Sparkles, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TradingDisclaimer } from "@/components/ui/trading-disclaimer";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { withPageTracking } from "@/components/business/ObservabilityProvider";
 import { useObservability } from "@/components/business/ObservabilityProvider";
 import { supabase } from "@/integrations/supabase/client";
