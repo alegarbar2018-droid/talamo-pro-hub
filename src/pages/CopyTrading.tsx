@@ -43,16 +43,32 @@ const CopyTrading: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section - preservado */}
-      <div className="bg-gradient-to-br from-primary/5 via-background to-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-              Copy Trading
-            </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Sigue estrategias de traders verificados y diversifica tu cartera con gestión profesional
-            </p>
+      {/* Hero Section */}
+      <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-background via-teal/5 to-primary/5">
+        {/* Decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-teal/10 rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
+        </div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="space-y-6 max-w-4xl">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal/20 via-teal/10 to-transparent border border-teal/30 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
+              <span className="text-sm font-medium text-teal">Copy Trading Profesional</span>
+            </div>
+            
+            {/* Main heading */}
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+                Copy Trading
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-3xl">
+                Sigue estrategias de traders verificados y diversifica tu cartera con{" "}
+                <span className="text-teal font-medium">gestión profesional</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
