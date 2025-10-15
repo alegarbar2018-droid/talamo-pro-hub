@@ -104,9 +104,13 @@ export const TradingJournal = () => {
   const { data: entries, isLoading } = useQuery({
     queryKey: ["journal-entries"],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       const { data, error } = await supabase
         .from("journal_entries")
         .select("*")
+        .eq("user_id", user.id)
         .order("trade_date", { ascending: false });
 
       if (error) throw error;
