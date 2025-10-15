@@ -142,13 +142,6 @@ const Dashboard = () => {
       icon: Calculator,
       action: () => navigate("/tools"),
       color: "muted"
-    },
-    {
-      title: "Configuración",
-      description: "Administra tu cuenta y preferencias",
-      icon: Settings,
-      action: () => navigate("/settings"),
-      color: "muted"
     }
   ];
 
@@ -218,10 +211,18 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-foreground">{t("dashboard:title")}</h1>
               <p className="text-muted-foreground">{t("dashboard:subtitle")}</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Badge variant="outline" className="border-teal text-teal">
                 {isValidated || user.isAffiliated ? t("dashboard:status.validated") : t("dashboard:status.demo")}
               </Badge>
+              <Button 
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/settings")}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
               <Button 
                 variant="ghost" 
                 onClick={signOut}
@@ -302,7 +303,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions con Hover Effects Avanzados */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickActions.map((action, index) => (
             <Card 
               key={index} 
