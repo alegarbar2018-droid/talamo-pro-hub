@@ -1722,6 +1722,7 @@ export type Database = {
           author_id: string
           created_at: string
           dedup_key: string
+          direction: string | null
           entry_price: number | null
           id: string
           instrument: string | null
@@ -1746,6 +1747,7 @@ export type Database = {
           author_id?: string
           created_at?: string
           dedup_key: string
+          direction?: string | null
           entry_price?: number | null
           id?: string
           instrument?: string | null
@@ -1770,6 +1772,7 @@ export type Database = {
           author_id?: string
           created_at?: string
           dedup_key?: string
+          direction?: string | null
           entry_price?: number | null
           id?: string
           instrument?: string | null
