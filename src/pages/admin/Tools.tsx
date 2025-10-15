@@ -11,12 +11,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Calculator, DollarSign, Upload } from "lucide-react";
 import { ContractSpecForm } from "@/components/admin/tools/ContractSpecForm";
 import { FormulaForm } from "@/components/admin/tools/FormulaForm";
+import { CalculatorConfigForm } from "@/components/admin/tools/CalculatorConfigForm";
 import BulkContractImport from "@/components/admin/tools/BulkContractImport";
 
 const AdminTools = () => {
   const [activeTab, setActiveTab] = useState("contracts");
   const [isNewContractModalOpen, setIsNewContractModalOpen] = useState(false);
   const [isNewFormulaModalOpen, setIsNewFormulaModalOpen] = useState(false);
+  const [isNewCalculatorModalOpen, setIsNewCalculatorModalOpen] = useState(false);
   const [isBulkImportModalOpen, setIsBulkImportModalOpen] = useState(false);
 
   // Fetch contracts
@@ -46,7 +48,7 @@ const AdminTools = () => {
   });
 
   // Fetch calculator configs
-  const { data: calculators, isLoading: calculatorsLoading } = useQuery({
+  const { data: calculators, isLoading: calculatorsLoading, refetch: refetchCalculators } = useQuery({
     queryKey: ["admin-calculator-configs"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -196,6 +198,9 @@ const AdminTools = () => {
             <TabsContent value="calculators" className="space-y-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Configuraciones de Calculadoras</h3>
+                <Button onClick={() => setIsNewCalculatorModalOpen(true)}>
+                  Nueva Calculadora
+                </Button>
               </div>
 
               {calculatorsLoading ? (
@@ -286,6 +291,24 @@ const AdminTools = () => {
                 refetchFormulas();
               }}
               onCancel={() => setIsNewFormulaModalOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isNewCalculatorModalOpen} onOpenChange={setIsNewCalculatorModalOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Crear Nueva Calculadora</DialogTitle>
+              <DialogDescription>
+                Configura una nueva calculadora para los usuarios
+              </DialogDescription>
+            </DialogHeader>
+            <CalculatorConfigForm
+              onSuccess={() => {
+                setIsNewCalculatorModalOpen(false);
+                refetchCalculators();
+              }}
+              onCancel={() => setIsNewCalculatorModalOpen(false)}
             />
           </DialogContent>
         </Dialog>
