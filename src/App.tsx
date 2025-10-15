@@ -96,6 +96,7 @@ const App: React.FC = () => {
             <Route path="/auth/register" element={<Navigate to="/onboarding?step=choose" replace />} />
             <Route path="/signup" element={<Navigate to="/onboarding?step=choose" replace />} />
             <Route path="/access-wizard" element={<Navigate to="/onboarding?step=choose" replace />} />
+            <Route path="/CopyTrading" element={<Navigate to="/copy-trading" replace />} />
             
             <Route path="/auth/exness" element={<ExnessRedirect />} />
             <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
