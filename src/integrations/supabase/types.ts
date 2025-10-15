@@ -221,6 +221,92 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_accounts: {
+        Row: {
+          broker: string
+          created_at: string
+          enc_credentials: string
+          id: string
+          last_sync_at: string | null
+          login: string
+          metaapi_account_id: string | null
+          platform: string | null
+          server: string
+          status: string
+          sync_error: string | null
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          broker?: string
+          created_at?: string
+          enc_credentials: string
+          id?: string
+          last_sync_at?: string | null
+          login: string
+          metaapi_account_id?: string | null
+          platform?: string | null
+          server: string
+          status?: string
+          sync_error?: string | null
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          broker?: string
+          created_at?: string
+          enc_credentials?: string
+          id?: string
+          last_sync_at?: string | null
+          login?: string
+          metaapi_account_id?: string | null
+          platform?: string | null
+          server?: string
+          status?: string
+          sync_error?: string | null
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      audit_equity: {
+        Row: {
+          account_id: string
+          balance: number
+          created_at: string
+          equity: number
+          id: string
+          time: string
+        }
+        Insert: {
+          account_id: string
+          balance: number
+          created_at?: string
+          equity: number
+          id?: string
+          time: string
+        }
+        Update: {
+          account_id?: string
+          balance?: number
+          created_at?: string
+          equity?: number
+          id?: string
+          time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_equity_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "audit_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -250,6 +336,156 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      audit_stats_daily: {
+        Row: {
+          account_id: string
+          avg_loss: number | null
+          avg_win: number | null
+          created_at: string
+          date: string
+          gross_loss: number | null
+          gross_profit: number | null
+          id: string
+          max_dd: number | null
+          profit_factor: number | null
+          total_trades: number | null
+          win_rate: number | null
+        }
+        Insert: {
+          account_id: string
+          avg_loss?: number | null
+          avg_win?: number | null
+          created_at?: string
+          date: string
+          gross_loss?: number | null
+          gross_profit?: number | null
+          id?: string
+          max_dd?: number | null
+          profit_factor?: number | null
+          total_trades?: number | null
+          win_rate?: number | null
+        }
+        Update: {
+          account_id?: string
+          avg_loss?: number | null
+          avg_win?: number | null
+          created_at?: string
+          date?: string
+          gross_loss?: number | null
+          gross_profit?: number | null
+          id?: string
+          max_dd?: number | null
+          profit_factor?: number | null
+          total_trades?: number | null
+          win_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_stats_daily_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "audit_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_trades: {
+        Row: {
+          account_id: string
+          close_price: number | null
+          close_time: string | null
+          commission: number | null
+          created_at: string
+          id: string
+          open_price: number
+          open_time: string
+          profit: number | null
+          swap: number | null
+          symbol: string
+          ticket: string
+          type: string
+          volume: number
+        }
+        Insert: {
+          account_id: string
+          close_price?: number | null
+          close_time?: string | null
+          commission?: number | null
+          created_at?: string
+          id?: string
+          open_price: number
+          open_time: string
+          profit?: number | null
+          swap?: number | null
+          symbol: string
+          ticket: string
+          type: string
+          volume: number
+        }
+        Update: {
+          account_id?: string
+          close_price?: number | null
+          close_time?: string | null
+          commission?: number | null
+          created_at?: string
+          id?: string
+          open_price?: number
+          open_time?: string
+          profit?: number | null
+          swap?: number | null
+          symbol?: string
+          ticket?: string
+          type?: string
+          volume?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_trades_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "audit_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_verification: {
+        Row: {
+          account_id: string
+          created_at: string
+          expires_at: string
+          found_at: string | null
+          id: string
+          key: string
+          status: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          expires_at: string
+          found_at?: string | null
+          id?: string
+          key: string
+          status?: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          expires_at?: string
+          found_at?: string | null
+          id?: string
+          key?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_verification_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "audit_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       calculator_configs: {
         Row: {
