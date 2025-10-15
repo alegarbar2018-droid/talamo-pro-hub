@@ -20,6 +20,7 @@ import Academy from "./pages/Academy";
 import Signals from "./pages/Signals";
 import CopyTrading from "./pages/CopyTrading";
 import Tools from "./pages/Tools";
+import Settings from "./pages/Settings";
 import AuthValidate from "./pages/AuthValidate";
 import ChangePartnerGuide from "./pages/ChangePartnerGuide";
 import ExnessRedirect from "./pages/ExnessRedirect";
@@ -84,6 +85,7 @@ const App: React.FC = () => {
             <Route path="/copy-trading" element={<CopyTrading />} />
             <Route path="/CopyTrading" element={<Navigate to="/copy-trading" replace />} />
             <Route path="/tools" element={<Tools />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/access" element={<AccessWizard />} />
             
             {/* Public info pages */}
