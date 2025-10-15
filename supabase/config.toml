@@ -68,3 +68,18 @@ cron = "*/5 * * * *"
 
 [functions.journal-mentor]
 verify_jwt = true
+
+[functions.audit-connect-account]
+verify_jwt = true
+
+[functions.audit-sync-account]
+verify_jwt = false
+
+[[functions.audit-sync-account.schedule]]
+cron = "0 */4 * * *"
+
+[functions.audit-start-verification]
+verify_jwt = true
+
+[functions.audit-verify-account]
+verify_jwt = false

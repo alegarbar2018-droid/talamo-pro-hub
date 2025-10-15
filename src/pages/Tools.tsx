@@ -8,6 +8,7 @@ import { ToolsOverview } from "@/components/tools/ToolsOverview";
 import { ContractSpecifications } from "@/components/tools/specifications";
 import { TradingFormulasGuide } from "@/components/tools/TradingFormulasGuide";
 import { TradingJournal } from "@/components/tools/TradingJournal";
+import { AuditDashboard } from "@/components/tools/audit";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import {
   PositionSizeCalculator,
@@ -173,6 +174,9 @@ const Tools = () => {
             <TabsTrigger value="journal" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
               Journal
             </TabsTrigger>
+            <TabsTrigger value="audit" className="data-[state=active]:bg-teal/10 data-[state=active]:text-teal">
+              Audit
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -254,6 +258,11 @@ const Tools = () => {
           {/* Journal Tab */}
           <TabsContent value="journal" className="space-y-6">
             <TradingJournal />
+          </TabsContent>
+
+          {/* Audit Tab */}
+          <TabsContent value="audit" className="space-y-6">
+            <AuditDashboard />
           </TabsContent>
         </Tabs>
 
