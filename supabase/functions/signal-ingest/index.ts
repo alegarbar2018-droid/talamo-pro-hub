@@ -74,19 +74,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // 🔐 NUEVO: valida TU token desde x-mt5-token (NO uses Authorization aquí)
+    // Validate MT5 secret token from x-mt5-token header
     const mt5Token = req.headers.get("x-mt5-token") ?? "";
     const expectedToken = Deno.env.get("MT5_SECRET_TOKEN") ?? "";
+    
     if (!expectedToken || mt5Token !== expectedToken) {
-      return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const providedToken = authHeader.slice(7); // Remove 'Bearer '
-    if (providedToken !== expectedToken) {
-      console.error("Authentication failed: token mismatch");
+      console.error("Authentication failed: invalid or missing MT5 token");
       return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
