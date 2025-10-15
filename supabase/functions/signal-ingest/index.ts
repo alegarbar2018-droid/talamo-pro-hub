@@ -198,7 +198,7 @@ Deno.serve(async (req) => {
       stop_loss: stopLoss,
       take_profit: takeProfit,
       logic,
-      //confidence: payload.win_prob,
+      confidence: payload.win_prob,
       status: "published",
       result: "pending",
       source: "mt5_ea",
