@@ -124,21 +124,57 @@ const CopyTrading = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-line bg-surface">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{t('copy:title')}</h1>
-              <p className="text-muted-foreground">{t('copy:subtitle')}</p>
+      {/* Hero Section */}
+      <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-background via-success/5 to-primary/5">
+        {/* Decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-success/10 rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
+        </div>
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/dashboard")}
+            className="mb-8 hover:bg-surface/80 backdrop-blur-sm group"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            {t('copy:back_to_dashboard')}
+          </Button>
+          
+          <div className="space-y-6 max-w-4xl">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-success/20 via-success/10 to-transparent border border-success/30 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <span className="text-sm font-medium text-success">Copy Trading Profesional</span>
             </div>
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/dashboard")}
-              className="text-teal hover:bg-teal/10"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('copy:back_to_dashboard')}
-            </Button>
+            
+            {/* Main heading */}
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+                {t('copy:title')}
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-3xl">
+                {t('copy:subtitle')}{" "}
+                <span className="text-success font-medium">verificadas y auditadas</span>
+              </p>
+            </div>
+            
+            {/* Feature highlights */}
+            <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <Users className="w-4 h-4 text-success" />
+                <span className="text-sm text-muted-foreground">3 Estrategias</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <Shield className="w-4 h-4 text-success" />
+                <span className="text-sm text-muted-foreground">Verificadas</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <BarChart3 className="w-4 h-4 text-success" />
+                <span className="text-sm text-muted-foreground">Métricas en Tiempo Real</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
