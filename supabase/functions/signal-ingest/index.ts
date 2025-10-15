@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, idempotency-key, x-mt5-token",
 };
 
-// Validation schema for incoming signal (agregué .positive() para pips >0, y finite() ya está)
+// Validation schema for incoming signal with strict validation
 const signalIngestSchema = z.object({
   pattern: z.string().min(1).max(64),
   action: z.enum(["BUY", "SELL"]),
@@ -15,13 +15,13 @@ const signalIngestSchema = z.object({
     .regex(/^[A-Z0-9_\/-]+$/)
     .min(1)
     .max(20),
-  entry: z.number().finite(),
-  tp_pips: z.number().finite().positive(), // Mejora: pips >0
-  sl_pips: z.number().finite().positive(), // Mejora: pips >0
-  timeframe: z.string().min(1).max(8),
+  entry: z.number().finite().positive(),
+  tp_pips: z.number().int().positive(),
+  sl_pips: z.number().int().positive(),
+  timeframe: z.string().regex(/^(M1|M5|M15|M30|H1|H4|D1|W1|MN1)$/).max(8),
   bar_time: z.string().datetime(),
-  win_prob: z.string().max(20),
-  explanation: z.string().max(500),
+  win_prob: z.string().regex(/^\d+%$/).max(20),
+  explanation: z.string().min(1).max(500),
 });
 
 type SignalIngestPayload = z.infer<typeof signalIngestSchema>;
@@ -29,15 +29,14 @@ type SignalIngestPayload = z.infer<typeof signalIngestSchema>;
 // System UUID for MT5 EA authored signals
 const SYSTEM_AUTHOR_ID = "00000000-0000-0000-0000-000000000000";
 
-// Calculate pip value based on symbol (simplified, pero más preciso)
+// Calculate pip value based on symbol
 function getPipValue(symbol: string): number {
-  // JPY pairs have different pip value
+  // JPY pairs have different pip value (2 decimals)
   if (symbol.includes("JPY")) {
     return 0.01;
   }
-  // Para otros, asume 5 digits (0.0001), pero ajusta si es 3 digits (0.001)
-  return _Digits === 5 || _Digits === 3 ? 0.0001 : 0.001; // Nota: _Digits no existe en Deno, usa lógica simple por symbol
-  // Alternativa: if (symbol.length > 6) return 0.0001; else 0.01; pero tu versión está bien
+  // Standard Forex pairs (5 decimals): EURUSD, GBPUSD, etc.
+  return 0.0001;
 }
 
 // Calculate price levels from pips (agregué chequeo de finite)
@@ -198,6 +197,14 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Validate action explicitly before converting to direction
+    if (payload.action !== "BUY" && payload.action !== "SELL") {
+      return new Response(JSON.stringify({ ok: false, error: "invalid_action" }), {
+        status: 422,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Calculate price levels (con try-catch para safety)
     const direction = payload.action === "BUY" ? "long" : "short";
     const pipValue = getPipValue(payload.symbol);
@@ -221,21 +228,47 @@ Deno.serve(async (req) => {
     // Construct logic field
     const logic = `${payload.pattern}. ${payload.explanation} Win probability: ${payload.win_prob}. Bar time: ${payload.bar_time}. TP: ${payload.tp_pips} pips, SL: ${payload.sl_pips} pips.`;
 
-    // Insert new signal
+    // Auto-generate title
+    const title = `${payload.symbol} ${payload.timeframe} ${payload.action}`;
+
+    // Calculate R:R ratio
+    const risk = Math.abs(payload.entry - stopLoss);
+    const reward = Math.abs(takeProfit - payload.entry);
+    const rr = risk > 0 ? reward / risk : 0;
+
+    // Store raw MQL5 data in audit_trail
+    const audit_trail = {
+      pattern: payload.pattern,
+      bar_time: payload.bar_time,
+      win_prob: payload.win_prob,
+      tp_pips: payload.tp_pips,
+      sl_pips: payload.sl_pips,
+      explanation: payload.explanation,
+      received_at: new Date().toISOString(),
+    };
+
+    // Determine decimal precision for prices
+    const _Digits = payload.symbol.includes("JPY") ? 3 : 5;
+
+    // Insert new signal with correct field mapping
     const { error: insertError } = await supabase.from("signals").insert({
       author_id: SYSTEM_AUTHOR_ID,
-      symbol: payload.symbol,
+      instrument: payload.symbol,           // ✅ Correcto: instrument, no symbol
       timeframe: payload.timeframe,
-      direction,
+      title: title,                          // ✅ Título descriptivo
+      direction,                             // ✅ long/short
       entry_price: payload.entry,
       stop_loss: stopLoss,
       take_profit: takeProfit,
       logic,
-      confidence: payload.win_prob,
+      rr: rr,                               // ✅ Risk/reward ratio
+      invalidation: `Stop loss @ ${stopLoss.toFixed(_Digits)}`, // ✅ Invalidation
+      audit_trail: audit_trail,             // ✅ Datos raw JSON
       status: "published",
       result: "pending",
       source: "mt5_ea",
       dedup_key: idempotencyKey,
+      // ❌ NO incluir confidence (no existe en DB)
     });
 
     if (insertError) {
