@@ -29,6 +29,35 @@ type SignalIngestPayload = z.infer<typeof signalIngestSchema>;
 // System UUID for MT5 EA authored signals
 const SYSTEM_AUTHOR_ID = "00000000-0000-0000-0000-000000000000";
 
+// Rate limiter: 10 requests per minute per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+  const limit = rateLimitMap.get(ip);
+  
+  if (!limit || now > limit.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + 60000 }); // 60 sec window
+    return { allowed: true };
+  }
+  
+  if (limit.count >= 10) {
+    const retryAfter = Math.ceil((limit.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  limit.count++;
+  return { allowed: true };
+}
+
+// Clean up old rate limit entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, limit] of rateLimitMap.entries()) {
+    if (now > limit.resetAt) rateLimitMap.delete(ip);
+  }
+}, 300000);
+
 // Calculate pip value based on symbol
 function getPipValue(symbol: string): number {
   // JPY pairs have different pip value (2 decimals)
@@ -66,6 +95,35 @@ function calculatePriceLevels(
   }
 }
 
+// Rate limiter: 10 requests per minute per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+  const limit = rateLimitMap.get(ip);
+  
+  if (!limit || now > limit.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + 60000 }); // 60 sec window
+    return { allowed: true };
+  }
+  
+  if (limit.count >= 10) {
+    const retryAfter = Math.ceil((limit.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  limit.count++;
+  return { allowed: true };
+}
+
+// Clean up old rate limit entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, limit] of rateLimitMap.entries()) {
+    if (now > limit.resetAt) rateLimitMap.delete(ip);
+  }
+}, 300000);
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -78,6 +136,28 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Rate limiting check
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0] || 
+                     req.headers.get("x-real-ip") || 
+                     "unknown";
+
+    const rateCheck = checkRateLimit(clientIp);
+    if (!rateCheck.allowed) {
+      console.warn(`Rate limit exceeded for IP: ${clientIp}`);
+      return new Response(JSON.stringify({ 
+        ok: false, 
+        error: "rate_limit_exceeded",
+        message: "Too many requests. Please retry later." 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Retry-After": rateCheck.retryAfter!.toString()
+        },
+      });
+    }
+
     // 🔐 Auth: Soporta AMBOS headers para compatibilidad (x-mt5-token O Authorization Bearer)
     let mt5Token = req.headers.get("x-mt5-token") ?? "";
     if (!mt5Token) {

@@ -2036,6 +2036,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_signals_performance: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_rr: number
+          simulated_return: number
+          total_signals: number
+          win_rate: number
+        }[]
+      }
       check_affiliation_by_email: {
         Args: { p_email: string }
         Returns: {

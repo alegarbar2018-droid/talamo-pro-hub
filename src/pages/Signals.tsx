@@ -21,13 +21,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { useObservability, withPageTracking } from "@/components/business/ObservabilityProvider";
-import { useSignals } from "@/hooks/useSignals";
+import { useSignals, useSignalsPerformance } from "@/hooks/useSignals";
+import { Calculator, Copy } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const Signals = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['signals']);
   const { trackInteraction, trackBusinessEvent } = useObservability();
   const { signals, loading, error } = useSignals();
+  const { performance, loading: perfLoading } = useSignalsPerformance();
   const [filters, setFilters] = useState({
     market: "all",
     timeframe: "all",
@@ -68,6 +71,19 @@ const Signals = () => {
     return type === "LONG" ? 
       <TrendingUp className="h-4 w-4 text-success" /> : 
       <TrendingDown className="h-4 w-4 text-destructive" />;
+  };
+
+  const calculatePipsFromPrice = (
+    entry: number, 
+    sl: number, 
+    tp: number, 
+    symbol: string
+  ): { sl_pips: number; tp_pips: number } => {
+    const pipValue = symbol.includes("JPY") ? 0.01 : 0.0001;
+    return {
+      sl_pips: Math.abs(Math.round((entry - sl) / pipValue)),
+      tp_pips: Math.abs(Math.round((tp - entry) / pipValue))
+    };
   };
 
   if (loading) {
@@ -313,6 +329,61 @@ const Signals = () => {
                 
                  <div className="flex gap-3 mt-6 pt-4 border-t border-line">
                   <Button 
+                    className="bg-teal hover:bg-teal/90 text-white"
+                    onClick={() => {
+                      const { sl_pips, tp_pips } = calculatePipsFromPrice(
+                        signal.entry, 
+                        signal.sl, 
+                        signal.tp, 
+                        signal.instrument
+                      );
+                      
+                      trackInteraction('signal_card', 'open_in_tools_click', {
+                        signal_id: signal.id,
+                        instrument: signal.instrument,
+                        type: signal.type
+                      });
+                      
+                      navigate(`/tools?calc=position-size&symbol=${signal.instrument}&dir=${signal.type}&entry=${signal.entry}&sl_pips=${sl_pips}&tp_pips=${tp_pips}`);
+                    }}
+                  >
+                    <Calculator className="h-4 w-4 mr-2" />
+                    Calcular en Tools
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="border-line"
+                    onClick={() => {
+                      const jsonPayload = {
+                        instrument: signal.instrument,
+                        type: signal.type,
+                        entry: signal.entry,
+                        stop_loss: signal.sl,
+                        take_profit: signal.tp,
+                        rr: signal.rr,
+                        timeframe: signal.timeframe,
+                        logic: signal.logic,
+                        invalidation: signal.invalidation,
+                        published_at: signal.publishedAt
+                      };
+                      
+                      navigator.clipboard.writeText(JSON.stringify(jsonPayload, null, 2));
+                      
+                      toast({
+                        title: "JSON copiado",
+                        description: "Los datos de la señal se copiaron al portapapeles",
+                      });
+                      
+                      trackInteraction('signal_card', 'copy_json', {
+                        signal_id: signal.id,
+                        instrument: signal.instrument
+                      });
+                    }}
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copiar JSON
+                  </Button>
+                  <Button 
                     variant="outline" 
                     className="border-teal text-teal hover:bg-teal/10"
                     onClick={() => {
@@ -327,20 +398,6 @@ const Signals = () => {
                     <Eye className="h-4 w-4 mr-2" />
                     {t('signals:signal.view_full_analysis')}
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    className="border-line"
-                    onClick={() => {
-                      trackInteraction('signal_card', 'view_chart', {
-                        signal_id: signal.id,
-                        instrument: signal.instrument
-                      });
-                    }}
-                    aria-label={`Ver gráfico de ${signal.instrument}`}
-                  >
-                     <Activity className="h-4 w-4 mr-2" />
-                     {t('signals:signal.view_chart')}
-                   </Button>
                  </div>
               </CardContent>
             </Card>
@@ -373,24 +430,47 @@ const Signals = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-teal">67%</div>
-                <div className="text-sm text-muted-foreground">{t('signals:performance.win_rate')}</div>
+            {perfLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {[1,2,3,4].map(i => <Skeleton key={i} className="h-16" />)}
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-teal">2.1</div>
-                <div className="text-sm text-muted-foreground">{t('signals:performance.avg_rr')}</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-teal">
+                    {performance?.winRate || 0}%
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {t('signals:performance.win_rate')}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-teal">
+                    {performance?.avgRr || 0}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {t('signals:performance.avg_rr')}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-teal">
+                    {performance?.totalSignals || 0}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {t('signals:performance.published_signals')}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-teal">
+                    {performance?.simulatedReturn >= 0 ? '+' : ''}
+                    {performance?.simulatedReturn || 0}%
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {t('signals:performance.simulated_return')}
+                  </div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-teal">24</div>
-                <div className="text-sm text-muted-foreground">{t('signals:performance.published_signals')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-teal">+12.3%</div>
-                <div className="text-sm text-muted-foreground">{t('signals:performance.simulated_return')}</div>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>

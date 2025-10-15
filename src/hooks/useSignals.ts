@@ -119,3 +119,43 @@ export const useSignals = () => {
 
   return { signals, loading, error };
 };
+
+// Hook for signals performance (historical metrics)
+export const useSignalsPerformance = () => {
+  const [performance, setPerformance] = useState<{
+    winRate: number;
+    avgRr: number;
+    totalSignals: number;
+    simulatedReturn: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPerformance = async () => {
+      try {
+        const { data, error } = await supabase
+          .rpc('calculate_signals_performance');
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const row = data[0];
+          setPerformance({
+            winRate: row.win_rate || 0,
+            avgRr: row.avg_rr || 0,
+            totalSignals: row.total_signals || 0,
+            simulatedReturn: row.simulated_return || 0,
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching performance:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPerformance();
+  }, []);
+
+  return { performance, loading };
+};

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Filter, TrendingUp } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Plus, Filter, TrendingUp, Archive } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import { PermissionGuard } from '@/components/admin/PermissionGuard';
 import { AdminBreadcrumbs } from '@/components/admin/AdminBreadcrumbs';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,23 @@ const AdminSignals = () => {
       const { data, error } = await query;
       if (error) throw error;
       return data;
+    },
+  });
+
+  const archiveMutation = useMutation({
+    mutationFn: async (signalId: string) => {
+      const { error } = await supabase
+        .from('signals')
+        .update({ status: 'archived' })
+        .eq('id', signalId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      refetch();
+      toast({
+        title: "Señal archivada",
+        description: "La señal se marcó como archivada correctamente",
+      });
     },
   });
 
@@ -153,6 +171,21 @@ const AdminSignals = () => {
                   <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
                     <span>{signal.source}</span>
                     <span>{new Date(signal.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-line">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        if (confirm('¿Archivar esta señal? No se mostrará en el feed público.')) {
+                          archiveMutation.mutate(signal.id);
+                        }
+                      }}
+                      disabled={archiveMutation.isPending || signal.status === 'archived'}
+                    >
+                      <Archive className="h-4 w-4 mr-2" />
+                      {signal.status === 'archived' ? 'Archivada' : 'Archivar'}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

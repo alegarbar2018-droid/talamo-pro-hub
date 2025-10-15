@@ -177,6 +177,18 @@ export function PositionSizeCalculator() {
     }
   }, [contractSpec]);
 
+  // Pre-fill from URL params (from /signals deep linking)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlSymbol = params.get('symbol');
+    const entry = params.get('entry');
+    const sl_pips = params.get('sl_pips');
+    
+    if (urlSymbol) calculator.updateInput('symbol', urlSymbol);
+    if (sl_pips) calculator.updateInput('stopLoss', parseInt(sl_pips));
+    // Note: entry is informational, position size calc doesn't use it
+  }, []);
+
   const InputsSection = (
     <TooltipProvider>
       <div className="space-y-4">
