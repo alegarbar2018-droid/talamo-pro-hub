@@ -47,8 +47,8 @@ export function ToolsOverview({
         </p>
       </div>
 
-      {/* Tools Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Tools Cards - First Row (3 cards) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Calculadoras */}
         <ExplainerCard
           title="Calculadoras de Trading"
@@ -133,7 +133,10 @@ export function ToolsOverview({
             variant: "default"
           }}
         />
+      </div>
 
+      {/* Tools Cards - Second Row (2 cards centered) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {/* Trading Journal */}
         <ExplainerCard
           title="Diario de Trading"
