@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { withPageTracking } from '@/components/business/ObservabilityProvider';
@@ -13,10 +14,11 @@ import {
   StrategyCard
 } from '@/components/copy';
 import type { CopyStrategy } from '@/modules/copy/types';
-import { User } from 'lucide-react';
+import { User, ArrowLeft } from 'lucide-react';
 
 const CopyTrading: React.FC = () => {
   const { t } = useTranslation(['copy', 'common']);
+  const navigate = useNavigate();
   
   const [wizardOpen, setWizardOpen] = useState(false);
   
@@ -51,6 +53,17 @@ const CopyTrading: React.FC = () => {
         </div>
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Back Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/dashboard")}
+            className="mb-6 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Volver al Dashboard
+          </Button>
+
           <div className="space-y-6 max-w-4xl">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal/20 via-teal/10 to-transparent border border-teal/30 backdrop-blur-sm">
