@@ -1721,72 +1721,72 @@ export type Database = {
           audit_trail: Json | null
           author_id: string
           created_at: string
-          dedup_key: string | null
+          dedup_key: string
           entry_price: number | null
           id: string
-          instrument: string
-          invalidation: string
+          instrument: string | null
+          invalidation: string | null
           logic: string
           media_urls: string[] | null
           published_at: string | null
           result: string | null
           reviewer_id: string | null
-          rr: number
+          rr: number | null
           scheduled_at: string | null
           source: string | null
           status: string
           stop_loss: number | null
           take_profit: number | null
           timeframe: string
-          title: string
+          title: string | null
           updated_at: string
         }
         Insert: {
           audit_trail?: Json | null
-          author_id: string
+          author_id?: string
           created_at?: string
-          dedup_key?: string | null
+          dedup_key: string
           entry_price?: number | null
           id?: string
-          instrument: string
-          invalidation: string
+          instrument?: string | null
+          invalidation?: string | null
           logic: string
           media_urls?: string[] | null
           published_at?: string | null
           result?: string | null
           reviewer_id?: string | null
-          rr: number
+          rr?: number | null
           scheduled_at?: string | null
           source?: string | null
           status?: string
           stop_loss?: number | null
           take_profit?: number | null
           timeframe: string
-          title: string
+          title?: string | null
           updated_at?: string
         }
         Update: {
           audit_trail?: Json | null
           author_id?: string
           created_at?: string
-          dedup_key?: string | null
+          dedup_key?: string
           entry_price?: number | null
           id?: string
-          instrument?: string
-          invalidation?: string
+          instrument?: string | null
+          invalidation?: string | null
           logic?: string
           media_urls?: string[] | null
           published_at?: string | null
           result?: string | null
           reviewer_id?: string | null
-          rr?: number
+          rr?: number | null
           scheduled_at?: string | null
           source?: string | null
           status?: string
           stop_loss?: number | null
           take_profit?: number | null
           timeframe?: string
-          title?: string
+          title?: string | null
           updated_at?: string
         }
         Relationships: []
