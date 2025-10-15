@@ -65,7 +65,11 @@ const OnboardingWelcome = () => {
       
       if (error) throw error;
       
+      // Esperar a que se actualice el perfil
       await refreshUser();
+      
+      // Pequeña espera adicional para asegurar que el perfil se actualizó
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       toast({
         title: '¡Bienvenido a Tálamo!',
