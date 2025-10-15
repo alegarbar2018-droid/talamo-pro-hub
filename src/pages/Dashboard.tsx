@@ -16,7 +16,8 @@ import {
   AlertTriangle,
   Target,
   Activity,
-  BarChart3
+  BarChart3,
+  Settings
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -140,6 +141,13 @@ const Dashboard = () => {
       description: t("dashboard:modules.tools.description"),
       icon: Calculator,
       action: () => navigate("/tools"),
+      color: "muted"
+    },
+    {
+      title: "Configuración",
+      description: "Administra tu cuenta y preferencias",
+      icon: Settings,
+      action: () => navigate("/settings"),
       color: "muted"
     }
   ];
@@ -294,7 +302,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions con Hover Effects Avanzados */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           {quickActions.map((action, index) => (
             <Card 
               key={index} 
