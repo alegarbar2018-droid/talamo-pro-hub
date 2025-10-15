@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, TrendingUp, Wallet, DollarSign, Target, Clock, Scale } from "lucide-react";
@@ -98,6 +98,7 @@ const Tools = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCalculator, setSelectedCalculator] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Handle deep linking from URL
   useEffect(() => {
@@ -136,7 +137,7 @@ const Tools = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <Button
             variant="ghost"
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/dashboard")}
             className="mb-8 hover:bg-surface/80 backdrop-blur-sm group"
           >
             <ArrowRight className="h-4 w-4 mr-2 rotate-180 group-hover:-translate-x-1 transition-transform" />
