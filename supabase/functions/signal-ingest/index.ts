@@ -26,8 +26,8 @@ const signalIngestSchema = z.object({
 
 type SignalIngestPayload = z.infer<typeof signalIngestSchema>;
 
-// System UUID for MT5 EA authored signals
-const SYSTEM_AUTHOR_ID = "00000000-0000-0000-0000-000000000000";
+// System UUID for MT5 EA authored signals (now handled by DB default)
+// const SYSTEM_AUTHOR_ID = "00000000-0000-0000-0000-000000000000";
 
 // Rate limiter: 10 requests per minute per IP
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -303,23 +303,22 @@ Deno.serve(async (req) => {
 
     // Insert new signal with correct field mapping
     const { error: insertError } = await supabase.from("signals").insert({
-      author_id: SYSTEM_AUTHOR_ID,
-      instrument: payload.symbol,           // ✅ Correcto: instrument, no symbol
+      // author_id uses DB default (00000000-0000-0000-0000-000000000000)
+      instrument: payload.symbol,
       timeframe: payload.timeframe,
-      title: title,                          // ✅ Título descriptivo
-      direction,                             // ✅ long/short
+      title: title,
+      direction,
       entry_price: payload.entry,
       stop_loss: stopLoss,
       take_profit: takeProfit,
       logic,
-      rr: rr,                               // ✅ Risk/reward ratio
-      invalidation: `Stop loss @ ${stopLoss.toFixed(_Digits)}`, // ✅ Invalidation
-      audit_trail: audit_trail,             // ✅ Datos raw JSON
+      rr: rr,
+      invalidation: `Stop loss @ ${stopLoss.toFixed(_Digits)}`,
+      audit_trail: audit_trail,
       status: "published",
       result: "pending",
-      source: "mt5_ea",
+      source: "automated",
       dedup_key: idempotencyKey,
-      // ❌ NO incluir confidence (no existe en DB)
     });
 
     if (insertError) {
