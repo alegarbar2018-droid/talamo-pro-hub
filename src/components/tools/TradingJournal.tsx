@@ -697,33 +697,43 @@ export const TradingJournal = () => {
                 <span>Analizando tu journal...</span>
               </div>
             ) : mentorRec ? (
-              <div ref={cardRef} className="relative overflow-hidden bg-gradient-to-br from-teal via-teal/95 to-teal/90">
-                {/* Subtle patterns */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.08),transparent_50%)]" />
+              <div ref={cardRef} className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-teal/30">
+                {/* Premium patterns and effects */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.15),transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-teal/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
                 
-                <div className="relative p-6 space-y-4">
-                  {/* Header */}
+                <div className="relative p-8 space-y-6">
+                  {/* Premium Header */}
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20">
-                        <TypeIcon className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-2xl bg-gradient-to-br from-teal/20 to-purple-500/20 backdrop-blur-sm border border-teal/30 shadow-lg shadow-teal/20">
+                        <TypeIcon className="w-7 h-7 text-teal" />
                       </div>
                       <div>
-                        <h4 className="text-xl font-bold text-white">Diagnóstico Profesional</h4>
-                        <Badge className="mt-1.5 bg-white/15 text-white text-xs border-white/25 capitalize backdrop-blur-sm">
-                          {mentorRec.type}
-                        </Badge>
+                        <h4 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                          Diagnóstico Profesional
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge className="bg-teal/20 text-teal text-xs border-teal/40 capitalize backdrop-blur-sm font-semibold px-3 py-0.5">
+                            {mentorRec.type}
+                          </Badge>
+                          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10">
+                            <Sparkles className="w-3 h-3 text-teal" />
+                            <span className="text-gray-300 text-xs font-medium">AI Expert</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20">
-                      <div className="w-2 h-2 rounded-full bg-green-300 animate-pulse shadow-lg" />
-                      <span className="text-white text-xs font-medium">{entries.length} ops</span>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-teal/10 to-purple-500/10 backdrop-blur-sm border border-teal/30 shadow-lg">
+                      <div className="w-2.5 h-2.5 rounded-full bg-teal animate-pulse shadow-lg shadow-teal/50" />
+                      <span className="text-white text-sm font-semibold">{entries.length} operaciones</span>
                     </div>
                   </div>
                   
-                  {/* Content */}
-                  <div className="space-y-3 text-white">
+                  {/* Content with better contrast */}
+                  <div className="space-y-4 bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-white/5">
                     {mentorRec.recommendation.split('\n').map((paragraph, idx) => {
                       const isBold = paragraph.includes('**');
                       const cleanText = paragraph.replace(/\*\*/g, '');
@@ -732,10 +742,10 @@ export const TradingJournal = () => {
                       
                       if (isBold) {
                         return (
-                          <div key={idx} className="mt-5 first:mt-0">
-                            <div className="flex items-center gap-2.5 mb-2">
-                              <div className="h-[2.5px] w-10 bg-white/50 rounded-full" />
-                              <h5 className="text-base font-bold text-white leading-tight">
+                          <div key={idx} className="mt-6 first:mt-0">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="h-[3px] w-12 bg-gradient-to-r from-teal to-purple-500 rounded-full" />
+                              <h5 className="text-lg font-bold text-white leading-tight">
                                 {cleanText}
                               </h5>
                             </div>
@@ -745,9 +755,9 @@ export const TradingJournal = () => {
                       
                       if (cleanText.match(/^[\d\-\•\*]\s/)) {
                         return (
-                          <div key={idx} className="flex gap-3 items-start pl-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-white/80 mt-2 flex-shrink-0 shadow-sm" />
-                            <p className="text-sm leading-relaxed text-white/95 font-medium">
+                          <div key={idx} className="flex gap-3 items-start pl-3 py-2 rounded-lg hover:bg-white/5 transition-colors">
+                            <div className="w-2 h-2 rounded-full bg-teal mt-2 flex-shrink-0 shadow-lg shadow-teal/50" />
+                            <p className="text-base leading-relaxed text-gray-200 font-medium">
                               {cleanText.replace(/^[\d\-\•\*]\s/, '')}
                             </p>
                           </div>
@@ -755,36 +765,38 @@ export const TradingJournal = () => {
                       }
                       
                       return (
-                        <p key={idx} className="text-sm leading-relaxed text-white/90 pl-2">
+                        <p key={idx} className="text-base leading-relaxed text-gray-300 pl-3">
                           {cleanText}
                         </p>
                       );
                     })}
                   </div>
 
-                  {/* Footer Branding with talamo.app */}
-                  <div className="pt-4 mt-2 border-t border-white/15">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 rounded-lg bg-white/15">
-                          <Brain className="w-4 h-4 text-white" />
+                  {/* Premium Footer */}
+                  <div className="pt-6 mt-4 border-t border-white/10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-gradient-to-br from-teal/20 to-purple-500/20 border border-teal/30">
+                          <Brain className="w-5 h-5 text-teal" />
                         </div>
                         <div>
-                          <p className="text-white text-xs font-semibold">Mentor AI Experto</p>
-                          <p className="text-white/70 text-[10px]">PhD Trading & Psicología</p>
+                          <p className="text-white text-sm font-bold">Mentor AI Experto</p>
+                          <p className="text-gray-400 text-xs">PhD Trading & Psicología del Mercado</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-white/70 text-[10px]">
-                          {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        <p className="text-gray-400 text-xs font-medium">
+                          {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
                       </div>
                     </div>
-                    {/* talamo.app branding */}
-                    <div className="flex items-center justify-center pt-3 border-t border-white/10">
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                        <p className="text-white font-bold text-sm tracking-wide">talamo.app</p>
+                    {/* Premium branding */}
+                    <div className="flex items-center justify-center pt-4 border-t border-white/5">
+                      <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-teal/10 to-purple-500/10 backdrop-blur-sm border border-teal/20">
+                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-teal to-purple-500 animate-pulse shadow-lg" />
+                        <p className="font-bold text-base bg-gradient-to-r from-teal to-purple-500 bg-clip-text text-transparent tracking-wide">
+                          talamo.app
+                        </p>
                       </div>
                     </div>
                   </div>
