@@ -1,55 +1,48 @@
 {
-  "title": "Smart Copy Trading",
-  "subtitle": "Verified strategies with full transparency",
-  "back_to_dashboard": "Dashboard",
-  "risk_warning": {
-    "title": "Risk warning:",
-    "description": "Copy trading involves risk of loss. Past results do not guarantee future returns. Always set appropriate risk limits for your capital."
+  "intro": {
+    "title": "What is Copy Trading?",
+    "description": "Copying means allocating capital to a professional trader's management. The trader operates on Exness using their verified strategy, and you receive signals to manually replicate their trades in your own account.",
+    "important": "Start by defining your risk profile and total amount; then diversify across multiple strategies to reduce concentrated exposure. This is not 'easy money' — it's education + discipline.",
+    "warning_title": "Important:",
+    "warning_text": "Define your total amount and risk profile before choosing strategies. Diversify by symbols and styles to reduce correlation.",
+    "cta_learn": "Learn risk basics",
+    "cta_view_all": "View all strategies"
   },
-  "active_strategies": {
-    "title": "Your Active Strategies",
-    "followed": "Strategies followed",
-    "estimated_return": "Estimated return",
-    "max_drawdown": "Max drawdown"
+  "evaluation": {
+    "title": "How to evaluate a strategy by numbers",
+    "subtitle": "PF and DD are not promises, they are historical. Use exposure limits at portfolio level."
   },
-  "strategy": {
-    "conservative": "Conservative",
-    "moderate": "Moderate",
-    "aggressive": "Aggressive",
-    "verified": "Verified",
-    "beta": "Beta",
-    "profit_factor": "Profit Factor:",
-    "max_dd": "Max DD:",
-    "green_months": "Green months:",
-    "monthly_return": "Monthly return:",
-    "win_rate": "Win Rate",
-    "avg_rr": "Avg RR:",
-    "total_trades": "Total trades:",
-    "instruments": "Instruments:",
-    "min_balance": "Recommended minimum balance:",
-    "configure_copy": "Configure copy",
-    "following": "Following"
+  "wizard": {
+    "title": "Define Investor Profile",
+    "actions": {
+      "back": "Back",
+      "next": "Next",
+      "complete": "View Strategies",
+      "profile_button": "Assess my Investor Profile"
+    }
   },
-  "risk_management": {
-    "title": "Copy Trading Risk Management",
-    "subtitle": "Important guidelines for safe copy trading",
-    "golden_rules": "Golden rules",
-    "rule_1": "Never risk more than 2-5% of your total capital",
-    "rule_2": "Diversify across multiple strategies",
-    "rule_3": "Set maximum drawdown limits",
-    "rule_4": "Monitor performance regularly",
-    "recommended_config": "Recommended configuration",
-    "conservative_allocation": "Conservative Strategy:",
-    "moderate_allocation": "Moderate Strategy:",
-    "aggressive_allocation": "Aggressive Strategy:",
-    "configure_limits": "Configure risk limits"
+  "catalog": {
+    "title": "Available Strategies",
+    "empty": "No strategies available",
+    "loading": "Loading strategies..."
   },
-  "disclaimer": {
-    "title": "Important about Copy Trading",
-    "point_1": "• Copy trading does not require direct access to your trading account",
-    "point_2": "• Signals are provided for you to execute manually",
-    "point_3": "• Tálamo never trades directly in your account",
-    "point_4": "• You maintain full control over your trades at all times",
-    "point_5": "• Results shown are simulations based on historical data"
+  "strategy_card": {
+    "min_investment": "Min Investment",
+    "fee": "Fee",
+    "follow": "Follow on Exness"
+  },
+  "gating": {
+    "title": "Affiliation Status",
+    "validating": "Validating affiliation...",
+    "eligible": "✓ Eligible - You can follow strategies",
+    "blocked": "✗ Access Blocked",
+    "blocked_message": "To follow strategies on Exness, you need to validate your affiliation.",
+    "cta_validate": "Validate my Affiliation",
+    "cta_create": "Open account with our link"
+  },
+  "disclaimers": {
+    "risk": "Trading involves significant risk of loss. Past performance does not guarantee future results.",
+    "educational": "This content is educational. It does not constitute financial advice or investment recommendation.",
+    "affiliation": "Access to copy trading requires an affiliated and verified account."
   }
 }
