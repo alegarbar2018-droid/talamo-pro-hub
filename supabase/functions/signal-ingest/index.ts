@@ -77,12 +77,23 @@ Deno.serve(async (req) => {
     // 🔐 NUEVO: valida TU token desde x-mt5-token (NO uses Authorization aquí)
     const mt5Token = req.headers.get("x-mt5-token") ?? "";
     const expectedToken = Deno.env.get("MT5_SECRET_TOKEN") ?? "";
+    
+    // 🐛 DEBUG: Logging temporal para diagnosticar el problema
+    console.log("🔍 DEBUG - Token Comparison:");
+    console.log("  Received token:", mt5Token.substring(0, 20) + "... (length: " + mt5Token.length + ")");
+    console.log("  Expected token:", expectedToken.substring(0, 20) + "... (length: " + expectedToken.length + ")");
+    console.log("  Tokens match:", mt5Token === expectedToken);
+    console.log("  Headers present:", Array.from(req.headers.keys()));
+    
     if (!expectedToken || mt5Token !== expectedToken) {
+      console.error("❌ Authentication failed");
       return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    
+    console.log("✅ Authentication passed");
 
     // Idempotency: require Idempotency-Key header
     const idempotencyKey = req.headers.get("Idempotency-Key");
@@ -198,7 +209,6 @@ Deno.serve(async (req) => {
       stop_loss: stopLoss,
       take_profit: takeProfit,
       logic,
-      confidence: payload.win_prob,
       status: "published",
       result: "pending",
       source: "mt5_ea",
