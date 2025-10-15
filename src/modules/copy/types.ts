@@ -1,14 +1,88 @@
 /**
- * Copy Trading Module Types - v1
+ * Copy Trading Module Types - v2
  * 
  * Type definitions for copy trading functionality.
- * All copy trading functionality is gated by the 'copy_v1' feature flag.
+ * Updated schema aligned with copy_strategies and copy_strategy_orders tables.
  */
 
+// Account & Status Types
+export type AccountType = 'Social Standard' | 'Pro';
+export type BillingPeriod = 'Weekly' | 'Monthly' | 'Quarterly';
+export type StrategyStatus = 'draft' | 'published' | 'archived';
+export type RiskBand = 'Conservador' | 'Moderado' | 'Agresivo';
+export type OrderSide = 'BUY' | 'SELL';
+export type OrderStatus = 'open' | 'closed' | 'pending';
+
+// Legacy types (for backwards compatibility)
 export type TraderStatus = 'active' | 'inactive' | 'suspended';
 export type TradeStatus = 'open' | 'closed' | 'pending';
 export type TradeResult = 'profit' | 'loss' | 'breakeven';
 
+// Cumulative return data point
+export interface CumulativeReturnPoint {
+  date: string; // 'YYYY-MM' or ISO timestamp
+  value: number; // percentage
+}
+
+// Main Strategy Interface (DB + FE)
+export interface CopyStrategy {
+  id: string;
+  slug: string;
+  
+  // Trader Info
+  name: string;
+  description: string;
+  photo_url?: string;
+  
+  // Account & Investment
+  account_type: AccountType;
+  strategy_equity: number;
+  min_investment: number;
+  performance_fee_pct: number;
+  leverage: number;
+  billing_period: BillingPeriod;
+  
+  // Performance Data
+  cumulative_return_series?: CumulativeReturnPoint[];
+  symbols: string[];
+  
+  // KPIs (calculated)
+  profit_factor?: number;
+  max_drawdown?: number;
+  win_rate?: number;
+  cagr?: number;
+  total_trades?: number;
+  
+  // Risk Classification
+  risk_band?: RiskBand;
+  
+  // External Link (with UTM)
+  external_link: string;
+  
+  // Status & Metadata
+  status: StrategyStatus;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+}
+
+// Strategy Order/Trade
+export interface StrategyOrder {
+  id: string;
+  strategy_id: string;
+  opened_at: string;
+  closed_at?: string;
+  symbol: string;
+  order_type: OrderSide;
+  volume: number;
+  open_price: number;
+  close_price?: number;
+  profit_loss?: number;
+  status: OrderStatus;
+  created_at: string;
+}
+
+// Legacy CopyTrader interface (backwards compatibility)
 export interface CopyTrader {
   id: string;
   user_id: string;
@@ -145,6 +219,38 @@ export interface CopyTradingStats {
   avg_trader_return_percentage: number;
   top_performers: CopyTrader[];
   recent_trades: CopyTrade[];
+}
+
+// Investor Profile (Wizard)
+export type InvestorRiskProfile = 'conservative' | 'moderate' | 'aggressive';
+
+export interface InvestorProfile {
+  risk_profile: InvestorRiskProfile;
+  total_investment: number;
+  experience: 'beginner' | 'intermediate' | 'advanced';
+  risk_tolerance: number; // 1-10
+  investment_horizon: 'short' | 'medium' | 'long';
+}
+
+// Strategy Allocation (Wizard Output)
+export interface StrategyAllocation {
+  strategy: CopyStrategy;
+  suggested_amount: number;
+  percentage: number;
+  reason?: string; // educación
+}
+
+// Affiliation Status (Gating)
+export interface AffiliationStatus {
+  status: 'pending' | 'eligible' | 'blocked';
+  partner_id?: string;
+  message?: string;
+}
+
+// Syntax Guide (Admin)
+export interface StrategySyntaxGuide {
+  format: 'yaml' | 'markdown';
+  content: string;
 }
 
 // Mock data interface for development
