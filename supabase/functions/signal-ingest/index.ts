@@ -95,35 +95,6 @@ function calculatePriceLevels(
   }
 }
 
-// Rate limiter: 10 requests per minute per IP
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
-  const now = Date.now();
-  const limit = rateLimitMap.get(ip);
-  
-  if (!limit || now > limit.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60000 }); // 60 sec window
-    return { allowed: true };
-  }
-  
-  if (limit.count >= 10) {
-    const retryAfter = Math.ceil((limit.resetAt - now) / 1000);
-    return { allowed: false, retryAfter };
-  }
-  
-  limit.count++;
-  return { allowed: true };
-}
-
-// Clean up old rate limit entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, limit] of rateLimitMap.entries()) {
-    if (now > limit.resetAt) rateLimitMap.delete(ip);
-  }
-}, 300000);
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });

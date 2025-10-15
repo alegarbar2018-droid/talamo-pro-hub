@@ -83,3 +83,6 @@ verify_jwt = true
 
 [functions.audit-verify-account]
 verify_jwt = false
+
+[functions.signal-ingest]
+verify_jwt = false
