@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export const AffiliationGateBlock = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation(['copy']);
   
   return (
     <Card className="border-line bg-surface/50">
@@ -15,7 +15,7 @@ export const AffiliationGateBlock = () => {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription className="text-sm">
-            {t('copy.disclaimers.affiliation')}
+            {t('copy:disclaimers.affiliation')}
           </AlertDescription>
         </Alert>
         
@@ -25,14 +25,14 @@ export const AffiliationGateBlock = () => {
             variant="outline"
             className="flex-1"
           >
-            {t('copy.gating.cta_validate')}
+            {t('copy:gating.cta_validate')}
           </Button>
           <Button
             onClick={() => window.open(import.meta.env.VITE_EXNESS_PARTNER_LINK || 'https://one.exness-track.com/a/4nf0qm6u0b', '_blank')}
             variant="outline"
             className="flex-1"
           >
-            {t('copy.gating.cta_create')}
+            {t('copy:gating.cta_create')}
           </Button>
         </div>
       </CardContent>

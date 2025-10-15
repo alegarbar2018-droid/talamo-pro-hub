@@ -10,6 +10,7 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ArrowLeft, DollarSign, TrendingUp, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { recommendStrategies } from '@/lib/recommendStrategies';
 import type { InvestorProfile, InvestorRiskProfile, StrategyAllocation, CopyStrategy } from '@/modules/copy/types';
 
@@ -20,6 +21,7 @@ interface InvestorProfileWizardProps {
 }
 
 export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorProfileWizardProps) => {
+  const { t } = useTranslation(['copy']);
   const [step, setStep] = useState(1);
   const [allocations, setAllocations] = useState<StrategyAllocation[]>([]);
   const [profile, setProfile] = useState<InvestorProfile>({
@@ -85,7 +87,7 @@ export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorPro
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
-            Definir Perfil de Inversionista
+            {t('copy:wizard.title')}
           </DialogTitle>
           <div className="flex items-center gap-2 mt-2">
             {[1, 2, 3].map((s) => (
@@ -288,7 +290,7 @@ export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorPro
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Atrás
+            {t('copy:wizard.actions.back')}
           </Button>
 
           {step < 3 ? (
@@ -297,12 +299,12 @@ export const InvestorProfileWizard = ({ open, onClose, onComplete }: InvestorPro
               disabled={step === 2 && profile.total_investment < 10}
               className="gap-2"
             >
-              Siguiente
+              {t('copy:wizard.actions.next')}
               <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
             <Button onClick={handleComplete} className="gap-2">
-              Ver Estrategias
+              {t('copy:wizard.actions.complete')}
               <ArrowRight className="h-4 w-4" />
             </Button>
           )}

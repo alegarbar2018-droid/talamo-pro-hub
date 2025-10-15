@@ -1,55 +1,48 @@
 {
-  "title": "Copy Trading Inteligente",
-  "subtitle": "Estratégias verificadas com transparência total",
-  "back_to_dashboard": "Painel",
-  "risk_warning": {
-    "title": "Aviso de risco:",
-    "description": "Copy trading envolve risco de perda. Resultados passados não garantem retornos futuros. Sempre configure limites de risco apropriados para seu capital."
+  "intro": {
+    "title": "O que é Copy Trading?",
+    "description": "Copiar significa alocar capital para a gestão de um trader profissional. O trader opera na Exness usando sua estratégia verificada, e você recebe sinais para replicar suas operações manualmente em sua própria conta.",
+    "important": "Comece definindo seu perfil de risco e seu valor total; então diversifique entre várias estratégias para reduzir exposição concentrada. Isso não é 'dinheiro fácil' — é educação + disciplina.",
+    "warning_title": "Importante:",
+    "warning_text": "Defina seu valor total e seu perfil de risco antes de escolher estratégias. Diversifique por símbolos e estilos para reduzir correlação.",
+    "cta_learn": "Aprenda o básico de risco",
+    "cta_view_all": "Ver todas as estratégias"
   },
-  "active_strategies": {
-    "title": "Suas Estratégias Ativas",
-    "followed": "Estratégias seguidas",
-    "estimated_return": "Retorno estimado",
-    "max_drawdown": "Drawdown máximo"
+  "evaluation": {
+    "title": "Como avaliar uma estratégia pelos números",
+    "subtitle": "PF e DD não são promessas, são históricos. Use limites de exposição no nível de portfólio."
   },
-  "strategy": {
-    "conservative": "Conservador",
-    "moderate": "Moderado",
-    "aggressive": "Agressivo",
-    "verified": "Verificada",
-    "beta": "Beta",
-    "profit_factor": "Profit Factor:",
-    "max_dd": "Max DD:",
-    "green_months": "Meses verdes:",
-    "monthly_return": "Retorno mensal:",
-    "win_rate": "Win Rate",
-    "avg_rr": "RR Médio:",
-    "total_trades": "Total trades:",
-    "instruments": "Instrumentos:",
-    "min_balance": "Saldo mínimo recomendado:",
-    "configure_copy": "Configurar cópia",
-    "following": "Seguindo"
+  "wizard": {
+    "title": "Definir Perfil de Investidor",
+    "actions": {
+      "back": "Voltar",
+      "next": "Próximo",
+      "complete": "Ver Estratégias",
+      "profile_button": "Avaliar meu Perfil de Investidor"
+    }
   },
-  "risk_management": {
-    "title": "Gestão de Risco no Copy Trading",
-    "subtitle": "Diretrizes importantes para copy trading seguro",
-    "golden_rules": "Regras de ouro",
-    "rule_1": "Nunca arrisque mais de 2-5% do seu capital total",
-    "rule_2": "Diversifique entre múltiplas estratégias",
-    "rule_3": "Estabeleça limites de drawdown máximo",
-    "rule_4": "Monitore o desempenho regularmente",
-    "recommended_config": "Configuração recomendada",
-    "conservative_allocation": "Estratégia Conservadora:",
-    "moderate_allocation": "Estratégia Moderada:",
-    "aggressive_allocation": "Estratégia Agressiva:",
-    "configure_limits": "Configurar limites de risco"
+  "catalog": {
+    "title": "Estratégias Disponíveis",
+    "empty": "Nenhuma estratégia disponível",
+    "loading": "Carregando estratégias..."
   },
-  "disclaimer": {
-    "title": "Importante sobre Copy Trading",
-    "point_1": "• Copy trading não requer acesso direto à sua conta de trading",
-    "point_2": "• Sinais são fornecidos para você executar manualmente",
-    "point_3": "• Tálamo nunca opera diretamente em sua conta",
-    "point_4": "• Você mantém controle total sobre suas operações a todo momento",
-    "point_5": "• Resultados mostrados são simulações baseadas em dados históricos"
+  "strategy_card": {
+    "min_investment": "Investimento Mín",
+    "fee": "Taxa",
+    "follow": "Seguir na Exness"
+  },
+  "gating": {
+    "title": "Status de Afiliação",
+    "validating": "Validando afiliação...",
+    "eligible": "✓ Elegível - Você pode seguir estratégias",
+    "blocked": "✗ Acesso Bloqueado",
+    "blocked_message": "Para seguir estratégias na Exness, você precisa validar sua afiliação.",
+    "cta_validate": "Validar minha Afiliação",
+    "cta_create": "Abrir conta com nosso link"
+  },
+  "disclaimers": {
+    "risk": "Trading envolve risco significativo de perda. Desempenho passado não garante resultados futuros.",
+    "educational": "Este conteúdo é educacional. Não constitui aconselhamento financeiro ou recomendação de investimento.",
+    "affiliation": "O acesso ao copy trading requer uma conta afiliada e verificada."
   }
 }

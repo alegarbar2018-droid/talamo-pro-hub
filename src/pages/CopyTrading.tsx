@@ -15,7 +15,7 @@ import {
 import type { CopyStrategy } from '@/modules/copy/types';
 
 const CopyTrading: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['copy', 'common']);
   const { trackEvent } = useObservability();
   
   const [wizardOpen, setWizardOpen] = useState(false);

@@ -1,8 +1,11 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
 import { TrendingUp, AlertTriangle, BarChart3, Activity, CheckCircle, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const StrategyEvaluationGuide = () => {
+  const { t } = useTranslation(['copy']);
+  
   const metrics = [
     {
       id: 'pf',
@@ -49,13 +52,13 @@ export const StrategyEvaluationGuide = () => {
           <AccordionTrigger className="text-lg font-semibold hover:no-underline py-4">
             <span className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-primary" />
-              Cómo evaluar una estrategia por sus números
+              {t('copy:evaluation.title')}
             </span>
           </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-2 pb-4">
               <p className="text-sm text-muted-foreground">
-                PF y DD no son promesas, son históricos. Usa límites de exposición a nivel cartera.
+                {t('copy:evaluation.subtitle')}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
