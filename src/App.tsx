@@ -82,6 +82,7 @@ const App: React.FC = () => {
             <Route path="/academy/quiz/:quizId" element={<QuizView />} />
             <Route path="/signals" element={<Signals />} />
             <Route path="/copy-trading" element={<CopyTrading />} />
+            <Route path="/CopyTrading" element={<Navigate to="/copy-trading" replace />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/access" element={<AccessWizard />} />
             
