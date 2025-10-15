@@ -95,5 +95,20 @@
       "cancel": "Cancel",
       "submit": "Create Signal"
     }
+  },
+  "copy": {
+    "title": "Copy Trading Management",
+    "subtitle": "Create and manage copy trading strategies",
+    "new_strategy": "New Strategy",
+    "filter": {
+      "all": "All strategies"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "error_loading": "Error loading strategies",
+    "no_strategies": "No strategies found",
+    "create_first": "Create First Strategy"
   }
 }

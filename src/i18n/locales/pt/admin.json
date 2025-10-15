@@ -95,5 +95,20 @@
       "cancel": "Cancelar",
       "submit": "Criar Sinal"
     }
+  },
+  "copy": {
+    "title": "Gestão de Copy Trading",
+    "subtitle": "Criar e gerenciar estratégias de copy trading",
+    "new_strategy": "Nova Estratégia",
+    "filter": {
+      "all": "Todas as estratégias"
+    },
+    "status": {
+      "draft": "Rascunho",
+      "published": "Publicada"
+    },
+    "error_loading": "Erro ao carregar estratégias",
+    "no_strategies": "Nenhuma estratégia encontrada",
+    "create_first": "Criar Primeira Estratégia"
   }
 }

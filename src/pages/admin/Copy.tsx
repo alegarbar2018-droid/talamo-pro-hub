@@ -43,7 +43,7 @@ export const AdminCopy: React.FC = () => {
   });
 
   const getStatusBadge = (status: string) => {
-    const variant = status === 'verified' ? 'default' : 'secondary';
+    const variant = status === 'published' ? 'default' : 'secondary';
     return <Badge variant={variant}>{t(`admin.copy.status.${status}`)}</Badge>;
   };
 
@@ -74,7 +74,7 @@ export const AdminCopy: React.FC = () => {
             <SelectContent>
               <SelectItem value="all">{t('admin.copy.filter.all')}</SelectItem>
               <SelectItem value="draft">{t('admin.copy.status.draft')}</SelectItem>
-              <SelectItem value="verified">{t('admin.copy.status.verified')}</SelectItem>
+              <SelectItem value="published">{t('admin.copy.status.published')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -116,26 +116,40 @@ export const AdminCopy: React.FC = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <CardTitle className="text-lg">{strategy.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{strategy.description}</p>
+                    <CardTitle className="text-lg">{strategy.trader_name}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{strategy.trader_bio}</p>
                   </div>
                   {getStatusBadge(strategy.status)}
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-4 gap-4 text-sm">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-muted-foreground">Risk:</span>{' '}
-                    <Badge variant="outline">{strategy.risk_band || 'N/A'}</Badge>
+                    <span className="text-muted-foreground">Tipo Cuenta:</span>{' '}
+                    <Badge variant="outline">{strategy.account_type}</Badge>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">PF:</span> {strategy.profit_factor ? `${strategy.profit_factor}x` : 'N/A'}
+                    <span className="text-muted-foreground">Equity:</span> ${strategy.strategy_equity?.toLocaleString()}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Max DD:</span> {strategy.max_drawdown ? `${strategy.max_drawdown}%` : 'N/A'}
+                    <span className="text-muted-foreground">Min Inversión:</span> ${strategy.min_investment}
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Min Investment:</span> ${strategy.min_investment}
+                    <span className="text-muted-foreground">Fee:</span> {strategy.performance_fee_pct}%
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Apalancamiento:</span> 1:{strategy.leverage}
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Facturación:</span>{' '}
+                    <Badge variant="outline">{strategy.billing_period}</Badge>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Riesgo:</span>{' '}
+                    <Badge variant="outline">{strategy.risk_band || 'Auto'}</Badge>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Símbolos:</span> {strategy.symbols_traded?.length || 0}
                   </div>
                 </div>
               </CardContent>
