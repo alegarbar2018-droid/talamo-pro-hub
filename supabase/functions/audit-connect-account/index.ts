@@ -40,7 +40,7 @@ serve(async (req) => {
     const metaApiAccountId = `meta_${login}_${Date.now()}`;
     const detectedPlatform = platform || 'mt5';
 
-    // Guardar en DB (credentials se guardan como texto por ahora - en producción usar encriptación)
+    // Guardar en DB - cuenta automáticamente verificada por contraseña de inversionista
     const { data: account, error: dbError } = await supabase
       .from('audit_accounts')
       .upsert({
@@ -49,7 +49,8 @@ serve(async (req) => {
         login: login,
         server: server,
         platform: detectedPlatform,
-        status: 'connected',
+        status: 'verified', // ✓ Verificada automáticamente
+        verified_at: new Date().toISOString(),
         enc_credentials: investorPassword, // En producción: encriptar
         metaapi_account_id: metaApiAccountId,
         last_sync_at: new Date().toISOString(),

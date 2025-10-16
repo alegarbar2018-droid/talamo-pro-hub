@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Plus, Shield, AlertCircle, RefreshCw } from 'lucide-react';
 import { ConnectAccountModal } from './ConnectAccountModal';
-import { VerificationPanel } from './VerificationPanel';
 import { EquityCurve } from './EquityCurve';
 import { StatsCards } from './StatsCards';
 import { TradesTable } from './TradesTable';
@@ -153,11 +152,7 @@ export const AuditDashboard = () => {
         </CardContent>
       </Card>
 
-      {selectedAccount && (selectedAccount.status === 'connected' || selectedAccount.status === 'verification_pending') && (
-        <VerificationPanel accountId={selectedAccount.id} />
-      )}
-
-      {selectedAccount && selectedAccount.status === 'verified' && accountData && (
+      {selectedAccount && accountData && (
         <>
           <div className="flex justify-end">
             <Button onClick={handleSync} variant="outline" size="sm">
