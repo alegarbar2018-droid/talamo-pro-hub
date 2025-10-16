@@ -1,4 +1,3 @@
-import DashboardNavigation from "@/components/DashboardNavigation";
 import { AuditDashboard } from "@/components/tools/audit";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { useTranslation } from "react-i18next";
@@ -9,8 +8,6 @@ const Audit = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNavigation />
-      
       {/* Hero Section */}
       <div className="border-b border-border/40 bg-gradient-to-b from-background to-muted/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
