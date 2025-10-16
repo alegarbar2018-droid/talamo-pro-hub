@@ -28,122 +28,131 @@ import { toast } from "@/hooks/use-toast";
 // Memoized signal card for performance
 const SignalCard = memo(({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
   <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all">
-    <CardHeader>
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          {getTypeIcon(signal.type)}
-          <div>
-            <CardTitle className="text-foreground">{signal.instrument} - {signal.type}</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              {signal.instrument} • {signal.timeframe} • Por {signal.author}
-            </CardDescription>
+    <CardHeader className="pb-3">
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {getTypeIcon(signal.type)}
+            <div className="min-w-0">
+              <CardTitle className="text-foreground text-base sm:text-lg truncate">
+                {signal.instrument} - {signal.type}
+              </CardTitle>
+              <CardDescription className="text-muted-foreground text-xs sm:text-sm">
+                {signal.timeframe} • {signal.author}
+              </CardDescription>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge className={getStatusColor(signal.status)}>
-            {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, '_')}`) || signal.status}
-          </Badge>
-          <Badge variant="outline" className="border-teal text-teal">
+          <Badge variant="outline" className="border-teal text-teal text-xs shrink-0">
             RR 1:{signal.rr}
           </Badge>
         </div>
+        <Badge className={`${getStatusColor(signal.status)} w-fit text-xs`}>
+          {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, '_')}`) || signal.status}
+        </Badge>
       </div>
     </CardHeader>
     
-    <CardContent>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
-            <div>
-              <span className="text-muted-foreground block text-xs">{t('signals:signal.entry')}</span>
-              <div className="font-mono font-medium text-foreground">{signal.entry.toFixed(2)}</div>
-            </div>
-            <div>
-              <span className="text-muted-foreground block text-xs">{t('signals:signal.stop_loss')}</span>
-              <div className="font-mono font-medium text-destructive">{signal.sl.toFixed(2)}</div>
-            </div>
-            <div>
-              <span className="text-muted-foreground block text-xs">{t('signals:signal.take_profit')}</span>
-              <div className="font-mono font-medium text-success">{signal.tp.toFixed(2)}</div>
-            </div>
+    <CardContent className="pt-0">
+      <div className="space-y-4">
+        {/* Price levels - Always visible */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-surface/50 p-2 rounded-lg border border-line/50">
+            <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1">{t('signals:signal.entry')}</span>
+            <div className="font-mono font-semibold text-foreground text-xs sm:text-sm">{signal.entry.toFixed(2)}</div>
           </div>
-          
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {signal.publishedAt}
-            </div>
-            <div className="flex items-center gap-1">
-              <Target className="h-4 w-4" />
-              {t('signals:signal.confidence')}: {signal.confidence}%
-            </div>
+          <div className="bg-surface/50 p-2 rounded-lg border border-destructive/20">
+            <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1">{t('signals:signal.stop_loss')}</span>
+            <div className="font-mono font-semibold text-destructive text-xs sm:text-sm">{signal.sl.toFixed(2)}</div>
+          </div>
+          <div className="bg-surface/50 p-2 rounded-lg border border-success/20">
+            <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1">{t('signals:signal.take_profit')}</span>
+            <div className="font-mono font-semibold text-success text-xs sm:text-sm">{signal.tp.toFixed(2)}</div>
           </div>
         </div>
         
-        <div className="space-y-4">
-          <div>
-            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-teal" />
-              {t('signals:signal.analysis_logic')}
-            </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{signal.logic}</p>
+        {/* Metadata */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="truncate">{signal.publishedAt}</span>
           </div>
-          
-          <div>
-            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              {t('signals:signal.invalidation')}
-            </h4>
-            <p className="text-sm text-muted-foreground">{signal.invalidation}</p>
+          <div className="flex items-center gap-1">
+            <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+            {t('signals:signal.confidence')}: {signal.confidence}%
           </div>
+        </div>
+        
+        {/* Analysis sections */}
+        <div>
+          <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-teal" />
+            {t('signals:signal.analysis_logic')}
+          </h4>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{signal.logic}</p>
+        </div>
+        
+        <div>
+          <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+            <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-warning" />
+            {t('signals:signal.invalidation')}
+          </h4>
+          <p className="text-xs sm:text-sm text-muted-foreground">{signal.invalidation}</p>
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6 pt-4 border-t border-line">
+      {/* Action buttons */}
+      <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-line">
         <Button 
-          className="bg-teal hover:bg-teal/90 text-white w-full sm:w-auto"
+          className="bg-teal hover:bg-teal/90 text-white w-full text-xs sm:text-sm"
+          size="sm"
           onClick={() => {
             const { sl_pips, tp_pips } = calculatePipsFromPrice(signal.entry, signal.sl, signal.tp, signal.instrument);
             trackInteraction('signal_card', 'open_in_tools_click', { signal_id: signal.id, instrument: signal.instrument, type: signal.type });
             navigate(`/tools?calc=position-size&symbol=${signal.instrument}&dir=${signal.type}&entry=${signal.entry}&sl_pips=${sl_pips}&tp_pips=${tp_pips}`);
           }}
         >
-          <Calculator className="h-4 w-4 mr-2" />
+          <Calculator className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
           Calcular en Tools
         </Button>
-        <Button 
-          variant="outline" 
-          className="border-line w-full sm:w-auto"
-          onClick={() => {
-            const jsonPayload = {
-              instrument: signal.instrument,
-              type: signal.type,
-              entry: signal.entry,
-              stop_loss: signal.sl,
-              take_profit: signal.tp,
-              rr: signal.rr,
-              timeframe: signal.timeframe,
-              logic: signal.logic,
-              invalidation: signal.invalidation,
-              published_at: signal.publishedAt
-            };
-            navigator.clipboard.writeText(JSON.stringify(jsonPayload, null, 2));
-            toast({ title: "JSON copiado", description: "Los datos de la señal se copiaron al portapapeles" });
-            trackInteraction('signal_card', 'copy_json', { signal_id: signal.id, instrument: signal.instrument });
-          }}
-        >
-          <Copy className="h-4 w-4 mr-2" />
-          Copiar JSON
-        </Button>
-        <Button 
-          variant="outline" 
-          className="border-teal text-teal hover:bg-teal/10 w-full sm:w-auto"
-          onClick={() => trackInteraction('signal_card', 'view_full_analysis', { signal_id: signal.id, signal_type: signal.type, instrument: signal.instrument })}
-          aria-label={`Ver análisis completo de ${signal.instrument}`}
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          {t('signals:signal.view_full_analysis')}
-        </Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="border-line w-full text-xs sm:text-sm"
+            onClick={() => {
+              const jsonPayload = {
+                instrument: signal.instrument,
+                type: signal.type,
+                entry: signal.entry,
+                stop_loss: signal.sl,
+                take_profit: signal.tp,
+                rr: signal.rr,
+                timeframe: signal.timeframe,
+                logic: signal.logic,
+                invalidation: signal.invalidation,
+                published_at: signal.publishedAt
+              };
+              navigator.clipboard.writeText(JSON.stringify(jsonPayload, null, 2));
+              toast({ title: "JSON copiado", description: "Los datos de la señal se copiaron al portapapeles" });
+              trackInteraction('signal_card', 'copy_json', { signal_id: signal.id, instrument: signal.instrument });
+            }}
+          >
+            <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Copiar JSON</span>
+            <span className="sm:hidden">JSON</span>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="border-teal text-teal hover:bg-teal/10 w-full text-xs sm:text-sm"
+            onClick={() => trackInteraction('signal_card', 'view_full_analysis', { signal_id: signal.id, signal_type: signal.type, instrument: signal.instrument })}
+            aria-label={`Ver análisis completo de ${signal.instrument}`}
+          >
+            <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">{t('signals:signal.view_full_analysis')}</span>
+            <span className="sm:hidden">Análisis</span>
+          </Button>
+        </div>
       </div>
     </CardContent>
   </Card>
@@ -264,35 +273,35 @@ const Signals = () => {
           
           <div className="space-y-6 max-w-4xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal/20 via-teal/10 to-transparent border border-teal/30 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
-              <span className="text-sm font-medium text-teal">Señales Verificadas</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-gradient-to-r from-teal/20 via-teal/10 to-transparent border border-teal/30 backdrop-blur-sm">
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-teal animate-pulse" />
+              <span className="text-xs sm:text-sm font-medium text-teal">Señales Verificadas</span>
             </div>
             
             {/* Main heading */}
-            <div className="space-y-4">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+            <div className="space-y-3">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
                 {t('signals:title')}
               </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground font-light max-w-3xl">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground font-light max-w-3xl">
                 {t('signals:subtitle')}{" "}
                 <span className="text-teal font-medium">análisis profesional verificado</span>
               </p>
             </div>
             
             {/* Feature highlights */}
-            <div className="flex flex-wrap gap-4 pt-4">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
-                <Activity className="w-4 h-4 text-teal" />
-                <span className="text-sm text-muted-foreground">Tiempo Real</span>
+            <div className="flex flex-wrap gap-2 sm:gap-3 pt-3">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <Activity className="w-3 h-3 sm:w-4 sm:h-4 text-teal shrink-0" />
+                <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Tiempo Real</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
-                <Target className="w-4 h-4 text-teal" />
-                <span className="text-sm text-muted-foreground">R:R Optimizado</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <Target className="w-3 h-3 sm:w-4 sm:h-4 text-teal shrink-0" />
+                <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">R:R Optimizado</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
-                <BarChart3 className="w-4 h-4 text-teal" />
-                <span className="text-sm text-muted-foreground">Análisis Verificado</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
+                <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 text-teal shrink-0" />
+                <span className="text-xs sm:text-sm text-muted-foreground whitespace-nowrap">Análisis Verificado</span>
               </div>
             </div>
           </div>
@@ -310,16 +319,16 @@ const Signals = () => {
 
         {/* Filters */}
         <Card className="border-line bg-surface mb-6">
-          <CardHeader>
-            <CardTitle className="text-foreground flex items-center gap-2">
-              <Filter className="h-5 w-5 text-teal" />
+          <CardHeader className="pb-3">
+            <CardTitle className="text-foreground flex items-center gap-2 text-base sm:text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-teal" />
               {t('signals:filters.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">{t('signals:filters.market')}</label>
+                <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">{t('signals:filters.market')}</label>
                 <Select value={filters.market} onValueChange={(value) => 
                   setFilters({ ...filters, market: value })
                 }>
@@ -337,7 +346,7 @@ const Signals = () => {
               </div>
               
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">{t('signals:filters.timeframe')}</label>
+                <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">{t('signals:filters.timeframe')}</label>
                 <Select value={filters.timeframe} onValueChange={(value) => 
                   setFilters({ ...filters, timeframe: value })
                 }>
@@ -355,7 +364,7 @@ const Signals = () => {
               </div>
               
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">{t('signals:filters.min_rr')}</label>
+                <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">{t('signals:filters.min_rr')}</label>
                 <Select value={filters.minRR} onValueChange={(value) => 
                   setFilters({ ...filters, minRR: value })
                 }>
