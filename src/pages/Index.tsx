@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,13 +20,15 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PARTNER_ID } from "@/lib/constants";
-import WhyWeDoIt from "@/components/WhyWeDoIt";
-import HowItWorks from "@/components/HowItWorks";
-import ModulesWithDetails from "@/components/ModulesWithDetails";
-import SyllabusDetailed from "@/components/SyllabusDetailed";
-import WhyExness from "@/components/WhyExness";
-import FAQExpanded from "@/components/FAQExpanded";
 import Navigation from "@/components/Navigation";
+
+// Lazy load heavy components
+const WhyWeDoIt = lazy(() => import("@/components/WhyWeDoIt"));
+const HowItWorks = lazy(() => import("@/components/HowItWorks"));
+const ModulesWithDetails = lazy(() => import("@/components/ModulesWithDetails"));
+const SyllabusDetailed = lazy(() => import("@/components/SyllabusDetailed"));
+const WhyExness = lazy(() => import("@/components/WhyExness"));
+const FAQExpanded = lazy(() => import("@/components/FAQExpanded"));
 
 const Index = () => {
   const navigate = useNavigate();
@@ -194,17 +196,19 @@ const Index = () => {
         </div>
       </motion.section>
 
-      {/* Why We Do It Section */}
-      <WhyWeDoIt />
+      {/* Lazy load non-critical sections */}
+      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin h-8 w-8 border-4 border-teal border-t-transparent rounded-full" /></div>}>
+        {/* Why We Do It Section */}
+        <WhyWeDoIt />
 
-      {/* How It Works */}
-      <HowItWorks />
+        {/* How It Works */}
+        <HowItWorks />
 
-      {/* Modules with Details */}
-      <ModulesWithDetails />
+        {/* Modules with Details */}
+        <ModulesWithDetails />
 
-      {/* Syllabus Detailed */}
-      <SyllabusDetailed />
+        {/* Syllabus Detailed */}
+        <SyllabusDetailed />
 
       {/* Business Model */}
       <section id="modelo" className="bg-surface border-y border-line">
@@ -273,11 +277,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why Exness */}
-      <WhyExness />
+        {/* Why Exness */}
+        <WhyExness />
 
-      {/* FAQ */}
-      <FAQExpanded />
+        {/* FAQ */}
+        <FAQExpanded />
+      </Suspense>
 
       {/* Footer */}
       <footer className="border-t border-line bg-surface">

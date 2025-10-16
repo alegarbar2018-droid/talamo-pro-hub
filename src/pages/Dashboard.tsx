@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -28,6 +28,100 @@ import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+// Memoize heavy card components
+const StatCard = memo(({ stat, index }: any) => (
+  <Card 
+    className="group relative overflow-hidden border-line/50 bg-surface/50 backdrop-blur-xl hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 dashboard-card"
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-cyan/0 group-hover:from-teal/10 group-hover:to-cyan/10 transition-all duration-500" />
+    
+    <CardContent className="relative z-10 p-6">
+      <div className="flex items-start justify-between mb-4">
+        <div className="p-3 rounded-xl bg-teal/10 group-hover:bg-teal/20 transition-colors">
+          <stat.icon className="h-6 w-6 text-teal group-hover:scale-110 transition-transform" />
+        </div>
+        <Badge variant="secondary" className="text-xs">
+          +12% ↗
+        </Badge>
+      </div>
+      
+      <div>
+        <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+        <p className="text-3xl font-bold text-foreground mb-2">{stat.value}</p>
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000" style={{width: '65%'}} />
+          </div>
+          <span className="text-xs text-teal whitespace-nowrap">{stat.trend}</span>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+));
+StatCard.displayName = 'StatCard';
+
+const QuickActionCard = memo(({ action, index }: any) => (
+  <Card 
+    className="group relative overflow-hidden border-line bg-surface hover:border-teal/50 transition-all duration-300 cursor-pointer dashboard-card"
+    onClick={action.action}
+  >
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+      <div className="absolute inset-[-2px] bg-gradient-to-br from-teal via-cyan to-teal rounded-lg blur-sm" />
+    </div>
+    
+    <div className="relative bg-surface rounded-lg">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+            <action.icon className="h-6 w-6 text-teal" />
+          </div>
+          {action.badge && (
+            <Badge 
+              variant="secondary" 
+              className="text-xs animate-pulse bg-teal/10 text-teal border-teal/30"
+            >
+              {action.badge}
+            </Badge>
+          )}
+        </div>
+        
+        <CardTitle className="text-lg text-foreground group-hover:text-teal transition-colors">
+          {action.title}
+        </CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
+          {action.description}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="pt-0">
+        {action.progress !== undefined && (
+          <div className="space-y-2 mb-4">
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000"
+                style={{width: `${action.progress}%`}}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {action.progress}% completado
+            </p>
+          </div>
+        )}
+        
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full text-teal hover:bg-teal/10 group-hover:translate-x-1 transition-transform"
+        >
+          Ir 
+          <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+        </Button>
+      </CardContent>
+    </div>
+  </Card>
+));
+QuickActionCard.displayName = 'QuickActionCard';
+
 const Dashboard = () => {
   const { user, isValidated, signOut, loading } = useAuth();
   const navigate = useNavigate();
@@ -45,7 +139,9 @@ const Dashboard = () => {
         .select('*', { count: 'exact', head: true })
         .eq('status', 'published');
       return count || 0;
-    }
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
   });
 
   useEffect(() => {
@@ -271,99 +367,14 @@ const Dashboard = () => {
         {/* Stats Cards con Glassmorphism */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
-            <Card 
-              key={index} 
-              className="group relative overflow-hidden border-line/50 bg-surface/50 backdrop-blur-xl hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 dashboard-card"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-cyan/0 group-hover:from-teal/10 group-hover:to-cyan/10 transition-all duration-500" />
-              
-              <CardContent className="relative z-10 p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 rounded-xl bg-teal/10 group-hover:bg-teal/20 transition-colors">
-                    <stat.icon className="h-6 w-6 text-teal group-hover:scale-110 transition-transform" />
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    +12% ↗
-                  </Badge>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
-                  <p className="text-3xl font-bold text-foreground mb-2">{stat.value}</p>
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000" style={{width: '65%'}} />
-                    </div>
-                    <span className="text-xs text-teal whitespace-nowrap">{stat.trend}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <StatCard key={index} stat={stat} index={index} />
           ))}
         </div>
 
         {/* Quick Actions con Hover Effects Avanzados */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickActions.map((action, index) => (
-            <Card 
-              key={index} 
-              className="group relative overflow-hidden border-line bg-surface hover:border-teal/50 transition-all duration-300 cursor-pointer dashboard-card"
-              onClick={action.action}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute inset-[-2px] bg-gradient-to-br from-teal via-cyan to-teal rounded-lg blur-sm" />
-              </div>
-              
-              <div className="relative bg-surface rounded-lg">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                      <action.icon className="h-6 w-6 text-teal" />
-                    </div>
-                    {action.badge && (
-                      <Badge 
-                        variant="secondary" 
-                        className="text-xs animate-pulse bg-teal/10 text-teal border-teal/30"
-                      >
-                        {action.badge}
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <CardTitle className="text-lg text-foreground group-hover:text-teal transition-colors">
-                    {action.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm text-muted-foreground">
-                    {action.description}
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="pt-0">
-                  {action.progress !== undefined && (
-                    <div className="space-y-2 mb-4">
-                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000"
-                          style={{width: `${action.progress}%`}}
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {action.progress}% completado
-                      </p>
-                    </div>
-                  )}
-                  
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full text-teal hover:bg-teal/10 group-hover:translate-x-1 transition-transform"
-                  >
-                    {t("dashboard:actions.go")} 
-                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </div>
-            </Card>
+            <QuickActionCard key={index} action={action} index={index} />
           ))}
         </div>
 

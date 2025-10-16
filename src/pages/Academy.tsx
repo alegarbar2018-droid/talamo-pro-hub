@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,110 @@ import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { useObservability } from "@/components/business/ObservabilityProvider";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserCourseProgress } from "@/hooks/useDashboardStats";
+
+// Memoize course card component
+const CourseCard = memo(({ course, index, courseProgress, handleCourseClick }: any) => {
+  const { t } = useTranslation(['academy']);
+  const isUnlocked = true;
+
+  return (
+    <Card 
+      className={`group relative overflow-hidden border-line transition-all duration-300 cursor-pointer animate-fade-in ${
+        isUnlocked 
+          ? 'bg-surface/80 backdrop-blur-sm hover:shadow-glow-subtle hover:-translate-y-1 hover:border-teal/50' 
+          : 'bg-muted/20 opacity-50'
+      }`}
+      style={{animationDelay: `${index * 100}ms`}}
+      onClick={() => isUnlocked && handleCourseClick(course.slug)}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-cyan/0 group-hover:from-teal/5 group-hover:to-cyan/5 transition-all duration-500" />
+      
+      {courseProgress && courseProgress.progress > 0 && (
+        <div className="absolute top-4 right-4 z-20">
+          <div className="relative w-12 h-12">
+            <svg className="w-12 h-12 transform -rotate-90">
+              <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="3" fill="none" className="text-muted" />
+              <circle
+                cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="3" fill="none"
+                strokeDasharray={`${2 * Math.PI * 20}`}
+                strokeDashoffset={`${2 * Math.PI * 20 * (1 - courseProgress.progress / 100)}`}
+                className="text-teal transition-all duration-500"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-xs font-bold text-teal">{courseProgress.progress}%</span>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <CardHeader className="relative z-10">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+              {isUnlocked ? <BookOpen className="h-6 w-6 text-teal" /> : <Lock className="h-6 w-6 text-muted-foreground" />}
+            </div>
+            <Badge variant="outline" className="border-teal/30 text-teal bg-teal/10">
+              Nivel {course.level}
+            </Badge>
+          </div>
+        </div>
+        
+        <CardTitle className="text-foreground group-hover:text-teal transition-colors line-clamp-2">
+          {course.course_item?.title}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground line-clamp-2">
+          {course.course_item?.tags?.join(', ') || 'Trading course'}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="relative z-10">
+        <div className="space-y-4">
+          {course.course_item?.duration_min && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-background/50">
+              <Clock className="h-4 w-4 text-teal" />
+              <span>{course.course_item.duration_min} minutos</span>
+            </div>
+          )}
+          
+          {courseProgress && courseProgress.progress > 0 && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Tu Progreso</span>
+                <span className="text-teal font-medium">{courseProgress.completedItems}/{courseProgress.totalItems} completado</span>
+              </div>
+              <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000"
+                  style={{width: `${courseProgress.progress}%`}}
+                />
+              </div>
+            </div>
+          )}
+          
+          {isUnlocked ? (
+            <Button 
+              variant="outline" 
+              className="w-full border-teal text-teal hover:bg-teal hover:text-white transition-all group-hover:translate-x-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCourseClick(course.slug);
+              }}
+            >
+              {courseProgress && courseProgress.progress > 0 ? 'Continuar' : t('academy:levels.start')}
+              <ArrowLeft className="h-4 w-4 ml-2 rotate-180 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          ) : (
+            <div className="text-xs text-muted-foreground text-center py-2 px-3 rounded-lg bg-muted/50">
+              {t('academy:levels.unlock_message')}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+CourseCard.displayName = 'CourseCard';
 
 const Academy = () => {
   const navigate = useNavigate();
@@ -53,6 +157,8 @@ const Academy = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
   });
 
   // Fetch user's completed lessons if logged in
@@ -69,6 +175,8 @@ const Academy = () => {
       if (error) throw error;
       return data.map(e => e.course_id);
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
   });
 
   const handleCourseClick = (courseSlug: string) => {
@@ -216,128 +324,15 @@ const Academy = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses?.map((course, index) => {
-              const isUnlocked = true;
               const courseProgress = coursesProgress?.find(cp => cp.id === course.id);
-
               return (
-                <Card 
+                <CourseCard 
                   key={course.id}
-                  className={`group relative overflow-hidden border-line transition-all duration-300 cursor-pointer animate-fade-in ${
-                    isUnlocked 
-                      ? 'bg-surface/80 backdrop-blur-sm hover:shadow-glow-subtle hover:-translate-y-1 hover:border-teal/50' 
-                      : 'bg-muted/20 opacity-50'
-                  }`}
-                  style={{animationDelay: `${index * 100}ms`}}
-                  onClick={() => isUnlocked && handleCourseClick(course.slug)}
-                >
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-cyan/0 group-hover:from-teal/5 group-hover:to-cyan/5 transition-all duration-500" />
-                  
-                  {/* Progress ring indicator */}
-                  {courseProgress && courseProgress.progress > 0 && (
-                    <div className="absolute top-4 right-4 z-20">
-                      <div className="relative w-12 h-12">
-                        <svg className="w-12 h-12 transform -rotate-90">
-                          <circle
-                            cx="24"
-                            cy="24"
-                            r="20"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            fill="none"
-                            className="text-muted"
-                          />
-                          <circle
-                            cx="24"
-                            cy="24"
-                            r="20"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                            fill="none"
-                            strokeDasharray={`${2 * Math.PI * 20}`}
-                            strokeDashoffset={`${2 * Math.PI * 20 * (1 - courseProgress.progress / 100)}`}
-                            className="text-teal transition-all duration-500"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-xs font-bold text-teal">{courseProgress.progress}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <CardHeader className="relative z-10">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                          {isUnlocked ? (
-                            <BookOpen className="h-6 w-6 text-teal" />
-                          ) : (
-                            <Lock className="h-6 w-6 text-muted-foreground" />
-                          )}
-                        </div>
-                        <Badge 
-                          variant="outline" 
-                          className="border-teal/30 text-teal bg-teal/10"
-                        >
-                          Nivel {course.level}
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <CardTitle className="text-foreground group-hover:text-teal transition-colors line-clamp-2">
-                      {course.course_item?.title}
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground line-clamp-2">
-                      {course.course_item?.tags?.join(', ') || 'Trading course'}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent className="relative z-10">
-                    <div className="space-y-4">
-                      {course.course_item?.duration_min && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-background/50">
-                          <Clock className="h-4 w-4 text-teal" />
-                          <span>{course.course_item.duration_min} minutos</span>
-                        </div>
-                      )}
-                      
-                      {/* User Progress Bar */}
-                      {courseProgress && courseProgress.progress > 0 && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>Tu Progreso</span>
-                            <span className="text-teal font-medium">{courseProgress.completedItems}/{courseProgress.totalItems} completado</span>
-                          </div>
-                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000"
-                              style={{width: `${courseProgress.progress}%`}}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      
-                      {isUnlocked ? (
-                        <Button 
-                          variant="outline" 
-                          className="w-full border-teal text-teal hover:bg-teal hover:text-white transition-all group-hover:translate-x-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCourseClick(course.slug);
-                          }}
-                        >
-                          {courseProgress && courseProgress.progress > 0 ? 'Continuar' : t('academy:levels.start')}
-                          <ArrowLeft className="h-4 w-4 ml-2 rotate-180 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                      ) : (
-                        <div className="text-xs text-muted-foreground text-center py-2 px-3 rounded-lg bg-muted/50">
-                          {t('academy:levels.unlock_message')}
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                  course={course}
+                  index={index}
+                  courseProgress={courseProgress}
+                  handleCourseClick={handleCourseClick}
+                />
               );
             })}
           </div>

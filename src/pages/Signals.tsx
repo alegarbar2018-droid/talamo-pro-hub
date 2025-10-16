@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,131 @@ import { useSignals, useSignalsPerformance } from "@/hooks/useSignals";
 import { Calculator, Copy } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
+// Memoized signal card for performance
+const SignalCard = memo(({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
+  <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all">
+    <CardHeader>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          {getTypeIcon(signal.type)}
+          <div>
+            <CardTitle className="text-foreground">{signal.instrument} - {signal.type}</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              {signal.instrument} • {signal.timeframe} • Por {signal.author}
+            </CardDescription>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge className={getStatusColor(signal.status)}>
+            {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, '_')}`) || signal.status}
+          </Badge>
+          <Badge variant="outline" className="border-teal text-teal">
+            RR 1:{signal.rr}
+          </Badge>
+        </div>
+      </div>
+    </CardHeader>
+    
+    <CardContent>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <span className="text-muted-foreground">{t('signals:signal.entry')}</span>
+              <div className="font-mono font-medium text-foreground">{signal.entry.toFixed(2)}</div>
+            </div>
+            <div>
+              <span className="text-muted-foreground">{t('signals:signal.stop_loss')}</span>
+              <div className="font-mono font-medium text-destructive">{signal.sl.toFixed(2)}</div>
+            </div>
+            <div>
+              <span className="text-muted-foreground">{t('signals:signal.take_profit')}</span>
+              <div className="font-mono font-medium text-success">{signal.tp.toFixed(2)}</div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              {signal.publishedAt}
+            </div>
+            <div className="flex items-center gap-1">
+              <Target className="h-4 w-4" />
+              {t('signals:signal.confidence')}: {signal.confidence}%
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-teal" />
+              {t('signals:signal.analysis_logic')}
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">{signal.logic}</p>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-warning" />
+              {t('signals:signal.invalidation')}
+            </h4>
+            <p className="text-sm text-muted-foreground">{signal.invalidation}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex gap-3 mt-6 pt-4 border-t border-line">
+        <Button 
+          className="bg-teal hover:bg-teal/90 text-white"
+          onClick={() => {
+            const { sl_pips, tp_pips } = calculatePipsFromPrice(signal.entry, signal.sl, signal.tp, signal.instrument);
+            trackInteraction('signal_card', 'open_in_tools_click', { signal_id: signal.id, instrument: signal.instrument, type: signal.type });
+            navigate(`/tools?calc=position-size&symbol=${signal.instrument}&dir=${signal.type}&entry=${signal.entry}&sl_pips=${sl_pips}&tp_pips=${tp_pips}`);
+          }}
+        >
+          <Calculator className="h-4 w-4 mr-2" />
+          Calcular en Tools
+        </Button>
+        <Button 
+          variant="outline" 
+          className="border-line"
+          onClick={() => {
+            const jsonPayload = {
+              instrument: signal.instrument,
+              type: signal.type,
+              entry: signal.entry,
+              stop_loss: signal.sl,
+              take_profit: signal.tp,
+              rr: signal.rr,
+              timeframe: signal.timeframe,
+              logic: signal.logic,
+              invalidation: signal.invalidation,
+              published_at: signal.publishedAt
+            };
+            navigator.clipboard.writeText(JSON.stringify(jsonPayload, null, 2));
+            toast({ title: "JSON copiado", description: "Los datos de la señal se copiaron al portapapeles" });
+            trackInteraction('signal_card', 'copy_json', { signal_id: signal.id, instrument: signal.instrument });
+          }}
+        >
+          <Copy className="h-4 w-4 mr-2" />
+          Copiar JSON
+        </Button>
+        <Button 
+          variant="outline" 
+          className="border-teal text-teal hover:bg-teal/10"
+          onClick={() => trackInteraction('signal_card', 'view_full_analysis', { signal_id: signal.id, signal_type: signal.type, instrument: signal.instrument })}
+          aria-label={`Ver análisis completo de ${signal.instrument}`}
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          {t('signals:signal.view_full_analysis')}
+        </Button>
+      </div>
+    </CardContent>
+  </Card>
+));
+SignalCard.displayName = 'SignalCard';
+
 const Signals = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['signals']);
@@ -45,12 +170,15 @@ const Signals = () => {
     });
   }, [trackBusinessEvent, filters]);
 
-  const filteredSignals = signals.filter(signal => {
-    if (filters.market !== "all" && signal.instrument !== filters.market) return false;
-    if (filters.timeframe !== "all" && signal.timeframe !== filters.timeframe) return false;
-    if (filters.minRR !== "all" && signal.rr < parseFloat(filters.minRR)) return false;
-    return true;
-  });
+  // Memoize filtered signals
+  const filteredSignals = useMemo(() => {
+    return signals.filter(signal => {
+      if (filters.market !== "all" && signal.instrument !== filters.market) return false;
+      if (filters.timeframe !== "all" && signal.timeframe !== filters.timeframe) return false;
+      if (filters.minRR !== "all" && signal.rr < parseFloat(filters.minRR)) return false;
+      return true;
+    });
+  }, [signals, filters]);
 
   const getStatusColor = (status: string) => {
     const statusMap: Record<string, string> = {
@@ -249,158 +377,16 @@ const Signals = () => {
         {/* Signals Grid */}
         <div className="space-y-6">
           {filteredSignals.map((signal) => (
-            <Card key={signal.id} className="border-line bg-surface hover:shadow-glow-subtle transition-all">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {getTypeIcon(signal.type)}
-                  <div>
-                      <CardTitle className="text-foreground">{signal.instrument} - {signal.type}</CardTitle>
-                      <CardDescription className="text-muted-foreground">
-                        {signal.instrument} • {signal.timeframe} • Por {signal.author}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getStatusColor(signal.status)}>
-                      {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, '_')}`) || signal.status}
-                    </Badge>
-                    <Badge variant="outline" className="border-teal text-teal">
-                      RR 1:{signal.rr}
-                    </Badge>
-                  </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Signal Details */}
-                  <div className="space-y-4">
-                     <div className="grid grid-cols-3 gap-4 text-sm">
-                       <div>
-                          <span className="text-muted-foreground">{t('signals:signal.entry')}</span>
-                          <div className="font-mono font-medium text-foreground">{signal.entry.toFixed(2)}</div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">{t('signals:signal.stop_loss')}</span>
-                          <div className="font-mono font-medium text-destructive">{signal.sl.toFixed(2)}</div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">{t('signals:signal.take_profit')}</span>
-                          <div className="font-mono font-medium text-success">{signal.tp.toFixed(2)}</div>
-                        </div>
-                     </div>
-                    
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {signal.publishedAt}
-                      </div>
-                       <div className="flex items-center gap-1">
-                          <Target className="h-4 w-4" />
-                          {t('signals:signal.confidence')}: {signal.confidence}%
-                        </div>
-                    </div>
-                  </div>
-                  
-                  {/* Analysis */}
-                  <div className="space-y-4">
-                     <div>
-                       <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                         <BarChart3 className="h-4 w-4 text-teal" />
-                         {t('signals:signal.analysis_logic')}
-                       </h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {signal.logic}
-                      </p>
-                    </div>
-                    
-                     <div>
-                       <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                         <AlertTriangle className="h-4 w-4 text-warning" />
-                         {t('signals:signal.invalidation')}
-                       </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {signal.invalidation}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                 <div className="flex gap-3 mt-6 pt-4 border-t border-line">
-                  <Button 
-                    className="bg-teal hover:bg-teal/90 text-white"
-                    onClick={() => {
-                      const { sl_pips, tp_pips } = calculatePipsFromPrice(
-                        signal.entry, 
-                        signal.sl, 
-                        signal.tp, 
-                        signal.instrument
-                      );
-                      
-                      trackInteraction('signal_card', 'open_in_tools_click', {
-                        signal_id: signal.id,
-                        instrument: signal.instrument,
-                        type: signal.type
-                      });
-                      
-                      navigate(`/tools?calc=position-size&symbol=${signal.instrument}&dir=${signal.type}&entry=${signal.entry}&sl_pips=${sl_pips}&tp_pips=${tp_pips}`);
-                    }}
-                  >
-                    <Calculator className="h-4 w-4 mr-2" />
-                    Calcular en Tools
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="border-line"
-                    onClick={() => {
-                      const jsonPayload = {
-                        instrument: signal.instrument,
-                        type: signal.type,
-                        entry: signal.entry,
-                        stop_loss: signal.sl,
-                        take_profit: signal.tp,
-                        rr: signal.rr,
-                        timeframe: signal.timeframe,
-                        logic: signal.logic,
-                        invalidation: signal.invalidation,
-                        published_at: signal.publishedAt
-                      };
-                      
-                      navigator.clipboard.writeText(JSON.stringify(jsonPayload, null, 2));
-                      
-                      toast({
-                        title: "JSON copiado",
-                        description: "Los datos de la señal se copiaron al portapapeles",
-                      });
-                      
-                      trackInteraction('signal_card', 'copy_json', {
-                        signal_id: signal.id,
-                        instrument: signal.instrument
-                      });
-                    }}
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copiar JSON
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="border-teal text-teal hover:bg-teal/10"
-                    onClick={() => {
-                      trackInteraction('signal_card', 'view_full_analysis', {
-                        signal_id: signal.id,
-                        signal_type: signal.type,
-                        instrument: signal.instrument
-                      });
-                    }}
-                    aria-label={`Ver análisis completo de ${signal.instrument}`}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    {t('signals:signal.view_full_analysis')}
-                  </Button>
-                 </div>
-              </CardContent>
-            </Card>
+            <SignalCard
+              key={signal.id}
+              signal={signal}
+              getStatusColor={getStatusColor}
+              getTypeIcon={getTypeIcon}
+              calculatePipsFromPrice={calculatePipsFromPrice}
+              navigate={navigate}
+              trackInteraction={trackInteraction}
+              t={t}
+            />
           ))}
         </div>
 
