@@ -86,15 +86,95 @@ serve(async (req) => {
       throw new Error('Account not found');
     }
 
-    // Simulación de datos - en producción conectar a MetaApi
-    const accountInfo = {
-      balance: 10000 + Math.random() * 5000,
-      equity: 10000 + Math.random() * 5000,
-    };
+    if (!account.metaapi_account_id) {
+      throw new Error('MetaAPI account ID not found. Please reconnect your account.');
+    }
 
+    const metaapiToken = Deno.env.get('METAAPI_TOKEN');
+    if (!metaapiToken) {
+      throw new Error('MetaAPI token not configured');
+    }
+
+    console.log(`📡 Fetching data from MetaAPI for account: ${account.metaapi_account_id}`);
+
+    // Get account information from MetaAPI
+    const accountInfoResponse = await fetch(
+      `https://mt-client-api-v1.london.agiliumtrade.ai/users/current/accounts/${account.metaapi_account_id}/account-information`,
+      {
+        headers: {
+          'auth-token': metaapiToken,
+        },
+      }
+    );
+
+    if (!accountInfoResponse.ok) {
+      const errorText = await accountInfoResponse.text();
+      console.error('❌ MetaAPI account info error:', errorText);
+      throw new Error(`MetaAPI error: ${accountInfoResponse.status} - ${errorText}`);
+    }
+
+    const accountInfo = await accountInfoResponse.json();
     console.log(`💰 Balance: ${accountInfo.balance}, Equity: ${accountInfo.equity}`);
 
-    // Guardar equity snapshot
+    // Get history deals (closed trades) from MetaAPI
+    const historyResponse = await fetch(
+      `https://mt-client-api-v1.london.agiliumtrade.ai/users/current/accounts/${account.metaapi_account_id}/history-deals/time/${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}/${new Date().toISOString()}`,
+      {
+        headers: {
+          'auth-token': metaapiToken,
+        },
+      }
+    );
+
+    let newTrades = [];
+    if (historyResponse.ok) {
+      const historyDeals = await historyResponse.json();
+      console.log(`📊 Found ${historyDeals.length} history deals`);
+
+      // Process deals and insert new trades
+      for (const deal of historyDeals) {
+        if (deal.type === 'DEAL_TYPE_BUY' || deal.type === 'DEAL_TYPE_SELL') {
+          // Check if trade already exists
+          const { data: existingTrade } = await supabase
+            .from('audit_trades')
+            .select('id')
+            .eq('account_id', account.id)
+            .eq('ticket', deal.positionId || deal.id)
+            .single();
+
+          if (!existingTrade) {
+            const tradeData = {
+              account_id: account.id,
+              ticket: deal.positionId || deal.id,
+              symbol: deal.symbol,
+              type: deal.type === 'DEAL_TYPE_BUY' ? 'buy' : 'sell',
+              volume: deal.volume,
+              open_price: deal.price,
+              close_price: deal.price,
+              open_time: deal.time,
+              close_time: deal.time,
+              profit: deal.profit || 0,
+              commission: deal.commission || 0,
+              swap: deal.swap || 0,
+            };
+
+            const { error: insertError } = await supabase
+              .from('audit_trades')
+              .insert(tradeData);
+
+            if (!insertError) {
+              newTrades.push(tradeData);
+            }
+          }
+        }
+      }
+
+      console.log(`✨ Inserted ${newTrades.length} new trades`);
+    } else {
+      console.warn('⚠️ Could not fetch history deals:', await historyResponse.text());
+    }
+
+    // Save equity snapshot
     await supabase
       .from('audit_equity')
       .insert({
@@ -104,7 +184,7 @@ serve(async (req) => {
         equity: accountInfo.equity,
       });
 
-    // Obtener trades existentes
+    // Get all trades for stats calculation
     const { data: allTrades } = await supabase
       .from('audit_trades')
       .select('*')
@@ -112,7 +192,7 @@ serve(async (req) => {
 
     const stats = calculateStats(allTrades || []);
 
-    // Guardar stats diarias
+    // Save daily stats
     await supabase
       .from('audit_stats_daily')
       .upsert({
@@ -121,23 +201,50 @@ serve(async (req) => {
         ...stats,
       }, { onConflict: 'account_id,date' });
 
-    // Actualizar last_sync_at
+    // Update last_sync_at and clear any errors
     await supabase
       .from('audit_accounts')
       .update({
         last_sync_at: new Date().toISOString(),
-        status: account.verified_at ? 'verified' : 'connected',
+        status: 'connected',
+        sync_error: null,
       })
       .eq('id', account.id);
 
     console.log(`✅ Sync completed for account ${account.id}`);
 
     return new Response(
-      JSON.stringify({ success: true, stats }),
+      JSON.stringify({ 
+        success: true, 
+        stats,
+        balance: accountInfo.balance,
+        equity: accountInfo.equity,
+        new_trades: newTrades.length,
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('❌ Sync error:', error);
+    
+    // Save error to account
+    try {
+      const { account_id } = await req.json();
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      );
+      
+      await supabase
+        .from('audit_accounts')
+        .update({
+          sync_error: error.message,
+          status: 'error',
+        })
+        .eq('id', account_id);
+    } catch (e) {
+      console.error('Failed to save error:', e);
+    }
+
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

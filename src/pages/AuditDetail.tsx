@@ -114,11 +114,16 @@ export const AuditDetail = () => {
     },
   });
 
+  // Auto-sync if no equity data on first load
   useEffect(() => {
     if (account && accountData && accountData.equity.length === 0 && !isSyncing) {
       syncMutation.mutate();
     }
   }, [account, accountData]);
+
+  // Check if we have MetaAPI connection
+  const hasMetaApiId = account?.metaapi_account_id;
+  const hasRealData = accountData && accountData.trades && accountData.trades.length > 0;
 
   if (accountLoading || !account) {
     return (
@@ -281,30 +286,87 @@ export const AuditDetail = () => {
           </div>
         </div>
 
-        {/* Alerts */}
-        {!hasData && !isSyncing && (
-          <Alert className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/30 backdrop-blur-sm">
-            <Zap className="h-4 w-4 text-yellow-500" />
-            <AlertTitle className="text-yellow-500 font-semibold">Sincronización inicial en progreso</AlertTitle>
-            <AlertDescription>
-              Conectando con MetaAPI para obtener tu historial completo. Esto puede tomar 30 seg - 2 min.
+        {/* Alerts de Estado */}
+        {!hasMetaApiId ? (
+          <Alert variant="destructive" className="bg-gradient-to-r from-destructive/10 to-destructive/5 border-destructive/30 backdrop-blur-sm">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="font-semibold">⚠️ Cuenta No Configurada Correctamente</AlertTitle>
+            <AlertDescription className="space-y-3">
+              <p className="font-medium">Esta cuenta no está conectada con MetaAPI. Los datos mostrados son temporales y no reflejan tu cuenta real.</p>
+              <div className="bg-destructive/5 rounded-lg p-3 space-y-2">
+                <p className="font-semibold text-sm">🔧 Cómo solucionar:</p>
+                <ol className="list-decimal list-inside text-sm space-y-1">
+                  <li>Elimina esta cuenta usando el botón "Eliminar" arriba</li>
+                  <li>Regresa al panel principal de Auditoría</li>
+                  <li>Vuelve a conectar tu cuenta con los datos correctos de MT5</li>
+                  <li>Asegúrate de ingresar el <strong>login</strong> y <strong>password de inversionista</strong> correctos</li>
+                </ol>
+              </div>
             </AlertDescription>
           </Alert>
-        )}
+        ) : !hasRealData && !isSyncing && !hasData ? (
+          <Alert className="bg-gradient-to-r from-teal/10 to-teal/5 border-teal/30 backdrop-blur-sm">
+            <Loader2 className="h-4 w-4 animate-spin text-teal" />
+            <AlertTitle className="text-teal font-semibold">🔄 Conectando con tu cuenta real...</AlertTitle>
+            <AlertDescription className="space-y-2">
+              <p>Estamos obteniendo los datos reales de tu cuenta MT5 desde MetaAPI.</p>
+              <p className="text-sm text-muted-foreground">Esto puede tomar 30-60 segundos dependiendo del historial de tu cuenta.</p>
+            </AlertDescription>
+          </Alert>
+        ) : !hasRealData && hasData ? (
+          <Alert className="bg-gradient-to-r from-amber/10 to-amber/5 border-amber/30 backdrop-blur-sm">
+            <Zap className="h-4 w-4 text-amber-500" />
+            <AlertTitle className="text-amber-500 font-semibold">⏳ Esperando Datos Reales de MT5</AlertTitle>
+            <AlertDescription className="space-y-3">
+              <p>La conexión con MetaAPI está en proceso. Los datos mostrados son temporales mientras se sincronizan tus operaciones reales.</p>
+              <div className="bg-amber/5 rounded-lg p-3 space-y-2">
+                <p className="font-semibold text-sm">Si la sincronización tarda más de lo esperado:</p>
+                <ul className="list-disc list-inside text-sm space-y-1">
+                  <li>Verifica que tu cuenta MT5 esté activa en Exness</li>
+                  <li>Confirma que tengas operaciones en el historial</li>
+                  <li>Asegúrate de que el <strong>login</strong> y <strong>password de inversionista</strong> sean correctos</li>
+                  <li>Intenta sincronizar manualmente con el botón de arriba</li>
+                </ul>
+              </div>
+            </AlertDescription>
+          </Alert>
+        ) : null}
 
         {account.sync_error && (
-          <Alert variant="destructive" className="bg-gradient-to-br from-destructive/10 to-destructive/5 backdrop-blur-sm">
+          <Alert variant="destructive" className="bg-gradient-to-r from-destructive/10 to-destructive/5 border-destructive/30 backdrop-blur-sm">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error de conexión detectado</AlertTitle>
-            <AlertDescription className="space-y-2">
-              <p className="font-medium">{account.sync_error}</p>
-              <div className="mt-3 space-y-1">
-                <p className="font-semibold text-sm">Soluciones recomendadas:</p>
-                <ul className="list-disc list-inside text-xs space-y-1 opacity-90">
-                  <li>Verifica el número de cuenta y contraseña de inversionista</li>
-                  <li>Confirma que el servidor sea el correcto</li>
-                  <li>Intenta reconectar la cuenta</li>
+            <AlertTitle className="font-semibold">❌ Error de Sincronización con MetaAPI</AlertTitle>
+            <AlertDescription className="space-y-3">
+              <div className="bg-destructive/10 rounded-lg p-3">
+                <p className="font-semibold text-sm mb-1">Error detectado:</p>
+                <p className="font-mono text-xs bg-background/50 p-2 rounded">{account.sync_error}</p>
+              </div>
+              
+              <div className="bg-destructive/5 rounded-lg p-3 space-y-2">
+                <p className="font-semibold text-sm">🔍 Causas comunes y soluciones:</p>
+                <ul className="list-disc list-inside text-sm space-y-2">
+                  <li>
+                    <strong>Account not found / Cuenta no encontrada:</strong><br/>
+                    <span className="text-xs ml-5 text-muted-foreground">El número de cuenta (login) no existe en MetaTrader. Verifica el login en tu terminal MT5.</span>
+                  </li>
+                  <li>
+                    <strong>Credenciales incorrectas:</strong><br/>
+                    <span className="text-xs ml-5 text-muted-foreground">El password de inversionista cambió o es incorrecto. Ve a MT5 → Herramientas → Opciones → Servidor para verificar.</span>
+                  </li>
+                  <li>
+                    <strong>Cuenta inactiva:</strong><br/>
+                    <span className="text-xs ml-5 text-muted-foreground">La cuenta puede estar cerrada o suspendida en Exness. Verifica el estado en tu área de clientes.</span>
+                  </li>
+                  <li>
+                    <strong>Servidor incorrecto:</strong><br/>
+                    <span className="text-xs ml-5 text-muted-foreground">Verifica que el servidor sea el correcto (ej: Exness-MT5Real31). Encuéntralo en MT5 → Archivo → Abrir una cuenta.</span>
+                  </li>
                 </ul>
+              </div>
+              
+              <div className="bg-teal/10 rounded-lg p-3 border border-teal/20">
+                <p className="text-sm font-semibold text-teal mb-1">💡 Recomendación:</p>
+                <p className="text-sm">Elimina esta cuenta y vuelve a conectarla con los datos correctos desde el panel principal de Auditoría.</p>
               </div>
             </AlertDescription>
           </Alert>
