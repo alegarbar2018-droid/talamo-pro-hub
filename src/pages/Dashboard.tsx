@@ -33,9 +33,9 @@ import { supabase } from "@/integrations/supabase/client";
 // Memoize heavy card components
 const StatCard = memo(({ stat, index }: any) => (
   <Card 
-    className="group relative overflow-hidden border-line/50 bg-surface/50 backdrop-blur-xl hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 dashboard-card"
+    className="group relative overflow-hidden border-line bg-surface backdrop-blur-xl hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 dashboard-card"
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-teal/0 to-cyan/0 group-hover:from-teal/10 group-hover:to-cyan/10 transition-all duration-500" />
+    <div className="absolute inset-0 bg-gradient-to-br from-teal/5 to-cyan/5 group-hover:from-teal/15 group-hover:to-cyan/15 transition-all duration-500" />
     
     <CardContent className="relative z-10 p-6">
       <div className="flex items-start justify-between mb-4">
@@ -48,13 +48,13 @@ const StatCard = memo(({ stat, index }: any) => (
       </div>
       
       <div>
-        <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+        <p className="text-sm text-foreground/70 mb-1">{stat.title}</p>
         <p className="text-3xl font-bold text-foreground mb-2">{stat.value}</p>
         <div className="flex items-center gap-2">
-          <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+          <div className="h-1 w-full bg-muted/60 rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000" style={{width: '65%'}} />
           </div>
-          <span className="text-xs text-teal whitespace-nowrap">{stat.trend}</span>
+          <span className="text-xs text-teal font-medium whitespace-nowrap">{stat.trend}</span>
         </div>
       </div>
     </CardContent>
@@ -64,7 +64,7 @@ StatCard.displayName = 'StatCard';
 
 const QuickActionCard = memo(({ action, index }: any) => (
   <Card 
-    className="group relative overflow-hidden border-line bg-surface hover:border-teal/50 transition-all duration-300 cursor-pointer dashboard-card"
+    className="group relative overflow-hidden border-line/80 bg-surface hover:border-teal/70 transition-all duration-300 cursor-pointer dashboard-card shadow-sm"
     onClick={action.action}
   >
     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -87,10 +87,10 @@ const QuickActionCard = memo(({ action, index }: any) => (
           )}
         </div>
         
-        <CardTitle className="text-lg text-foreground group-hover:text-teal transition-colors">
+        <CardTitle className="text-lg text-foreground group-hover:text-teal transition-colors font-semibold">
           {action.title}
         </CardTitle>
-        <CardDescription className="text-sm text-muted-foreground">
+        <CardDescription className="text-sm text-foreground/60">
           {action.description}
         </CardDescription>
       </CardHeader>
@@ -104,7 +104,7 @@ const QuickActionCard = memo(({ action, index }: any) => (
                 style={{width: `${action.progress}%`}}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground/60 font-medium">
               {action.progress}% completado
             </p>
           </div>
@@ -326,8 +326,8 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section Premium */}
-        <div className="relative mb-8 sm:mb-12 overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-teal/10 via-surface to-cyan/10 p-4 sm:p-6 md:p-8 border border-teal/20 animate-fade-in">
-          <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-teal/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="relative mb-8 sm:mb-12 overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-teal/20 via-surface to-cyan/15 p-4 sm:p-6 md:p-8 border border-teal/40 animate-fade-in shadow-lg">
+          <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-teal/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           
           <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-gradient-to-br from-teal to-cyan flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg ring-4 ring-teal/20">
@@ -335,25 +335,25 @@ const Dashboard = () => {
             </div>
             
             <div className="flex-1">
-              <p className="text-xs sm:text-sm text-muted-foreground mb-1">
+              <p className="text-xs sm:text-sm text-foreground/70 mb-1 font-medium">
                 {getGreeting()}
               </p>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">
                 {user.profile?.first_name || user.email?.split('@')[0] || 'Trader'}
               </h1>
               <div className="flex flex-wrap items-center gap-4">
-                <Badge variant="outline" className="border-teal text-teal">
+                <Badge variant="outline" className="border-teal/70 text-teal bg-teal/10">
                   {isValidated || user.isAffiliated ? "✓ Cuenta Validada" : "Demo"}
                 </Badge>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-foreground/70 font-medium">
                   🔥 {completedLessons} lecciones completadas
                 </span>
               </div>
             </div>
             
             <div className="text-right">
-              <p className="text-3xl font-bold text-teal">{academyProgress}%</p>
-              <p className="text-xs text-muted-foreground">Progreso total</p>
+              <p className="text-3xl font-bold text-teal drop-shadow-sm">{academyProgress}%</p>
+              <p className="text-xs text-foreground/60 font-medium">Progreso total</p>
             </div>
           </div>
         </div>
@@ -369,17 +369,17 @@ const Dashboard = () => {
         {/* Recent Activity & Checklist Mejorados */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Activity Timeline */}
-          <Card className="border-line bg-surface/80 backdrop-blur-sm dashboard-card">
+          <Card className="border-line bg-surface backdrop-blur-sm dashboard-card shadow-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-foreground flex items-center gap-2">
+                  <CardTitle className="text-foreground flex items-center gap-2 font-semibold">
                     <Activity className="h-5 w-5 text-teal" />
                     Actividad Reciente
                   </CardTitle>
-                  <CardDescription>Tus últimas acciones</CardDescription>
+                  <CardDescription className="text-foreground/60">Tus últimas acciones</CardDescription>
                 </div>
-                <Badge variant="outline" className="text-teal border-teal">
+                <Badge variant="outline" className="text-teal border-teal/70 bg-teal/10">
                   {recentActivities.length} actividades
                 </Badge>
               </div>
@@ -395,10 +395,10 @@ const Dashboard = () => {
                   recentActivities.map((activity, index) => (
                     <div
                       key={index}
-                      className="relative flex items-start gap-4 p-4 rounded-lg bg-background/50 border border-line/50 hover:border-teal/30 transition-colors animate-fade-in"
+                      className="relative flex items-start gap-4 p-4 rounded-lg bg-surface/50 border border-line/80 hover:border-teal/50 transition-colors animate-fade-in"
                       style={{animationDelay: `${index * 100}ms`}}
                     >
-                      <div className="relative z-10 p-2 rounded-full bg-teal/20 ring-4 ring-surface">
+                      <div className="relative z-10 p-2 rounded-full bg-teal/25 ring-4 ring-surface/50">
                         <BookOpen className="h-4 w-4 text-teal" />
                       </div>
                       
@@ -406,7 +406,7 @@ const Dashboard = () => {
                         <p className="text-sm font-medium text-foreground truncate">
                           {activity.title}
                         </p>
-                        <p className="text-xs text-muted-foreground capitalize">
+                        <p className="text-xs text-foreground/60 capitalize font-medium">
                           {activity.action} • {activity.time}
                         </p>
                       </div>
@@ -415,14 +415,14 @@ const Dashboard = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-8">
+                  <p className="text-sm text-foreground/60 text-center py-8 font-medium">
                     No hay actividad reciente aún
                   </p>
                 )}
               </div>
               <Button
                 variant="outline"
-                className="w-full mt-4 border-teal text-teal hover:bg-teal/10"
+                className="w-full mt-4 border-teal/70 text-teal hover:bg-teal/15 font-medium"
                 onClick={() => navigate("/academy")}
               >
                 Ir a Academia
@@ -431,13 +431,13 @@ const Dashboard = () => {
           </Card>
 
           {/* Checklist Mejorado */}
-          <Card className="border-line bg-surface/80 backdrop-blur-sm dashboard-card">
+          <Card className="border-line bg-surface backdrop-blur-sm dashboard-card shadow-sm">
             <CardHeader>
-              <CardTitle className="text-foreground flex items-center gap-2">
+              <CardTitle className="text-foreground flex items-center gap-2 font-semibold">
                 <Target className="h-5 w-5 text-teal" />
                 {t("dashboard:checklist.title")}
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription className="text-foreground/60">
                 {t("dashboard:checklist.subtitle")}
               </CardDescription>
             </CardHeader>
@@ -446,22 +446,22 @@ const Dashboard = () => {
                 {checklistItems.map((item, index) => (
                   <div 
                     key={index} 
-                    className="group flex items-center gap-3 p-3 rounded-lg bg-background/50 border border-line/50 hover:border-teal/30 transition-all animate-fade-in"
+                    className="group flex items-center gap-3 p-3 rounded-lg bg-surface/50 border border-line/80 hover:border-teal/50 transition-all animate-fade-in"
                     style={{animationDelay: `${index * 80}ms`}}
                   >
                     {item.done ? (
                       <div className="relative flex items-center justify-center">
-                        <div className="absolute w-6 h-6 bg-success/20 rounded-full animate-pulse" />
+                        <div className="absolute w-6 h-6 bg-success/25 rounded-full animate-pulse" />
                         <CheckCircle className="h-5 w-5 text-success relative z-10" />
                       </div>
                     ) : (
-                      <div className="h-5 w-5 rounded-full border-2 border-muted group-hover:border-teal/50 transition-colors" />
+                      <div className="h-5 w-5 rounded-full border-2 border-line group-hover:border-teal/70 transition-colors" />
                     )}
-                    <span className={`text-sm flex-1 transition-all ${item.done ? 'text-muted-foreground line-through' : 'text-foreground group-hover:text-teal'}`}>
+                    <span className={`text-sm flex-1 transition-all font-medium ${item.done ? 'text-foreground/50 line-through' : 'text-foreground group-hover:text-teal'}`}>
                       {item.task}
                     </span>
                     {!item.done && (
-                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowRight className="h-4 w-4 text-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity" />
                     )}
                   </div>
                 ))}
@@ -471,22 +471,22 @@ const Dashboard = () => {
         </div>
 
         {/* Risk Warning Premium */}
-        <Card className="relative overflow-hidden border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-orange-500/5 mt-8 dashboard-card">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
+        <Card className="relative overflow-hidden border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-orange-500/10 mt-8 dashboard-card shadow-sm">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/15 rounded-full blur-3xl" />
           
           <CardContent className="relative z-10 p-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-amber-500/10">
+              <div className="p-3 rounded-xl bg-amber-500/20">
                 <AlertTriangle className="h-6 w-6 text-amber-500" />
               </div>
               <div className="flex-1 space-y-2">
                 <h3 className="font-semibold text-foreground flex items-center gap-2">
                   {t("dashboard:risk_warning.title")}
-                  <Badge variant="outline" className="border-amber-500 text-amber-500">
+                  <Badge variant="outline" className="border-amber-500/70 text-amber-500 bg-amber-500/10">
                     Importante
                   </Badge>
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-foreground/70 leading-relaxed font-medium">
                   {t("dashboard:risk_warning.text")}
                 </p>
               </div>
