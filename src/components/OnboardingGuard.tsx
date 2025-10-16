@@ -11,8 +11,12 @@ export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({ children }) =>
   const { user, loading } = useAuth();
   const location = useLocation();
   
-  // Mientras carga la autenticación O el perfil no está disponible
-  if (loading || (user && !user.profile)) {
+  // Only show spinner on initial load, not when user data is being revalidated
+  // If we have cached profile data or the profile has loaded, don't block
+  const hasProfileData = user?.profile !== undefined;
+  const shouldShowSpinner = loading && !user;
+  
+  if (shouldShowSpinner) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

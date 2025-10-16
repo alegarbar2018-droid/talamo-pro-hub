@@ -83,11 +83,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const enrichUserData = async (baseUser: User): Promise<AuthUser> => {
-    console.log('⏳ Starting progressive user data enrichment...');
+    console.log('⏳ Starting user data enrichment (with cache)...');
     const startTime = Date.now();
     
-    // Progressive loading: Try to get each piece of data independently
-    // Don't fail the entire login if one piece fails
+    // Progressive loading with cache: Try to get each piece of data independently
+    // Cache will provide instant data if available, then revalidate in background
     const profilePromise = getUserProfile(baseUser.id).catch(err => {
       console.warn('⚠️ getUserProfile failed, using defaults:', err);
       return null;
@@ -103,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     });
 
-    // Wait for all promises, but don't fail if some fail
+    // Wait for all promises (will use cache if available)
     const [profile, roles, validated] = await Promise.all([
       profilePromise,
       rolesPromise,
@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ]);
 
     const duration = Date.now() - startTime;
-    console.log(`✅ User data enriched in ${duration}ms (progressive mode)`);
+    console.log(`✅ User data enriched in ${duration}ms (cached: ${duration < 100 ? 'yes' : 'no'})`);
     console.log('📊 Data status:', { 
       hasProfile: !!profile, 
       rolesCount: roles?.length || 0, 
@@ -128,7 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = async () => {
     if (session?.user) {
-      setLoading(true);
+      // Don't set loading to true for refresh - use cache
       try {
         const enrichedUser = await enrichUserData(session.user);
         setUser(enrichedUser);
@@ -136,8 +136,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (error) {
         console.error('⚠️ Error refreshing user data (non-fatal):', error);
         // Don't force logout on refresh failure - progressive auth
-      } finally {
-        setLoading(false);
       }
     }
   };
@@ -164,17 +162,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         
         if (session?.user) {
-          setLoading(true);
+          // Only show loading on initial sign in, not on revalidation
+          const isInitialSignIn = event === 'SIGNED_IN' && !user;
+          if (isInitialSignIn) {
+            setLoading(true);
+          }
+          
           try {
-            // Progressive auth: Always set basic user first
-            setUser({
-              ...session.user,
-              profile: undefined,
-              roles: [],
-              isAffiliated: false,
-            });
-            
-            // Then enrich data in background (non-blocking)
+            // Enrich data with cache support (instant if cached)
             const enrichedUser = await enrichUserData(session.user);
             setUser(enrichedUser);
             setIsValidated(enrichedUser.isAffiliated || false);
@@ -182,7 +177,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error('⚠️ Error enriching user data (non-fatal):', error);
             // Don't logout on enrichment failure with progressive auth
           } finally {
-            setLoading(false);
+            if (isInitialSignIn) {
+              setLoading(false);
+            }
           }
         } else {
           setUser(null);
@@ -201,15 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (session?.user) {
           setLoading(true);
           try {
-            // Progressive auth: Set basic user immediately
-            setUser({
-              ...session.user,
-              profile: undefined,
-              roles: [],
-              isAffiliated: false,
-            });
-            
-            // Then enrich in background
+            // Enrich with cache support (instant if cached)
             const enrichedUser = await enrichUserData(session.user);
             setUser(enrichedUser);
             setIsValidated(enrichedUser.isAffiliated || false);

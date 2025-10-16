@@ -60,10 +60,13 @@ export const signIn = async (email: string, password: string) => {
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
   
-  // Clear local storage
+  // Clear local storage including cache
   localStorage.removeItem("user");
   localStorage.removeItem("isValidated");
   localStorage.removeItem("partnerId");
+  localStorage.removeItem(CACHE_KEYS.PROFILE);
+  localStorage.removeItem(CACHE_KEYS.ROLES);
+  localStorage.removeItem(CACHE_KEYS.VALIDATION);
   
   return { error };
 };
@@ -86,10 +89,48 @@ export const updatePassword = async (password: string) => {
   return { data, error };
 };
 
-// Utility to wrap promises with timeout (increased to 8s for better reliability)
+// Cache keys
+const CACHE_KEYS = {
+  PROFILE: 'user_profile_cache',
+  ROLES: 'user_roles_cache',
+  VALIDATION: 'user_validation_cache',
+};
+
+// Cache utilities
+const setCache = (key: string, data: any) => {
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      data,
+      timestamp: Date.now(),
+    }));
+  } catch (error) {
+    console.warn('Failed to cache data:', error);
+  }
+};
+
+const getCache = <T>(key: string, maxAgeMs: number = 5 * 60 * 1000): T | null => {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+    
+    if (age > maxAgeMs) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    
+    return data as T;
+  } catch (error) {
+    return null;
+  }
+};
+
+// Utility to wrap promises with timeout (reduced to 3s for faster feedback)
 const withTimeout = async <T>(
   promise: Promise<T>,
-  timeoutMs: number = 8000
+  timeoutMs: number = 3000
 ): Promise<T> => {
   const startTime = Date.now();
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -111,6 +152,16 @@ const withTimeout = async <T>(
 // Profile functions
 export const getUserProfile = async (userId: string): Promise<UserProfile | null> => {
   console.log(`📥 Fetching profile for user ${userId}...`);
+  
+  // Try to get from cache first
+  const cached = getCache<UserProfile>(CACHE_KEYS.PROFILE);
+  if (cached) {
+    console.log('✅ Profile loaded from cache');
+    // Revalidate in background
+    fetchProfileInBackground(userId);
+    return cached;
+  }
+  
   try {
     const fetchProfile = async () => {
       const { data, error } = await supabase
@@ -121,13 +172,37 @@ export const getUserProfile = async (userId: string): Promise<UserProfile | null
       
       if (error) throw error;
       console.log('✅ Profile fetched successfully');
+      
+      // Cache the result
+      if (data) {
+        setCache(CACHE_KEYS.PROFILE, data);
+      }
+      
       return data;
     };
     
-    return await withTimeout(fetchProfile(), 8000);
+    return await withTimeout(fetchProfile(), 3000);
   } catch (error) {
     console.error('❌ getUserProfile failed:', error);
-    return null;
+    // Return cached data as fallback even if expired
+    return getCache<UserProfile>(CACHE_KEYS.PROFILE, Infinity);
+  }
+};
+
+// Background fetch to update cache
+const fetchProfileInBackground = async (userId: string) => {
+  try {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (data) {
+      setCache(CACHE_KEYS.PROFILE, data);
+    }
+  } catch (error) {
+    // Silently fail background updates
   }
 };
 
@@ -145,6 +220,16 @@ export const updateUserProfile = async (userId: string, updates: Partial<UserPro
 // Role functions
 export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
   console.log(`📥 Fetching roles for user ${userId}...`);
+  
+  // Try to get from cache first
+  const cached = getCache<UserRole[]>(CACHE_KEYS.ROLES);
+  if (cached) {
+    console.log('✅ Roles loaded from cache');
+    // Revalidate in background
+    fetchRolesInBackground(userId);
+    return cached;
+  }
+  
   try {
     const fetchRoles = async () => {
       const { data, error } = await supabase
@@ -154,13 +239,35 @@ export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
       
       if (error) throw error;
       console.log(`✅ Roles fetched: ${data?.length || 0} roles`);
-      return data || [];
+      
+      // Cache the result
+      const roles = data || [];
+      setCache(CACHE_KEYS.ROLES, roles);
+      
+      return roles;
     };
     
-    return await withTimeout(fetchRoles(), 8000);
+    return await withTimeout(fetchRoles(), 3000);
   } catch (error) {
     console.error('❌ getUserRoles failed:', error);
-    return [];
+    // Return cached data as fallback even if expired
+    return getCache<UserRole[]>(CACHE_KEYS.ROLES, Infinity) || [];
+  }
+};
+
+// Background fetch to update cache
+const fetchRolesInBackground = async (userId: string) => {
+  try {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (data) {
+      setCache(CACHE_KEYS.ROLES, data);
+    }
+  } catch (error) {
+    // Silently fail background updates
   }
 };
 
@@ -191,6 +298,16 @@ export const addUserRole = async (userId: string, role: 'admin' | 'trader' | 'pa
 // Affiliation functions (integration with existing system)
 export const isUserValidated = async (userId: string): Promise<boolean> => {
   console.log(`📥 Checking validation for user ${userId}...`);
+  
+  // Try to get from cache first
+  const cached = getCache<boolean>(CACHE_KEYS.VALIDATION);
+  if (cached !== null) {
+    console.log('✅ Validation loaded from cache');
+    // Revalidate in background
+    fetchValidationInBackground(userId);
+    return cached;
+  }
+  
   try {
     const checkAffiliation = async () => {
       const { data, error } = await supabase
@@ -205,14 +322,39 @@ export const isUserValidated = async (userId: string): Promise<boolean> => {
         return localStorage.getItem("isValidated") === 'true';
       }
       
-      console.log(`✅ Validation checked: ${data?.is_affiliated || false}`);
-      return data?.is_affiliated || false;
+      const isValidated = data?.is_affiliated || false;
+      console.log(`✅ Validation checked: ${isValidated}`);
+      
+      // Cache the result
+      setCache(CACHE_KEYS.VALIDATION, isValidated);
+      
+      return isValidated;
     };
     
-    return await withTimeout(checkAffiliation(), 8000);
+    return await withTimeout(checkAffiliation(), 3000);
   } catch (error) {
     console.error('❌ isUserValidated failed:', error);
+    // Return cached data as fallback
+    const cachedValidation = getCache<boolean>(CACHE_KEYS.VALIDATION, Infinity);
+    if (cachedValidation !== null) return cachedValidation;
     return localStorage.getItem("isValidated") === 'true';
+  }
+};
+
+// Background fetch to update cache
+const fetchValidationInBackground = async (userId: string) => {
+  try {
+    const { data } = await supabase
+      .from('affiliations')
+      .select('is_affiliated')
+      .eq('user_id', userId)
+      .maybeSingle();
+    
+    if (data !== null) {
+      setCache(CACHE_KEYS.VALIDATION, data.is_affiliated || false);
+    }
+  } catch (error) {
+    // Silently fail background updates
   }
 };
 
