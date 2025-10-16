@@ -99,59 +99,110 @@ export const VerificationPanel = ({ accountId }: VerificationPanelProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         {!verification ? (
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">
-              {t('tools.audit.verification_intro', 'Para verificar que eres el dueño de la cuenta, necesitamos que crees una orden pendiente temporal.')}
-            </p>
-            <Button onClick={() => startVerification.mutate()} disabled={startVerification.isPending}>
+          <div className="space-y-4">
+            <Alert className="bg-blue-500/10 border-blue-500/30">
+              <AlertDescription className="space-y-3">
+                <p className="font-semibold text-base">
+                  📋 {t('tools.audit.why_verify', '¿Por qué verificar la cuenta?')}
+                </p>
+                <p className="text-sm">
+                  {t('tools.audit.verification_intro', 'Para conectarnos de forma segura a tu cuenta MT4/MT5, necesitamos confirmar que eres el dueño. Solo toma 1 minuto.')}
+                </p>
+                <p className="text-sm font-medium">
+                  {t('tools.audit.verification_method', '✓ Verificación mediante orden pendiente temporal')}
+                </p>
+              </AlertDescription>
+            </Alert>
+            
+            <Button 
+              onClick={() => startVerification.mutate()} 
+              disabled={startVerification.isPending}
+              className="w-full bg-teal hover:bg-teal/90"
+              size="lg"
+            >
               {startVerification.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {t('tools.audit.generate_code', 'Generar Código de Verificación')}
+              {t('tools.audit.generate_code', '1️⃣ Generar mi Código de Verificación')}
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-4 bg-background/50 rounded-lg border border-line/30">
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground mb-1">
-                  {t('tools.audit.verification_code', 'Código de Verificación')}
-                </p>
-                <Badge className="text-lg font-mono bg-teal/20 text-teal border-teal/30">
+          <div className="space-y-5">
+            {/* Código destacado */}
+            <div className="bg-gradient-to-br from-teal/20 to-teal/5 p-6 rounded-lg border-2 border-teal/50">
+              <p className="text-sm font-semibold text-center mb-3">
+                🔑 {t('tools.audit.your_code', 'TU CÓDIGO DE VERIFICACIÓN')}
+              </p>
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <Badge className="text-3xl font-mono px-6 py-3 bg-background border-2 border-teal/50 text-teal tracking-wider">
                   {verification.key}
                 </Badge>
+                <Button size="lg" variant="outline" onClick={copyKey} className="border-teal/50">
+                  {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+                </Button>
               </div>
-              <Button size="sm" variant="ghost" onClick={copyKey}>
-                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-              </Button>
+              <p className="text-xs text-center text-muted-foreground">
+                {t('tools.audit.click_to_copy', '☝️ Clic en el botón para copiar el código')}
+              </p>
             </div>
 
-            <Alert>
+            {/* Instrucciones paso a paso */}
+            <Alert className="bg-blue-500/10 border-blue-500/30">
               <AlertDescription>
-                <ol className="list-decimal list-inside space-y-2 text-sm">
-                  <li>{t('tools.audit.step1', 'Abre tu plataforma MT4/MT5')}</li>
-                  <li>{t('tools.audit.step2', 'Crea una orden pendiente (Buy Limit o Sell Limit) muy lejos del precio actual')}</li>
-                  <li>
-                    {t('tools.audit.step3', 'En el campo Comment, escribe exactamente:')} <code className="bg-muted px-1 py-0.5 rounded">{verification.key}</code>
+                <p className="font-semibold mb-3 text-base">
+                  📝 {t('tools.audit.follow_steps', 'Sigue estos pasos en tu plataforma MT4/MT5:')}
+                </p>
+                <ol className="space-y-3 text-sm">
+                  <li className="flex gap-3">
+                    <span className="font-bold text-teal min-w-[24px]">1.</span>
+                    <span>{t('tools.audit.step1_detail', 'Abre tu plataforma MetaTrader 4 o 5 con la cuenta que conectaste')}</span>
                   </li>
-                  <li>{t('tools.audit.step4', 'Confirma la orden (no se ejecutará por estar muy lejos del precio)')}</li>
-                  <li>{t('tools.audit.step5', 'Haz clic en "Verificar Ahora" abajo')}</li>
-                  <li>{t('tools.audit.step6', 'Una vez verificado, puedes cancelar la orden pendiente')}</li>
+                  <li className="flex gap-3">
+                    <span className="font-bold text-teal min-w-[24px]">2.</span>
+                    <div>
+                      <p className="mb-1">{t('tools.audit.step2_detail', 'Crea una orden PENDIENTE (no ejecutable):')}</p>
+                      <ul className="list-disc list-inside ml-4 text-xs space-y-1 text-muted-foreground">
+                        <li>{t('tools.audit.step2a', 'Elige Buy Limit o Sell Limit')}</li>
+                        <li>{t('tools.audit.step2b', 'Ponla MUY LEJOS del precio actual (ejemplo: si EURUSD está en 1.10, ponla en 0.50 o 2.00)')}</li>
+                        <li className="font-semibold text-yellow-400">{t('tools.audit.step2c', '¡Así NO se ejecutará y no gastarás dinero!')}</li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-bold text-teal min-w-[24px]">3.</span>
+                    <div>
+                      <p className="mb-1">{t('tools.audit.step3_detail', 'En el campo "Comment" o "Comentario", pega EXACTAMENTE este código:')}</p>
+                      <code className="block mt-2 bg-background px-3 py-2 rounded border border-teal/30 text-teal font-mono text-base">
+                        {verification.key}
+                      </code>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-bold text-teal min-w-[24px]">4.</span>
+                    <span>{t('tools.audit.step4_detail', 'Confirma y crea la orden pendiente')}</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-bold text-teal min-w-[24px]">5.</span>
+                    <span>{t('tools.audit.step5_detail', 'Regresa aquí y haz clic en "Verificar Ahora"')}</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="font-bold text-green-500 min-w-[24px]">6.</span>
+                    <span className="text-muted-foreground italic">{t('tools.audit.step6_detail', 'Una vez verificado, puedes eliminar la orden pendiente desde MT4/MT5')}</span>
+                  </li>
                 </ol>
               </AlertDescription>
             </Alert>
 
-            <div className="flex gap-3">
-              <Button
-                onClick={() => verifyAccount.mutate()}
-                disabled={verifyAccount.isPending}
-                className="flex-1 bg-teal hover:bg-teal/90"
-              >
-                {verifyAccount.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {t('tools.audit.verify_now', 'Verificar Ahora')}
-              </Button>
-            </div>
+            <Button
+              onClick={() => verifyAccount.mutate()}
+              disabled={verifyAccount.isPending}
+              className="w-full bg-teal hover:bg-teal/90"
+              size="lg"
+            >
+              {verifyAccount.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {t('tools.audit.verify_now', '✓ Verificar Ahora')}
+            </Button>
 
-            <p className="text-xs text-muted-foreground text-center">
-              {t('tools.audit.expires', 'Código expira:')} {new Date(verification.expires_at).toLocaleString()}
+            <p className="text-xs text-muted-foreground text-center bg-background/50 py-2 rounded">
+              ⏱️ {t('tools.audit.expires', 'Este código expira el:')} <span className="font-semibold">{new Date(verification.expires_at).toLocaleString()}</span>
             </p>
           </div>
         )}
