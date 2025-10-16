@@ -28,6 +28,7 @@ const CopyTrading = lazy(() => import("./pages/CopyTrading"));
 const Tools = lazy(() => import("./pages/Tools"));
 const Journal = lazy(() => import("./pages/Journal"));
 const Audit = lazy(() => import("./pages/Audit"));
+const AuditDetail = lazy(() => import("./pages/AuditDetail"));
 const Settings = lazy(() => import("./pages/Settings"));
 const ChangePartnerGuide = lazy(() => import("./pages/ChangePartnerGuide"));
 const ExnessRedirect = lazy(() => import("./pages/ExnessRedirect"));
@@ -109,6 +110,7 @@ const App: React.FC = () => {
             <Route path="/tools" element={<OnboardingGuard><Tools /></OnboardingGuard>} />
             <Route path="/journal" element={<OnboardingGuard><Journal /></OnboardingGuard>} />
             <Route path="/audit" element={<OnboardingGuard><Audit /></OnboardingGuard>} />
+            <Route path="/audit/:accountId" element={<OnboardingGuard><AuditDetail /></OnboardingGuard>} />
             <Route path="/settings" element={<OnboardingGuard><Settings /></OnboardingGuard>} />
             <Route path="/access" element={<AccessWizard />} />
             
