@@ -70,8 +70,8 @@ const Index = () => {
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--primary-rgb),0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(var(--primary-rgb),0.02)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
         
-        <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-24">
-          <div className="text-center space-y-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16 md:py-20 lg:py-24">
+          <div className="text-center space-y-8 sm:space-y-12 md:space-y-16">
             
             {/* Premium badge */}
             <motion.div 
@@ -91,18 +91,18 @@ const Index = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="space-y-8"
             >
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[0.95] tracking-tight">
                 <div className="relative">
                   <div className="text-white">Trading serio.</div>
                   <span className="text-primary">Sin humo</span>
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-40 h-2 bg-gradient-primary rounded-full opacity-60"></div>
+                  <div className="absolute -bottom-2 sm:-bottom-4 left-1/2 transform -translate-x-1/2 w-32 sm:w-40 h-1.5 sm:h-2 bg-gradient-primary rounded-full opacity-60"></div>
                 </div>
               </h1>
               
               <div className="max-w-4xl mx-auto">
-                <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-medium tracking-wide">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed font-medium tracking-wide">
                   {t("landing:hero_subtitle")}
-                  <div className="flex flex-wrap justify-center gap-6 mt-8">
+                  <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 mt-6 sm:mt-8">
                     <div className="group relative">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-teal/30 via-primary/20 to-accent/30 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
                       <div className="relative bg-surface/90 backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2 flex items-center gap-3 shadow-lg">
@@ -287,7 +287,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-line bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">

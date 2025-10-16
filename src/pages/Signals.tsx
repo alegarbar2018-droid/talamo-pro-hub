@@ -51,19 +51,19 @@ const SignalCard = memo(({ signal, getStatusColor, getTypeIcon, calculatePipsFro
     </CardHeader>
     
     <CardContent>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
             <div>
-              <span className="text-muted-foreground">{t('signals:signal.entry')}</span>
+              <span className="text-muted-foreground block text-xs">{t('signals:signal.entry')}</span>
               <div className="font-mono font-medium text-foreground">{signal.entry.toFixed(2)}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">{t('signals:signal.stop_loss')}</span>
+              <span className="text-muted-foreground block text-xs">{t('signals:signal.stop_loss')}</span>
               <div className="font-mono font-medium text-destructive">{signal.sl.toFixed(2)}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">{t('signals:signal.take_profit')}</span>
+              <span className="text-muted-foreground block text-xs">{t('signals:signal.take_profit')}</span>
               <div className="font-mono font-medium text-success">{signal.tp.toFixed(2)}</div>
             </div>
           </div>
@@ -99,9 +99,9 @@ const SignalCard = memo(({ signal, getStatusColor, getTypeIcon, calculatePipsFro
         </div>
       </div>
       
-      <div className="flex gap-3 mt-6 pt-4 border-t border-line">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6 pt-4 border-t border-line">
         <Button 
-          className="bg-teal hover:bg-teal/90 text-white"
+          className="bg-teal hover:bg-teal/90 text-white w-full sm:w-auto"
           onClick={() => {
             const { sl_pips, tp_pips } = calculatePipsFromPrice(signal.entry, signal.sl, signal.tp, signal.instrument);
             trackInteraction('signal_card', 'open_in_tools_click', { signal_id: signal.id, instrument: signal.instrument, type: signal.type });
@@ -113,7 +113,7 @@ const SignalCard = memo(({ signal, getStatusColor, getTypeIcon, calculatePipsFro
         </Button>
         <Button 
           variant="outline" 
-          className="border-line"
+          className="border-line w-full sm:w-auto"
           onClick={() => {
             const jsonPayload = {
               instrument: signal.instrument,
@@ -137,7 +137,7 @@ const SignalCard = memo(({ signal, getStatusColor, getTypeIcon, calculatePipsFro
         </Button>
         <Button 
           variant="outline" 
-          className="border-teal text-teal hover:bg-teal/10"
+          className="border-teal text-teal hover:bg-teal/10 w-full sm:w-auto"
           onClick={() => trackInteraction('signal_card', 'view_full_analysis', { signal_id: signal.id, signal_type: signal.type, instrument: signal.instrument })}
           aria-label={`Ver análisis completo de ${signal.instrument}`}
         >
@@ -271,10 +271,10 @@ const Signals = () => {
             
             {/* Main heading */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
                 {t('signals:title')}
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-3xl">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground font-light max-w-3xl">
                 {t('signals:subtitle')}{" "}
                 <span className="text-teal font-medium">análisis profesional verificado</span>
               </p>

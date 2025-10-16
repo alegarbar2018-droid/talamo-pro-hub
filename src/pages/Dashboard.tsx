@@ -332,19 +332,19 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section Premium */}
-        <div className="relative mb-12 overflow-hidden rounded-2xl bg-gradient-to-br from-teal/10 via-surface to-cyan/10 p-8 border border-teal/20 animate-fade-in">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-teal/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="relative mb-8 sm:mb-12 overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-teal/10 via-surface to-cyan/10 p-4 sm:p-6 md:p-8 border border-teal/20 animate-fade-in">
+          <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-teal/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-teal to-cyan flex items-center justify-center text-3xl font-bold text-white shadow-lg ring-4 ring-teal/20">
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-gradient-to-br from-teal to-cyan flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg ring-4 ring-teal/20">
               {user.profile?.first_name?.[0]?.toUpperCase() || user.email?.[0].toUpperCase()}
             </div>
             
             <div className="flex-1">
-              <p className="text-sm text-muted-foreground mb-1">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-1">
                 {getGreeting()}
               </p>
-              <h1 className="text-4xl font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">
                 {user.profile?.first_name || user.email?.split('@')[0] || 'Trader'}
               </h1>
               <div className="flex flex-wrap items-center gap-4">
@@ -365,14 +365,14 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards con Glassmorphism */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
           {stats.map((stat, index) => (
             <StatCard key={index} stat={stat} index={index} />
           ))}
         </div>
 
         {/* Quick Actions con Hover Effects Avanzados */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
           {quickActions.map((action, index) => (
             <QuickActionCard key={index} action={action} index={index} />
           ))}

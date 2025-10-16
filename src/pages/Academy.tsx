@@ -228,10 +228,10 @@ const Academy = () => {
                 </Badge>
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
                 {t('academy:title')}
               </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl">
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
                 {t('academy:subtitle')}
               </p>
             </div>
@@ -322,7 +322,7 @@ const Academy = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredCourses?.map((course, index) => {
               const courseProgress = coursesProgress?.find(cp => cp.id === course.id);
               return (

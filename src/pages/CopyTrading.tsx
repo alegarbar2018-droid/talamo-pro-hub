@@ -78,10 +78,10 @@ const CopyTrading: React.FC = () => {
             
             {/* Main heading */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
                 Copy Trading
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-3xl">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground font-light max-w-3xl">
                 Sigue estrategias de traders verificados y diversifica tu cartera con{" "}
                 <span className="text-teal font-medium">gestión profesional</span>
               </p>
@@ -121,7 +121,7 @@ const CopyTrading: React.FC = () => {
           ) : strategies.length === 0 ? (
             <p className="text-center text-muted-foreground py-12">{t('copy:catalog.empty')}</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {strategies.map((strategy) => (
                 <MemoizedStrategyCard key={strategy.id} strategy={strategy} />
               ))}

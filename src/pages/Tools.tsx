@@ -153,10 +153,10 @@ const Tools = () => {
             
             {/* Main heading */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight">
                 Herramientas de Trading
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-3xl">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground font-light max-w-3xl">
                 Suite completa de calculadoras, especificaciones y análisis profesionales para{" "}
                 <span className="text-teal font-medium">optimizar tu gestión de riesgo</span>
               </p>
@@ -184,41 +184,41 @@ const Tools = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <div className="flex justify-center mb-8">
-            <TabsList className="bg-gradient-to-br from-surface via-surface/95 to-surface/90 backdrop-blur-sm border border-line/50 shadow-lg p-1.5 rounded-xl inline-flex gap-1">
+          <div className="flex justify-center mb-8 overflow-x-auto px-4">
+            <TabsList className="bg-gradient-to-br from-surface via-surface/95 to-surface/90 backdrop-blur-sm border border-line/50 shadow-lg p-1.5 rounded-xl inline-flex gap-1 flex-nowrap min-w-min">
               <TabsTrigger 
                 value="overview" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger 
                 value="calculators" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
                 Calculadoras
               </TabsTrigger>
               <TabsTrigger 
                 value="formulas" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
                 Fórmulas
               </TabsTrigger>
               <TabsTrigger 
                 value="specifications" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
                 Especificaciones
               </TabsTrigger>
               <TabsTrigger 
                 value="journal" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
                 Journal
               </TabsTrigger>
               <TabsTrigger 
                 value="audit" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-4 py-2 font-medium transition-all"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
                 Audit
               </TabsTrigger>
@@ -249,7 +249,7 @@ const Tools = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {basicCalculators.map((calc) => (
                   <CalculatorCard
                     key={calc.id}
@@ -276,7 +276,7 @@ const Tools = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {advancedCalculators.map((calc) => (
                   <CalculatorCard
                     key={calc.id}
