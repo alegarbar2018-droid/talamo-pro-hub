@@ -153,7 +153,7 @@ export const AuditDashboard = () => {
         </CardContent>
       </Card>
 
-      {selectedAccount && selectedAccount.status === 'verification_pending' && (
+      {selectedAccount && (selectedAccount.status === 'connected' || selectedAccount.status === 'verification_pending') && (
         <VerificationPanel accountId={selectedAccount.id} />
       )}
 
