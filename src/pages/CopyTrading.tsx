@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,9 @@ import {
 } from '@/components/copy';
 import type { CopyStrategy } from '@/modules/copy/types';
 import { User, ArrowLeft } from 'lucide-react';
+
+// Memoize strategy card to prevent unnecessary re-renders
+const MemoizedStrategyCard = memo(StrategyCard);
 
 const CopyTrading: React.FC = () => {
   const { t } = useTranslation(['copy', 'common']);
@@ -34,7 +37,9 @@ const CopyTrading: React.FC = () => {
       
       if (error) throw error;
       return (data || []) as any[] as CopyStrategy[];
-    }
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes - strategies don't change often
+    gcTime: 30 * 60 * 1000, // 30 minutes
   });
 
   // Track page view
@@ -118,7 +123,7 @@ const CopyTrading: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {strategies.map((strategy) => (
-                <StrategyCard key={strategy.id} strategy={strategy} />
+                <MemoizedStrategyCard key={strategy.id} strategy={strategy} />
               ))}
             </div>
           )}

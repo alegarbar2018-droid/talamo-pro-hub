@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,55 +7,69 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ObservabilityProvider } from "@/components/business/ObservabilityProvider";
 import { OnboardingGuard } from "@/components/OnboardingGuard";
+import { Loader2 } from "lucide-react";
+
+// Critical pages - loaded immediately
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-import AuthForgot from "./pages/AuthForgot";
-import AuthCallback from "./pages/AuthCallback";
-import ResetPassword from "./pages/ResetPassword";
-import Onboarding from "./pages/Onboarding";
-import OnboardingWelcome from "./pages/OnboardingWelcome";
-import Dashboard from "./pages/Dashboard";
-import Academy from "./pages/Academy";
-import Signals from "./pages/Signals";
-import CopyTrading from "./pages/CopyTrading";
-import Tools from "./pages/Tools";
-import Settings from "./pages/Settings";
-import AuthValidate from "./pages/AuthValidate";
-import ChangePartnerGuide from "./pages/ChangePartnerGuide";
-import ExnessRedirect from "./pages/ExnessRedirect";
-import AccessWizard from "./pages/AccessWizard";
-import AcademyInfo from "./pages/AcademyInfo";
-import SignalsInfo from "./pages/SignalsInfo";
-import CopyInfo from "./pages/CopyInfo";
-import ToolsInfo from "./pages/ToolsInfo";
-import CourseView from "./pages/CourseView";
-import LessonView from "./pages/LessonView";
-import QuizView from "./pages/QuizView";
-import { AdminLayout } from "./components/admin/AdminLayout";
-import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import { AdminUsers } from "./pages/admin/Users";
-import { AdminAnalytics } from "./pages/admin/Analytics";
-import AdminSignals from "./pages/admin/Signals";
-import AdminAffiliation from "./pages/admin/Affiliation";
-import AdminLMS from "./pages/admin/LMS";
-import AdminCopy from "./pages/admin/Copy";
-import AdminEAs from "./pages/admin/EAs";
-import AdminTools from "./pages/admin/Tools";
-import AdminCompetitions from "./pages/admin/Competitions";
-import AdminCommunity from "./pages/admin/Community";
-import AdminReferrals from "./pages/admin/Referrals";
-import AdminIntegrations from "./pages/admin/Integrations";
-import AdminAudit from "./pages/admin/Audit";
-import AdminSettings from "./pages/admin/Settings";
+// Lazy load non-critical pages
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AuthForgot = lazy(() => import("./pages/AuthForgot"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const OnboardingWelcome = lazy(() => import("./pages/OnboardingWelcome"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Academy = lazy(() => import("./pages/Academy"));
+const Signals = lazy(() => import("./pages/Signals"));
+const CopyTrading = lazy(() => import("./pages/CopyTrading"));
+const Tools = lazy(() => import("./pages/Tools"));
+const Settings = lazy(() => import("./pages/Settings"));
+const ChangePartnerGuide = lazy(() => import("./pages/ChangePartnerGuide"));
+const ExnessRedirect = lazy(() => import("./pages/ExnessRedirect"));
+const AccessWizard = lazy(() => import("./pages/AccessWizard"));
+const AcademyInfo = lazy(() => import("./pages/AcademyInfo"));
+const SignalsInfo = lazy(() => import("./pages/SignalsInfo"));
+const CopyInfo = lazy(() => import("./pages/CopyInfo"));
+const ToolsInfo = lazy(() => import("./pages/ToolsInfo"));
+const CourseView = lazy(() => import("./pages/CourseView"));
+const LessonView = lazy(() => import("./pages/LessonView"));
+const QuizView = lazy(() => import("./pages/QuizView"));
+
+// Admin pages
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout").then(m => ({ default: m.AdminLayout })));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
+const AdminUsers = lazy(() => import("./pages/admin/Users").then(m => ({ default: m.AdminUsers })));
+const AdminAnalytics = lazy(() => import("./pages/admin/Analytics").then(m => ({ default: m.AdminAnalytics })));
+const AdminSignals = lazy(() => import("./pages/admin/Signals"));
+const AdminAffiliation = lazy(() => import("./pages/admin/Affiliation"));
+const AdminLMS = lazy(() => import("./pages/admin/LMS"));
+const AdminCopy = lazy(() => import("./pages/admin/Copy"));
+const AdminEAs = lazy(() => import("./pages/admin/EAs"));
+const AdminTools = lazy(() => import("./pages/admin/Tools"));
+const AdminCompetitions = lazy(() => import("./pages/admin/Competitions"));
+const AdminCommunity = lazy(() => import("./pages/admin/Community"));
+const AdminReferrals = lazy(() => import("./pages/admin/Referrals"));
+const AdminIntegrations = lazy(() => import("./pages/admin/Integrations"));
+const AdminAudit = lazy(() => import("./pages/admin/Audit"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex h-screen items-center justify-center bg-background">
+    <Loader2 className="h-8 w-8 animate-spin text-teal" />
+  </div>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
     },
   },
 });
@@ -69,7 +83,8 @@ const App: React.FC = () => {
       <BrowserRouter>
         <AuthProvider>
           <ObservabilityProvider>
-            <Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -126,7 +141,8 @@ const App: React.FC = () => {
               <Route path="settings" element={<AdminSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </Suspense>
           </ObservabilityProvider>
         </AuthProvider>
       </BrowserRouter>
