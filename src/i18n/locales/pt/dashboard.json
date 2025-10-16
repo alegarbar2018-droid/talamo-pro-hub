@@ -50,6 +50,14 @@
     "tools": {
       "title": "Ferramentas",
       "description": "Calculadoras e análises"
+    },
+    "journal": {
+      "title": "Diário de Trading",
+      "description": "Registre e analise suas operações"
+    },
+    "audit": {
+      "title": "Auditoria de Conta",
+      "description": "Verifique seu desempenho real"
     }
   },
   "checklist": {

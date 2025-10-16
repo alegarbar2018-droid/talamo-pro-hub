@@ -50,6 +50,14 @@
     "tools": {
       "title": "Tools",
       "description": "Calculators and analysis"
+    },
+    "journal": {
+      "title": "Trading Journal",
+      "description": "Record and analyze your trades"
+    },
+    "audit": {
+      "title": "Account Audit",
+      "description": "Verify your real performance"
     }
   },
   "checklist": {

@@ -17,7 +17,9 @@ import {
   Target,
   Activity,
   BarChart3,
-  Settings
+  Settings,
+  BookMarked,
+  Shield
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -237,6 +239,20 @@ const Dashboard = () => {
       description: t("dashboard:modules.tools.description"),
       icon: Calculator,
       action: () => navigate("/tools"),
+      color: "muted"
+    },
+    {
+      title: t("dashboard:modules.journal.title"),
+      description: t("dashboard:modules.journal.description"),
+      icon: BookMarked,
+      action: () => navigate("/journal"),
+      color: "muted"
+    },
+    {
+      title: t("dashboard:modules.audit.title"),
+      description: t("dashboard:modules.audit.description"),
+      icon: Shield,
+      action: () => navigate("/audit"),
       color: "muted"
     }
   ];
