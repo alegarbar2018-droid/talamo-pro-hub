@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, LayoutDashboard, GraduationCap, TrendingUp, Users, Wrench, Settings, LogOut } from "lucide-react";
+import { Menu, LayoutDashboard, GraduationCap, TrendingUp, Users, Wrench, BookMarked, Shield, Settings, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,8 +29,10 @@ const DashboardNavigation = () => {
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: t("nav:academy"), href: "/academy", icon: GraduationCap },
     { label: t("nav:signals"), href: "/signals", icon: TrendingUp },
-    { label: t("nav:copy"), href: "/copy", icon: Users },
-    { label: t("nav:tools"), href: "/tools", icon: Wrench }
+    { label: t("nav:copy"), href: "/copy-trading", icon: Users },
+    { label: t("nav:tools"), href: "/tools", icon: Wrench },
+    { label: t("nav:journal"), href: "/journal", icon: BookMarked },
+    { label: t("nav:audit"), href: "/audit", icon: Shield }
   ];
 
   const handleNavigation = (href: string) => {

@@ -241,30 +241,8 @@ const Dashboard = () => {
     }
   ];
 
-  // Stats with real data
-  const stats = [
-    {
-      title: "Completed Lessons",
-      value: completedLessons,
-      icon: BookOpen,
-      trend: `${dashboardStats?.totalLessons || 0} total`,
-      color: "teal"
-    },
-    {
-      title: "Quiz Success Rate",
-      value: `${quizSuccessRate}%`,
-      icon: Trophy,
-      trend: `${dashboardStats?.passedQuizzes}/${dashboardStats?.totalQuizzes} passed`,
-      color: "success"
-    },
-    {
-      title: t("dashboard:stats.academy_progress"),
-      value: `${academyProgress}%`,
-      icon: BarChart3,
-      trend: "Overall progress",
-      color: "info"
-    }
-  ];
+  // Stats with real data - simplified version
+  const stats = [];
 
   // Recent activity from real events
   const recentActivities = (dashboardStats?.recentEvents || []).map(event => ({
@@ -364,12 +342,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats Cards con Glassmorphism */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <StatCard key={index} stat={stat} index={index} />
-          ))}
-        </div>
 
         {/* Quick Actions con Hover Effects Avanzados */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">

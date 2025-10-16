@@ -7,8 +7,6 @@ import { CalculatorModal } from "@/components/tools/calculators/CalculatorModal"
 import { ToolsOverview } from "@/components/tools/ToolsOverview";
 import { ContractSpecifications } from "@/components/tools/specifications";
 import { TradingFormulasGuide } from "@/components/tools/TradingFormulasGuide";
-import { TradingJournal } from "@/components/tools/TradingJournal";
-import { AuditDashboard } from "@/components/tools/audit";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import {
   PositionSizeCalculator,
@@ -210,18 +208,6 @@ const Tools = () => {
               >
                 Especificaciones
               </TabsTrigger>
-              <TabsTrigger 
-                value="journal" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
-              >
-                Journal
-              </TabsTrigger>
-              <TabsTrigger 
-                value="audit" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
-              >
-                Audit
-              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -231,8 +217,8 @@ const Tools = () => {
               onNavigateToCalculators={() => setActiveTab("calculators")}
               onNavigateToContracts={() => setActiveTab("specifications")}
               onNavigateToFormulas={() => setActiveTab("formulas")}
-              onNavigateToJournal={() => setActiveTab("journal")}
-              onNavigateToAudit={() => setActiveTab("audit")}
+              onNavigateToJournal={() => navigate("/journal")}
+              onNavigateToAudit={() => navigate("/audit")}
             />
           </TabsContent>
 
@@ -301,16 +287,6 @@ const Tools = () => {
           {/* Especificaciones Tab */}
           <TabsContent value="specifications" className="space-y-6">
             <ContractSpecifications />
-          </TabsContent>
-
-          {/* Journal Tab */}
-          <TabsContent value="journal" className="space-y-6">
-            <TradingJournal />
-          </TabsContent>
-
-          {/* Audit Tab */}
-          <TabsContent value="audit" className="space-y-6">
-            <AuditDashboard />
           </TabsContent>
         </Tabs>
 

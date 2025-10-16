@@ -26,6 +26,8 @@ const Academy = lazy(() => import("./pages/Academy"));
 const Signals = lazy(() => import("./pages/Signals"));
 const CopyTrading = lazy(() => import("./pages/CopyTrading"));
 const Tools = lazy(() => import("./pages/Tools"));
+const Journal = lazy(() => import("./pages/Journal"));
+const Audit = lazy(() => import("./pages/Audit"));
 const Settings = lazy(() => import("./pages/Settings"));
 const ChangePartnerGuide = lazy(() => import("./pages/ChangePartnerGuide"));
 const ExnessRedirect = lazy(() => import("./pages/ExnessRedirect"));
@@ -105,6 +107,8 @@ const App: React.FC = () => {
             <Route path="/copy-trading" element={<OnboardingGuard><CopyTrading /></OnboardingGuard>} />
             <Route path="/CopyTrading" element={<Navigate to="/copy-trading" replace />} />
             <Route path="/tools" element={<OnboardingGuard><Tools /></OnboardingGuard>} />
+            <Route path="/journal" element={<OnboardingGuard><Journal /></OnboardingGuard>} />
+            <Route path="/audit" element={<OnboardingGuard><Audit /></OnboardingGuard>} />
             <Route path="/settings" element={<OnboardingGuard><Settings /></OnboardingGuard>} />
             <Route path="/access" element={<AccessWizard />} />
             
