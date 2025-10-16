@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { 
   ArrowLeft, RefreshCw, CheckCircle2, AlertCircle, Loader2, Trash2, 
   TrendingUp, TrendingDown, DollarSign, Target, Activity, BarChart3,
-  Info, Calendar, Percent, Hash
+  Info, Percent, Hash, Zap, Shield, Award
 } from 'lucide-react';
 import { EquityCurve } from '@/components/tools/audit/EquityCurve';
 import { TradesTable } from '@/components/tools/audit/TradesTable';
@@ -114,7 +114,6 @@ export const AuditDetail = () => {
     },
   });
 
-  // Auto-sync si no hay datos
   useEffect(() => {
     if (account && accountData && accountData.equity.length === 0 && !isSyncing) {
       syncMutation.mutate();
@@ -123,8 +122,11 @@ export const AuditDetail = () => {
 
   if (accountLoading || !account) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-teal" />
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-background to-teal/5">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 animate-spin text-teal" />
+          <p className="text-muted-foreground animate-pulse">Cargando análisis...</p>
+        </div>
       </div>
     );
   }
@@ -133,55 +135,79 @@ export const AuditDetail = () => {
   const stats = accountData?.stats;
   const latestEquity = accountData?.equity?.[accountData.equity.length - 1];
 
-  // Calculate metrics
   const totalProfit = stats?.gross_profit ? stats.gross_profit - (stats.gross_loss || 0) : 0;
   const profitPercent = latestEquity?.balance ? ((latestEquity.equity - latestEquity.balance) / latestEquity.balance) * 100 : 0;
 
   const StatCard = ({ 
     title, 
     value, 
+    subtitle,
     tooltip, 
     icon: Icon, 
     trend, 
-    valueColor 
+    valueColor,
+    highlighted 
   }: { 
     title: string; 
     value: string | number; 
+    subtitle?: string;
     tooltip: string; 
     icon: any; 
     trend?: 'up' | 'down' | 'neutral';
     valueColor?: string;
+    highlighted?: boolean;
   }) => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Card className="bg-surface border-line/50 hover:border-teal/30 transition-colors cursor-help">
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Icon className="w-4 h-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground font-medium">{title}</p>
-                  </div>
-                  <p className={`text-2xl font-bold ${valueColor || 'text-foreground'}`}>
-                    {value}
-                  </p>
+          <Card className={`
+            group relative overflow-hidden transition-all duration-300 cursor-help
+            ${highlighted 
+              ? 'bg-gradient-to-br from-teal/20 via-surface to-surface border-teal/50 shadow-lg shadow-teal/10' 
+              : 'bg-surface/50 backdrop-blur-sm border-line/50 hover:border-teal/30'
+            }
+            hover:shadow-xl hover:shadow-teal/5 hover:-translate-y-1
+          `}>
+            <div className="absolute inset-0 bg-gradient-to-br from-teal/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            <CardContent className="p-6 relative">
+              <div className="flex items-start justify-between mb-4">
+                <div className={`
+                  p-3 rounded-xl transition-all duration-300
+                  ${highlighted 
+                    ? 'bg-teal/20 group-hover:bg-teal/30' 
+                    : 'bg-muted/50 group-hover:bg-muted'
+                  }
+                `}>
+                  <Icon className={`w-5 h-5 ${highlighted ? 'text-teal' : 'text-muted-foreground'}`} />
                 </div>
                 {trend && (
-                  <div className={`p-1 rounded ${
-                    trend === 'up' ? 'bg-green-500/10' : 
-                    trend === 'down' ? 'bg-red-500/10' : 
-                    'bg-muted'
-                  }`}>
+                  <div className={`
+                    p-2 rounded-lg transition-all duration-300
+                    ${trend === 'up' ? 'bg-green-500/10 group-hover:bg-green-500/20' : 
+                      trend === 'down' ? 'bg-red-500/10 group-hover:bg-red-500/20' : 
+                      'bg-muted/50'
+                    }
+                  `}>
                     {trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
                     {trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
                   </div>
                 )}
               </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground font-medium mb-2">{title}</p>
+                <p className={`text-3xl font-bold mb-1 ${valueColor || 'text-foreground'} transition-colors`}>
+                  {value}
+                </p>
+                {subtitle && (
+                  <p className="text-xs text-muted-foreground">{subtitle}</p>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-xs">
+        <TooltipContent side="bottom" className="max-w-xs bg-popover/95 backdrop-blur-sm border-line/50">
           <p className="text-sm">{tooltip}</p>
         </TooltipContent>
       </Tooltip>
@@ -189,321 +215,381 @@ export const AuditDetail = () => {
   );
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/audit')}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Cuenta #{account.login}
-            </h1>
-            <p className="text-muted-foreground">
-              {account.server} • {account.platform?.toUpperCase()}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge 
-            variant={account.status === 'verified' ? 'default' : 'destructive'}
-            className="flex items-center gap-2"
-          >
-            {account.status === 'verified' ? (
-              <><CheckCircle2 className="w-3 h-3" /> Conectada</>
-            ) : (
-              <><AlertCircle className="w-3 h-3" /> Error</>
-            )}
-          </Badge>
-          <Button
-            onClick={() => syncMutation.mutate()}
-            disabled={isSyncing}
-            variant="outline"
-            size="sm"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
-            {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
-          </Button>
-          <Button
-            onClick={() => deleteMutation.mutate()}
-            disabled={deleteMutation.isPending}
-            variant="destructive"
-            size="sm"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Eliminar
-          </Button>
-        </div>
-      </div>
-
-      {/* Alerts */}
-      {!hasData && !isSyncing && (
-        <Alert className="bg-yellow-500/10 border-yellow-500/30">
-          <AlertCircle className="h-4 w-4 text-yellow-500" />
-          <AlertTitle>Sincronizando por primera vez</AlertTitle>
-          <AlertDescription>
-            Conectando con MetaAPI. Esto puede tomar 30 seg - 2 min.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {account.sync_error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error de conexión</AlertTitle>
-          <AlertDescription className="space-y-2">
-            <p>{account.sync_error}</p>
-            <ul className="list-disc list-inside text-xs space-y-1">
-              <li>Verifica número de cuenta y contraseña de inversionista</li>
-              <li>Confirma que el servidor sea correcto</li>
-              <li>Intenta reconectar</li>
-            </ul>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Main Content */}
-      {hasData ? (
-        <>
-          {/* Key Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              title="Balance"
-              value={`$${latestEquity?.balance?.toFixed(2) || '0.00'}`}
-              tooltip="Saldo total de tu cuenta sin incluir operaciones abiertas"
-              icon={DollarSign}
-              trend="neutral"
-            />
-            <StatCard
-              title="Equity"
-              value={`$${latestEquity?.equity?.toFixed(2) || '0.00'}`}
-              tooltip="Balance + P/L de posiciones abiertas. Es tu capital real en este momento"
-              icon={Activity}
-              trend={latestEquity?.equity > latestEquity?.balance ? 'up' : 'down'}
-              valueColor={latestEquity?.equity > latestEquity?.balance ? 'text-green-500' : 'text-red-500'}
-            />
-            <StatCard
-              title="Ganancia Total"
-              value={`${totalProfit >= 0 ? '+' : ''}$${totalProfit.toFixed(2)}`}
-              tooltip="Ganancia o pérdida total desde el inicio de la cuenta"
-              icon={TrendingUp}
-              trend={totalProfit >= 0 ? 'up' : 'down'}
-              valueColor={totalProfit >= 0 ? 'text-green-500' : 'text-red-500'}
-            />
-            <StatCard
-              title="Ganancia %"
-              value={`${profitPercent >= 0 ? '+' : ''}${profitPercent.toFixed(2)}%`}
-              tooltip="Porcentaje de ganancia sobre tu balance inicial"
-              icon={Percent}
-              trend={profitPercent >= 0 ? 'up' : 'down'}
-              valueColor={profitPercent >= 0 ? 'text-green-500' : 'text-red-500'}
-            />
-          </div>
-
-          {/* Advanced Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <StatCard
-              title="Win Rate"
-              value={`${stats?.win_rate?.toFixed(1) || '0'}%`}
-              tooltip="Porcentaje de operaciones ganadoras vs totales. Arriba de 50% es positivo"
-              icon={Target}
-              trend={stats?.win_rate > 50 ? 'up' : 'down'}
-            />
-            <StatCard
-              title="Profit Factor"
-              value={stats?.profit_factor?.toFixed(2) || '0'}
-              tooltip="Ganancias brutas ÷ Pérdidas brutas. Arriba de 1.5 es excelente, arriba de 1 es rentable"
-              icon={BarChart3}
-              trend={stats?.profit_factor > 1 ? 'up' : 'down'}
-            />
-            <StatCard
-              title="Max Drawdown"
-              value={`${stats?.max_dd?.toFixed(2) || '0'}%`}
-              tooltip="Mayor caída desde un pico. Mide el riesgo máximo que has tomado. Menos de 20% es conservador"
-              icon={TrendingDown}
-              trend="down"
-              valueColor="text-orange-500"
-            />
-            <StatCard
-              title="Total Trades"
-              value={stats?.total_trades || accountData.trades.length || 0}
-              tooltip="Número total de operaciones cerradas"
-              icon={Hash}
-              trend="neutral"
-            />
-            <StatCard
-              title="Avg Win"
-              value={`$${stats?.avg_win?.toFixed(2) || '0'}`}
-              tooltip="Ganancia promedio por operación ganadora"
-              icon={TrendingUp}
-              trend="up"
-              valueColor="text-green-500"
-            />
-            <StatCard
-              title="Avg Loss"
-              value={`$${Math.abs(stats?.avg_loss || 0).toFixed(2)}`}
-              tooltip="Pérdida promedio por operación perdedora"
-              icon={TrendingDown}
-              trend="down"
-              valueColor="text-red-500"
-            />
-          </div>
-
-          {/* Charts Section */}
-          <Tabs defaultValue="equity" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
-              <TabsTrigger value="equity">Curva de Equity</TabsTrigger>
-              <TabsTrigger value="trades">Operaciones</TabsTrigger>
-              <TabsTrigger value="stats">Estadísticas</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="equity" className="space-y-4">
-              <Card className="bg-surface border-line/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-teal" />
-                    Evolución de Equity
-                  </CardTitle>
-                  <CardDescription>
-                    Muestra cómo ha crecido (o decrecido) tu capital con el tiempo
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {accountData.equity.length > 0 ? (
-                    <EquityCurve data={accountData.equity} />
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No hay datos de equity disponibles
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="trades" className="space-y-4">
-              <Card className="bg-surface border-line/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-teal" />
-                    Historial de Operaciones
-                  </CardTitle>
-                  <CardDescription>
-                    {accountData.trades.length} operaciones registradas
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TradesTable trades={accountData.trades} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="stats" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="bg-surface border-line/50">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Análisis de Rentabilidad</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Ganancias Brutas</span>
-                      <span className="font-semibold text-green-500">
-                        ${stats?.gross_profit?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Pérdidas Brutas</span>
-                      <span className="font-semibold text-red-500">
-                        ${Math.abs(stats?.gross_loss || 0).toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="h-px bg-border" />
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-semibold">Ganancia Neta</span>
-                      <span className={`font-bold text-lg ${totalProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        ${totalProfit.toFixed(2)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-surface border-line/50">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Métricas de Riesgo</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Max Drawdown</span>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="w-3 h-3 text-muted-foreground" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-xs max-w-xs">
-                                La mayor caída desde un pico de equity. Indica el peor momento de tu cuenta
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <span className="font-semibold text-orange-500">
-                        {stats?.max_dd?.toFixed(2) || '0.00'}%
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Profit Factor</span>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="w-3 h-3 text-muted-foreground" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-xs max-w-xs">
-                                Ganancias ÷ Pérdidas. Arriba de 1 = rentable, arriba de 1.5 = muy bueno
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <span className={`font-semibold ${stats?.profit_factor > 1 ? 'text-green-500' : 'text-red-500'}`}>
-                        {stats?.profit_factor?.toFixed(2) || '0.00'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Win Rate</span>
-                      <span className="font-semibold text-teal">
-                        {stats?.win_rate?.toFixed(1) || '0'}%
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </>
-      ) : (
-        !isSyncing && (
-          <Card className="bg-surface border-line/50">
-            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <Loader2 className="w-12 h-12 text-muted-foreground/30 mb-4" />
-              <p className="text-lg font-semibold text-foreground mb-2">
-                Esperando sincronización
-              </p>
-              <p className="text-sm text-muted-foreground max-w-md mb-4">
-                La primera sincronización puede tardar. Si pasaron más de 2 minutos, sincroniza manualmente.
-              </p>
-              <Button onClick={() => syncMutation.mutate()} disabled={isSyncing}>
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Sincronizar ahora
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-teal/5">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Premium Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal/20 via-surface/50 to-surface border border-teal/30 backdrop-blur-sm p-8">
+          <div className="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(white,transparent_85%)]" />
+          
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/audit')}
+                className="hover:bg-white/10 transition-all duration-300 hover:scale-105"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Volver
               </Button>
-            </CardContent>
-          </Card>
-        )
-      )}
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-teal bg-clip-text text-transparent">
+                    Cuenta #{account.login}
+                  </h1>
+                  <Badge 
+                    variant={account.status === 'verified' ? 'default' : 'destructive'}
+                    className="flex items-center gap-2 px-3 py-1"
+                  >
+                    {account.status === 'verified' ? (
+                      <><Shield className="w-3 h-3" /> Verificada</>
+                    ) : (
+                      <><AlertCircle className="w-3 h-3" /> Error</>
+                    )}
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  {account.server} • {account.platform?.toUpperCase()}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => syncMutation.mutate()}
+                disabled={isSyncing}
+                variant="outline"
+                size="sm"
+                className="bg-surface/50 backdrop-blur-sm border-line/50 hover:bg-teal/10 hover:border-teal/50 transition-all duration-300"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+                {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
+              </Button>
+              <Button
+                onClick={() => deleteMutation.mutate()}
+                disabled={deleteMutation.isPending}
+                variant="outline"
+                size="sm"
+                className="bg-surface/50 backdrop-blur-sm border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Eliminar
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Alerts */}
+        {!hasData && !isSyncing && (
+          <Alert className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/30 backdrop-blur-sm">
+            <Zap className="h-4 w-4 text-yellow-500" />
+            <AlertTitle className="text-yellow-500 font-semibold">Sincronización inicial en progreso</AlertTitle>
+            <AlertDescription>
+              Conectando con MetaAPI para obtener tu historial completo. Esto puede tomar 30 seg - 2 min.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {account.sync_error && (
+          <Alert variant="destructive" className="bg-gradient-to-br from-destructive/10 to-destructive/5 backdrop-blur-sm">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error de conexión detectado</AlertTitle>
+            <AlertDescription className="space-y-2">
+              <p className="font-medium">{account.sync_error}</p>
+              <div className="mt-3 space-y-1">
+                <p className="font-semibold text-sm">Soluciones recomendadas:</p>
+                <ul className="list-disc list-inside text-xs space-y-1 opacity-90">
+                  <li>Verifica el número de cuenta y contraseña de inversionista</li>
+                  <li>Confirma que el servidor sea el correcto</li>
+                  <li>Intenta reconectar la cuenta</li>
+                </ul>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {hasData ? (
+          <div className="space-y-6">
+            {/* Hero Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <StatCard
+                title="Balance Actual"
+                value={`$${latestEquity?.balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`}
+                subtitle="Saldo base de tu cuenta"
+                tooltip="Tu saldo total sin incluir las ganancias/pérdidas de operaciones abiertas. Es tu dinero depositado más las ganancias netas acumuladas."
+                icon={DollarSign}
+                trend="neutral"
+                highlighted
+              />
+              <StatCard
+                title="Equity en Vivo"
+                value={`$${latestEquity?.equity?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`}
+                subtitle="Balance + posiciones abiertas"
+                tooltip="Tu capital real en este momento. Incluye el balance más las ganancias o pérdidas de operaciones abiertas. Este es tu verdadero valor de cuenta."
+                icon={Activity}
+                trend={latestEquity?.equity > latestEquity?.balance ? 'up' : 'down'}
+                valueColor={latestEquity?.equity > latestEquity?.balance ? 'text-green-500' : 'text-red-500'}
+                highlighted
+              />
+              <StatCard
+                title="Ganancia Total"
+                value={`${totalProfit >= 0 ? '+' : ''}$${Math.abs(totalProfit).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                subtitle="Profit neto acumulado"
+                tooltip="Tu ganancia o pérdida total desde que iniciaste esta cuenta. Incluye todas las operaciones cerradas."
+                icon={TrendingUp}
+                trend={totalProfit >= 0 ? 'up' : 'down'}
+                valueColor={totalProfit >= 0 ? 'text-green-500' : 'text-red-500'}
+                highlighted
+              />
+              <StatCard
+                title="Rentabilidad"
+                value={`${profitPercent >= 0 ? '+' : ''}${profitPercent.toFixed(2)}%`}
+                subtitle="ROI de tu inversión"
+                tooltip="Porcentaje de retorno sobre tu capital inicial. Un número positivo significa que estás ganando dinero."
+                icon={Percent}
+                trend={profitPercent >= 0 ? 'up' : 'down'}
+                valueColor={profitPercent >= 0 ? 'text-green-500' : 'text-red-500'}
+                highlighted
+              />
+            </div>
+
+            {/* Performance Metrics */}
+            <Card className="bg-surface/50 backdrop-blur-sm border-line/50 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-teal/10 to-transparent border-b border-line/50">
+                <CardTitle className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-teal" />
+                  Métricas de Rendimiento
+                </CardTitle>
+                <CardDescription>
+                  Indicadores clave que miden la calidad de tu trading
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  <StatCard
+                    title="Win Rate"
+                    value={`${stats?.win_rate?.toFixed(1) || '0'}%`}
+                    tooltip="Porcentaje de operaciones ganadoras. Arriba de 50% es positivo, arriba de 60% es excelente."
+                    icon={Target}
+                    trend={stats?.win_rate > 50 ? 'up' : 'down'}
+                  />
+                  <StatCard
+                    title="Profit Factor"
+                    value={stats?.profit_factor?.toFixed(2) || '0'}
+                    tooltip="Ganancias brutas ÷ Pérdidas brutas. Mayor a 1 es rentable, mayor a 1.5 es muy bueno, mayor a 2 es excelente."
+                    icon={BarChart3}
+                    trend={stats?.profit_factor > 1 ? 'up' : 'down'}
+                    valueColor={stats?.profit_factor > 1.5 ? 'text-green-500' : stats?.profit_factor > 1 ? 'text-yellow-500' : 'text-red-500'}
+                  />
+                  <StatCard
+                    title="Max Drawdown"
+                    value={`${stats?.max_dd?.toFixed(2) || '0'}%`}
+                    tooltip="Mayor caída desde un pico. Menos de 10% es conservador, menos de 20% es moderado, más de 30% es agresivo."
+                    icon={TrendingDown}
+                    trend="down"
+                    valueColor={stats?.max_dd < 10 ? 'text-green-500' : stats?.max_dd < 20 ? 'text-yellow-500' : 'text-red-500'}
+                  />
+                  <StatCard
+                    title="Total Trades"
+                    value={stats?.total_trades || accountData.trades.length || 0}
+                    tooltip="Número total de operaciones cerradas. Más trades = más datos estadísticos confiables."
+                    icon={Hash}
+                    trend="neutral"
+                  />
+                  <StatCard
+                    title="Avg Win"
+                    value={`$${stats?.avg_win?.toFixed(2) || '0'}`}
+                    tooltip="Ganancia promedio en operaciones ganadoras. Mientras más alto, mejor."
+                    icon={TrendingUp}
+                    trend="up"
+                    valueColor="text-green-500"
+                  />
+                  <StatCard
+                    title="Avg Loss"
+                    value={`$${Math.abs(stats?.avg_loss || 0).toFixed(2)}`}
+                    tooltip="Pérdida promedio en operaciones perdedoras. Debe ser menor que tu Avg Win."
+                    icon={TrendingDown}
+                    trend="down"
+                    valueColor="text-red-500"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Charts Tabs */}
+            <Tabs defaultValue="equity" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-surface/50 backdrop-blur-sm border border-line/50">
+                <TabsTrigger value="equity" className="data-[state=active]:bg-teal/20">
+                  Curva de Equity
+                </TabsTrigger>
+                <TabsTrigger value="trades" className="data-[state=active]:bg-teal/20">
+                  Historial de Trades
+                </TabsTrigger>
+                <TabsTrigger value="analysis" className="data-[state=active]:bg-teal/20">
+                  Análisis Detallado
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="equity" className="mt-6">
+                <Card className="bg-surface/50 backdrop-blur-sm border-line/50 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-teal/10 to-transparent border-b border-line/50">
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-teal" />
+                      Evolución de Tu Capital
+                    </CardTitle>
+                    <CardDescription>
+                      Visualiza cómo ha crecido (o decrecido) tu cuenta con el tiempo
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    {accountData.equity.length > 0 ? (
+                      <EquityCurve data={accountData.equity} />
+                    ) : (
+                      <div className="text-center py-12 text-muted-foreground">
+                        No hay datos de equity disponibles
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="trades" className="mt-6">
+                <Card className="bg-surface/50 backdrop-blur-sm border-line/50 overflow-hidden">
+                  <CardHeader className="bg-gradient-to-r from-teal/10 to-transparent border-b border-line/50">
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-teal" />
+                      Registro Completo de Operaciones
+                    </CardTitle>
+                    <CardDescription>
+                      {accountData.trades.length} operaciones en total
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <TradesTable trades={accountData.trades} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="analysis" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="bg-gradient-to-br from-green-500/10 to-surface/50 backdrop-blur-sm border-green-500/30 overflow-hidden">
+                    <CardHeader className="border-b border-green-500/20">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5 text-green-500" />
+                        Análisis de Rentabilidad
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex justify-between items-center p-3 rounded-lg bg-green-500/5">
+                        <span className="text-sm text-muted-foreground font-medium">Ganancias Brutas</span>
+                        <span className="font-bold text-green-500 text-lg">
+                          ${stats?.gross_profit?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '0.00'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 rounded-lg bg-red-500/5">
+                        <span className="text-sm text-muted-foreground font-medium">Pérdidas Brutas</span>
+                        <span className="font-bold text-red-500 text-lg">
+                          ${Math.abs(stats?.gross_loss || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                      <div className="flex justify-between items-center p-4 rounded-lg bg-gradient-to-r from-teal/10 to-teal/5">
+                        <span className="font-semibold">Ganancia Neta Total</span>
+                        <span className={`font-bold text-2xl ${totalProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                          ${Math.abs(totalProfit).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-br from-orange-500/10 to-surface/50 backdrop-blur-sm border-orange-500/30 overflow-hidden">
+                    <CardHeader className="border-b border-orange-500/20">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Shield className="w-5 h-5 text-orange-500" />
+                        Evaluación de Riesgo
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex justify-between items-center p-3 rounded-lg bg-orange-500/5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground font-medium">Max Drawdown</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="w-3 h-3 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="text-xs max-w-xs">
+                                  La mayor caída desde un pico de equity. Indica el peor momento que ha vivido tu cuenta.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <span className="font-bold text-orange-500 text-lg">
+                          {stats?.max_dd?.toFixed(2) || '0.00'}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 rounded-lg bg-teal/5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground font-medium">Profit Factor</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="w-3 h-3 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="text-xs max-w-xs">
+                                  Ganancias ÷ Pérdidas. Mayor a 1 = rentable, mayor a 1.5 = muy bueno, mayor a 2 = excelente
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <span className={`font-bold text-lg ${stats?.profit_factor > 1 ? 'text-green-500' : 'text-red-500'}`}>
+                          {stats?.profit_factor?.toFixed(2) || '0.00'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 rounded-lg bg-blue-500/5">
+                        <span className="text-sm text-muted-foreground font-medium">Win Rate</span>
+                        <span className="font-bold text-teal text-lg">
+                          {stats?.win_rate?.toFixed(1) || '0'}%
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        ) : (
+          !isSyncing && (
+            <Card className="bg-surface/50 backdrop-blur-sm border-line/50">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="p-4 rounded-full bg-teal/10 mb-6">
+                  <Loader2 className="w-12 h-12 text-teal/50 animate-spin" />
+                </div>
+                <p className="text-xl font-semibold text-foreground mb-2">
+                  Preparando tu análisis
+                </p>
+                <p className="text-sm text-muted-foreground max-w-md mb-6">
+                  Estamos conectando con tu cuenta y obteniendo el historial. Esto puede tomar hasta 2 minutos.
+                </p>
+                <Button 
+                  onClick={() => syncMutation.mutate()} 
+                  disabled={isSyncing}
+                  className="bg-teal hover:bg-teal/90"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Forzar sincronización
+                </Button>
+              </CardContent>
+            </Card>
+          )
+        )}
+      </div>
     </div>
   );
 };
