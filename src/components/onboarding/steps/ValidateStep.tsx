@@ -90,42 +90,46 @@ export const ValidateStep = ({
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <div className="text-center space-y-2 sm:space-y-3">
+    <div className="space-y-8 sm:space-y-10">
+      <div className="text-center space-y-4 sm:space-y-5 max-w-3xl mx-auto">
         <div className="flex items-center justify-center mb-4 sm:mb-6">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-primary rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl">
-            <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary-foreground" />
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-primary rounded-3xl flex items-center justify-center shadow-[var(--glow-primary)] animate-scale-in">
+            <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-primary-foreground" />
           </div>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Conecta tu cuenta de trading</h2>
-        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-          Tálamo funciona con cuentas de Exness. Validamos tu email para confirmar que estás afiliado con nosotros.
+        <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+          Conecta tu cuenta de trading
+        </h2>
+        <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
+          Validaremos que tienes una cuenta con nuestro partner para darte acceso a la plataforma.
         </p>
       </div>
 
-      <Card className="border-none bg-gradient-to-br from-surface/80 to-surface/40 backdrop-blur-xl shadow-2xl">        
-        <CardContent className="space-y-6 sm:space-y-8 p-4 sm:p-8">
-          <div className="bg-gradient-to-br from-primary/8 to-primary/3 border border-primary/20 rounded-2xl p-5 sm:p-6">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-                <Info className="h-5 w-5 sm:h-5.5 sm:w-5.5 text-primary-foreground" />
+      <Card className="border-2 border-border/50 bg-gradient-to-br from-surface/90 via-surface/80 to-background/90 backdrop-blur-xl shadow-[var(--shadow-elevated)]">        
+        <CardContent className="space-y-8 sm:space-y-10 p-6 sm:p-10">
+          <div className="bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 border-2 border-primary/30 rounded-3xl p-6 sm:p-8 shadow-lg relative overflow-hidden">
+            {/* Subtle glow effect */}
+            <div className="absolute inset-0 bg-[var(--gradient-glow)] opacity-50" />
+            <div className="relative flex items-start gap-4 sm:gap-5">
+              <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-[var(--glow-primary)]">
+                <Info className="h-6 w-6 sm:h-7 sm:w-7 text-primary-foreground" />
               </div>
-              <div className="space-y-2.5">
-                <h3 className="font-bold text-foreground text-base sm:text-lg">¿Por qué necesitas una cuenta en Exness?</h3>
-                <p className="text-muted-foreground leading-relaxed text-sm">
+              <div className="space-y-3">
+                <h3 className="font-bold text-foreground text-lg sm:text-xl">¿Por qué necesitas una cuenta en Exness?</h3>
+                <p className="text-muted-foreground leading-relaxed text-base">
                   Exness es el broker que recomendamos por su regulación, ejecución y herramientas profesionales. Tálamo verifica que tu cuenta esté afiliada para ofrecerte acceso completo a nuestra plataforma.
                 </p>
-                <div className="flex items-center gap-2 text-xs text-primary/90 pt-1">
-                  <Shield className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-2 text-sm text-primary font-medium pt-1 bg-primary/5 rounded-xl px-3 py-2 border border-primary/20">
+                  <Shield className="h-4 w-4" />
                   <span>Solo verificamos tu email, nunca accedemos a tus fondos</span>
                 </div>
               </div>
             </div>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2.5">
-              <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <Label htmlFor="email" className="text-lg font-bold text-foreground">
                 Email registrado en Exness
               </Label>
               <Input
@@ -135,24 +139,24 @@ export const ValidateStep = ({
                 value={email}
                 onChange={(e) => onEmailChange(e.target.value)}
                 required
-                className="bg-input border-border focus:border-primary h-12 text-base rounded-xl"
+                className="h-16 px-5 text-lg bg-gradient-to-br from-surface/80 to-surface/50 border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-2xl transition-all duration-300 hover:border-primary/50"
               />
-              <p className="text-xs text-muted-foreground/80 pl-1">
+              <p className="text-base text-muted-foreground leading-relaxed pl-1">
                 Ingresa el email que usaste al crear tu cuenta en Exness
               </p>
             </div>
             
             {error && !isNotAffiliated && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-destructive text-sm p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-                  <span>{error}</span>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-destructive p-4 bg-gradient-to-r from-destructive/15 to-destructive/10 border-2 border-destructive/30 rounded-2xl shadow-lg">
+                  <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+                  <span className="text-base font-medium">{error}</span>
                 </div>
                 {/* Always show options when there's an error */}
                 <Button
                   onClick={() => onNotAffiliated()}
                   variant="outline"
-                  className="w-full text-sm h-10 sm:h-11"
+                  className="w-full border-2 border-primary/40 text-primary hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/10 hover:border-primary/60 font-semibold px-6 py-6 text-base rounded-2xl transition-all duration-300"
                 >
                   Ver opciones para afiliarte
                 </Button>
@@ -162,12 +166,12 @@ export const ValidateStep = ({
             <Button
               type="submit"
               disabled={!email || loading || cooldownSeconds > 0}
-              className="w-full bg-gradient-primary hover:shadow-glow h-11 sm:h-14 text-base sm:text-lg font-semibold rounded-lg sm:rounded-xl"
+              className="w-full h-16 bg-gradient-primary hover:shadow-[var(--glow-primary)] text-lg font-bold rounded-2xl transition-all duration-300 hover:scale-[1.02] disabled:hover:scale-100"
             >
               {loading ? (
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span className="text-sm sm:text-base">Validando con API de Exness...</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Validando con API de Exness...</span>
                 </div>
               ) : cooldownSeconds > 0 ? (
                 `Espera ${cooldownSeconds}s antes de reintentar`
