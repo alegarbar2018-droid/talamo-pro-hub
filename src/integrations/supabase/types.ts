@@ -1500,6 +1500,81 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_analytics: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          session_id: string
+          step_name: string
+          step_number: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          session_id: string
+          step_name: string
+          step_number?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          session_id?: string
+          step_name?: string
+          step_number?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      onboarding_tutorials: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          duration_seconds: number | null
+          id: string
+          is_active: boolean | null
+          thumbnail_url: string | null
+          title: string
+          tutorial_key: string
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean | null
+          thumbnail_url?: string | null
+          title: string
+          tutorial_key: string
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          duration_seconds?: number | null
+          id?: string
+          is_active?: boolean | null
+          thumbnail_url?: string | null
+          title?: string
+          tutorial_key?: string
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           action: string
@@ -2098,6 +2173,19 @@ export type Database = {
           p_current_position: number
         }
         Returns: Json
+      }
+      get_onboarding_step_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_time_spent_seconds: number
+          completion_rate: number
+          drop_off_rate: number
+          step_name: string
+          step_number: number
+          total_completes: number
+          total_exits: number
+          total_views: number
+        }[]
       }
       get_profile_security_summary: {
         Args: Record<PropertyKey, never>
