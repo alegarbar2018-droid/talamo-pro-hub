@@ -9,48 +9,88 @@ export const UserPathCards = () => {
   const navigate = useNavigate();
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.8, duration: 0.4 }}
-      className="mt-16 text-center"
-    >
-      <p className="text-lg text-muted-foreground mb-8">
-        {t("hero_user_question")}
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-        <Card 
-          className="p-6 hover:border-primary/50 transition-all cursor-pointer group" 
-          onClick={() => {
-            document.getElementById('para-principiantes')?.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          }}
+    <section className="py-20 md:py-24 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="text-center mb-12"
         >
-          <GraduationCap className="h-10 w-10 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-foreground mb-2">{t("hero_path_beginner")}</h3>
-          <p className="text-sm text-muted-foreground">{t("hero_path_beginner_desc")}</p>
-        </Card>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            {t("hero_user_question")}
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Selecciona tu camino y te guiaremos paso a paso
+          </p>
+        </motion.div>
         
-        <Card 
-          className="p-6 hover:border-primary/50 transition-all cursor-pointer group" 
-          onClick={() => navigate('/copy-info')}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto"
         >
-          <Users className="h-10 w-10 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-foreground mb-2">{t("hero_path_investor")}</h3>
-          <p className="text-sm text-muted-foreground">{t("hero_path_investor_desc")}</p>
-        </Card>
-        
-        <Card 
-          className="p-6 hover:border-primary/50 transition-all cursor-pointer group" 
-          onClick={() => navigate('/tools-info')}
-        >
-          <TrendingUp className="h-10 w-10 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold text-foreground mb-2">{t("hero_path_experienced")}</h3>
-          <p className="text-sm text-muted-foreground">{t("hero_path_experienced_desc")}</p>
-        </Card>
+          <Card 
+            className="p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer group bg-card/50 backdrop-blur-sm" 
+            onClick={() => {
+              document.getElementById('para-principiantes')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }}
+          >
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+                <GraduationCap className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">{t("hero_path_beginner")}</h3>
+              <p className="text-muted-foreground">{t("hero_path_beginner_desc")}</p>
+              <div className="pt-4">
+                <span className="text-sm font-medium text-primary group-hover:underline">
+                  Ver más →
+                </span>
+              </div>
+            </div>
+          </Card>
+          
+          <Card 
+            className="p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer group bg-card/50 backdrop-blur-sm border-2 border-primary/30" 
+            onClick={() => navigate('/copy-info')}
+          >
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">{t("hero_path_investor")}</h3>
+              <p className="text-muted-foreground">{t("hero_path_investor_desc")}</p>
+              <div className="pt-4">
+                <span className="text-sm font-medium text-primary group-hover:underline">
+                  Comenzar →
+                </span>
+              </div>
+            </div>
+          </Card>
+          
+          <Card 
+            className="p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer group bg-card/50 backdrop-blur-sm" 
+            onClick={() => navigate('/tools-info')}
+          >
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+                <TrendingUp className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">{t("hero_path_experienced")}</h3>
+              <p className="text-muted-foreground">{t("hero_path_experienced_desc")}</p>
+              <div className="pt-4">
+                <span className="text-sm font-medium text-primary group-hover:underline">
+                  Explorar →
+                </span>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
       </div>
-    </motion.div>
+    </section>
   );
 };

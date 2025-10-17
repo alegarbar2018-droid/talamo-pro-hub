@@ -9,8 +9,6 @@ import { PartnerModal } from "@/components/landing/PartnerModal";
 
 // Lazy load heavy components
 const ValueProposition = lazy(() => import("@/components/ValueProposition"));
-const HowItWorks = lazy(() => import("@/components/HowItWorks"));
-const ModulesWithDetails = lazy(() => import("@/components/ModulesWithDetails"));
 const WhyExness = lazy(() => import("@/components/WhyExness"));
 const FAQExpanded = lazy(() => import("@/components/FAQExpanded"));
 
@@ -29,19 +27,13 @@ const Index = () => {
 
       <HeroSection />
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
-        <UserPathCards />
-      </div>
+      <UserPathCards />
 
       {/* Lazy load non-critical sections */}
       <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin h-8 w-8 border-4 border-teal border-t-transparent rounded-full" /></div>}>
         <ValueProposition />
         
         <BeginnerSection />
-
-        <HowItWorks />
-
-        <ModulesWithDetails />
 
         <WhyExness />
 
