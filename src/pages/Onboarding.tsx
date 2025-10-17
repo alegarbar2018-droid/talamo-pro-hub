@@ -14,7 +14,8 @@ import { NoExnessAccountStep } from "@/components/onboarding/steps/NoExnessAccou
 import { ExnessDetectionStep } from "@/components/onboarding/steps/ExnessDetectionStep";
 import { HasExnessFlowStep } from "@/components/onboarding/steps/HasExnessFlowStep";
 import { NoExnessFlowStep } from "@/components/onboarding/steps/NoExnessFlowStep";
-import { CapitalExperienceStep } from "@/components/onboarding/steps/CapitalExperienceStep";
+import { CapitalStep } from "@/components/onboarding/steps/CapitalStep";
+import { ExperienceStep } from "@/components/onboarding/steps/ExperienceStep";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -608,7 +609,7 @@ const Onboarding = () => {
                   transition={{ delay: 0.1 * index, duration: 0.3 }}
                   onClick={() => {
                     setGoal(option.value as any);
-                    setStep('capital-experience');
+                    setStep('capital');
                   }}
                   className="group p-6 sm:p-8 rounded-2xl border-2 border-border/50 bg-gradient-to-br from-surface/80 to-surface/40 hover:border-primary/50 hover:shadow-glow-primary transition-all text-left"
                 >
@@ -636,12 +637,21 @@ const Onboarding = () => {
           </motion.div>
         );
 
-      case "capital-experience":
+      case "capital":
         return (
-          <CapitalExperienceStep
+          <CapitalStep
             capital={capital}
-            experience={experience}
             onCapitalChange={setCapital}
+            onContinue={() => setStep("experience")}
+            onBack={goBack}
+            canGoBack={canGoBack}
+          />
+        );
+
+      case "experience":
+        return (
+          <ExperienceStep
+            experience={experience}
             onExperienceChange={setExperience}
             onContinue={() => setStep("recommendation")}
             onBack={goBack}

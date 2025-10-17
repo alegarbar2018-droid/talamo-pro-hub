@@ -1,36 +1,28 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp } from "lucide-react";
+import { Target, ArrowLeft, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { ExperienceLevel } from "@/hooks/useOnboardingState";
 
 interface ExperienceStepProps {
   experience: ExperienceLevel | null;
-  onSelect: (experience: ExperienceLevel) => void;
+  onExperienceChange: (experience: ExperienceLevel) => void;
+  onContinue: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
 }
 
-export const ExperienceStep = ({ experience, onSelect }: ExperienceStepProps) => {
-  const options: { value: ExperienceLevel; label: string; description: string }[] = [
-    {
-      value: "ninguna",
-      label: "Ninguna (empezando)",
-      description: "Primera vez con trading"
-    },
-    {
-      value: "basica",
-      label: "Básica (< 6 meses)",
-      description: "Conoces conceptos fundamentales"
-    },
-    {
-      value: "intermedia",
-      label: "Intermedia (6m - 2 años)",
-      description: "Experiencia práctica consistente"
-    },
-    {
-      value: "avanzada",
-      label: "Avanzada (> 2 años)",
-      description: "Trader experimentado"
-    }
+export const ExperienceStep = ({
+  experience,
+  onExperienceChange,
+  onContinue,
+  onBack,
+  canGoBack
+}: ExperienceStepProps) => {
+  const experienceOptions: { value: ExperienceLevel; label: string; description: string }[] = [
+    { value: "ninguna", label: "Ninguna", description: "Empezando desde cero" },
+    { value: "basica", label: "Básica", description: "Menos de 6 meses" },
+    { value: "intermedia", label: "Intermedia", description: "6 meses - 2 años" },
+    { value: "avanzada", label: "Avanzada", description: "Más de 2 años" }
   ];
 
   return (
@@ -38,77 +30,105 @@ export const ExperienceStep = ({ experience, onSelect }: ExperienceStepProps) =>
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
-      className="space-y-6 sm:space-y-8"
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="space-y-8 sm:space-y-10"
     >
       {/* Header */}
-      <div className="text-center space-y-3 sm:space-y-4">
-        <div className="flex items-center justify-center mb-4 sm:mb-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-glow-primary">
-            <TrendingUp className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
-          </div>
+      <div className="text-center space-y-6 sm:space-y-8 relative">
+        <div className="absolute inset-0 -z-10 blur-3xl opacity-20">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-br from-primary/40 via-primary/20 to-transparent rounded-full" />
         </div>
         
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-          ¿Cuánta experiencia tienes en trading?
-        </h2>
-        
-        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Personalizaremos tu ruta de aprendizaje según tu nivel
-        </p>
-      </div>
-
-      {/* Options Grid */}
-      <div className="grid grid-cols-1 gap-4">
-        {options.map((option, index) => (
-          <motion.div
-            key={option.value}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 * index, duration: 0.3 }}
-          >
-            <Card
-              className={`cursor-pointer transition-all duration-300 border-2 hover:shadow-glow-primary ${
-                experience === option.value
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border/50 bg-surface/30 hover:border-primary/30'
-              }`}
-              onClick={() => onSelect(option.value)}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground text-lg mb-1">
-                      {option.label}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {option.description}
-                    </p>
-                  </div>
-                  {experience === option.value && (
-                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-background" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-
-      {experience && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent leading-tight tracking-tight"
+        >
+          ¿Cuánta experiencia tienes?
+        </motion.h2>
+        
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="text-base sm:text-lg lg:text-xl text-muted-foreground/90 max-w-2xl mx-auto leading-relaxed font-light"
+        >
+          Personalizaremos tu ruta según tu nivel
+        </motion.p>
+      </div>
+
+      {/* Options */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.6 }}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto"
+      >
+        {experienceOptions.map((option, index) => (
+          <motion.button
+            key={option.value}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ 
+              delay: 0.5 + (0.08 * index), 
+              duration: 0.4,
+              type: "spring",
+              stiffness: 100
+            }}
+            whileHover={{ scale: 1.03, y: -4 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              onExperienceChange(option.value);
+              setTimeout(() => onContinue(), 300);
+            }}
+            className={`group relative p-8 rounded-3xl border-2 text-center transition-all duration-300 backdrop-blur-sm overflow-hidden ${
+              experience === option.value
+                ? "border-primary bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 shadow-[0_8px_40px_rgba(var(--primary),0.3)]"
+                : "border-border/40 bg-gradient-to-br from-surface/90 to-surface/60 hover:border-primary/50 hover:bg-surface/70 hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
+            }`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <div className="relative space-y-3">
+              <h3 className={`text-2xl sm:text-3xl font-bold transition-colors duration-300 ${
+                experience === option.value ? "text-primary" : "text-foreground group-hover:text-primary"
+              }`}>
+                {option.label}
+              </h3>
+              <p className="text-sm sm:text-base text-muted-foreground/80">
+                {option.description}
+              </p>
+            </div>
+            
+            {experience === option.value && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+              >
+                <CheckCircle className="h-5 w-5 text-primary-foreground" strokeWidth={3} />
+              </motion.div>
+            )}
+          </motion.button>
+        ))}
+      </motion.div>
+
+      {/* Back Button */}
+      {canGoBack && onBack && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+          className="flex justify-center"
         >
           <Button
-            size="lg"
-            className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+            variant="ghost"
+            onClick={onBack}
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            Continuar
+            <ArrowLeft className="h-4 w-4 mr-2" strokeWidth={2.5} />
+            Atrás
           </Button>
         </motion.div>
       )}

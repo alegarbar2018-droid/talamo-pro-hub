@@ -12,7 +12,8 @@ export type OnboardingStep =
   | "create-password"
   | "welcome"
   | "goal"
-  | "capital-experience"
+  | "capital"
+  | "experience"
   | "recommendation";
 
 export type Goal = 'copiar' | 'aprender' | 'operar' | 'mixto';
@@ -57,8 +58,9 @@ export const useOnboardingState = () => {
       "create-password": "email-capture",
       "welcome": "create-password",
       "goal": "welcome",
-      "capital-experience": "goal",
-      "recommendation": "capital-experience"
+      "capital": "goal",
+      "experience": "capital",
+      "recommendation": "experience"
     };
     
     const previousStep = backMap[step];
@@ -88,8 +90,9 @@ export const useOnboardingState = () => {
       "create-password": 4,
       "welcome": 5,
       "goal": 6,
-      "capital-experience": 7,
-      "recommendation": 8
+      "capital": 7,
+      "experience": 8,
+      "recommendation": 9
     };
     return stepMap[step] || 1;
   };
@@ -151,7 +154,7 @@ export const useOnboardingState = () => {
     
     // Computed
     getStepNumber,
-    progress: (getStepNumber() / 8) * 100,
+    progress: (getStepNumber() / 9) * 100,
     
     // Actions
     resetState,
