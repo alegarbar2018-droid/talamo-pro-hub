@@ -1,178 +1,252 @@
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { useOnboardingState } from "@/hooks/useOnboardingState";
-import { OnboardingHeader } from "@/components/onboarding/OnboardingHeader";
-import { ValidateStep } from "@/components/onboarding/steps/ValidateStep";
-import { EligibleStep } from "@/components/onboarding/steps/EligibleStep";
-import { DoneStep } from "@/components/onboarding/steps/DoneStep";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TrendingUp, GraduationCap, Wrench } from "lucide-react";
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from '@/hooks/use-toast';
+import { OnboardingHeader } from '@/components/onboarding/OnboardingHeader';
+import { ValidateStep } from '@/components/onboarding/steps/ValidateStep';
+import { EligibleStep } from '@/components/onboarding/steps/EligibleStep';
+import { WelcomeNameStep } from '@/components/onboarding/steps/WelcomeNameStep';
+import { ChooseGoalStep } from '@/components/onboarding/steps/ChooseGoalStep';
+import { CapitalExperienceStep } from '@/components/onboarding/steps/CapitalExperienceStep';
+import { RecommendationStep } from '@/components/onboarding/steps/RecommendationStep';
+import { useOnboardingState } from '@/hooks/useOnboardingState';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Sparkles } from 'lucide-react';
 
 const OnboardingNew = () => {
-  const { toast } = useToast();
+  const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const flowOrigin = searchParams.get('flow'); // 'investor' | null
+  const flowOrigin = searchParams.get('flow');
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   
   const {
-    // State
     step,
     email,
     password,
     confirmPassword,
+    name,
+    goal,
+    capital,
+    experience,
     uid,
     isDemoMode,
     isNotAffiliated,
     showPartnerModal,
-    
-    // Setters
     setStep,
     setEmail,
     setPassword,
     setConfirmPassword,
+    setName,
+    setGoal,
+    setCapital,
+    setExperience,
     setUid,
     setIsDemoMode,
     setIsNotAffiliated,
     setShowPartnerModal,
-    
-    // Computed
     getStepNumber,
-    progress,
-    
-    // Actions
-    resetState
+    progress
   } = useOnboardingState();
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  // Estado del wizard de inversión si viene de ese flujo
   const [wizardState, setWizardState] = useState<any>(null);
 
-  // Recuperar estado del wizard si viene de copy-info
   useEffect(() => {
     if (flowOrigin === 'investor') {
-      const savedState = sessionStorage.getItem('investor_wizard_state');
-      if (savedState) {
-        try {
-          const parsed = JSON.parse(savedState);
-          setWizardState(parsed);
-        } catch (e) {
-          console.error('Error parsing wizard state:', e);
-        }
+      const savedWizardState = sessionStorage.getItem('investor_wizard_state');
+      if (savedWizardState) {
+        const parsed = JSON.parse(savedWizardState);
+        setWizardState(parsed);
+        console.info('Loaded investor wizard state:', parsed);
       }
     }
   }, [flowOrigin]);
 
-  // Clear errors when step changes
   const clearErrors = () => {
-    setError("");
+    setError('');
     setLoading(false);
   };
 
-  // Step handlers
-  const handleValidationSuccess = (clientUid?: string) => {
+  const handleValidationSuccess = (receivedUid?: string) => {
+    console.info('✅ Validation success, moving to create-password');
+    if (receivedUid) setUid(receivedUid);
+    setStep('create-password');
     clearErrors();
-    setUid(clientUid || "");
-    setIsNotAffiliated(false);
-    setIsDemoMode(false);
-    setStep("create-account");
   };
 
   const handleNotAffiliated = () => {
-    console.info(`🚫 Setting not affiliated state to true`);
+    console.info('❌ Not affiliated');
     setIsNotAffiliated(true);
-    // Stay on validate step to show options
+    clearErrors();
   };
 
   const handleDemoMode = () => {
-    clearErrors();
+    console.info('🎮 Demo mode activated');
     setIsDemoMode(true);
-    setIsNotAffiliated(false);
-    setStep("create-account");
-    toast({
-      title: "Modo Demo Activado",
-      description: "Acceso temporal sin validación por API",
-    });
+    setStep('create-password');
+    clearErrors();
   };
 
   const handleRetryValidation = () => {
-    clearErrors();
+    console.info('🔄 Retry validation');
     setIsNotAffiliated(false);
-    setShowPartnerModal(false);
-    // Stay on validate step for retry
+    setIsDemoMode(false);
+    clearErrors();
   };
 
-  const handlePasswordSuccess = () => {
-    clearErrors();
+  const handlePasswordSuccess = async () => {
+    console.info('✅ Password created, moving to welcome step');
+    
+    // Si viene del flujo de inversión, pre-cargar datos
     if (flowOrigin === 'investor' && wizardState) {
-      // Redirigir a onboarding-welcome con datos del wizard
-      navigate('/onboarding-welcome?source=copy', {
-        state: { wizardData: wizardState }
-      });
-    } else {
-      // Usuario normal va directo a onboarding-welcome para completar perfil
-      navigate('/onboarding-welcome');
+      const mapInvestmentToBand = (amount: number) => {
+        if (amount < 500) return '<500';
+        if (amount < 2000) return '500-2000';
+        if (amount < 10000) return '2000-10000';
+        return '>10000';
+      };
+      
+      setGoal('copiar');
+      setCapital(mapInvestmentToBand(wizardState.profile.total_investment));
     }
+    
+    setStep('welcome');
+    clearErrors();
   };
 
   const handleRestart = () => {
-    resetState();
+    setIsNotAffiliated(false);
+    setIsDemoMode(false);
+    setStep('validate-email');
+    clearErrors();
   };
 
-  // Get context-aware messaging
   const getContextMessage = () => {
+    const referrer = sessionStorage.getItem('onboarding_source');
+    
     if (flowOrigin === 'investor') {
       return {
-        icon: <TrendingUp className="h-4 w-4 text-primary" />,
-        title: "Acceso a Copy Trading",
-        description: "Para seguir estrategias profesionales, valida tu cuenta Exness y crea tu acceso a Tálamo."
+        title: '🎯 Acceso a Copy Trading',
+        description: 'Valida tu cuenta Exness para acceder a las estrategias de inversión',
+        icon: Sparkles
       };
     }
     
-    // Detectar desde qué página viene basado en el referrer o sessionStorage
-    const lastPage = sessionStorage.getItem('onboarding_source');
-    
-    if (lastPage === 'academy') {
+    if (referrer === 'academy') {
       return {
-        icon: <GraduationCap className="h-4 w-4 text-primary" />,
-        title: "Acceso a Academia",
-        description: "Valida tu cuenta Exness para acceder a cursos profesionales de trading sin costo."
+        title: '📚 Acceso a la Academia',
+        description: 'Valida tu cuenta para comenzar tu educación en trading',
+        icon: Sparkles
       };
     }
     
-    if (lastPage === 'tools') {
+    if (referrer === 'tools') {
       return {
-        icon: <Wrench className="h-4 w-4 text-primary" />,
-        title: "Acceso a Herramientas Pro",
-        description: "Valida tu cuenta Exness para usar calculadoras, journal y análisis de cuenta."
+        title: '🛠️ Acceso a Herramientas',
+        description: 'Valida tu cuenta para usar nuestras herramientas profesionales',
+        icon: Sparkles
       };
     }
     
-    // Default
-    return {
-      icon: <TrendingUp className="h-4 w-4 text-primary" />,
-      title: "Solicitar Acceso a Tálamo",
-      description: "Valida tu cuenta Exness para acceder a herramientas profesionales de trading sin membresía."
-    };
+    return null;
   };
 
-  const contextMessage = getContextMessage();
+  const handleComplete = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      // Determine recommended account based on experience and capital
+      let recommendedAccount = 'Standard Cent';
+      let recommendedRoute = goal;
+      
+      if (experience === 'ninguna' || experience === 'basica') {
+        recommendedAccount = 'Standard Cent';
+      } else if (experience === 'intermedia') {
+        recommendedAccount = capital === '>10000' ? 'Pro' : 'Standard';
+      } else if (experience === 'avanzada') {
+        recommendedAccount = capital === '>10000' ? 'Zero' : 'Pro';
+      }
 
-  // Render current step
+      const updateData = {
+        first_name: name,
+        goal,
+        capital_band: capital,
+        level: experience,
+        recommended_account: recommendedAccount,
+        recommended_route: recommendedRoute,
+        onboarding_completed: true,
+        onboarding_completed_at: new Date().toISOString(),
+        // Guardar recomendaciones del wizard si existen
+        ...(wizardState?.allocations && {
+          metadata: {
+            investor_recommendations: wizardState.allocations
+          }
+        })
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      
+      await refreshUser();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      toast({
+        title: '¡Bienvenido a Tálamo!',
+        description: 'Tu perfil está listo',
+      });
+      
+      // Redirigir según el goal
+      if (flowOrigin === 'investor' || goal === 'copiar') {
+        navigate('/copy-trading', {
+          state: {
+            showWelcome: true,
+            recommendedAllocations: wizardState?.allocations
+          }
+        });
+      } else if (goal === 'aprender') {
+        navigate('/academy');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo completar el proceso',
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderCurrentStep = () => {
+    const contextMessage = getContextMessage();
+    
     switch (step) {
-      case "validate":
+      case 'validate-email':
         return (
-          <>
-            {/* Context Alert */}
-            <Alert className="mb-6 bg-primary/5 border-primary/20">
-              {contextMessage.icon}
-              <AlertTitle className="font-semibold">{contextMessage.title}</AlertTitle>
-              <AlertDescription className="text-sm">
-                {contextMessage.description}
-              </AlertDescription>
-            </Alert>
-
+          <div className="space-y-6">
+            {contextMessage && (
+              <Alert className="bg-primary/5 border-primary/20">
+                <contextMessage.icon className="h-4 w-4 text-primary" />
+                <AlertDescription>
+                  <strong>{contextMessage.title}</strong>
+                  <p className="text-sm mt-1">{contextMessage.description}</p>
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <ValidateStep
               email={email}
               isNotAffiliated={isNotAffiliated}
@@ -183,15 +257,11 @@ const OnboardingNew = () => {
               onDemoMode={handleDemoMode}
               onRetryValidation={handleRetryValidation}
               onShowPartnerModal={setShowPartnerModal}
-              onUserExists={() => {
-                // Redirect to login with email pre-filled
-                navigate(`/login?email=${encodeURIComponent(email)}`);
-              }}
             />
-          </>
+          </div>
         );
-      
-      case "create-account":
+
+      case 'create-password':
         return (
           <EligibleStep
             email={email}
@@ -208,20 +278,57 @@ const OnboardingNew = () => {
             onSuccess={handlePasswordSuccess}
           />
         );
-      
-      case "done":
+
+      case 'welcome':
         return (
-          <DoneStep
-            onClearState={handleRestart}
+          <WelcomeNameStep
+            name={name}
+            onNameChange={setName}
+            onContinue={() => setStep('choose-goal')}
           />
         );
-      
+
+      case 'choose-goal':
+        return (
+          <ChooseGoalStep
+            name={name}
+            goal={goal}
+            flowOrigin={flowOrigin || undefined}
+            onGoalSelect={setGoal}
+            onBack={() => setStep('welcome')}
+            onContinue={() => setStep('capital-experience')}
+          />
+        );
+
+      case 'capital-experience':
+        return (
+          <CapitalExperienceStep
+            capital={capital}
+            experience={experience}
+            onCapitalSelect={setCapital}
+            onExperienceSelect={setExperience}
+            onBack={() => setStep('choose-goal')}
+            onContinue={() => setStep('recommendation')}
+          />
+        );
+
+      case 'recommendation':
+        return (
+          <RecommendationStep
+            goal={goal!}
+            capital={capital!}
+            experience={experience!}
+            loading={loading}
+            onComplete={handleComplete}
+          />
+        );
+
       default:
         return (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">Paso no reconocido</p>
-            <button 
-              onClick={handleRestart} 
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl font-bold">Paso no reconocido</h2>
+            <button
+              onClick={handleRestart}
               className="text-primary hover:underline"
             >
               Reiniciar proceso
@@ -232,44 +339,32 @@ const OnboardingNew = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-bg via-surface/50 to-bg">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-background via-surface/50 to-background">
       <OnboardingHeader 
         stepNumber={getStepNumber()} 
-        progress={progress} 
+        progress={progress}
       />
-
-      {/* Main Content */}
-      <main className="flex-1 py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
-        <div className="max-w-xl sm:max-w-2xl mx-auto">
-          {/* Content Card */}
-          <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-0.5 sm:-inset-1 bg-gradient-primary opacity-20 blur-xl rounded-2xl sm:rounded-3xl" />
-            
-            {/* Main Card */}
-            <div className="relative bg-surface/90 backdrop-blur-xl border border-line rounded-2xl sm:rounded-3xl shadow-shadow-glow-subtle overflow-hidden">
-              <div className="p-4 xs:p-6 sm:p-8 lg:p-12">
-                {renderCurrentStep()}
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Info */}
-          <div className="mt-6 sm:mt-8 text-center px-4">
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Plataforma segura y encriptada
-              <span className="hidden xs:inline"> • Powered by Exness Partnership</span>
-            </p>
-          </div>
+      
+      <main className="flex-1 py-8 px-6">
+        <div className="max-w-4xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {renderCurrentStep()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 
-      {/* Background Elements */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        {/* Mobile optimized gradients */}
-        <div className="absolute top-1/4 left-1/4 w-48 sm:w-72 h-48 sm:h-72 bg-gradient-glow opacity-30 rounded-full blur-2xl sm:blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-40 sm:w-64 h-40 sm:h-64 bg-gradient-primary opacity-10 rounded-full blur-xl sm:blur-2xl" />
+      {/* Decorative gradient orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       </div>
     </div>
   );
