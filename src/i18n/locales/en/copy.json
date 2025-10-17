@@ -84,5 +84,103 @@
     "weekly": "Weekly",
     "monthly": "Monthly",
     "quarterly": "Quarterly"
+  },
+  "simple": {
+    "hero": {
+      "badge": "Smart Investing",
+      "title": "Invest with professional traders, without being a trader",
+      "subtitle": "Your money working for you, with strategies selected and supervised by experts. No technical complications.",
+      "cta_primary": "Discover your investor profile",
+      "cta_secondary": "How does it work?"
+    },
+    "how_it_works": {
+      "title": "How does it work?",
+      "subtitle": "It's like hiring a professional chef for your restaurant, but in trading",
+      "step1_title": "We select",
+      "step1_desc": "We review professional traders and show you only those who meet our performance and transparency standards.",
+      "step2_title": "You decide how much",
+      "step2_desc": "Define your budget and risk level (low/medium/high). We suggest how to distribute your investment.",
+      "step3_title": "They trade, you observe",
+      "step3_desc": "Professional traders execute operations. You receive updates and can stop at any time."
+    },
+    "safety": {
+      "title": "Is it safe?",
+      "subtitle": "Your peace of mind is a priority. Here's how copy trading security works:",
+      "point1_title": "Your money stays in your account",
+      "point1_desc": "Funds remain in your Exness wallet. We don't touch your money, we only connect your account with strategies.",
+      "point2_title": "Traders CANNOT withdraw",
+      "point2_desc": "Professional traders can only execute trading operations. They have no access to withdraw funds from your account.",
+      "point3_title": "Full control in your hands",
+      "point3_desc": "You can pause or stop copying at any time from your Exness panel. It's your decision, always.",
+      "point4_title": "Complete transparency",
+      "point4_desc": "You see every executed trade, historical performance, and all metrics in real-time."
+    },
+    "expectations": {
+      "title": "How much can I earn?",
+      "subtitle": "Let's talk honestly about realistic expectations",
+      "realistic_title": "Realistic returns",
+      "realistic_desc": "Professional traders seek annual returns of 10-30%, depending on risk. This is NOT 'get rich quick'. It's consistent growth with discipline.",
+      "patience_title": "Requires patience",
+      "patience_desc": "Copy trading is a medium to long-term strategy. Some months you'll be up, others down. What matters is the overall trend over 6-12 months.",
+      "risk_title": "There can be losses",
+      "risk_desc": "No trader wins 100% of the time. There will be losing trades. That's why we diversify and only invest money we can afford to lose."
+    },
+    "wizard": {
+      "step1": {
+        "title": "Step 1: What type of investor are you?",
+        "subtitle": "Help us understand your experience and risk tolerance",
+        "investment_experience": "Have you invested before?",
+        "experience_never": "Never invested",
+        "experience_some": "Sometimes in stocks or crypto",
+        "experience_regular": "I invest regularly",
+        "investment_horizon": "How long do you plan to invest?",
+        "horizon_short": "Short term (less than 6 months)",
+        "horizon_medium": "Medium term (6-18 months)",
+        "horizon_long": "Long term (more than 18 months)",
+        "risk_question": "If your investment drops 10% in a month, what would you do?",
+        "risk_option_a": "I panic and withdraw everything",
+        "risk_option_b": "I wait to see what happens",
+        "risk_option_c": "I take advantage to invest more",
+        "profile_calculated": "Your risk profile:",
+        "profile_conservative": "Conservative",
+        "profile_conservative_desc": "You seek stability. We prioritize strategies with less volatility even if they earn less.",
+        "profile_moderate": "Moderate",
+        "profile_moderate_desc": "You balance risk and reward. We mix stable strategies with some more dynamic ones.",
+        "profile_aggressive": "Aggressive",
+        "profile_aggressive_desc": "You tolerate ups and downs. We include strategies with higher potential but also higher risk."
+      },
+      "step2": {
+        "title": "Step 2: How much do you want to invest?",
+        "subtitle": "Define the total amount you'll allocate to copy trading",
+        "amount_label": "Total Amount (USD)",
+        "amount_min": "Minimum: $10 USD",
+        "warning_title": "⚠️ Important",
+        "warning_desc": "Only invest money you can afford to lose. Trading has real risks.",
+        "suggestions_title": "Suggested ranges",
+        "suggestion_beginner": "Beginners: $100 - $500",
+        "suggestion_intermediate": "Intermediate: $500 - $2,000",
+        "suggestion_advanced": "Advanced: $2,000+",
+        "diversification_note": "Your amount will be distributed among 3-5 different strategies to reduce risk."
+      },
+      "step3": {
+        "title": "Step 3: Suggested strategies for you",
+        "subtitle": "Based on your profile, we recommend these strategies",
+        "loading": "Calculating your ideal portfolio...",
+        "no_strategies": "No compatible strategies found",
+        "no_strategies_help": "Try adjusting your amount or risk profile.",
+        "suggested_amount": "Suggested amount",
+        "why_this": "Why this strategy?",
+        "educational_note": "This is an educational suggestion based on your profile. You can manually adjust amounts in the full catalog."
+      }
+    },
+    "strategy_simple": {
+      "trader_by": "By",
+      "risk_level": "Risk",
+      "risk_low": "Low",
+      "risk_medium": "Medium",
+      "risk_high": "High",
+      "min_amount": "From",
+      "view_full": "View full strategy"
+    }
   }
 }

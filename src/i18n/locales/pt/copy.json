@@ -84,5 +84,103 @@
     "weekly": "Semanal",
     "monthly": "Mensal",
     "quarterly": "Trimestral"
+  },
+  "simple": {
+    "hero": {
+      "badge": "Investimento Inteligente",
+      "title": "Invista com traders profissionais, sem ser trader",
+      "subtitle": "Seu dinheiro trabalhando para você, com estratégias selecionadas e supervisionadas por especialistas. Sem complicações técnicas.",
+      "cta_primary": "Descubra seu perfil de investidor",
+      "cta_secondary": "Como funciona?"
+    },
+    "how_it_works": {
+      "title": "Como funciona?",
+      "subtitle": "É como contratar um chef profissional para seu restaurante, mas em trading",
+      "step1_title": "Nós selecionamos",
+      "step1_desc": "Revisamos traders profissionais e mostramos apenas aqueles que atendem aos nossos padrões de desempenho e transparência.",
+      "step2_title": "Você decide quanto",
+      "step2_desc": "Defina seu orçamento e nível de risco (baixo/médio/alto). Sugerimos como distribuir seu investimento.",
+      "step3_title": "Eles operam, você observa",
+      "step3_desc": "Traders profissionais executam as operações. Você recebe atualizações e pode parar a qualquer momento."
+    },
+    "safety": {
+      "title": "É seguro?",
+      "subtitle": "Sua tranquilidade é prioridade. Veja como funciona a segurança do copy trading:",
+      "point1_title": "Seu dinheiro está na sua conta",
+      "point1_desc": "Os fundos permanecem na sua carteira Exness. Não tocamos seu dinheiro, apenas conectamos sua conta com as estratégias.",
+      "point2_title": "Traders NÃO podem sacar",
+      "point2_desc": "Traders profissionais só podem executar operações de trading. Não têm acesso para sacar fundos da sua conta.",
+      "point3_title": "Controle total nas suas mãos",
+      "point3_desc": "Você pode pausar ou parar de copiar a qualquer momento do seu painel Exness. É sua decisão, sempre.",
+      "point4_title": "Transparência completa",
+      "point4_desc": "Você vê cada operação executada, o desempenho histórico e todas as métricas em tempo real."
+    },
+    "expectations": {
+      "title": "Quanto posso ganhar?",
+      "subtitle": "Vamos falar com honestidade sobre expectativas realistas",
+      "realistic_title": "Retornos realistas",
+      "realistic_desc": "Traders profissionais buscam retornos anuais de 10-30%, dependendo do risco. Isso NÃO é 'ficar rico rápido'. É crescimento consistente com disciplina.",
+      "patience_title": "Requer paciência",
+      "patience_desc": "Copy trading é uma estratégia de médio a longo prazo. Alguns meses você sobe, outros desce. O importante é a tendência geral ao longo de 6-12 meses.",
+      "risk_title": "Pode haver perdas",
+      "risk_desc": "Nenhum trader ganha 100% do tempo. Haverá operações perdedoras. Por isso diversificamos e só investimos dinheiro que podemos nos permitir perder."
+    },
+    "wizard": {
+      "step1": {
+        "title": "Passo 1: Que tipo de investidor você é?",
+        "subtitle": "Ajude-nos a entender sua experiência e tolerância ao risco",
+        "investment_experience": "Você já investiu antes?",
+        "experience_never": "Nunca investi",
+        "experience_some": "Algumas vezes em bolsa ou crypto",
+        "experience_regular": "Invisto regularmente",
+        "investment_horizon": "Por quanto tempo planeja investir?",
+        "horizon_short": "Curto prazo (menos de 6 meses)",
+        "horizon_medium": "Médio prazo (6-18 meses)",
+        "horizon_long": "Longo prazo (mais de 18 meses)",
+        "risk_question": "Se seu investimento cair 10% em um mês, o que você faria?",
+        "risk_option_a": "Eu me assusto e retiro tudo",
+        "risk_option_b": "Espero para ver o que acontece",
+        "risk_option_c": "Aproveito para investir mais",
+        "profile_calculated": "Seu perfil de risco:",
+        "profile_conservative": "Conservador",
+        "profile_conservative_desc": "Você busca estabilidade. Priorizamos estratégias com menos volatilidade mesmo que ganhem menos.",
+        "profile_moderate": "Moderado",
+        "profile_moderate_desc": "Você equilibra risco e ganho. Misturamos estratégias estáveis com algumas mais dinâmicas.",
+        "profile_aggressive": "Agressivo",
+        "profile_aggressive_desc": "Você tolera altos e baixos. Incluímos estratégias com maior potencial mas também maior risco."
+      },
+      "step2": {
+        "title": "Passo 2: Quanto você quer investir?",
+        "subtitle": "Defina o valor total que destinará ao copy trading",
+        "amount_label": "Valor Total (USD)",
+        "amount_min": "Mínimo: $10 USD",
+        "warning_title": "⚠️ Importante",
+        "warning_desc": "Invista apenas dinheiro que possa se permitir perder. Trading tem riscos reais.",
+        "suggestions_title": "Faixas sugeridas",
+        "suggestion_beginner": "Iniciantes: $100 - $500",
+        "suggestion_intermediate": "Intermediários: $500 - $2,000",
+        "suggestion_advanced": "Avançados: $2,000+",
+        "diversification_note": "Seu valor será distribuído entre 3-5 estratégias diferentes para reduzir risco."
+      },
+      "step3": {
+        "title": "Passo 3: Estratégias sugeridas para você",
+        "subtitle": "Com base no seu perfil, recomendamos estas estratégias",
+        "loading": "Calculando sua carteira ideal...",
+        "no_strategies": "Não encontramos estratégias compatíveis",
+        "no_strategies_help": "Tente ajustar seu valor ou perfil de risco.",
+        "suggested_amount": "Valor sugerido",
+        "why_this": "Por que esta estratégia?",
+        "educational_note": "Esta é uma sugestão educativa baseada no seu perfil. Você pode ajustar valores manualmente no catálogo completo."
+      }
+    },
+    "strategy_simple": {
+      "trader_by": "Por",
+      "risk_level": "Risco",
+      "risk_low": "Baixo",
+      "risk_medium": "Médio",
+      "risk_high": "Alto",
+      "min_amount": "Desde",
+      "view_full": "Ver estratégia completa"
+    }
   }
 }
