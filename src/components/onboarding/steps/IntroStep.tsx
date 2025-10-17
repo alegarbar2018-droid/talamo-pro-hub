@@ -69,24 +69,24 @@ export const IntroStep = ({ onContinue }: IntroStepProps) => {
 
       {/* Features Grid */}
       <Card className="border-border/50 bg-gradient-to-br from-surface/80 via-surface/50 to-surface/30 backdrop-blur-xl shadow-xl">
-        <CardContent className="p-6 sm:p-8">
-          <div className="grid grid-cols-1 gap-4 sm:gap-6">
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * index, duration: 0.3 }}
-                className="flex items-start gap-4 p-4 rounded-xl bg-background/50 border border-border/30 hover:border-primary/30 transition-all duration-300 group"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.05 * index, duration: 0.2 }}
+                className="flex flex-col items-center gap-2 p-3 rounded-lg bg-background/50 border border-border/30 hover:border-primary/30 transition-all duration-300 group"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:shadow-glow-primary transition-all duration-300">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:shadow-glow-primary transition-all duration-300">
+                  <feature.icon className="h-5 w-5 text-primary" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-foreground text-base sm:text-lg mb-1">
+                <div className="text-center">
+                  <h3 className="font-semibold text-foreground text-xs sm:text-sm mb-1 line-clamp-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <p className="text-xs text-muted-foreground leading-snug line-clamp-2 hidden sm:block">
                     {feature.description}
                   </p>
                 </div>
