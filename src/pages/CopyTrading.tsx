@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { withPageTracking } from '@/components/business/ObservabilityProvider';
+import { SEOHead } from "@/components/SEOHead";
+import { getSEOConfig } from "@/lib/seo-config";
+import { getBreadcrumbSchema } from "@/lib/structured-data";
 import { 
   CopyTradingIntro, 
   StrategyEvaluationGuide, 
@@ -21,9 +24,15 @@ import { User, ArrowLeft, Sparkles } from 'lucide-react';
 const MemoizedStrategyCard = memo(StrategyCard);
 
 const CopyTrading: React.FC = () => {
-  const { t } = useTranslation(['copy', 'common']);
+  const { t, i18n } = useTranslation(['copy', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const seoConfig = getSEOConfig('copyTrading', i18n.language);
+  const structuredData = getBreadcrumbSchema([
+    { name: "Inicio", url: "https://talamo.app/" },
+    { name: "Copy Trading", url: "https://talamo.app/copy-trading" }
+  ]);
   
   // Recuperar recomendaciones del estado de navegación
   const recommendedAllocations = location.state?.recommendedAllocations as StrategyAllocation[] | undefined;
@@ -56,6 +65,13 @@ const CopyTrading: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
+        canonicalPath="/copy-trading"
+        structuredData={structuredData}
+      />
       {/* Hero Section */}
       <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-background via-teal/5 to-primary/5">
         {/* Decorative elements */}

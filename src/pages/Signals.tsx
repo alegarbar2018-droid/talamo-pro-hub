@@ -6,6 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEOHead } from "@/components/SEOHead";
+import { getSEOConfig } from "@/lib/seo-config";
+import { getArticleSchema, getBreadcrumbSchema } from "@/lib/structured-data";
 import { 
   TrendingUp, 
   TrendingDown,
@@ -161,7 +164,7 @@ SignalCard.displayName = 'SignalCard';
 
 const Signals = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['signals']);
+  const { t, i18n } = useTranslation(['signals']);
   const { trackInteraction, trackBusinessEvent } = useObservability();
   const { signals, loading, error } = useSignals();
   const { performance, loading: perfLoading } = useSignalsPerformance();
@@ -170,6 +173,19 @@ const Signals = () => {
     timeframe: "all",
     minRR: "all"
   });
+
+  const seoConfig = getSEOConfig('signals', i18n.language);
+  const structuredData = [
+    getArticleSchema(
+      "Señales de Trading en Tiempo Real",
+      "Señales profesionales verificadas con análisis técnico completo",
+      new Date().toISOString()
+    ),
+    getBreadcrumbSchema([
+      { name: "Inicio", url: "https://talamo.app/" },
+      { name: "Señales", url: "https://talamo.app/signals" }
+    ])
+  ];
 
   // Track page view and signal interactions
   React.useEffect(() => {
@@ -253,6 +269,14 @@ const Signals = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
+        canonicalPath="/signals"
+        type="article"
+        structuredData={structuredData}
+      />
       {/* Hero Section */}
       <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-background via-teal/5 to-primary/5">
         {/* Decorative elements */}

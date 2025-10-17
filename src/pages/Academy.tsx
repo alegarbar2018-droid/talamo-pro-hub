@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { SEOHead } from "@/components/SEOHead";
+import { getSEOConfig } from "@/lib/seo-config";
+import { getCourseSchema, getBreadcrumbSchema } from "@/lib/structured-data";
 import { 
   BookOpen, 
   CheckCircle, 
@@ -129,10 +132,22 @@ CourseCard.displayName = 'CourseCard';
 
 const Academy = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['academy']);
+  const { t, i18n } = useTranslation(['academy']);
   const { trackPageView } = useObservability();
   const { session } = useAuth();
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+  
+  const seoConfig = getSEOConfig('academy', i18n.language);
+  const structuredData = [
+    getCourseSchema(
+      "Academia de Trading Profesional",
+      "Cursos estructurados de trading desde nivel principiante hasta avanzado"
+    ),
+    getBreadcrumbSchema([
+      { name: "Inicio", url: "https://talamo.app/" },
+      { name: "Academia", url: "https://talamo.app/academy" }
+    ])
+  ];
   
   // Get user's progress for all courses
   const { data: coursesProgress } = useUserCourseProgress();
@@ -201,6 +216,13 @@ const Academy = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
+        canonicalPath="/academy"
+        structuredData={structuredData}
+      />
       {/* Hero Section Premium */}
       <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-teal/5 via-surface to-cyan/5">
         <div className="absolute top-0 left-0 w-96 h-96 bg-teal/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />

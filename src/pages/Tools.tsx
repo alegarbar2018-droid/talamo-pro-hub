@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, TrendingUp, Wallet, DollarSign, Target, Clock, Scale } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
+import { getSEOConfig } from "@/lib/seo-config";
+import { getBreadcrumbSchema } from "@/lib/structured-data";
 import { CalculatorModal } from "@/components/tools/calculators/CalculatorModal";
 import { ToolsOverview } from "@/components/tools/ToolsOverview";
 import { ContractSpecifications } from "@/components/tools/specifications";
@@ -93,10 +97,17 @@ const calculators = [
 ];
 
 const Tools = () => {
+  const { i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("overview");
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCalculator, setSelectedCalculator] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const seoConfig = getSEOConfig('tools', i18n.language);
+  const structuredData = getBreadcrumbSchema([
+    { name: "Inicio", url: "https://talamo.app/" },
+    { name: "Herramientas", url: "https://talamo.app/tools" }
+  ]);
 
   // Handle deep linking from URL
   useEffect(() => {
@@ -124,6 +135,13 @@ const Tools = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
+        canonicalPath="/tools"
+        structuredData={structuredData}
+      />
       {/* Hero Section */}
       <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-background via-teal/5 to-primary/5">
         {/* Decorative elements */}
