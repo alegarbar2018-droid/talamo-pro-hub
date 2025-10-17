@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, Target } from "lucide-react";
+import { DollarSign, Target, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { CapitalBand, ExperienceLevel } from "@/hooks/useOnboardingState";
 
@@ -11,6 +11,8 @@ interface CapitalExperienceStepProps {
   onCapitalChange: (capital: CapitalBand) => void;
   onExperienceChange: (experience: ExperienceLevel) => void;
   onContinue: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export const CapitalExperienceStep = ({
@@ -18,7 +20,9 @@ export const CapitalExperienceStep = ({
   experience,
   onCapitalChange,
   onExperienceChange,
-  onContinue
+  onContinue,
+  onBack,
+  canGoBack
 }: CapitalExperienceStepProps) => {
   const capitalOptions: { value: CapitalBand; label: string }[] = [
     { value: "<500", label: "Menos de $500" },
@@ -139,14 +143,27 @@ export const CapitalExperienceStep = ({
           </div>
 
           {/* Continue Button */}
-          <Button
-            size="lg"
-            onClick={onContinue}
-            disabled={!capital || !experience}
-            className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Continuar
-          </Button>
+          <div className="flex gap-3">
+            {canGoBack && onBack && (
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                onClick={onBack}
+                className="h-14 sm:h-16 px-6 rounded-xl sm:rounded-2xl transition-all duration-300"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            )}
+            <Button
+              size="lg"
+              onClick={onContinue}
+              disabled={!capital || !experience}
+              className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Continuar
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </motion.div>

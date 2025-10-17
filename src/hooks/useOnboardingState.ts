@@ -50,6 +50,32 @@ export const useOnboardingState = () => {
     console.info(`onboarding_step_change`, { step: newStep });
   }, [setSearchParams]);
 
+  // Navigate to previous step
+  const goBack = useCallback(() => {
+    const backMap: Partial<Record<OnboardingStep, OnboardingStep>> = {
+      "email-capture": "intro",
+      "create-password": "email-capture",
+      "welcome": "create-password",
+      "goal": "welcome",
+      "capital-experience": "goal",
+      "recommendation": "capital-experience"
+    };
+    
+    const previousStep = backMap[step];
+    if (previousStep) {
+      setStep(previousStep);
+    }
+  }, [step, setStep]);
+
+  const canGoBack = () => {
+    return step !== "intro" && 
+           step !== "user-exists" && 
+           step !== "no-exness-account" &&
+           step !== "exness-detection" &&
+           step !== "has-exness-flow" &&
+           step !== "no-exness-flow";
+  };
+
   const getStepNumber = () => {
     const stepMap: Record<OnboardingStep, number> = {
       "intro": 1,
@@ -128,6 +154,8 @@ export const useOnboardingState = () => {
     progress: (getStepNumber() / 8) * 100,
     
     // Actions
-    resetState
+    resetState,
+    goBack,
+    canGoBack: canGoBack()
   };
 };

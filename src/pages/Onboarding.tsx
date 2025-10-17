@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Users, GraduationCap, TrendingUp, CheckCircle, AlertTriangle, Shield, Loader2 } from "lucide-react";
+import { Sparkles, Users, GraduationCap, TrendingUp, CheckCircle, AlertTriangle, Shield, Loader2, ArrowLeft } from "lucide-react";
 
 const Onboarding = () => {
   const { toast } = useToast();
@@ -54,6 +54,8 @@ const Onboarding = () => {
     setAccountStatus,
     getStepNumber,
     progress,
+    goBack,
+    canGoBack,
   } = useOnboardingState();
   
   const { saveState, loadState, clearState } = useOnboardingPersistence();
@@ -311,7 +313,7 @@ const Onboarding = () => {
 
     switch (step) {
       case "intro":
-        return <IntroStep onContinue={() => setStep("email-capture")} />;
+        return <IntroStep onContinue={() => setStep("email-capture")} onBack={goBack} canGoBack={canGoBack} />;
 
       case "email-capture":
         return (
@@ -321,6 +323,8 @@ const Onboarding = () => {
             onContinue={handleEmailValidation}
             loading={loading}
             error={validationError}
+            onBack={goBack}
+            canGoBack={canGoBack}
           />
         );
 
@@ -465,25 +469,39 @@ const Onboarding = () => {
                     </Alert>
                   )}
                   
-                  <Button
-                    type="submit"
-                    disabled={
-                      password.length < 8 || 
-                      password !== confirmPassword || 
-                      !/(?=.*[A-Z])(?=.*\d)/.test(password) || 
-                      loading
-                    }
-                    className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Creando cuenta...
-                      </>
-                    ) : (
-                      "Continuar"
+                  <div className="flex gap-3">
+                    {canGoBack && (
+                      <Button
+                        type="button"
+                        size="lg"
+                        variant="outline"
+                        onClick={goBack}
+                        disabled={loading}
+                        className="h-14 sm:h-16 px-6 rounded-xl sm:rounded-2xl transition-all duration-300"
+                      >
+                        <ArrowLeft className="h-5 w-5" />
+                      </Button>
                     )}
-                  </Button>
+                    <Button
+                      type="submit"
+                      disabled={
+                        password.length < 8 || 
+                        password !== confirmPassword || 
+                        !/(?=.*[A-Z])(?=.*\d)/.test(password) || 
+                        loading
+                      }
+                      className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                          Creando cuenta...
+                        </>
+                      ) : (
+                        "Continuar"
+                      )}
+                    </Button>
+                  </div>
                 </form>
               </CardContent>
             </Card>
@@ -534,13 +552,24 @@ const Onboarding = () => {
                   />
                 </div>
                 
-                <Button
-                  onClick={() => setStep("goal")}
-                  disabled={!name.trim()}
-                  className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Comenzar
-                </Button>
+                <div className="flex gap-3">
+                  {canGoBack && (
+                    <Button
+                      variant="outline"
+                      onClick={goBack}
+                      className="h-14 sm:h-16 px-6 rounded-xl sm:rounded-2xl transition-all duration-300"
+                    >
+                      <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => setStep("goal")}
+                    disabled={!name.trim()}
+                    className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    Comenzar
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
@@ -593,6 +622,17 @@ const Onboarding = () => {
                 </motion.button>
               ))}
             </div>
+            
+            {canGoBack && (
+              <Button
+                variant="outline"
+                onClick={goBack}
+                className="w-full h-14 sm:h-16 rounded-xl sm:rounded-2xl transition-all duration-300"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Volver
+              </Button>
+            )}
           </motion.div>
         );
 
@@ -604,6 +644,8 @@ const Onboarding = () => {
             onCapitalChange={setCapital}
             onExperienceChange={setExperience}
             onContinue={() => setStep("recommendation")}
+            onBack={goBack}
+            canGoBack={canGoBack}
           />
         );
 
@@ -662,20 +704,34 @@ const Onboarding = () => {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handleComplete}
-                  disabled={loading}
-                  className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Configurando...
-                    </>
-                  ) : (
-                    "Comenzar mi camino"
+                <div className="flex gap-3">
+                  {canGoBack && (
+                    <Button
+                      type="button"
+                      size="lg"
+                      variant="outline"
+                      onClick={goBack}
+                      disabled={loading}
+                      className="h-14 sm:h-16 px-6 rounded-xl sm:rounded-2xl transition-all duration-300"
+                    >
+                      <ArrowLeft className="h-5 w-5" />
+                    </Button>
                   )}
-                </Button>
+                  <Button
+                    onClick={handleComplete}
+                    disabled={loading}
+                    className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Configurando...
+                      </>
+                    ) : (
+                      "Comenzar mi camino"
+                    )}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </motion.div>

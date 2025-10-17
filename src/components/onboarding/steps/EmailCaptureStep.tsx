@@ -2,7 +2,7 @@ import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, Loader2 } from "lucide-react";
+import { Shield, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface EmailCaptureStepProps {
@@ -11,6 +11,8 @@ interface EmailCaptureStepProps {
   onContinue: (email: string) => Promise<void>;
   loading?: boolean;
   error?: string;
+  onBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export const EmailCaptureStep = ({ 
@@ -18,7 +20,9 @@ export const EmailCaptureStep = ({
   onEmailChange, 
   onContinue, 
   loading = false,
-  error 
+  error,
+  onBack,
+  canGoBack
 }: EmailCaptureStepProps) => {
   const [localEmail, setLocalEmail] = useState(email);
 
@@ -81,20 +85,34 @@ export const EmailCaptureStep = ({
               </motion.div>
             )}
 
-            <Button
-              type="submit"
-              disabled={!localEmail.trim() || loading}
-              className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Validando...
-                </>
-              ) : (
-                "Continuar"
+            <div className="flex gap-3">
+              {canGoBack && onBack && (
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  onClick={onBack}
+                  disabled={loading}
+                  className="h-14 sm:h-16 px-6 rounded-xl sm:rounded-2xl transition-all duration-300"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
               )}
-            </Button>
+              <Button
+                type="submit"
+                disabled={!localEmail.trim() || loading}
+                className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Validando...
+                  </>
+                ) : (
+                  "Continuar"
+                )}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

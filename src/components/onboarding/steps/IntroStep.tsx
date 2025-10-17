@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { GraduationCap, Calculator, TrendingUp, Users, Shield, Sparkles } from "lucide-react";
+import { GraduationCap, Calculator, TrendingUp, Users, Shield, Sparkles, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface IntroStepProps {
   onContinue: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
 }
 
-export const IntroStep = ({ onContinue }: IntroStepProps) => {
+export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => {
   const features = [
     {
       icon: GraduationCap,
@@ -116,14 +118,26 @@ export const IntroStep = ({ onContinue }: IntroStepProps) => {
         </AccordionItem>
       </Accordion>
 
-      {/* CTA Button */}
-      <Button
-        size="lg"
-        onClick={onContinue}
-        className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-      >
-        Empezar
-      </Button>
+      {/* CTA Buttons */}
+      <div className="flex gap-3">
+        {canGoBack && onBack && (
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={onBack}
+            className="h-14 sm:h-16 px-6 rounded-xl sm:rounded-2xl transition-all duration-300"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <Button
+          size="lg"
+          onClick={onContinue}
+          className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+        >
+          Empezar
+        </Button>
+      </div>
     </motion.div>
   );
 };
