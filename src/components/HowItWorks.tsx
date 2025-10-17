@@ -5,21 +5,18 @@ const HowItWorks = () => {
   const steps = [
     {
       number: "1",
-      title: "Regístrate en Tálamo",
-      description: "Completamente gratis, sin compromisos",
-      detail: "Acceso inmediato a nuestra academia y herramientas básicas"
+      title: "Valida tu cuenta Exness",
+      description: "Verificamos tu afiliación con nuestro partner"
     },
     {
       number: "2", 
-      title: "Crea cuenta Exness",
-      description: "Con nuestro partner ID para acceso completo",
-      detail: "Plataforma regulada y transparente, sin costos ocultos"
+      title: "Crea tu acceso a Tálamo",
+      description: "Configura tu password en 30 segundos"
     },
     {
       number: "3",
-      title: "Acceso completo",
-      description: "A toda la plataforma de forma inmediata", 
-      detail: "Señales, copy trading, competencias y auditoría"
+      title: "Accede a todo el ecosistema",
+      description: "Academia, señales, copy trading y herramientas"
     }
   ];
 
@@ -92,9 +89,6 @@ const HowItWorks = () => {
                     </h4>
                     <p className="text-muted-foreground leading-relaxed">
                       {step.description}
-                    </p>
-                    <p className="text-sm text-muted-foreground/80 italic">
-                      {step.detail}
                     </p>
                   </div>
                   

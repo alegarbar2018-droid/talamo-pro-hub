@@ -18,6 +18,22 @@ const FAQExpanded = () => {
       answer: "Por spread IB con nuestra afiliación en Exness. Nuestro incentivo está alineado contigo: ganamos cuando operas, pero solo si confías lo suficiente para seguir haciéndolo. No necesitamos prometerte ganancias irreales."
     },
     {
+      question: "¿Hay costos ocultos?",
+      answer: "No. Los costos son los del bróker (spread, swap, comisiones) que pagarías de cualquier forma. Tálamo no añade cargos. La comisión IB la paga Exness, no tú."
+    },
+    {
+      question: "¿Necesito cuenta Exness?",
+      answer: "Sí, con nuestro partner ID para acceder a todo el ecosistema. Si ya tienes cuenta con otro partner, puedes solicitar cambio de partner: 1141465940423171000."
+    },
+    {
+      question: "Ya tengo cuenta con otro partner...",
+      answer: "Sí, puedes solicitar cambio de partner: 1141465940423171000. El proceso toma unas horas. Tu historial y fondos no se afectan. Una vez completado, podrás acceder a Tálamo."
+    },
+    {
+      question: "¿Garantizan resultados?",
+      answer: "No. El trading implica riesgo de pérdida. Te damos estructura, educación y herramientas profesionales, pero los resultados dependen de tu disciplina, gestión de riesgo y condiciones de mercado."
+    },
+    {
       question: "¿Piden acceso a mis fondos?",
       answer: "No. Solo validamos email/UID para confirmar que tu cuenta está afiliada. Para auditoría transparente, usamos investor password (solo lectura). Nunca pedimos trading password ni acceso para operar."
     },
@@ -26,28 +42,12 @@ const FAQExpanded = () => {
       answer: "No. Nunca. Investor password es solo lectura para verificar métricas. Tu cuenta es 100% tuya. En copy trading enviamos alertas; tú decides si ejecutas manualmente."
     },
     {
-      question: "¿Garantizan resultados?",
-      answer: "No. El trading implica riesgo de pérdida. Te damos estructura, educación y herramientas profesionales, pero los resultados dependen de tu disciplina, gestión de riesgo y condiciones de mercado."
-    },
-    {
-      question: "Ya tengo cuenta con otro partner...",
-      answer: "Sí, puedes solicitar cambio de partner: 1141465940423171000. El proceso toma unas horas. Tu historial y fondos no se afectan. Una vez completado, podrás acceder a Tálamo."
-    },
-    {
-      question: "¿Costos ocultos?",
-      answer: "No. Los costos son los del bróker (spread, swap, comisiones) que pagarías de cualquier forma. Tálamo no añade cargos. La comisión IB la paga Exness, no tú."
-    },
-    {
       question: "¿Qué mercados cubren?",
       answer: "FX, índices, oro, petróleo y cripto (según regulación). Nos enfocamos en instrumentos con spread competitivo y liquidez adecuada para estrategias profesionales."
     },
     {
       question: "¿Qué incluye la academia?",
-      answer: "Niveles 0→4 con objetivos, práctica y evaluación por lección. Desde setup y seguridad hasta algoritmos y EAs. Progresión estructurada con criterios mínimos y certificación interna."
-    },
-    {
-      question: "¿Idiomas y regiones?",
-      answer: "Español primero; luego inglés/portugués. Algunas funciones dependen de la entidad/región. Exness opera globalmente, pero disponibilidad específica varía según país."
+      answer: "146 lecciones organizadas en 3 niveles, desde fundamentos hasta estrategias avanzadas. Progresión estructurada con quizzes y certificación interna."
     }
   ];
 

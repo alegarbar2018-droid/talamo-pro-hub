@@ -1,92 +1,78 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { 
   BookOpen,
   TrendingUp,
   Users,
   Calculator,
   Trophy,
-  BarChart3
+  BarChart3,
+  ArrowRight
 } from "lucide-react";
+import { TechTerm } from "./TechTerm";
 
 const ModulesWithDetails = () => {
+  const navigate = useNavigate();
+  
   const features = [
     {
       icon: BookOpen,
       title: "Academia Estructurada",
       description: "Formación progresiva de trading profesional en 5 niveles",
       highlights: ["Fundamentos sólidos", "Gestión de riesgo", "Estrategias avanzadas"],
-      details: [
-        "Criterios mínimos de progresión entre niveles",
-        "Evaluaciones prácticas con métricas verificables",
-        "Mentoring peer-to-peer estructurado",
-        "Certificación interna por nivel completado",
-        "Journal obligatorio con feedback quincenal"
-      ]
+      infoLink: "/academy-info",
+      tooltip: "146 lecciones organizadas en 3 niveles: Fundamentos, Intermedio y Avanzado. Progresión validada con quizzes."
     },
     {
       icon: TrendingUp,
       title: "Señales Verificadas",
-      description: "Análisis profesional con transparencia total",
+      description: () => (
+        <span>
+          Análisis profesional con <TechTerm term="RR" definition="Risk/Reward: Relación entre el riesgo asumido y la ganancia potencial. RR 1:2 significa arriesgar $1 para ganar $2">RR</TechTerm> mínimo de 1:2
+        </span>
+      ),
       highlights: ["Lógica detallada", "Risk/Reward claro", "Historial público"],
-      details: [
-        "Criterios mínimos: RR ≥1:2, win rate ≥40%, sample ≥100",
-        "Publicación solo después de 3 meses de track record",
-        "Auditoría mensual de resultados por terceros",
-        "Invalidación automática si DD >15% en 30 días",
-        "Transparencia total: drawdowns y rachas perdedoras visibles"
-      ]
+      infoLink: "/signals-info",
+      tooltip: "Publicamos señales solo después de verificar 3 meses de track record con métricas profesionales"
     },
     {
       icon: Users,
       title: "Copy Trading Inteligente",
       description: "Estrategias verificadas con gestión de riesgo integrada",
       highlights: ["Sin acceso a cuenta", "Control total", "Métricas reales"],
-      details: [
-        "Filtros de riesgo: máximo 2% por trade, DD límite 20%",
-        "Copy solo con investor password (lectura)",
-        "Alertas automáticas, ejecución manual opcional",
-        "Diversificación automática entre máximo 3 estrategias",
-        "Pausas automáticas si estrategia excede límites"
-      ]
+      infoLink: "/copy-info",
+      tooltip: "Alertas automáticas, ejecución manual opcional. Sin acceso a tu cuenta de trading."
     },
     {
       icon: Calculator,
       title: "Herramientas Profesionales",
-      description: "Calculadoras y utilidades para trading sistemático",
+      description: () => (
+        <span>
+          Calculadoras y utilidades con métricas como <TechTerm term="PF" definition="Profit Factor: Ratio entre ganancias totales y pérdidas totales. PF > 1.5 indica buena estrategia">PF</TechTerm>, <TechTerm term="Sharpe" definition="Sharpe Ratio: Mide el retorno ajustado por riesgo. Sharpe > 1.0 es bueno, > 2.0 es excelente">Sharpe</TechTerm> y más
+        </span>
+      ),
       highlights: ["Gestión de posición", "Journal de trading", "Análisis de riesgo"],
-      details: [
-        "Calculadora de posición con vol targeting",
-        "Journal integrado con métricas PF, SQN, Sharpe",
-        "Backtesting walk-forward automatizado",
-        "Alertas de límites diarios/semanales configurables",
-        "Exportación compatible con MT4/MT5 y Excel"
-      ]
+      infoLink: "/tools-info",
+      tooltip: "Suite completa de herramientas profesionales para operativa sistemática"
     },
     {
       icon: Trophy,
       title: "Competencias",
       description: "Torneos y challenges para mejorar habilidades",
       highlights: ["LATAM Trading Cup", "Leaderboards", "Premios reales"],
-      details: [
-        "Competencias solo en demo con fondos virtual iguales",
-        "Métricas de evaluación: Profit Factor, Sharpe, Max DD",
-        "Duración estándar: 3 meses con auditoría externa",
-        "Premios en educación, software, o acceso premium",
-        "Transparencia total: todas las operaciones visibles"
-      ]
+      tooltip: "Competencias solo en demo con fondos virtuales iguales. Métricas de evaluación verificadas."
     },
     {
       icon: BarChart3,
       title: "Auditoría Transparente",
-      description: "Verificación de cuentas reales (solo lectura)",
+      description: () => (
+        <span>
+          Verificación de cuentas reales con <TechTerm term="Investor Password" definition="Contraseña de solo lectura que permite ver operaciones sin poder ejecutar trades. Tu cuenta permanece 100% segura.">investor password</TechTerm> (solo lectura)
+        </span>
+      ),
       highlights: ["MT4/MT5 compatible", "Métricas verificadas", "Transparencia total"],
-      details: [
-        "Solo investor password (read-only), nunca trading password",
-        "Cálculo automático de métricas: PF, win rate, Sharpe, DD",
-        "Verificación de terceros para traders públicos",
-        "Privacidad garantizada: datos agregados, no trades específicos",
-        "Revocación de acceso inmediata desde MT4/MT5"
-      ]
+      tooltip: "Solo lectura, nunca acceso de trading. Cálculo automático de métricas profesionales."
     }
   ];
 
@@ -137,7 +123,7 @@ const ModulesWithDetails = () => {
                   </div>
                 </div>
                 <CardDescription className="text-muted-foreground leading-relaxed">
-                  {feature.description}
+                  {typeof feature.description === 'function' ? feature.description() : feature.description}
                 </CardDescription>
               </CardHeader>
               
@@ -153,21 +139,16 @@ const ModulesWithDetails = () => {
                   ))}
                 </ul>
                 
-                <details className="group/details">
-                  <summary className="cursor-pointer text-sm font-medium text-teal hover:text-teal-bright transition-colors duration-300 flex items-center gap-2">
-                    <span>Ver detalles técnicos</span>
-                    <div className="w-4 h-4 rounded-full bg-teal/20 flex items-center justify-center group-hover/details:bg-teal/30 transition-colors duration-300">
-                      <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-                    </div>
-                  </summary>
-                  <div className="mt-4 space-y-3 border-t border-gradient-to-r from-transparent via-line to-transparent pt-4">
-                    {feature.details.map((detail, idx) => (
-                      <p key={idx} className="text-xs text-muted-foreground leading-relaxed pl-4 border-l-2 border-teal/20 hover:border-teal/40 transition-colors duration-300">
-                        {detail}
-                      </p>
-                    ))}
-                  </div>
-                </details>
+                {feature.infoLink && (
+                  <Button 
+                    variant="link" 
+                    onClick={() => navigate(feature.infoLink)}
+                    className="text-primary hover:underline p-0 h-auto"
+                  >
+                    Ver más detalles
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -15,7 +15,9 @@ import {
   Sparkles,
   Award,
   Zap,
-  Check
+  Check,
+  GraduationCap,
+  BookOpen
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -23,10 +25,9 @@ import { PARTNER_ID } from "@/lib/constants";
 import Navigation from "@/components/Navigation";
 
 // Lazy load heavy components
-const WhyWeDoIt = lazy(() => import("@/components/WhyWeDoIt"));
+const ValueProposition = lazy(() => import("@/components/ValueProposition"));
 const HowItWorks = lazy(() => import("@/components/HowItWorks"));
 const ModulesWithDetails = lazy(() => import("@/components/ModulesWithDetails"));
-const SyllabusDetailed = lazy(() => import("@/components/SyllabusDetailed"));
 const WhyExness = lazy(() => import("@/components/WhyExness"));
 const FAQExpanded = lazy(() => import("@/components/FAQExpanded"));
 
@@ -193,89 +194,100 @@ const Index = () => {
               </div>
             </motion.div>
           </div>
+          
+          {/* User Differentiation */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.4 }}
+            className="mt-12 text-center"
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              ¿Primera vez en trading?
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  document.getElementById('para-principiantes')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }}
+                className="group"
+              >
+                <GraduationCap className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                Soy principiante
+              </Button>
+              <Button 
+                variant="outline"
+                size="lg"
+                onClick={() => navigate('/tools-info')}
+                className="group"
+              >
+                <TrendingUp className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                Tengo experiencia
+              </Button>
+            </div>
+          </motion.div>
         </div>
       </motion.section>
 
       {/* Lazy load non-critical sections */}
       <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin h-8 w-8 border-4 border-teal border-t-transparent rounded-full" /></div>}>
-        {/* Why We Do It Section */}
-        <WhyWeDoIt />
+        {/* Value Proposition Section */}
+        <ValueProposition />
+        
+        {/* Sección para principiantes */}
+        <section id="para-principiantes" className="py-16 bg-surface/50">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <GraduationCap className="h-4 w-4" />
+              Si eres nuevo en trading
+            </div>
+            
+            <h2 className="text-3xl font-bold mb-6">Aprende desde cero, sin pagar cursos</h2>
+            
+            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+              Nuestra academia tiene <span className="text-primary font-semibold">146 lecciones gratuitas</span> que 
+              te llevan desde conceptos básicos hasta estrategias avanzadas. 
+              Todo estructurado por niveles con evaluaciones prácticas.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-surface border border-line rounded-xl p-6">
+                <BookOpen className="h-8 w-8 text-primary mb-3 mx-auto" />
+                <h3 className="font-semibold mb-2">Nivel 1: Fundamentos</h3>
+                <p className="text-sm text-muted-foreground">Qué es el trading, cómo funcionan los mercados</p>
+              </div>
+              <div className="bg-surface border border-line rounded-xl p-6">
+                <Target className="h-8 w-8 text-primary mb-3 mx-auto" />
+                <h3 className="font-semibold mb-2">Nivel 2: Intermedio</h3>
+                <p className="text-sm text-muted-foreground">Análisis técnico, gestión de riesgo</p>
+              </div>
+              <div className="bg-surface border border-line rounded-xl p-6">
+                <TrendingUp className="h-8 w-8 text-primary mb-3 mx-auto" />
+                <h3 className="font-semibold mb-2">Nivel 3: Avanzado</h3>
+                <p className="text-sm text-muted-foreground">Estrategias complejas, psicología del trader</p>
+              </div>
+            </div>
+            
+            <Button 
+              size="lg"
+              onClick={() => navigate('/academy-info')}
+            >
+              Ver temario completo
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          </div>
+        </section>
 
         {/* How It Works */}
         <HowItWorks />
 
         {/* Modules with Details */}
         <ModulesWithDetails />
-
-        {/* Syllabus Detailed */}
-        <SyllabusDetailed />
-
-      {/* Business Model */}
-      <section id="modelo" className="bg-surface border-y border-line">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              ¿Por qué el acceso por afiliación?
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Nuestro modelo es simple y transparente: ganamos cuando tú ganas
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Nuestro modelo es simple y transparente: ganamos cuando tú ganas. 
-                  Somos IB (Introducing Broker) de Exness, lo que significa que recibimos 
-                  una comisión por spread cuando operas.
-                </p>
-                <p>
-                  <strong className="text-foreground">No vendemos cursos.</strong> No necesitamos 
-                  prometerte rentabilidades irreales. Nuestro incentivo está alineado contigo: 
-                  mientras más exitoso seas y más confíes en operar, mejor para ambos.
-                </p>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-6 w-6 text-teal flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">Transparencia Total</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Publicamos resultados reales, avisos de riesgo claros y nunca 
-                    prometemos rentabilidades garantizadas.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="pt-4">
-                <div className="flex flex-col gap-2">
-                  <Button 
-                    variant="outline"
-                    onClick={() => navigate("/onboarding?step=validate")}
-                    className="border-primary text-primary hover:bg-primary/5"
-                    data-event="cta-validar-acceso-modelo"
-                  >
-                    <Target className="h-5 w-5 mr-2" />
-                    Ya tengo cuenta, validar ahora
-                  </Button>
-                  <Button 
-                    variant="link"
-                    onClick={() => navigate("/onboarding?step=validate")}
-                    className="text-muted-foreground hover:text-foreground text-sm h-auto p-1"
-                    data-event="cta-no-afiliado-modelo"
-                  >
-                    <Users className="h-4 w-4 mr-2" />
-                    Tengo cuenta pero no estoy afiliado
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
         {/* Why Exness */}
         <WhyExness />
