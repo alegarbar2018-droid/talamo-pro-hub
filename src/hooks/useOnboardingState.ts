@@ -1,15 +1,11 @@
 import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export type OnboardingStep = "validate" | "create-account" | "done";
+export type OnboardingStep = "validate" | "create-password" | "welcome" | "goal" | "capital" | "experience" | "recommendation";
 
-interface ProfileData {
-  language: string;
-  level: string;
-  objective: string;
-  riskTolerance: string;
-  interests: string[];
-}
+export type Goal = 'copiar' | 'aprender' | 'operar' | 'mixto';
+export type CapitalBand = '<500' | '500-2000' | '2000-10000' | '>10000';
+export type ExperienceLevel = 'ninguna' | 'basica' | 'intermedia' | 'avanzada';
 
 export const useOnboardingState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,13 +19,10 @@ export const useOnboardingState = () => {
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [profile, setProfile] = useState<ProfileData>({
-    language: "español",
-    level: "",
-    objective: "",
-    riskTolerance: "",
-    interests: []
-  });
+  const [name, setName] = useState("");
+  const [goal, setGoal] = useState<Goal | null>(null);
+  const [capital, setCapital] = useState<CapitalBand | null>(null);
+  const [experience, setExperience] = useState<ExperienceLevel | null>(null);
   const [uid, setUid] = useState("");
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isNotAffiliated, setIsNotAffiliated] = useState(false);
@@ -47,8 +40,12 @@ export const useOnboardingState = () => {
   const getStepNumber = () => {
     const stepMap = {
       validate: 1,
-      "create-account": 2,
-      done: 3
+      "create-password": 2,
+      welcome: 3,
+      goal: 4,
+      capital: 5,
+      experience: 6,
+      recommendation: 7
     };
     return stepMap[step];
   };
@@ -59,13 +56,10 @@ export const useOnboardingState = () => {
     setEmail("");
     setPassword("");
     setConfirmPassword("");
-    setProfile({
-      language: "español",
-      level: "",
-      objective: "",
-      riskTolerance: "",
-      interests: []
-    });
+    setName("");
+    setGoal(null);
+    setCapital(null);
+    setExperience(null);
     setUid("");
     setIsDemoMode(false);
     setIsNotAffiliated(false);
@@ -81,7 +75,10 @@ export const useOnboardingState = () => {
     email,
     password,
     confirmPassword,
-    profile,
+    name,
+    goal,
+    capital,
+    experience,
     uid,
     isDemoMode,
     isNotAffiliated,
@@ -94,7 +91,10 @@ export const useOnboardingState = () => {
     setEmail,
     setPassword,
     setConfirmPassword,
-    setProfile,
+    setName,
+    setGoal,
+    setCapital,
+    setExperience,
     setUid,
     setIsDemoMode,
     setIsNotAffiliated,
@@ -104,7 +104,7 @@ export const useOnboardingState = () => {
     
     // Computed
     getStepNumber,
-    progress: (getStepNumber() / 3) * 100,
+    progress: (getStepNumber() / 7) * 100,
     
     // Actions
     resetState

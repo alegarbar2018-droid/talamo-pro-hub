@@ -89,7 +89,7 @@ export const InvestorProfileWizardSimple = ({ open, onClose, onComplete }: Inves
       sessionStorage.setItem('investor_wizard_state', JSON.stringify(wizardState));
       
       // Redirigir al flujo de onboarding con parámetro de origen
-      navigate('/onboarding?flow=investor&step=validate');
+      navigate('/onboarding?flow=investor');
       onClose();
     } else {
       // Usuario autenticado: ir directo a copy-trading con recomendaciones
