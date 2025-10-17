@@ -22,6 +22,7 @@ export default function CopyInfo() {
   useEffect(() => {
     document.title = "Copy Trading — Información para Inversionistas";
     trackPageView("copy-info");
+    window.scrollTo(0, 0);
   }, [trackPageView]);
 
   const handleWizardComplete = (allocations: StrategyAllocation[]) => {
