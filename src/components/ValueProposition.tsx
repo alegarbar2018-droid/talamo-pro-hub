@@ -1,98 +1,108 @@
-import { Shield, TrendingUp, CheckCircle, Target, Users } from "lucide-react";
+import { Shield, TrendingUp, Users, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-const ValueProposition = () => {
+export default function ValueProposition() {
   const navigate = useNavigate();
-  
+  const { t } = useTranslation();
+
   return (
-    <section id="propuesta" className="relative overflow-hidden bg-gradient-to-br from-background via-surface to-background py-20">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl"></div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Parte 1: Por qué existimos */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Shield className="h-4 w-4" />
-            Nuestro propósito
-          </div>
-          
-          <h2 className="text-4xl font-bold text-foreground mb-6">
-            Trading serio, sin promesas vacías
+    <section className="py-20 relative overflow-hidden bg-background">
+      <div className="container mx-auto px-4">
+        {/* Main heading */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            {t('landing:value_title')}
           </h2>
-          
-          <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-            Nuestro modelo es <span className="text-primary font-semibold">gratis para ti</span>. 
-            Ganamos por spread IB cuando operas en Exness con nuestra afiliación. 
-            Eso alinea nuestro éxito con el tuyo.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {t('landing:value_subtitle')}
           </p>
-          
-          <div className="bg-primary/5 border border-primary/20 rounded-xl p-6">
-            <p className="text-base text-foreground leading-relaxed">
-              No prometemos rentabilidad. Te damos <span className="text-primary font-semibold">estructura profesional</span>: 
-              academia, señales, copy trading, herramientas y comunidad.
+        </div>
+
+        {/* Three pillars */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          {/* Pillar 1 */}
+          <div className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+              <Shield className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-3">
+              {t('landing:value_pillar1_title')}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {t('landing:value_pillar1_desc')}
+            </p>
+            <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
+              {t('landing:value_pillar1_proof')}
+            </p>
+          </div>
+
+          {/* Pillar 2 */}
+          <div className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+              <TrendingUp className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-3">
+              {t('landing:value_pillar2_title')}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {t('landing:value_pillar2_desc')}
+            </p>
+            <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
+              {t('landing:value_pillar2_proof')}
+            </p>
+          </div>
+
+          {/* Pillar 3 */}
+          <div className="bg-card border border-border rounded-lg p-6 hover:border-primary/50 transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+              <Users className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-3">
+              {t('landing:value_pillar3_title')}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {t('landing:value_pillar3_desc')}
+            </p>
+            <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
+              {t('landing:value_pillar3_proof')}
             </p>
           </div>
         </div>
-        
-        {/* Parte 2: Los 3 pilares */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-surface/80 backdrop-blur-sm border border-line rounded-xl p-6 hover:shadow-glow-subtle hover:border-primary/30 transition-all duration-300">
-            <div className="flex items-center justify-center w-12 h-12 bg-gradient-primary rounded-xl mb-4 mx-auto">
-              <Shield className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <h3 className="text-xl font-bold text-center mb-2">Transparencia total</h3>
-            <p className="text-muted-foreground text-center">
-              Sin cargos ocultos. Todo claro desde día uno.
-            </p>
-          </div>
-          
-          <div className="bg-surface/80 backdrop-blur-sm border border-line rounded-xl p-6 hover:shadow-glow-subtle hover:border-primary/30 transition-all duration-300">
-            <div className="flex items-center justify-center w-12 h-12 bg-gradient-primary rounded-xl mb-4 mx-auto">
-              <TrendingUp className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <h3 className="text-xl font-bold text-center mb-2">Ejecución con datos</h3>
-            <p className="text-muted-foreground text-center">
-              Métricas reales, no marketing exagerado.
-            </p>
-          </div>
-          
-          <div className="bg-surface/80 backdrop-blur-sm border border-line rounded-xl p-6 hover:shadow-glow-subtle hover:border-primary/30 transition-all duration-300">
-            <div className="flex items-center justify-center w-12 h-12 bg-gradient-primary rounded-xl mb-4 mx-auto">
-              <CheckCircle className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <h3 className="text-xl font-bold text-center mb-2">Riesgo gestionado</h3>
-            <p className="text-muted-foreground text-center">
-              Advertencias claras y control profesional.
-            </p>
-          </div>
+
+        {/* IB Model Note */}
+        <div className="max-w-3xl mx-auto mb-12 bg-muted/30 border border-border rounded-lg p-6">
+          <p className="text-muted-foreground text-center">
+            {t('landing:value_ib_note')}{' '}
+            <a 
+              href="https://www.investopedia.com/terms/i/introducingbroker.asp" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline inline-flex items-center gap-1"
+            >
+              {t('landing:value_ib_learn')} <ExternalLink className="w-3 h-3" />
+            </a>
+          </p>
         </div>
-        
-        {/* Parte 3: CTAs de acceso */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+
+        {/* CTA */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg"
-            onClick={() => navigate("/onboarding?step=validate")}
-            className="bg-primary hover:bg-primary/90"
+            onClick={() => navigate('/auth/validate')}
           >
-            <Target className="h-5 w-5 mr-2" />
-            Ya tengo cuenta Exness
+            {t('landing:exness_have')}
           </Button>
           <Button 
-            variant="outline"
             size="lg"
-            onClick={() => navigate("/onboarding?step=validate")}
+            variant="outline"
+            onClick={() => navigate('/onboarding?step=choose')}
           >
-            <Users className="h-5 w-5 mr-2" />
-            No estoy afiliado, cambiar partner
+            {t('landing:cta_access')}
           </Button>
         </div>
       </div>
     </section>
   );
-};
-
-export default ValueProposition;
+}

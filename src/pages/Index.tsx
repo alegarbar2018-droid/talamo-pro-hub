@@ -1,28 +1,13 @@
-import { useState, useEffect, lazy, Suspense } from "react";
-import { motion } from "framer-motion";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Target,
-  ArrowRight,
-  CheckCircle,
-  AlertTriangle,
-  Copy,
-  X,
-  TrendingUp,
-  Shield,
-  Users,
-  Sparkles,
-  Award,
-  Zap,
-  Check,
-  GraduationCap,
-  BookOpen
-} from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { Shield, TrendingUp, Users, Sparkles, BookOpen, Target, GraduationCap, Clock, Award } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { PARTNER_ID } from "@/lib/constants";
 import Navigation from "@/components/Navigation";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import ValidateCTA from "@/components/ValidateCTA";
+import { ChangePartnerModal } from "@/components/access/ChangePartnerModal";
 
 // Lazy load heavy components
 const ValueProposition = lazy(() => import("@/components/ValueProposition"));
@@ -239,47 +224,93 @@ const Index = () => {
         {/* Value Proposition Section */}
         <ValueProposition />
         
-        {/* Sección para principiantes */}
-        <section id="para-principiantes" className="py-16 bg-surface/50">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <GraduationCap className="h-4 w-4" />
-              Si eres nuevo en trading
+        {/* Beginner Section - Humanized */}
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
+                  <GraduationCap className="w-4 h-4" />
+                  {t('landing:beginner_badge')}
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  {t('landing:beginner_title')}
+                </h2>
+                <p className="text-lg text-muted-foreground mb-2">
+                  {t('landing:beginner_subtitle')}
+                </p>
+                <p className="text-muted-foreground">
+                  {t('landing:beginner_reality')}
+                </p>
+              </div>
+
+              {/* Learning Path Timeline */}
+              <div className="grid md:grid-cols-3 gap-6 mb-12">
+                <Card className="p-6 border-border bg-card">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{t('landing:beginner_month1')}</h3>
+                      <p className="text-xs text-muted-foreground">{t('landing:beginner_hours')}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">{t('landing:beginner_month1_desc')}</p>
+                  <div className="flex items-center gap-2 text-xs text-primary">
+                    <Award className="w-4 h-4" />
+                    <span>{t('landing:beginner_month1_milestone')}</span>
+                  </div>
+                </Card>
+
+                <Card className="p-6 border-border bg-card">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Target className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{t('landing:beginner_month23')}</h3>
+                      <p className="text-xs text-muted-foreground">{t('landing:beginner_practice')}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">{t('landing:beginner_month23_desc')}</p>
+                  <div className="flex items-center gap-2 text-xs text-primary">
+                    <Award className="w-4 h-4" />
+                    <span>{t('landing:beginner_month23_milestone')}</span>
+                  </div>
+                </Card>
+
+                <Card className="p-6 border-border bg-card">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{t('landing:beginner_month46')}</h3>
+                      <p className="text-xs text-muted-foreground">{t('landing:beginner_consistency')}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">{t('landing:beginner_month46_desc')}</p>
+                  <div className="flex items-center gap-2 text-xs text-primary">
+                    <Award className="w-4 h-4" />
+                    <span>{t('landing:beginner_month46_milestone')}</span>
+                  </div>
+                </Card>
+              </div>
+
+              <div className="text-center">
+                <Button 
+                  size="lg"
+                  onClick={() => navigate('/academy-info')}
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  {t('landing:beginner_cta')}
+                </Button>
+                <p className="text-sm text-muted-foreground mt-4">
+                  {t('landing:beginner_lessons_count')}
+                </p>
+              </div>
             </div>
-            
-            <h2 className="text-3xl font-bold mb-6">Aprende desde cero, sin pagar cursos</h2>
-            
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Nuestra academia tiene <span className="text-primary font-semibold">146 lecciones gratuitas</span> que 
-              te llevan desde conceptos básicos hasta estrategias avanzadas. 
-              Todo estructurado por niveles con evaluaciones prácticas.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-surface border border-line rounded-xl p-6">
-                <BookOpen className="h-8 w-8 text-primary mb-3 mx-auto" />
-                <h3 className="font-semibold mb-2">Nivel 1: Fundamentos</h3>
-                <p className="text-sm text-muted-foreground">Qué es el trading, cómo funcionan los mercados</p>
-              </div>
-              <div className="bg-surface border border-line rounded-xl p-6">
-                <Target className="h-8 w-8 text-primary mb-3 mx-auto" />
-                <h3 className="font-semibold mb-2">Nivel 2: Intermedio</h3>
-                <p className="text-sm text-muted-foreground">Análisis técnico, gestión de riesgo</p>
-              </div>
-              <div className="bg-surface border border-line rounded-xl p-6">
-                <TrendingUp className="h-8 w-8 text-primary mb-3 mx-auto" />
-                <h3 className="font-semibold mb-2">Nivel 3: Avanzado</h3>
-                <p className="text-sm text-muted-foreground">Estrategias complejas, psicología del trader</p>
-              </div>
-            </div>
-            
-            <Button 
-              size="lg"
-              onClick={() => navigate('/academy-info')}
-            >
-              Ver temario completo
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
           </div>
         </section>
 
