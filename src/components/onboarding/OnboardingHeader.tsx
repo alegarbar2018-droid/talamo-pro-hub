@@ -36,16 +36,16 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
           </div>
 
           {/* Step Indicator */}
-          <div className="text-sm text-muted-foreground font-medium">
-            {stepNumber}/7
+          <div className="text-xs sm:text-sm text-muted-foreground font-medium">
+            {stepNumber}/8
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="pb-3 sm:pb-4">
+        <div className="pb-2 sm:pb-3">
           <Progress 
             value={progress} 
-            className="h-1 bg-muted/30"
+            className="h-1 sm:h-1.5 bg-muted/30"
           />
         </div>
       </div>

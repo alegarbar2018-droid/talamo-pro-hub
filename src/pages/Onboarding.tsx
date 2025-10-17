@@ -2,20 +2,27 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useOnboardingState } from "@/hooks/useOnboardingState";
+import { useOnboardingPersistence } from "@/hooks/useOnboardingPersistence";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Users, GraduationCap, TrendingUp } from "lucide-react";
+import { OnboardingHeader } from "@/components/onboarding/OnboardingHeader";
+import { IntroStep } from "@/components/onboarding/steps/IntroStep";
+import { EmailCaptureStep } from "@/components/onboarding/steps/EmailCaptureStep";
+import { UserExistsStep } from "@/components/onboarding/steps/UserExistsStep";
+import { NoExnessAccountStep } from "@/components/onboarding/steps/NoExnessAccountStep";
+import { ExnessDetectionStep } from "@/components/onboarding/steps/ExnessDetectionStep";
+import { HasExnessFlowStep } from "@/components/onboarding/steps/HasExnessFlowStep";
+import { NoExnessFlowStep } from "@/components/onboarding/steps/NoExnessFlowStep";
+import { CapitalExperienceStep } from "@/components/onboarding/steps/CapitalExperienceStep";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAffiliationValidation } from "@/hooks/useAffiliationValidation";
-import { NotAffiliatedOptions } from "@/components/onboarding/NotAffiliatedOptions";
-import ChangePartnerModal from "@/components/access/ChangePartnerModal";
-import { CheckCircle, AlertTriangle, Shield } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Sparkles, Users, GraduationCap, TrendingUp, CheckCircle, AlertTriangle, Shield, Loader2 } from "lucide-react";
 
-const OnboardingNew = () => {
+const Onboarding = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
@@ -43,25 +50,48 @@ const OnboardingNew = () => {
     setUid,
     isDemoMode,
     setIsDemoMode,
-    isNotAffiliated,
-    setIsNotAffiliated,
-    showPartnerModal,
-    setShowPartnerModal,
+    accountStatus,
+    setAccountStatus,
     getStepNumber,
+    progress,
   } = useOnboardingState();
   
+  const { saveState, loadState, clearState } = useOnboardingPersistence();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [wizardState, setWizardState] = useState<any>(null);
-  const { loading: validating, error: validationError, cooldownSeconds, validateAffiliation } = useAffiliationValidation();
-  const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
 
+  // Load saved state on mount
+  useEffect(() => {
+    const saved = loadState();
+    if (saved && saved.step && saved.step !== "intro") {
+      if (saved.email) setEmail(saved.email);
+      if (saved.name) setName(saved.name);
+      if (saved.goal) setGoal(saved.goal);
+      if (saved.capital) setCapital(saved.capital);
+      if (saved.experience) setExperience(saved.experience);
+      if (saved.step) setStep(saved.step);
+      if (saved.accountStatus) setAccountStatus(saved.accountStatus);
+      
+      toast({
+        title: "Progreso restaurado",
+        description: "Continuamos donde lo dejaste"
+      });
+    }
+  }, []);
+
+  // Load investor wizard state
   useEffect(() => {
     if (flowOrigin === 'investor') {
       const saved = sessionStorage.getItem('investor_wizard_state');
       if (saved) {
         try {
-          setWizardState(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          setWizardState(parsed);
+          if (parsed.goal) {
+            setGoal('copiar');
+          }
         } catch (e) {
           console.error('Error parsing wizard state:', e);
         }
@@ -69,54 +99,82 @@ const OnboardingNew = () => {
     }
   }, [flowOrigin]);
 
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
-  };
+  // Save state on changes
+  useEffect(() => {
+    saveState({ step, email, name, goal, capital, experience, accountStatus });
+  }, [step, email, name, goal, capital, experience, accountStatus, saveState]);
 
-  // Step 1: Validate email
-  const handleValidateEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Validation logic
+  const handleEmailValidation = async (emailToValidate: string) => {
+    setLoading(true);
+    setValidationError("");
     
-    await validateAffiliation(
-      email,
-      (clientUid) => {
-        setUid(clientUid || "");
-        setIsNotAffiliated(false);
-        setIsDemoMode(false);
-        setStep("create-password");
-      },
-      () => {
-        setIsNotAffiliated(true);
-        setTimeout(() => {
-          const blockB = document.getElementById('block-b-not-affiliated');
-          blockB?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-      },
-      () => {
-        setIsDemoMode(true);
-        setIsNotAffiliated(false);
-        setStep("create-password");
-        toast({
-          title: "Modo Demo Activado",
-          description: "Acceso temporal para explorar Tálamo",
-        });
+    try {
+      const { data, error: apiError } = await supabase.functions.invoke(
+        'secure-affiliation-check',
+        { body: { email: emailToValidate } }
+      );
+
+      if (apiError?.status === 429 || data?.rate_limited) {
+        const retryAfter = data?.retry_after || 300;
+        setValidationError(`Demasiadas solicitudes. Espera ${retryAfter}s.`);
+        setLoading(false);
+        return;
       }
-    );
+
+      if (apiError?.status === 503 || data?.code === 'UpstreamError') {
+        setValidationError("Servicio temporalmente no disponible. Intenta en unos minutos.");
+        setLoading(false);
+        return;
+      }
+
+      if (data?.code === 'BadRequest') {
+        setValidationError("Email inválido. Verifica el formato.");
+        setLoading(false);
+        return;
+      }
+
+      // Success - route based on response
+      if (data?.ok && data?.data) {
+        const { user_exists, is_affiliated, has_exness_account, uid: responseUid, demo_mode } = data.data;
+
+        if (user_exists) {
+          setAccountStatus('exists');
+          setStep('user-exists');
+        } else if (demo_mode) {
+          setIsDemoMode(true);
+          setAccountStatus('affiliated');
+          setStep('create-password');
+          toast({
+            title: "Modo Demo Activado",
+            description: "Acceso temporal para explorar Tálamo"
+          });
+        } else if (is_affiliated) {
+          setUid(responseUid || '');
+          setAccountStatus('affiliated');
+          setStep('create-password');
+        } else if (has_exness_account === false) {
+          setAccountStatus('no-exness');
+          setStep('no-exness-account');
+        } else {
+          // Has Exness but not affiliated
+          setAccountStatus('not-affiliated');
+          setStep('exness-detection');
+        }
+      } else {
+        // Fallback
+        setAccountStatus('not-affiliated');
+        setStep('exness-detection');
+      }
+    } catch (err: any) {
+      console.error('Validation error:', err);
+      setValidationError("Error inesperado. Verifica tu conexión.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCreateAccount = () => {
-    setShowNewAccountCreated(true);
-  };
-
-  const handleRetryValidation = () => {
-    setShowNewAccountCreated(false);
-    setIsNotAffiliated(false);
-    setShowPartnerModal(false);
-  };
-
-  // Step 2: Create password
+  // Step 3: Create password
   const handleCreatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -138,7 +196,7 @@ const OnboardingNew = () => {
         return;
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -147,7 +205,7 @@ const OnboardingNew = () => {
         }
       });
 
-      if (error) throw error;
+      if (signUpError) throw signUpError;
       setStep("welcome");
       
     } catch (err: any) {
@@ -157,7 +215,7 @@ const OnboardingNew = () => {
     }
   };
 
-  // Step 7: Complete onboarding
+  // Complete onboarding
   const handleComplete = async () => {
     if (!user) return;
     
@@ -173,7 +231,7 @@ const OnboardingNew = () => {
         recommendedAccount = capital === '>10000' ? 'Zero' : 'Pro';
       }
 
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({
           first_name: name,
@@ -187,10 +245,12 @@ const OnboardingNew = () => {
         })
         .eq('user_id', user.id);
       
-      if (error) throw error;
+      if (updateError) throw updateError;
       
       await refreshUser();
       await new Promise(resolve => setTimeout(resolve, 500));
+      
+      clearState();
       
       toast({
         title: '¡Bienvenido a Tálamo!',
@@ -220,135 +280,94 @@ const OnboardingNew = () => {
     if (experience === 'ninguna' || experience === 'basica') {
       return {
         account: 'Standard Cent',
-        reason: 'Perfecta para principiantes. Opera con micro-lotes ($1 = 100 centavos) y practica sin riesgo alto.'
+        reason: 'Perfecta para principiantes. Opera con micro-lotes ($1 = 100 centavos) y practica sin riesgo alto.',
+        nextStep: goal === 'aprender' ? 'Comenzar con la academia' : 'Explorar herramientas básicas'
       };
     } else if (experience === 'intermedia') {
       return {
         account: capital === '>10000' ? 'Pro' : 'Standard',
         reason: capital === '>10000' 
           ? 'Cuenta Pro: spreads desde 0.1 pips, ideal para tu capital y experiencia.'
-          : 'Cuenta Standard: spreads competitivos y condiciones balanceadas para traders intermedios.'
+          : 'Cuenta Standard: spreads competitivos y condiciones balanceadas para traders intermedios.',
+        nextStep: goal === 'copiar' ? 'Explorar estrategias de copy trading' : 'Acceder a herramientas avanzadas'
       };
     } else {
       return {
         account: capital === '>10000' ? 'Zero' : 'Pro',
         reason: capital === '>10000'
           ? 'Cuenta Zero: spreads de 0.0 pips en pares principales, perfecta para scalping y alta frecuencia.'
-          : 'Cuenta Pro: condiciones profesionales con spreads reducidos.'
+          : 'Cuenta Pro: condiciones profesionales con spreads reducidos.',
+        nextStep: 'Acceder a herramientas profesionales'
       };
     }
   };
 
   const renderStep = () => {
+    const fadeIn = {
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: -20 }
+    };
+
     switch (step) {
-      case "validate":
+      case "intro":
+        return <IntroStep onContinue={() => setStep("email-capture")} />;
+
+      case "email-capture":
         return (
-          <motion.div
-            key="validate"
-            variants={fadeIn}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="space-y-8 max-w-2xl mx-auto"
-          >
-            <div className="text-center space-y-4">
-              <Sparkles className="h-16 w-16 mx-auto text-primary" />
-              <h1 className="text-4xl font-bold">Comencemos tu registro</h1>
-              <p className="text-xl text-muted-foreground">
-                Para acceder a Tálamo, necesitas una cuenta en Exness. Es la plataforma donde operarás.
-              </p>
-            </div>
+          <EmailCaptureStep
+            email={email}
+            onEmailChange={setEmail}
+            onContinue={handleEmailValidation}
+            loading={loading}
+            error={validationError}
+          />
+        );
 
-            <form onSubmit={handleValidateEmail} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-base">
-                  Email de tu cuenta Exness
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-12 text-lg"
-                />
-                <p className="text-sm text-muted-foreground">
-                  Si aún no tienes cuenta, te mostraremos cómo crear una en el siguiente paso
-                </p>
-              </div>
-              
-              {validationError && !isNotAffiliated && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>{validationError}</AlertDescription>
-                </Alert>
-              )}
-              
-              <Button
-                type="submit"
-                disabled={!email || validating || cooldownSeconds > 0}
-                className="w-full h-14 text-lg"
-                size="lg"
-              >
-                {validating ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Verificando...</span>
-                  </div>
-                ) : cooldownSeconds > 0 ? (
-                  `Espera ${cooldownSeconds}s`
-                ) : (
-                  "Continuar"
-                )}
-              </Button>
-            </form>
+      case "user-exists":
+        return (
+          <UserExistsStep
+            email={email}
+            onTryAnotherEmail={() => {
+              setEmail("");
+              setAccountStatus('unknown');
+              setStep("email-capture");
+            }}
+          />
+        );
 
-            {isNotAffiliated && (
-              <div className="mt-6">
-                <NotAffiliatedOptions
-                  onCreateAccount={handleCreateAccount}
-                  onRequestPartnerChange={() => setShowPartnerModal(true)}
-                  onRetryValidation={handleRetryValidation}
-                />
-              </div>
-            )}
+      case "no-exness-account":
+        return (
+          <NoExnessAccountStep
+            onAccountCreated={() => setStep("email-capture")}
+          />
+        );
 
-            {showNewAccountCreated && (
-              <Alert>
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
-                  ¡Perfecto! Cuando termines de crear tu cuenta, vuelve aquí.
-                  <Button
-                    onClick={handleRetryValidation}
-                    variant="outline"
-                    className="w-full mt-3"
-                  >
-                    Ya la creé, continuar
-                  </Button>
-                </AlertDescription>
-              </Alert>
-            )}
+      case "exness-detection":
+        return (
+          <ExnessDetectionStep
+            onHasExness={() => setStep("has-exness-flow")}
+            onNoExness={() => setStep("no-exness-flow")}
+            onTryAnotherEmail={() => {
+              setEmail("");
+              setAccountStatus('unknown');
+              setStep("email-capture");
+            }}
+          />
+        );
 
-            <div className="mt-8 p-6 bg-card/50 rounded-xl border border-border">
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary mt-0.5" />
-                <div className="space-y-2">
-                  <h3 className="font-semibold">¿Por qué Exness?</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Exness es una plataforma regulada donde manejas tu dinero de forma segura. Tálamo es un servicio complementario 
-                    que te proporciona herramientas, educación y señales para operar mejor. Nunca accedemos a tus fondos.
-                  </p>
-                </div>
-              </div>
-            </div>
+      case "has-exness-flow":
+        return (
+          <HasExnessFlowStep
+            onCompleted={() => setStep("email-capture")}
+          />
+        );
 
-            <ChangePartnerModal 
-              isOpen={showPartnerModal} 
-              onClose={() => setShowPartnerModal(false)}
-              onRetryValidation={handleRetryValidation}
-            />
-          </motion.div>
+      case "no-exness-flow":
+        return (
+          <NoExnessFlowStep
+            onAccountCreated={() => setStep("email-capture")}
+          />
         );
 
       case "create-password":
@@ -359,18 +378,26 @@ const OnboardingNew = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="space-y-8 max-w-2xl mx-auto"
+            className="space-y-6 sm:space-y-8"
           >
-            <div className="text-center space-y-4">
-              <CheckCircle className="h-16 w-16 mx-auto text-primary" />
-              <h1 className="text-4xl font-bold">Crear tu acceso a Tálamo</h1>
-              <p className="text-xl text-muted-foreground">
+            <div className="text-center space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-center mb-4 sm:mb-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-glow-primary">
+                  <CheckCircle className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+                </div>
+              </div>
+              
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                Crear tu acceso a Tálamo
+              </h2>
+              
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 Esta contraseña es para tu cuenta de Tálamo, independiente de Exness
               </p>
             </div>
 
             {isDemoMode && (
-              <Alert className="bg-warning/10 border-warning/20">
+              <Alert className="bg-warning/10 border-warning/30">
                 <AlertTriangle className="h-4 w-4 text-warning" />
                 <AlertDescription className="text-warning">
                   Modo demo — acceso temporal para explorar la plataforma
@@ -378,73 +405,88 @@ const OnboardingNew = () => {
               </Alert>
             )}
 
-            <div className="p-6 bg-card/50 rounded-xl border border-border">
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary mt-0.5" />
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Seguridad y privacidad</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Tu panel de Tálamo es independiente de tu cuenta de trading. Solo validamos tu afiliación 
-                    para darte acceso gratuito a las herramientas.
-                  </p>
+            <Card className="border-border/50 bg-gradient-to-br from-surface/80 via-surface/50 to-surface/30 backdrop-blur-xl shadow-xl">
+              <CardContent className="p-6 sm:p-8">
+                <div className="mb-6 p-4 rounded-xl bg-background/50 border border-border/30">
+                  <div className="flex items-start gap-3">
+                    <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h3 className="font-semibold text-foreground text-sm sm:text-base">
+                        Seguridad y privacidad
+                      </h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                        Tu panel de Tálamo es independiente de tu cuenta de trading. Solo validamos tu afiliación para darte acceso gratuito a las herramientas.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <form onSubmit={handleCreatePassword} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-base">Crear contraseña</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Mínimo 8 caracteres"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={8}
-                  className="h-12 text-lg"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-base">Confirmar contraseña</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Repite tu contraseña"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  minLength={8}
-                  className="h-12 text-lg"
-                />
-              </div>
+                <form onSubmit={handleCreatePassword} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm sm:text-base font-medium">
+                      Crear contraseña
+                    </Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Mínimo 8 caracteres"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      className="h-14 sm:h-16 px-4 text-base sm:text-lg bg-background/50 border-2 border-border focus:border-primary rounded-xl transition-all duration-300"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-sm sm:text-base font-medium">
+                      Confirmar contraseña
+                    </Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="Repite tu contraseña"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      className="h-14 sm:h-16 px-4 text-base sm:text-lg bg-background/50 border-2 border-border focus:border-primary rounded-xl transition-all duration-300"
+                    />
+                  </div>
 
-              <div className="text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg">
-                La contraseña debe tener al menos 8 caracteres, incluir una mayúscula y un número.
-              </div>
-              
-              {error && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              
-              <Button
-                type="submit"
-                disabled={
-                  password.length < 8 || 
-                  password !== confirmPassword || 
-                  !/(?=.*[A-Z])(?=.*\d)/.test(password) || 
-                  loading
-                }
-                className="w-full h-14 text-lg"
-                size="lg"
-              >
-                {loading ? "Creando cuenta..." : "Continuar"}
-              </Button>
-            </form>
+                  <div className="text-xs sm:text-sm text-muted-foreground bg-background/30 p-4 rounded-lg border border-border/30">
+                    La contraseña debe tener al menos 8 caracteres, incluir una mayúscula y un número.
+                  </div>
+                  
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <Button
+                    type="submit"
+                    disabled={
+                      password.length < 8 || 
+                      password !== confirmPassword || 
+                      !/(?=.*[A-Z])(?=.*\d)/.test(password) || 
+                      loading
+                    }
+                    className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Creando cuenta...
+                      </>
+                    ) : (
+                      "Continuar"
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </motion.div>
         );
 
@@ -456,34 +498,51 @@ const OnboardingNew = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="space-y-8 text-center max-w-2xl mx-auto"
+            className="space-y-6 sm:space-y-8"
           >
-            <div className="space-y-4">
-              <Sparkles className="h-16 w-16 mx-auto text-primary" />
-              <h1 className="text-4xl font-bold">¡Bienvenido a Tálamo!</h1>
-              <p className="text-xl text-muted-foreground">
+            <div className="text-center space-y-4 sm:space-y-6">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+                className="flex items-center justify-center mb-6"
+              >
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-3xl flex items-center justify-center shadow-glow-primary">
+                  <Sparkles className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
+                </div>
+              </motion.div>
+              
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
+                ¡Bienvenido a Tálamo!
+              </h1>
+              
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
                 Vamos a personalizar tu experiencia en solo 3 pasos
               </p>
             </div>
             
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="¿Cómo te llamas?"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full max-w-md mx-auto block px-6 py-4 text-lg rounded-xl border-2 border-border bg-background focus:border-primary focus:outline-none transition-colors"
-              />
-              
-              <Button
-                onClick={() => setStep("goal")}
-                disabled={!name.trim()}
-                size="lg"
-                className="text-lg px-8"
-              >
-                Comenzar
-              </Button>
-            </div>
+            <Card className="border-border/50 bg-gradient-to-br from-surface/80 via-surface/50 to-surface/30 backdrop-blur-xl shadow-xl">
+              <CardContent className="p-6 sm:p-8 space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-base sm:text-lg font-medium">¿Cómo te llamas?</Label>
+                  <Input
+                    type="text"
+                    placeholder="Tu nombre"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="h-14 sm:h-16 px-4 text-base sm:text-lg bg-background/50 border-2 border-border focus:border-primary rounded-xl transition-all duration-300"
+                  />
+                </div>
+                
+                <Button
+                  onClick={() => setStep("goal")}
+                  disabled={!name.trim()}
+                  className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Comenzar
+                </Button>
+              </CardContent>
+            </Card>
           </motion.div>
         );
 
@@ -495,207 +554,57 @@ const OnboardingNew = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="space-y-8 max-w-4xl mx-auto"
+            className="space-y-6 sm:space-y-8"
           >
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold">Hola {name}, ¿qué te gustaría hacer?</h2>
-              <p className="text-muted-foreground">
+            <div className="text-center space-y-3 sm:space-y-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                Hola {name}, ¿qué te gustaría hacer?
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground">
                 Selecciona la opción que más te interese
               </p>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-4">
-              <button
-                onClick={() => {
-                  setGoal('copiar');
-                  setStep('capital');
-                }}
-                className="group p-8 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <Users className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-2">Copiar traders exitosos</h3>
-                <p className="text-muted-foreground">Invierte automáticamente siguiendo estrategias verificadas</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setGoal('aprender');
-                  setStep('capital');
-                }}
-                className="group p-8 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <GraduationCap className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-2">Aprender trading</h3>
-                <p className="text-muted-foreground">Domina el trading desde cero con nuestra academia</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setGoal('operar');
-                  setStep('capital');
-                }}
-                className="group p-8 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <TrendingUp className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-2">Operar por mi cuenta</h3>
-                <p className="text-muted-foreground">Usa herramientas profesionales y señales de trading</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setGoal('mixto');
-                  setStep('capital');
-                }}
-                className="group p-8 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <Sparkles className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-2">Todo lo anterior</h3>
-                <p className="text-muted-foreground">Acceso completo a todas las funcionalidades</p>
-              </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                { value: 'copiar', icon: Users, title: 'Copiar traders exitosos', desc: 'Invierte automáticamente siguiendo estrategias verificadas' },
+                { value: 'aprender', icon: GraduationCap, title: 'Aprender trading', desc: 'Domina el trading desde cero con nuestra academia' },
+                { value: 'operar', icon: TrendingUp, title: 'Operar por mi cuenta', desc: 'Usa herramientas profesionales y señales de trading' },
+                { value: 'mixto', icon: Sparkles, title: 'Todo lo anterior', desc: 'Acceso completo a todas las funcionalidades' }
+              ].map((option, index) => (
+                <motion.button
+                  key={option.value}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index, duration: 0.3 }}
+                  onClick={() => {
+                    setGoal(option.value as any);
+                    setStep('capital-experience');
+                  }}
+                  className="group p-6 sm:p-8 rounded-2xl border-2 border-border/50 bg-gradient-to-br from-surface/80 to-surface/40 hover:border-primary/50 hover:shadow-glow-primary transition-all text-left"
+                >
+                  <option.icon className="h-10 w-10 sm:h-12 sm:w-12 mb-4 text-primary" />
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    {option.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                    {option.desc}
+                  </p>
+                </motion.button>
+              ))}
             </div>
           </motion.div>
         );
 
-      case "capital":
+      case "capital-experience":
         return (
-          <motion.div
-            key="capital"
-            variants={fadeIn}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="space-y-8 max-w-3xl mx-auto"
-          >
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold">¿Con cuánto capital iniciarías?</h2>
-              <p className="text-muted-foreground">Esto nos ayuda a recomendarte la cuenta ideal</p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              <button
-                onClick={() => {
-                  setCapital('<500');
-                  setStep('experience');
-                }}
-                className="p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all"
-              >
-                <div className="text-2xl font-bold mb-2">Menos de $500</div>
-                <p className="text-sm text-muted-foreground">Ideal para empezar con micro-lotes</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setCapital('500-2000');
-                  setStep('experience');
-                }}
-                className="p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all"
-              >
-                <div className="text-2xl font-bold mb-2">$500 - $2,000</div>
-                <p className="text-sm text-muted-foreground">Buen balance para operar</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setCapital('2000-10000');
-                  setStep('experience');
-                }}
-                className="p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all"
-              >
-                <div className="text-2xl font-bold mb-2">$2,000 - $10,000</div>
-                <p className="text-sm text-muted-foreground">Capital intermedio sólido</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setCapital('>10000');
-                  setStep('experience');
-                }}
-                className="p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all"
-              >
-                <div className="text-2xl font-bold mb-2">Más de $10,000</div>
-                <p className="text-sm text-muted-foreground">Acceso a cuentas premium</p>
-              </button>
-            </div>
-
-            <Button
-              variant="ghost"
-              onClick={() => setStep('goal')}
-              className="mx-auto block"
-            >
-              ← Atrás
-            </Button>
-          </motion.div>
-        );
-
-      case "experience":
-        return (
-          <motion.div
-            key="experience"
-            variants={fadeIn}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="space-y-8 max-w-3xl mx-auto"
-          >
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold">¿Cuál es tu nivel de experiencia?</h2>
-              <p className="text-muted-foreground">Último paso para personalizar tu ruta</p>
-            </div>
-            
-            <div className="space-y-4">
-              <button
-                onClick={() => {
-                  setExperience('ninguna');
-                  setStep('recommendation');
-                }}
-                className="w-full p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <div className="font-semibold text-lg mb-1">Nunca he operado</div>
-                <p className="text-sm text-muted-foreground">Quiero aprender desde cero</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setExperience('basica');
-                  setStep('recommendation');
-                }}
-                className="w-full p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <div className="font-semibold text-lg mb-1">Experiencia básica</div>
-                <p className="text-sm text-muted-foreground">He probado en demo o hecho pocas operaciones reales</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setExperience('intermedia');
-                  setStep('recommendation');
-                }}
-                className="w-full p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <div className="font-semibold text-lg mb-1">Experiencia intermedia</div>
-                <p className="text-sm text-muted-foreground">Opero regularmente, tengo mi estrategia</p>
-              </button>
-
-              <button
-                onClick={() => {
-                  setExperience('avanzada');
-                  setStep('recommendation');
-                }}
-                className="w-full p-6 rounded-xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-left"
-              >
-                <div className="font-semibold text-lg mb-1">Experiencia avanzada</div>
-                <p className="text-sm text-muted-foreground">Trader consistente con historial verificable</p>
-              </button>
-            </div>
-
-            <Button
-              variant="ghost"
-              onClick={() => setStep('capital')}
-              className="mx-auto block"
-            >
-              ← Atrás
-            </Button>
-          </motion.div>
+          <CapitalExperienceStep
+            capital={capital}
+            experience={experience}
+            onCapitalChange={setCapital}
+            onExperienceChange={setExperience}
+            onContinue={() => setStep("recommendation")}
+          />
         );
 
       case "recommendation":
@@ -708,52 +617,67 @@ const OnboardingNew = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="space-y-8 max-w-2xl mx-auto text-center"
+            className="space-y-6 sm:space-y-8"
           >
-            <Sparkles className="h-16 w-16 mx-auto text-primary" />
-            
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold">¡Tu plan está listo!</h2>
+            <div className="text-center space-y-4">
+              <motion.div
+                initial={{ scale: 0.9, rotate: -10 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.1, duration: 0.5, type: "spring" }}
+                className="flex items-center justify-center mb-6"
+              >
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-3xl flex items-center justify-center shadow-glow-primary">
+                  <Sparkles className="h-12 w-12 text-primary" />
+                </div>
+              </motion.div>
               
-              <div className="relative p-8 rounded-2xl bg-card border border-border shadow-lg">
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                      <Sparkles className="h-3.5 w-3.5 text-primary" />
-                      <span className="text-xs font-medium text-primary">Recomendación personalizada</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-primary">
-                      {recommendation.account}
-                    </h3>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                ¡Tu plan está listo!
+              </h2>
+            </div>
+              
+            <Card className="border-2 border-primary/30 bg-gradient-to-br from-surface/90 via-surface/60 to-surface/40 backdrop-blur-xl shadow-glow-primary">
+              <CardContent className="p-6 sm:p-8 space-y-6">
+                <div className="text-center space-y-4">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-semibold text-primary">Recomendación personalizada</span>
                   </div>
                   
-                  <p className="text-base leading-relaxed text-foreground/80">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-primary">
+                    {recommendation.account}
+                  </h3>
+                  
+                  <p className="text-base sm:text-lg text-foreground/80 leading-relaxed">
                     {recommendation.reason}
                   </p>
                   
                   <div className="pt-6 border-t border-border/50 space-y-2">
-                    <div className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-medium text-muted-foreground">
                       Tu siguiente paso
-                    </div>
-                    <div className="text-lg font-semibold">
-                      {goal === 'copiar' ? 'Explorar estrategias de copy trading' :
-                       goal === 'aprender' ? 'Comenzar con la academia' :
-                       goal === 'operar' ? 'Acceder a herramientas profesionales' :
-                       'Explorar todas las funcionalidades'}
-                    </div>
+                    </p>
+                    <p className="text-lg sm:text-xl font-bold text-foreground">
+                      {recommendation.nextStep}
+                    </p>
                   </div>
                 </div>
-              </div>
 
-              <Button
-                onClick={handleComplete}
-                disabled={loading}
-                size="lg"
-                className="text-lg px-8"
-              >
-                {loading ? 'Configurando tu cuenta...' : 'Comenzar mi camino'}
-              </Button>
-            </div>
+                <Button
+                  onClick={handleComplete}
+                  disabled={loading}
+                  className="w-full h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      Configurando...
+                    </>
+                  ) : (
+                    "Comenzar mi camino"
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
           </motion.div>
         );
 
@@ -763,19 +687,11 @@ const OnboardingNew = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/80 to-background">
-      {/* Progress bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-border z-50">
-        <motion.div
-          className="h-full bg-primary"
-          initial={{ width: 0 }}
-          animate={{ width: `${((getStepNumber() / 7) * 100)}%` }}
-          transition={{ duration: 0.3 }}
-        />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
+      <OnboardingHeader stepNumber={getStepNumber()} progress={progress} />
 
-      <main className="flex-1 py-12 px-6">
-        <div className="max-w-5xl mx-auto">
+      <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
           <AnimatePresence mode="wait">
             {renderStep()}
           </AnimatePresence>
@@ -784,11 +700,11 @@ const OnboardingNew = () => {
 
       {/* Background gradient effects */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl opacity-50" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-50" />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-50" />
       </div>
     </div>
   );
 };
 
-export default OnboardingNew;
+export default Onboarding;

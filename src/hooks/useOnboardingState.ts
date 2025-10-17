@@ -1,7 +1,19 @@
 import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export type OnboardingStep = "validate" | "create-password" | "welcome" | "goal" | "capital" | "experience" | "recommendation";
+export type OnboardingStep = 
+  | "intro"
+  | "email-capture"
+  | "user-exists"
+  | "no-exness-account"
+  | "exness-detection"
+  | "has-exness-flow"
+  | "no-exness-flow"
+  | "create-password"
+  | "welcome"
+  | "goal"
+  | "capital-experience"
+  | "recommendation";
 
 export type Goal = 'copiar' | 'aprender' | 'operar' | 'mixto';
 export type CapitalBand = '<500' | '500-2000' | '2000-10000' | '>10000';
@@ -10,8 +22,8 @@ export type ExperienceLevel = 'ninguna' | 'basica' | 'intermedia' | 'avanzada';
 export const useOnboardingState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Initialize from URL or default to "validate"
-  const initialStep = (searchParams.get("step") as OnboardingStep) || "validate";
+  // Initialize from URL or default to "intro"
+  const initialStep = (searchParams.get("step") as OnboardingStep) || "intro";
   const initialEmail = searchParams.get("email") || "";
   
   // State
@@ -29,6 +41,7 @@ export const useOnboardingState = () => {
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [copiedText, setCopiedText] = useState("");
   const [showNewAccountCreated, setShowNewAccountCreated] = useState(false);
+  const [accountStatus, setAccountStatus] = useState<'unknown' | 'exists' | 'no-exness' | 'not-affiliated' | 'affiliated'>('unknown');
 
   // Step setter that updates URL
   const setStep = useCallback((newStep: OnboardingStep) => {
@@ -38,21 +51,26 @@ export const useOnboardingState = () => {
   }, [setSearchParams]);
 
   const getStepNumber = () => {
-    const stepMap = {
-      validate: 1,
-      "create-password": 2,
-      welcome: 3,
-      goal: 4,
-      capital: 5,
-      experience: 6,
-      recommendation: 7
+    const stepMap: Record<OnboardingStep, number> = {
+      "intro": 1,
+      "email-capture": 2,
+      "user-exists": 2,
+      "no-exness-account": 3,
+      "exness-detection": 3,
+      "has-exness-flow": 3,
+      "no-exness-flow": 3,
+      "create-password": 4,
+      "welcome": 5,
+      "goal": 6,
+      "capital-experience": 7,
+      "recommendation": 8
     };
-    return stepMap[step];
+    return stepMap[step] || 1;
   };
 
   // Reset all state
   const resetState = useCallback(() => {
-    setStepInternal("validate");
+    setStepInternal("intro");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -66,6 +84,7 @@ export const useOnboardingState = () => {
     setShowPartnerModal(false);
     setCopiedText("");
     setShowNewAccountCreated(false);
+    setAccountStatus('unknown');
     setSearchParams({});
   }, [setSearchParams]);
 
@@ -85,6 +104,7 @@ export const useOnboardingState = () => {
     showPartnerModal,
     copiedText,
     showNewAccountCreated,
+    accountStatus,
     
     // Setters
     setStep,
@@ -101,10 +121,11 @@ export const useOnboardingState = () => {
     setShowPartnerModal,
     setCopiedText,
     setShowNewAccountCreated,
+    setAccountStatus,
     
     // Computed
     getStepNumber,
-    progress: (getStepNumber() / 7) * 100,
+    progress: (getStepNumber() / 8) * 100,
     
     // Actions
     resetState
