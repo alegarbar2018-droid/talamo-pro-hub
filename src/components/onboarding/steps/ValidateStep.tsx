@@ -97,47 +97,48 @@ export const ValidateStep = ({
             <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary-foreground" />
           </div>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Validación de Afiliación</h2>
-        <p className="text-muted-foreground text-base sm:text-lg max-w-md mx-auto">
-          Verifica tu cuenta de Exness para acceso completo
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Conecta tu cuenta de trading</h2>
+        <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          Tálamo funciona con cuentas de Exness. Validamos tu email para confirmar que estás afiliado con nosotros.
         </p>
       </div>
 
       <Card className="border-none bg-gradient-to-br from-surface/80 to-surface/40 backdrop-blur-xl shadow-2xl">        
         <CardContent className="space-y-6 sm:space-y-8 p-4 sm:p-8">
-          <div className="bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+          <div className="bg-gradient-to-br from-primary/8 to-primary/3 border border-primary/20 rounded-2xl p-5 sm:p-6">
             <div className="flex items-start gap-3 sm:gap-4">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-primary rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg">
-                <Info className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
+              <div className="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+                <Info className="h-5 w-5 sm:h-5.5 sm:w-5.5 text-primary-foreground" />
               </div>
-              <div className="space-y-2 sm:space-y-3">
-                <h3 className="font-bold text-foreground text-lg sm:text-xl">Validación de Afiliación</h3>
-                <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                  Ingresa tu email de Exness para verificar que tu cuenta esté afiliada con nuestro partner oficial.
+              <div className="space-y-2.5">
+                <h3 className="font-bold text-foreground text-base sm:text-lg">¿Por qué necesitas una cuenta en Exness?</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">
+                  Exness es el broker que recomendamos por su regulación, ejecución y herramientas profesionales. Tálamo verifica que tu cuenta esté afiliada para ofrecerte acceso completo a nuestra plataforma.
                 </p>
-                <div className="bg-primary/10 text-primary px-3 py-2 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl font-mono text-xs sm:text-sm font-medium">
-                  Partner ID: {PARTNER_ID}
+                <div className="flex items-center gap-2 text-xs text-primary/90 pt-1">
+                  <Shield className="h-3.5 w-3.5" />
+                  <span>Solo verificamos tu email, nunca accedemos a tus fondos</span>
                 </div>
               </div>
             </div>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm sm:text-base font-medium">
-                Email de tu cuenta Exness
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2.5">
+              <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+                Email registrado en Exness
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="ejemplo@gmail.com"
+                placeholder="tu-email@ejemplo.com"
                 value={email}
                 onChange={(e) => onEmailChange(e.target.value)}
                 required
-                className="bg-input border-line h-10 sm:h-11"
+                className="bg-input border-border focus:border-primary h-12 text-base rounded-xl"
               />
-              <p className="text-xs text-muted-foreground">
-                Debe ser el mismo email que usas para acceder a tu cuenta de Exness
+              <p className="text-xs text-muted-foreground/80 pl-1">
+                Ingresa el email que usaste al crear tu cuenta en Exness
               </p>
             </div>
             
