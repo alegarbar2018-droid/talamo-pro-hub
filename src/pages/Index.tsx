@@ -1,13 +1,29 @@
 import { Suspense, lazy, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { Shield, TrendingUp, Users, Sparkles, BookOpen, Target, GraduationCap, Clock, Award } from "lucide-react";
+import { 
+  Shield, 
+  TrendingUp, 
+  Users, 
+  Sparkles, 
+  BookOpen, 
+  Target, 
+  GraduationCap, 
+  Clock, 
+  Award,
+  Zap,
+  ArrowRight,
+  X,
+  Check,
+  Copy,
+  AlertTriangle
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { PARTNER_ID } from "@/lib/constants";
 import Navigation from "@/components/Navigation";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import ValidateCTA from "@/components/ValidateCTA";
-import { ChangePartnerModal } from "@/components/access/ChangePartnerModal";
+import ChangePartnerModal from "@/components/access/ChangePartnerModal";
 
 // Lazy load heavy components
 const ValueProposition = lazy(() => import("@/components/ValueProposition"));
