@@ -220,10 +220,30 @@ const Onboarding = () => {
 
   // Complete onboarding
   const handleComplete = async () => {
-    if (!user) return;
-    
     setLoading(true);
+    
     try {
+      // If no user, try to refresh auth state first
+      if (!user) {
+        console.warn('No user found, attempting to refresh...');
+        await refreshUser();
+        
+        // If still no user after refresh, navigate based on goal anyway
+        if (!user) {
+          console.warn('Still no user after refresh, navigating based on goal');
+          clearState();
+          
+          if (flowOrigin === 'investor' || goal === 'copiar') {
+            navigate('/copy-trading');
+          } else if (goal === 'aprender') {
+            navigate('/academy');
+          } else {
+            navigate('/dashboard');
+          }
+          return;
+        }
+      }
+      
       let recommendedAccount = 'Standard Cent';
       
       if (experience === 'ninguna' || experience === 'basica') {
@@ -248,7 +268,10 @@ const Onboarding = () => {
         })
         .eq('user_id', user.id);
       
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating profile:', updateError);
+        throw updateError;
+      }
       
       await refreshUser();
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -260,6 +283,7 @@ const Onboarding = () => {
         description: 'Tu perfil está listo',
       });
       
+      // Navigate based on goal
       if (flowOrigin === 'investor' || goal === 'copiar') {
         navigate('/copy-trading');
       } else if (goal === 'aprender') {
@@ -274,6 +298,15 @@ const Onboarding = () => {
         description: 'No se pudo completar el proceso',
         variant: 'destructive'
       });
+      
+      // Even if there's an error, navigate to appropriate page
+      if (flowOrigin === 'investor' || goal === 'copiar') {
+        navigate('/copy-trading');
+      } else if (goal === 'aprender') {
+        navigate('/academy');
+      } else {
+        navigate('/dashboard');
+      }
     } finally {
       setLoading(false);
     }
