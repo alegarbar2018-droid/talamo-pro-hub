@@ -139,97 +139,61 @@ const Index = () => {
               </div>
             </motion.div>
 
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-            >
-              <Button 
-                size="lg" 
-                onClick={() => navigate("/onboarding?step=choose")}
-                className="group relative bg-gradient-primary hover:shadow-glow-intense text-lg px-10 py-6 h-auto overflow-hidden transition-all duration-300 hover:scale-105 rounded-2xl"
-                data-event="cta-solicitar-acceso-hero"
-              >
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  whileHover={{ scale: 1.05 }}
-                ></motion.div>
-                <span className="relative flex items-center gap-3 font-semibold">
-                  <Zap className="h-5 w-5" />
-                  {t("landing:cta_access")}
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-              </Button>
-              
-              <Button 
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/onboarding?step=validate")}
-                className="group border-2 border-primary/30 bg-surface/50 backdrop-blur-xl text-primary hover:bg-primary/10 hover:border-primary hover:shadow-lg text-lg px-10 py-6 h-auto transition-all duration-300 hover:scale-105 rounded-2xl"
-                data-event="cta-ya-tengo-cuenta-hero"
-              >
-                <Target className="h-5 w-5 mr-3 group-hover:rotate-90 transition-transform duration-300" />
-                {t("landing:exness_have")}
-              </Button>
-            </motion.div>
-            
-            {/* Trust indicators */}
+            {/* Trust indicators moved up */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.4 }}
-              className="flex flex-wrap justify-center items-center gap-8 pt-8 opacity-70"
+              transition={{ delay: 0.6, duration: 0.4 }}
+              className="flex flex-wrap justify-center items-center gap-8 pt-4 opacity-70"
             >
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="h-4 w-4 text-primary" />
-                <span>Acceso por afiliación</span>
+                <span>Acceso exclusivo</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <span>Transparente</span>
+                <span>100% Transparente</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Target className="h-4 w-4 text-primary" />
-                <span>Verificado</span>
+                <span>Riesgo controlado</span>
               </div>
             </motion.div>
           </div>
           
-          {/* User Differentiation */}
+          {/* User Differentiation - 3 paths */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.4 }}
-            className="mt-12 text-center"
+            transition={{ delay: 0.8, duration: 0.4 }}
+            className="mt-16 text-center"
           >
-            <p className="text-sm text-muted-foreground mb-4">
-              ¿Primera vez en trading?
+            <p className="text-lg text-muted-foreground mb-8">
+              {t("landing:hero_user_question")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  document.getElementById('para-principiantes')?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                  });
-                }}
-                className="group"
-              >
-                <GraduationCap className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                Soy principiante
-              </Button>
-              <Button 
-                variant="outline"
-                size="lg"
-                onClick={() => navigate('/tools-info')}
-                className="group"
-              >
-                <TrendingUp className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                Tengo experiencia
-              </Button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <Card className="p-6 hover:border-primary/50 transition-all cursor-pointer group" onClick={() => {
+                document.getElementById('para-principiantes')?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }}>
+                <GraduationCap className="h-10 w-10 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="font-semibold text-foreground mb-2">{t("landing:hero_path_beginner")}</h3>
+                <p className="text-sm text-muted-foreground">{t("landing:hero_path_beginner_desc")}</p>
+              </Card>
+              
+              <Card className="p-6 hover:border-primary/50 transition-all cursor-pointer group" onClick={() => navigate('/copy-info')}>
+                <Users className="h-10 w-10 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="font-semibold text-foreground mb-2">{t("landing:hero_path_investor")}</h3>
+                <p className="text-sm text-muted-foreground">{t("landing:hero_path_investor_desc")}</p>
+              </Card>
+              
+              <Card className="p-6 hover:border-primary/50 transition-all cursor-pointer group" onClick={() => navigate('/tools-info')}>
+                <TrendingUp className="h-10 w-10 text-primary mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <h3 className="font-semibold text-foreground mb-2">{t("landing:hero_path_experienced")}</h3>
+                <p className="text-sm text-muted-foreground">{t("landing:hero_path_experienced_desc")}</p>
+              </Card>
             </div>
           </motion.div>
         </div>
