@@ -96,7 +96,7 @@ const App: React.FC = () => {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            {/* Removed /onboarding-welcome - now part of unified /onboarding */}
+            <Route path="/onboarding-welcome" element={<OnboardingWelcome />} />
             
             {/* Protected routes - require onboarding completion */}
             <Route path="/dashboard" element={<OnboardingGuard><Dashboard /></OnboardingGuard>} />

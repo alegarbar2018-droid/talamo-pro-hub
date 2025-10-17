@@ -1,17 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export type OnboardingStep = 
-  | "validate-email" 
-  | "create-password" 
-  | "welcome" 
-  | "choose-goal" 
-  | "capital-experience" 
-  | "recommendation";
-
-export type Goal = 'copiar' | 'aprender' | 'operar' | 'mixto';
-export type CapitalBand = '<500' | '500-2000' | '2000-10000' | '>10000';
-export type ExperienceLevel = 'ninguna' | 'basica' | 'intermedia' | 'avanzada';
+export type OnboardingStep = "validate" | "create-account" | "done";
 
 interface ProfileData {
   language: string;
@@ -24,8 +14,8 @@ interface ProfileData {
 export const useOnboardingState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Initialize from URL or default to "validate-email"
-  const initialStep = (searchParams.get("step") as OnboardingStep) || "validate-email";
+  // Initialize from URL or default to "validate"
+  const initialStep = (searchParams.get("step") as OnboardingStep) || "validate";
   const initialEmail = searchParams.get("email") || "";
   
   // State
@@ -33,10 +23,6 @@ export const useOnboardingState = () => {
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");
-  const [goal, setGoal] = useState<Goal | null>(null);
-  const [capital, setCapital] = useState<CapitalBand | null>(null);
-  const [experience, setExperience] = useState<ExperienceLevel | null>(null);
   const [profile, setProfile] = useState<ProfileData>({
     language: "español",
     level: "",
@@ -60,26 +46,19 @@ export const useOnboardingState = () => {
 
   const getStepNumber = () => {
     const stepMap = {
-      "validate-email": 1,
-      "create-password": 2,
-      "welcome": 3,
-      "choose-goal": 4,
-      "capital-experience": 5,
-      "recommendation": 6
+      validate: 1,
+      "create-account": 2,
+      done: 3
     };
     return stepMap[step];
   };
 
   // Reset all state
   const resetState = useCallback(() => {
-    setStepInternal("validate-email");
+    setStepInternal("validate");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
-    setName("");
-    setGoal(null);
-    setCapital(null);
-    setExperience(null);
     setProfile({
       language: "español",
       level: "",
@@ -102,10 +81,6 @@ export const useOnboardingState = () => {
     email,
     password,
     confirmPassword,
-    name,
-    goal,
-    capital,
-    experience,
     profile,
     uid,
     isDemoMode,
@@ -119,10 +94,6 @@ export const useOnboardingState = () => {
     setEmail,
     setPassword,
     setConfirmPassword,
-    setName,
-    setGoal,
-    setCapital,
-    setExperience,
     setProfile,
     setUid,
     setIsDemoMode,
@@ -133,7 +104,7 @@ export const useOnboardingState = () => {
     
     // Computed
     getStepNumber,
-    progress: (getStepNumber() / 6) * 100,
+    progress: (getStepNumber() / 3) * 100,
     
     // Actions
     resetState
