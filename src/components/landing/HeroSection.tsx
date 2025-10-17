@@ -10,7 +10,7 @@ export const HeroSection = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative pt-32 pb-32 md:pt-40 md:pb-40 bg-gradient-to-b from-background via-surface/30 to-background"
+      className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-background via-surface/30 to-background/95"
     >
       {/* Premium background effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>

@@ -9,11 +9,8 @@ export const UserPathCards = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-20 md:py-24 bg-gradient-to-b from-background via-background to-surface/20">
-      {/* Blur effect at top for smooth transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-background to-transparent pointer-events-none"></div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+    <section className="relative min-h-screen flex items-center justify-center py-20 md:py-24 bg-background">      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 w-full">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
