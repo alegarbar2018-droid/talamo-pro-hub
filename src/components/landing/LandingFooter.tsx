@@ -59,7 +59,7 @@ export const LandingFooter = () => {
                 Iniciar Sesión
               </button>
               <button 
-                onClick={() => navigate("/onboarding?step=choose")}
+                onClick={() => navigate("/onboarding")}
                 className="block text-muted-foreground hover:text-foreground transition-colors"
               >
                 Solicitar Acceso

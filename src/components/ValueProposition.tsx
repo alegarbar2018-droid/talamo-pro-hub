@@ -97,7 +97,7 @@ export default function ValueProposition() {
           <Button 
             size="lg"
             variant="outline"
-            onClick={() => navigate('/onboarding?step=choose')}
+            onClick={() => navigate('/onboarding')}
           >
             {t('landing:cta_access')}
           </Button>

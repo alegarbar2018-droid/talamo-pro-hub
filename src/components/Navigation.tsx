@@ -69,7 +69,7 @@ const Navigation = () => {
               {t("nav:login")}
             </Button>
             <Button 
-              onClick={() => navigate("/onboarding?step=choose")}
+              onClick={() => navigate("/onboarding")}
               className="bg-gradient-primary hover:shadow-lg text-sm font-medium px-6"
             >
               {t("nav:start")}
@@ -133,7 +133,7 @@ const Navigation = () => {
                       {t("nav:login")}
                     </Button>
                     <Button 
-                      onClick={() => handleNavigation("/onboarding?step=choose")}
+                      onClick={() => handleNavigation("/onboarding")}
                       className="w-full bg-gradient-primary hover:shadow-lg h-11 text-sm font-medium"
                     >
                       {t("nav:start_now")}

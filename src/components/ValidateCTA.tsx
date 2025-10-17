@@ -14,7 +14,7 @@ interface ValidateCTAProps {
 
 export const ValidateCTA = ({ 
   onOpenChangePartner, 
-  href = "/onboarding?step=validate",
+  href = "/onboarding",
   variant = "outline",
   size = "default",
   className = ""
@@ -37,7 +37,7 @@ export const ValidateCTA = ({
     {
       label: "Crear cuenta nueva", 
       action: () => {
-        navigate("/onboarding?step=choose");
+        navigate("/onboarding");
         setIsOpen(false);
       },
       event: "cta_not_affiliated_create_account"

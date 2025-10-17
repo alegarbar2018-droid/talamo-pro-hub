@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export type OnboardingStep = "choose" | "validate" | "eligible" | "create-password" | "profile" | "done";
+export type OnboardingStep = "validate" | "create-account" | "done";
 
 interface ProfileData {
   language: string;
@@ -14,8 +14,8 @@ interface ProfileData {
 export const useOnboardingState = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Initialize from URL or default to "choose"
-  const initialStep = (searchParams.get("step") as OnboardingStep) || "choose";
+  // Initialize from URL or default to "validate"
+  const initialStep = (searchParams.get("step") as OnboardingStep) || "validate";
   const initialEmail = searchParams.get("email") || "";
   
   // State
@@ -46,19 +46,16 @@ export const useOnboardingState = () => {
 
   const getStepNumber = () => {
     const stepMap = {
-      choose: 1,
-      validate: 2,
-      eligible: 3,
-      "create-password": 3,
-      profile: 4,
-      done: 5
+      validate: 1,
+      "create-account": 2,
+      done: 3
     };
     return stepMap[step];
   };
 
   // Reset all state
   const resetState = useCallback(() => {
-    setStepInternal("choose");
+    setStepInternal("validate");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -107,7 +104,7 @@ export const useOnboardingState = () => {
     
     // Computed
     getStepNumber,
-    progress: (getStepNumber() / 5) * 100,
+    progress: (getStepNumber() / 3) * 100,
     
     // Actions
     resetState

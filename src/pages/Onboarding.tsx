@@ -2,14 +2,12 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useOnboardingState } from "@/hooks/useOnboardingState";
 import { OnboardingHeader } from "@/components/onboarding/OnboardingHeader";
-import { ChooseStep } from "@/components/onboarding/steps/ChooseStep";
 import { ValidateStep } from "@/components/onboarding/steps/ValidateStep";
 import { EligibleStep } from "@/components/onboarding/steps/EligibleStep";
-import { ProfileStep } from "@/components/onboarding/steps/ProfileStep";
 import { DoneStep } from "@/components/onboarding/steps/DoneStep";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TrendingUp } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TrendingUp, GraduationCap, Wrench } from "lucide-react";
 
 const OnboardingNew = () => {
   const { toast } = useToast();
@@ -23,7 +21,6 @@ const OnboardingNew = () => {
     email,
     password,
     confirmPassword,
-    profile,
     uid,
     isDemoMode,
     isNotAffiliated,
@@ -34,7 +31,6 @@ const OnboardingNew = () => {
     setEmail,
     setPassword,
     setConfirmPassword,
-    setProfile,
     setUid,
     setIsDemoMode,
     setIsNotAffiliated,
@@ -74,22 +70,12 @@ const OnboardingNew = () => {
   };
 
   // Step handlers
-  const handleChooseCreateAccount = () => {
-    console.info('user_chose_create_account');
-    // User opens partner link, stays on choose step
-  };
-
-  const handleChooseValidateExisting = () => {
-    clearErrors();
-    setStep("validate");
-  };
-
   const handleValidationSuccess = (clientUid?: string) => {
     clearErrors();
     setUid(clientUid || "");
     setIsNotAffiliated(false);
     setIsDemoMode(false);
-    setStep("eligible");
+    setStep("create-account");
   };
 
   const handleNotAffiliated = () => {
@@ -102,7 +88,7 @@ const OnboardingNew = () => {
     clearErrors();
     setIsDemoMode(true);
     setIsNotAffiliated(false);
-    setStep("eligible");
+    setStep("create-account");
     toast({
       title: "Modo Demo Activado",
       description: "Acceso temporal sin validación por API",
@@ -124,41 +110,69 @@ const OnboardingNew = () => {
         state: { wizardData: wizardState }
       });
     } else {
-      setStep("profile");
+      // Usuario normal va directo a onboarding-welcome para completar perfil
+      navigate('/onboarding-welcome');
     }
-  };
-
-  const handleProfileComplete = () => {
-    clearErrors();
-    setStep("done");
   };
 
   const handleRestart = () => {
     resetState();
   };
 
+  // Get context-aware messaging
+  const getContextMessage = () => {
+    if (flowOrigin === 'investor') {
+      return {
+        icon: <TrendingUp className="h-4 w-4 text-primary" />,
+        title: "Acceso a Copy Trading",
+        description: "Para seguir estrategias profesionales, valida tu cuenta Exness y crea tu acceso a Tálamo."
+      };
+    }
+    
+    // Detectar desde qué página viene basado en el referrer o sessionStorage
+    const lastPage = sessionStorage.getItem('onboarding_source');
+    
+    if (lastPage === 'academy') {
+      return {
+        icon: <GraduationCap className="h-4 w-4 text-primary" />,
+        title: "Acceso a Academia",
+        description: "Valida tu cuenta Exness para acceder a cursos profesionales de trading sin costo."
+      };
+    }
+    
+    if (lastPage === 'tools') {
+      return {
+        icon: <Wrench className="h-4 w-4 text-primary" />,
+        title: "Acceso a Herramientas Pro",
+        description: "Valida tu cuenta Exness para usar calculadoras, journal y análisis de cuenta."
+      };
+    }
+    
+    // Default
+    return {
+      icon: <TrendingUp className="h-4 w-4 text-primary" />,
+      title: "Solicitar Acceso a Tálamo",
+      description: "Valida tu cuenta Exness para acceder a herramientas profesionales de trading sin membresía."
+    };
+  };
+
+  const contextMessage = getContextMessage();
+
   // Render current step
   const renderCurrentStep = () => {
     switch (step) {
-      case "choose":
-        return (
-          <ChooseStep
-            onChooseCreateAccount={handleChooseCreateAccount}
-            onChooseValidateExisting={handleChooseValidateExisting}
-          />
-        );
-      
       case "validate":
         return (
           <>
-            {flowOrigin === 'investor' && (
-              <Alert className="mb-6 bg-primary/5 border-primary/20">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                <AlertDescription>
-                  Para seguir estrategias de copy trading, necesitas validar tu cuenta Exness y crear tu acceso.
-                </AlertDescription>
-              </Alert>
-            )}
+            {/* Context Alert */}
+            <Alert className="mb-6 bg-primary/5 border-primary/20">
+              {contextMessage.icon}
+              <AlertTitle className="font-semibold">{contextMessage.title}</AlertTitle>
+              <AlertDescription className="text-sm">
+                {contextMessage.description}
+              </AlertDescription>
+            </Alert>
+
             <ValidateStep
               email={email}
               isNotAffiliated={isNotAffiliated}
@@ -177,8 +191,7 @@ const OnboardingNew = () => {
           </>
         );
       
-      case "eligible":
-      case "create-password":
+      case "create-account":
         return (
           <EligibleStep
             email={email}
@@ -193,15 +206,6 @@ const OnboardingNew = () => {
             onError={setError}
             onLoading={setLoading}
             onSuccess={handlePasswordSuccess}
-          />
-        );
-      
-      case "profile":
-        return (
-          <ProfileStep
-            profile={profile}
-            onProfileUpdate={setProfile}
-            onComplete={handleProfileComplete}
           />
         );
       

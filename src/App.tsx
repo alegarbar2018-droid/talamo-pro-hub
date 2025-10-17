@@ -122,9 +122,9 @@ const App: React.FC = () => {
             
             {/* Legacy redirects */}
             <Route path="/auth/validate" element={<Navigate to="/onboarding?step=validate" replace />} />
-            <Route path="/auth/register" element={<Navigate to="/onboarding?step=choose" replace />} />
-            <Route path="/signup" element={<Navigate to="/onboarding?step=choose" replace />} />
-            <Route path="/access-wizard" element={<Navigate to="/onboarding?step=choose" replace />} />
+            <Route path="/auth/register" element={<Navigate to="/onboarding" replace />} />
+            <Route path="/signup" element={<Navigate to="/onboarding" replace />} />
+            <Route path="/access-wizard" element={<Navigate to="/onboarding" replace />} />
             
             <Route path="/auth/exness" element={<ExnessRedirect />} />
             <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />

@@ -334,7 +334,7 @@ export default function LoginPage() {
           <div className="mt-6 pt-4 border-t border-line">
             <p className="text-center text-sm text-muted-foreground">
               ¿No tienes cuenta?{' '}
-              <Link to="/onboarding?step=choose" className="text-teal hover:underline">
+              <Link to="/onboarding" className="text-teal hover:underline">
                 Solicitar acceso
               </Link>
             </p>

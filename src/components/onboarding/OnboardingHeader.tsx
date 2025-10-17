@@ -37,7 +37,7 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
 
           {/* Step Indicator */}
           <div className="text-sm text-muted-foreground font-medium">
-            {stepNumber}/5
+            {stepNumber}/3
           </div>
         </div>
 
