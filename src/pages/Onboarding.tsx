@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useOnboardingState } from "@/hooks/useOnboardingState";
 import { OnboardingHeader } from "@/components/onboarding/OnboardingHeader";
@@ -7,11 +7,16 @@ import { ValidateStep } from "@/components/onboarding/steps/ValidateStep";
 import { EligibleStep } from "@/components/onboarding/steps/EligibleStep";
 import { ProfileStep } from "@/components/onboarding/steps/ProfileStep";
 import { DoneStep } from "@/components/onboarding/steps/DoneStep";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TrendingUp } from "lucide-react";
 
 const OnboardingNew = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const flowOrigin = searchParams.get('flow'); // 'investor' | null
+  
   const {
     // State
     step,
@@ -45,6 +50,22 @@ const OnboardingNew = () => {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [wizardState, setWizardState] = useState<any>(null);
+
+  // Recuperar estado del wizard si viene de copy-info
+  useEffect(() => {
+    if (flowOrigin === 'investor') {
+      const savedState = sessionStorage.getItem('investor_wizard_state');
+      if (savedState) {
+        try {
+          const parsed = JSON.parse(savedState);
+          setWizardState(parsed);
+        } catch (e) {
+          console.error('Error parsing wizard state:', e);
+        }
+      }
+    }
+  }, [flowOrigin]);
 
   // Clear errors when step changes
   const clearErrors = () => {
@@ -97,7 +118,14 @@ const OnboardingNew = () => {
 
   const handlePasswordSuccess = () => {
     clearErrors();
-    setStep("profile");
+    if (flowOrigin === 'investor' && wizardState) {
+      // Redirigir a onboarding-welcome con datos del wizard
+      navigate('/onboarding-welcome?source=copy', {
+        state: { wizardData: wizardState }
+      });
+    } else {
+      setStep("profile");
+    }
   };
 
   const handleProfileComplete = () => {
@@ -122,21 +150,31 @@ const OnboardingNew = () => {
       
       case "validate":
         return (
-          <ValidateStep
-            email={email}
-            isNotAffiliated={isNotAffiliated}
-            showPartnerModal={showPartnerModal}
-            onEmailChange={setEmail}
-            onValidationSuccess={handleValidationSuccess}
-            onNotAffiliated={handleNotAffiliated}
-            onDemoMode={handleDemoMode}
-            onRetryValidation={handleRetryValidation}
-            onShowPartnerModal={setShowPartnerModal}
-            onUserExists={() => {
-              // Redirect to login with email pre-filled
-              navigate(`/login?email=${encodeURIComponent(email)}`);
-            }}
-          />
+          <>
+            {flowOrigin === 'investor' && (
+              <Alert className="mb-6 bg-primary/5 border-primary/20">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <AlertDescription>
+                  Para seguir estrategias de copy trading, necesitas validar tu cuenta Exness y crear tu acceso.
+                </AlertDescription>
+              </Alert>
+            )}
+            <ValidateStep
+              email={email}
+              isNotAffiliated={isNotAffiliated}
+              showPartnerModal={showPartnerModal}
+              onEmailChange={setEmail}
+              onValidationSuccess={handleValidationSuccess}
+              onNotAffiliated={handleNotAffiliated}
+              onDemoMode={handleDemoMode}
+              onRetryValidation={handleRetryValidation}
+              onShowPartnerModal={setShowPartnerModal}
+              onUserExists={() => {
+                // Redirect to login with email pre-filled
+                navigate(`/login?email=${encodeURIComponent(email)}`);
+              }}
+            />
+          </>
         );
       
       case "eligible":

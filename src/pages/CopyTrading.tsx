@@ -2,8 +2,9 @@ import React, { useState, memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
 import { withPageTracking } from '@/components/business/ObservabilityProvider';
 import { 
@@ -13,8 +14,8 @@ import {
   FundingInstructions,
   StrategyCard
 } from '@/components/copy';
-import type { CopyStrategy } from '@/modules/copy/types';
-import { User, ArrowLeft } from 'lucide-react';
+import type { CopyStrategy, StrategyAllocation } from '@/modules/copy/types';
+import { User, ArrowLeft, Sparkles } from 'lucide-react';
 
 // Memoize strategy card to prevent unnecessary re-renders
 const MemoizedStrategyCard = memo(StrategyCard);
@@ -22,8 +23,14 @@ const MemoizedStrategyCard = memo(StrategyCard);
 const CopyTrading: React.FC = () => {
   const { t } = useTranslation(['copy', 'common']);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Recuperar recomendaciones del estado de navegación
+  const recommendedAllocations = location.state?.recommendedAllocations as StrategyAllocation[] | undefined;
+  const showWelcome = location.state?.showWelcome as boolean | undefined;
   
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(!!recommendedAllocations);
   
   // Fetch estrategias publicadas
   const { data: strategies = [], isLoading } = useQuery({
@@ -92,8 +99,64 @@ const CopyTrading: React.FC = () => {
       
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Welcome Alert para nuevos usuarios del flujo inversor */}
+        {showWelcome && recommendedAllocations && (
+          <Alert className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/30">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <AlertTitle className="text-lg font-bold">¡Bienvenido a Copy Trading!</AlertTitle>
+            <AlertDescription className="text-base">
+              Aquí están las {recommendedAllocations.length} estrategias recomendadas según tu perfil de inversionista.
+              Revisa cada una y decide cómo distribuir tu capital.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Estrategias Recomendadas - Destacadas */}
+        {showRecommendations && recommendedAllocations && recommendedAllocations.length > 0 && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-primary" />
+                Recomendadas para Ti
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowRecommendations(false)}
+              >
+                Ver todo el catálogo
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {recommendedAllocations.map((allocation) => (
+                <div key={allocation.strategy.id} className="relative">
+                  {/* Badge de recomendado */}
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                      ${allocation.suggested_amount}
+                    </div>
+                  </div>
+                  <div className="ring-2 ring-primary/50 rounded-lg">
+                    <MemoizedStrategyCard strategy={allocation.strategy} />
+                  </div>
+                  {allocation.reason && (
+                    <p className="mt-2 text-xs text-muted-foreground italic">
+                      💡 {allocation.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="pt-4 border-t">
+              <p className="text-sm text-muted-foreground text-center">
+                👇 Explora más estrategias en el catálogo completo
+              </p>
+            </div>
+          </section>
+        )}
+        
         {/* A. Intro + Diversificación */}
-        <CopyTradingIntro />
+        {!showRecommendations && <CopyTradingIntro />}
         
         {/* B. Acordeón Evaluación */}
         <StrategyEvaluationGuide />
@@ -114,7 +177,9 @@ const CopyTrading: React.FC = () => {
 
         {/* D. Catálogo de Estrategias */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">{t('copy:catalog.title')}</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            {showRecommendations ? 'Todas las Estrategias Disponibles' : t('copy:catalog.title')}
+          </h2>
           
           {isLoading ? (
             <p className="text-center text-muted-foreground py-12">{t('copy:catalog.loading')}</p>

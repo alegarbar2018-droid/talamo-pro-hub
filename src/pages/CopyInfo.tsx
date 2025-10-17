@@ -27,7 +27,9 @@ export default function CopyInfo() {
 
   const handleWizardComplete = (allocations: StrategyAllocation[]) => {
     console.log('Allocations completed:', allocations);
-    navigate('/copy-trading');
+    // El wizard se encarga de la redirección apropiada
+    // Si el usuario no está autenticado, irá a /onboarding?flow=investor
+    // Si está autenticado, irá a /copy-trading
   };
 
   return (

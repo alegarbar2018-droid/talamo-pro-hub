@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/hooks/use-toast';
 import { Sparkles, TrendingUp, GraduationCap, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type Goal = 'copiar' | 'aprender' | 'operar' | 'mixto';
 type CapitalBand = '<500' | '500-2000' | '2000-10000' | '>10000';
@@ -14,14 +15,32 @@ type ExperienceLevel = 'ninguna' | 'basica' | 'intermedia' | 'avanzada';
 const OnboardingWelcome = () => {
   const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
-  const [step, setStep] = useState(0);
+  // Detectar si viene de copy-info
+  const wizardData = location.state?.wizardData;
+  const sourcePage = new URLSearchParams(location.search).get('source');
+  
+  // Mapear monto del wizard a banda de capital
+  const mapInvestmentToBand = (amount: number): CapitalBand => {
+    if (amount < 500) return '<500';
+    if (amount < 2000) return '500-2000';
+    if (amount < 10000) return '2000-10000';
+    return '>10000';
+  };
+
+  // Determinar step inicial y valores pre-rellenados
+  const initialStep = wizardData ? 1 : 0; // Si viene de wizard, saltar al goal
+  const initialGoal = wizardData ? 'copiar' : null;
+  const initialCapital = wizardData ? mapInvestmentToBand(wizardData.profile.total_investment) : null;
+  
+  const [step, setStep] = useState(initialStep);
   const [loading, setLoading] = useState(false);
   
   // User answers
   const [name, setName] = useState(user?.profile?.first_name || '');
-  const [goal, setGoal] = useState<Goal | null>(null);
-  const [capital, setCapital] = useState<CapitalBand | null>(null);
+  const [goal, setGoal] = useState<Goal | null>(initialGoal);
+  const [capital, setCapital] = useState<CapitalBand | null>(initialCapital);
   const [experience, setExperience] = useState<ExperienceLevel | null>(null);
 
   const fadeIn = {
@@ -56,6 +75,12 @@ const OnboardingWelcome = () => {
         recommended_route: recommendedRoute,
         onboarding_completed: true,
         onboarding_completed_at: new Date().toISOString(),
+        // Guardar recomendaciones del wizard si existen
+        ...(wizardData?.allocations && {
+          metadata: {
+            investor_recommendations: wizardData.allocations
+          }
+        })
       };
       
       const { error } = await supabase
@@ -76,9 +101,14 @@ const OnboardingWelcome = () => {
         description: 'Tu perfil está listo',
       });
       
-      // Redirect based on goal
-      if (goal === 'copiar') {
-        navigate('/copy-trading');
+      // Redirigir siempre a copy-trading si venía de ese flujo
+      if (sourcePage === 'copy' || goal === 'copiar') {
+        navigate('/copy-trading', {
+          state: {
+            showWelcome: true,
+            recommendedAllocations: wizardData?.allocations
+          }
+        });
       } else if (goal === 'aprender') {
         navigate('/academy');
       } else {
@@ -147,9 +177,20 @@ const OnboardingWelcome = () => {
             exit="exit"
             className="space-y-8 max-w-4xl mx-auto"
           >
+            {sourcePage === 'copy' && wizardData && (
+              <Alert className="mb-4 bg-primary/5 border-primary/20">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <AlertDescription>
+                  Basado en tu perfil de inversionista (${wizardData.profile.total_investment}), 
+                  confirma tus preferencias para acceder a las estrategias recomendadas.
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold">Hola {name}, ¿qué te gustaría hacer?</h2>
-              <p className="text-muted-foreground">Selecciona la opción que más te interese</p>
+              <h2 className="text-3xl font-bold">Hola {name || 'allí'}, ¿qué te gustaría hacer?</h2>
+              <p className="text-muted-foreground">
+                {sourcePage === 'copy' ? 'Confirma tu objetivo principal' : 'Selecciona la opción que más te interese'}
+              </p>
             </div>
             
             <div className="grid md:grid-cols-2 gap-4">

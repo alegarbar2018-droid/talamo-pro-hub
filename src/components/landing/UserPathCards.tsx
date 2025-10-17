@@ -57,6 +57,7 @@ export const UserPathCards = () => {
           <Card 
             className="p-8 hover:border-primary hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer group bg-card/50 backdrop-blur-sm border-2 border-primary/30" 
             onClick={() => navigate('/copy-info')}
+            aria-label="Ir a información sobre Copy Trading"
           >
             <div className="text-center space-y-4">
               <div className="w-16 h-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/20 transition-all">

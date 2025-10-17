@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -22,6 +24,8 @@ interface InvestorProfileWizardSimpleProps {
 
 export const InvestorProfileWizardSimple = ({ open, onClose, onComplete }: InvestorProfileWizardSimpleProps) => {
   const { t } = useTranslation(['copy']);
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [allocations, setAllocations] = useState<StrategyAllocation[]>([]);
   const [profile, setProfile] = useState<InvestorProfile>({
@@ -31,6 +35,18 @@ export const InvestorProfileWizardSimple = ({ open, onClose, onComplete }: Inves
     risk_tolerance: 5,
     investment_horizon: 'medium'
   });
+
+  // Save state to sessionStorage whenever it changes
+  useEffect(() => {
+    if (open && step > 1) {
+      const wizardState = {
+        profile,
+        allocations,
+        timestamp: new Date().toISOString()
+      };
+      sessionStorage.setItem('investor_wizard_state', JSON.stringify(wizardState));
+    }
+  }, [profile, allocations, step, open]);
   
   // Fetch estrategias publicadas
   const { data: strategies, isLoading: loadingStrategies } = useQuery({
@@ -63,9 +79,30 @@ export const InvestorProfileWizardSimple = ({ open, onClose, onComplete }: Inves
   };
 
   const handleComplete = () => {
-    onComplete?.(allocations);
-    onClose();
-    setStep(1);
+    if (!user) {
+      // Usuario NO autenticado: guardar estado y redirigir a onboarding
+      const wizardState = {
+        profile,
+        allocations,
+        timestamp: new Date().toISOString()
+      };
+      sessionStorage.setItem('investor_wizard_state', JSON.stringify(wizardState));
+      
+      // Redirigir al flujo de onboarding con parámetro de origen
+      navigate('/onboarding?flow=investor&step=validate');
+      onClose();
+    } else {
+      // Usuario autenticado: ir directo a copy-trading con recomendaciones
+      onComplete?.(allocations);
+      navigate('/copy-trading', {
+        state: {
+          recommendedAllocations: allocations,
+          showWelcome: true
+        }
+      });
+      onClose();
+      setStep(1);
+    }
   };
 
   const updateProfile = (updates: Partial<InvestorProfile>) => {
@@ -376,7 +413,7 @@ export const InvestorProfileWizardSimple = ({ open, onClose, onComplete }: Inves
             </Button>
           ) : (
             <Button onClick={handleComplete} className="gap-2" disabled={allocations.length === 0}>
-              {t('copy:wizard.actions.complete')}
+              {user ? t('copy:wizard.actions.complete') : 'Solicitar Acceso para Continuar'}
               <ArrowRight className="h-4 w-4" />
             </Button>
           )}
