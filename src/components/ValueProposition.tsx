@@ -1,4 +1,4 @@
-import { Shield, TrendingUp, Users, ExternalLink, CheckCircle2, ArrowRight, Sparkles } from "lucide-react";
+import { Shield, TrendingUp, Users, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -14,21 +14,18 @@ export default function ValueProposition() {
       icon: Shield,
       titleKey: 'landing:value_pillar1_title',
       descKey: 'landing:value_pillar1_desc',
-      proofKey: 'landing:value_pillar1_proof',
       delay: 0.2
     },
     {
       icon: TrendingUp,
       titleKey: 'landing:value_pillar2_title',
       descKey: 'landing:value_pillar2_desc',
-      proofKey: 'landing:value_pillar2_proof',
       delay: 0.35
     },
     {
       icon: Users,
       titleKey: 'landing:value_pillar3_title',
       descKey: 'landing:value_pillar3_desc',
-      proofKey: 'landing:value_pillar3_proof',
       delay: 0.5
     }
   ];
@@ -55,7 +52,7 @@ export default function ValueProposition() {
             transition={{ delay: 0.1, duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4"
           >
-            <CheckCircle2 className="w-4 h-4 text-primary" />
+            <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Por qué elegirnos</span>
           </motion.div>
           
@@ -102,16 +99,6 @@ export default function ValueProposition() {
                       <p className="text-muted-foreground leading-relaxed text-sm">
                         {t(pillar.descKey)}
                       </p>
-                    </div>
-                    
-                    {/* Proof point */}
-                    <div className="pt-3 border-l-2 border-primary/30 pl-3 bg-primary/5 -ml-1 -mr-1 px-4 py-2 rounded-r-lg">
-                      <div className="flex items-start gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          {t(pillar.proofKey)}
-                        </p>
-                      </div>
                     </div>
                   </div>
                 </div>
