@@ -2,6 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { FlipCard, ContentAccordion, ContentTabs, Callout } from './InteractiveContent';
 import { TradingSimulator } from './TradingSimulator';
+import { TradingSimulatorV2 } from './TradingSimulatorV2';
 
 interface EnhancedContentRendererProps {
   content: string;
@@ -226,6 +227,20 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
         <ReactMarkdown>{content.trim()}</ReactMarkdown>
       </Callout>
     );
+  };
+
+  const renderTradingSimulatorV2 = (attributes: string, content: string, key: number) => {
+    try {
+      const props = parseTradingSimV2(attributes, content);
+      return <TradingSimulatorV2 key={key} {...props} />;
+    } catch (error) {
+      return (
+        <div key={key} className="p-4 border border-red-500 bg-red-50 rounded">
+          <p className="font-semibold text-red-700">Error parsing Trading Simulator v2</p>
+          <pre className="text-xs mt-2 text-red-600">{String(error)}</pre>
+        </div>
+      );
+    }
   };
 
   const renderTradingSimulator = (attributes: string, content: string, key: number) => {
