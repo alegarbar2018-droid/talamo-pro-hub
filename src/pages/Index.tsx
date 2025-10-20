@@ -13,6 +13,7 @@ import { getOrganizationSchema, getWebSiteSchema } from "@/lib/structured-data";
 // Lazy load heavy components
 const ValueProposition = lazy(() => import("@/components/ValueProposition"));
 const WhyExness = lazy(() => import("@/components/WhyExness"));
+const RiskWarning = lazy(() => import("@/components/RiskWarning"));
 
 const Index = () => {
   const [showPartnerModal, setShowPartnerModal] = useState(false);
@@ -51,6 +52,8 @@ const Index = () => {
         <BeginnerSection />
 
         <WhyExness />
+
+        <RiskWarning />
       </Suspense>
 
       <LandingFooter />
