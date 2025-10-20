@@ -37,7 +37,7 @@ export default function CopyInfo() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-12 px-4 bg-gradient-to-b from-primary/5 to-background">
+      <section className="relative pt-20 pb-12 px-4 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-background">
         <div className="container mx-auto max-w-4xl">
           <Button
             variant="ghost"
