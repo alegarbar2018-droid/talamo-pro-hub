@@ -446,9 +446,31 @@ export const LessonForm: React.FC<LessonFormProps> = ({
               {showSyntaxGuide && (
                 <Collapsible open={showSyntaxGuide} className="border rounded-lg p-4 bg-muted/50 mb-2">
                   <CollapsibleContent>
-                    <div className="space-y-3 text-sm">
+                    <div className="space-y-3 text-sm max-h-[500px] overflow-y-auto pr-2">
+                      <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                        <h4 className="font-semibold mb-2 text-primary">✨ Tálamo Extended Markdown v1.1</h4>
+                        <p className="text-xs text-muted-foreground">
+                          Sistema de componentes interactivos para lecciones. <a href="/docs/EXTENDED_MARKDOWN_SYNTAX_v1.1.md" target="_blank" className="underline">Ver documentación completa</a>
+                        </p>
+                      </div>
+
                       <div>
-                        <h4 className="font-semibold mb-1">📚 Accordion (Collapsible Sections)</h4>
+                        <h4 className="font-semibold mb-1">📋 Meta (Metadata de lección - Nuevo v1.1)</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::meta
+level: beginner
+duration: 15min
+tags: forex, trend-trading, price-action
+id: lesson-trend-01
+:::`}
+                        </pre>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Define nivel, duración estimada, tags y ID único. Mejora SEO y filtrado.
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-1">📚 Accordion (Secciones Colapsables)</h4>
                         <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
 {`:::accordion
 ## Section Title 1
@@ -464,109 +486,153 @@ More content...
                         <h4 className="font-semibold mb-1">📑 Tabs</h4>
                         <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
 {`:::tabs
-[label="Tab 1"]
-Content for tab 1...
+[label="Long Position"]
+Setup para posición larga...
 
-[label="Tab 2"]
-Content for tab 2...
+[label="Short Position"]
+Setup para posición corta...
 :::`}
                         </pre>
                       </div>
 
                       <div>
-                        <h4 className="font-semibold mb-1">🔄 Flip Card (Question/Answer)</h4>
+                        <h4 className="font-semibold mb-1">🔄 Flip Card (Pregunta/Respuesta)</h4>
                         <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
 {`:::flipcard
 [front]
-Question or term
+¿Qué es un higher high (HH)?
 
 [back]
-Answer or definition
+Un HH ocurre cuando el precio hace un pico más alto que el anterior, indicando momentum alcista.
 :::`}
                         </pre>
                       </div>
 
                       <div>
-                        <h4 className="font-semibold mb-1">⚠️ Callout (Highlighted Messages)</h4>
+                        <h4 className="font-semibold mb-1">⚠️ Callout (Mensajes Destacados)</h4>
                         <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
 {`:::callout type="warning"
-Important message here!
+⚠️ **Advertencia de Riesgo**: Nunca arriesgues más del 1-2% de tu cuenta en una sola operación.
 :::`}
                         </pre>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Types: info, warning, success, danger
+                          Types: info, warning, success, danger, tip
                         </p>
                       </div>
 
                       <div>
-                        <h4 className="font-semibold mb-1">📊 Trading Simulator (Interactive)</h4>
+                        <h4 className="font-semibold mb-1">📊 Trading Simulator v1 (Clásico)</h4>
                         <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
 {`:::trading-sim asset="EURUSD" scenario="uptrend_pullback"
-[educational_context]
+[context]
 {
-  "concept": "Identificación de Tendencia Alcista",
-  "whatToLook": [
-    "Máximos más altos (HH)",
-    "Mínimos más altos (HL)",
-    "Rebote en zona de soporte"
-  ],
-  "hint": "En tendencia alcista, busca COMPRAR en pullbacks"
+  "concept": "Comprar pullbacks en tendencia alcista",
+  "whatToLook": ["HH y HL", "Pullback a soporte", "Rechazo alcista"],
+  "hint": "La tendencia es tu amiga"
 }
 
 [scenario_data]
 {
-  "historical": [1.0800, 1.0820, 1.0850, 1.0880, 1.0900],
-  "current": 1.0900,
-  "future": [1.0920, 1.0950, 1.0970],
+  "historical": [1.0800, 1.0820, 1.0850, 1.0880],
+  "current": 1.0865,
+  "future": [1.0870, 1.0885, 1.0900],
   "correct_action": "buy",
-  "entry": 1.0900,
-  "sl": 1.0870,
-  "tp": 1.0970
-}
-
-[annotations]
-{
-  "higherHighs": [1, 3, 4],
-  "higherLows": [0, 2],
-  "support": 1.0850,
-  "resistance": 1.0980
+  "entry": 1.0865,
+  "stop_loss": 1.0850,
+  "take_profit": 1.0900
 }
 
 [question]
-Analiza el gráfico paso a paso:
-
-1. **Tendencia**: ¿Observas HH y HL?
-2. **Contexto**: El precio rebotó en soporte
-3. **Decisión**: ¿Cuál es tu acción?
+¿Detectas la tendencia? ¿Dónde colocarías SL y TP?
 
 [feedback_buy]
-✅ **¡Excelente decisión!**
-
-**¿Por qué fue correcta?**
-1. Identificaste la tendencia alcista (HH y HL)
-2. El precio rebotó en soporte (1.0850)
-3. Entraste alineado con la tendencia
-
-**Resultado:** +70 pips de ganancia
+✅ Excelente. Identificaste correctamente el pullback en tendencia alcista.
 
 [feedback_sell]
-❌ **Decisión incorrecta**
-
-Vendiste CONTRA la tendencia alcista.
-El precio subió +70 pips, causando pérdida.
-
-**Regla:** NUNCA vendas en tendencia alcista sin confirmación de reversión.
+❌ Incorrecto. Vendiste contra la tendencia establecida.
 
 [feedback_skip]
-⚠️ **Oportunidad perdida**
+⚠️ Oportunidad perdida. Este era un setup de alta probabilidad.
+:::`}
+                        </pre>
+                      </div>
 
-Esta era una configuración de alta probabilidad (+70 pips).
-Todos los criterios estaban alineados para una compra.
+                      <div>
+                        <h4 className="font-semibold mb-1">🚀 Trading Simulator v2 (Avanzado - Nuevo v1.1)</h4>
+                        <pre className="bg-background p-2 rounded text-xs overflow-x-auto whitespace-pre">
+{`:::trading-sim asset="EURUSD" scenario="uptrend_pullback" v="2"
+chart="candles" timeframe="H1" reveal_future="after_decision"
+
+[market]
+{ "spread": 0.0002, "slippage": 0.0001, "commission_per_lot": 7 }
+
+[risk]
+{ "initial_balance": 10000, "risk_pct": 1, "min_rr": 1.5 }
+
+[dataset]
+{
+  "ohlc": [
+    ["2024-05-01T10:00Z", 1.0810, 1.0830, 1.0800, 1.0820],
+    ["2024-05-01T11:00Z", 1.0820, 1.0850, 1.0815, 1.0845],
+    ["2024-05-01T12:00Z", 1.0845, 1.0860, 1.0840, 1.0855]
+  ]
+}
+
+[annotations]
+{ "higherHighs": [1, 3], "supportZones": [1.0850] }
+
+[context]
+{
+  "concept": "Pullbacks con gestión de riesgo",
+  "whatToLook": ["Estructura HH/HL", "Zona de soporte", "R:R mínimo 1.5"],
+  "hint": "Valida estructura + zona + R:R"
+}
+
+[hints]
+- Busca HH y HL crecientes
+- ¿Está el precio en soporte?
+- ¿Tu R:R cumple mínimo 1.5?
+
+[rubric]
+{
+  "trend_alignment": 0.35,
+  "rr_meets_min": 0.35,
+  "structure_based_sl": 0.20,
+  "entry_location_quality": 0.10
+}
+
+[question]
+1. ¿Detectas HH y HL?
+2. ¿Dónde colocarías SL y TP?
+3. ¿Cumple tu R:R el mínimo?
+
+[feedback_general]
+Siempre valida: estructura + zona + R:R.
+
+[feedback_buy]
+✅ A favor de tendencia con R:R correcto.
+
+[feedback_sell]
+❌ Contra tendencia, R:R bajo.
+
+[feedback_skip]
+⚠️ Setup válido omitido.
 :::`}
                         </pre>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Soporta contexto educativo, anotaciones visuales (HH/HL, soporte/resistencia), y feedback estructurado
+                          v2 incluye: datos OHLC, gestión de riesgo, hints progresivos, scoring con rubric, y validación automática.
                         </p>
+                      </div>
+
+                      <div className="bg-muted p-3 rounded-lg">
+                        <h4 className="font-semibold mb-2">💡 Tips de Autor</h4>
+                        <ul className="text-xs space-y-1 text-muted-foreground">
+                          <li>• Usa <code className="bg-background px-1 py-0.5 rounded">:::meta</code> al inicio para metadata</li>
+                          <li>• v1 para escenarios simples, v2 para análisis avanzado</li>
+                          <li>• JSON debe ser válido (sin comas finales)</li>
+                          <li>• Aliases: <code className="bg-background px-1 py-0.5 rounded">[context]</code> = <code className="bg-background px-1 py-0.5 rounded">[educational_context]</code></li>
+                          <li>• Valida con: <code className="bg-background px-1 py-0.5 rounded">npm run validate-lesson</code></li>
+                        </ul>
                       </div>
                     </div>
                   </CollapsibleContent>

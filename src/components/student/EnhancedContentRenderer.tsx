@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { FlipCard, ContentAccordion, ContentTabs, Callout } from './InteractiveContent';
 import { TradingSimulator } from './TradingSimulator';
 import { TradingSimulatorV2 } from './TradingSimulatorV2';
+import { parseExtendedMarkdown } from '@/lib/extended-markdown-parser';
 
 interface EnhancedContentRendererProps {
   content: string;
@@ -77,7 +78,14 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
             sections.push(renderCallout(attributes, blockContent, keyCounter++));
             break;
           case 'trading-sim':
-            sections.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
+            // Check if v2 is specified
+            const versionMatch = attributes.match(/v="(\d+)"/);
+            const version = versionMatch?.[1];
+            if (version === '2') {
+              sections.push(renderTradingSimulatorV2(attributes, blockContent, keyCounter++));
+            } else {
+              sections.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
+            }
             break;
         }
       } catch (error) {
@@ -231,13 +239,17 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
 
   const renderTradingSimulatorV2 = (attributes: string, content: string, key: number) => {
     try {
-      const props = parseTradingSimV2(attributes, content);
-      return <TradingSimulatorV2 key={key} {...props} />;
+      const parsed = parseExtendedMarkdown(`:::trading-sim ${attributes}\n${content}\n:::`);
+      const simBlock = parsed.blocks.find(b => b.type === 'trading-sim');
+      if (!simBlock || simBlock.type !== 'trading-sim') {
+        throw new Error('Failed to parse trading-sim block');
+      }
+      return <TradingSimulatorV2 key={key} {...simBlock.props} />;
     } catch (error) {
       return (
-        <div key={key} className="p-4 border border-red-500 bg-red-50 rounded">
-          <p className="font-semibold text-red-700">Error parsing Trading Simulator v2</p>
-          <pre className="text-xs mt-2 text-red-600">{String(error)}</pre>
+        <div key={key} className="p-4 border border-red-500 bg-red-50 dark:bg-red-950 rounded">
+          <p className="font-semibold text-red-700 dark:text-red-400">Error parsing Trading Simulator v2</p>
+          <pre className="text-xs mt-2 text-red-600 dark:text-red-400">{String(error)}</pre>
         </div>
       );
     }
