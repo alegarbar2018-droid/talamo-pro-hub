@@ -105,28 +105,26 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 rounded-xl transition-all duration-300 px-3 py-2.5 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'}`
+                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-[--sidebar-width-icon]`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
-                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                          }`} />
-                          {open && (
-                            <>
-                              <span className="text-sm font-medium tracking-wide truncate">
-                                {t(item.labelKey)}
-                              </span>
-                              {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
-                              )}
-                            </>
+                          <span className="shrink-0 grid place-items-center size-9 group-data-[collapsible=icon]:ml-0 group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:mx-auto">
+                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
+                              isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                            }`} />
+                          </span>
+                          <span className="text-sm font-medium tracking-wide truncate group-data-[collapsible=icon]:hidden">
+                            {t(item.labelKey)}
+                          </span>
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full group-data-[collapsible=icon]:hidden" />
                           )}
                         </>
                       )}
@@ -151,37 +149,35 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 rounded-xl transition-all duration-300 px-3 py-2.5 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'}`
+                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-[--sidebar-width-icon]`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
-                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                          }`} />
-                          {open && (
-                            <>
-                              <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span className="text-sm font-medium tracking-wide truncate">
-                                  {t(item.labelKey)}
-                                </span>
-                                {item.badge && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
-                                  >
-                                    {item.badge}
-                                  </Badge>
-                                )}
-                              </div>
-                              {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
-                              )}
-                            </>
+                          <span className="shrink-0 grid place-items-center size-9 group-data-[collapsible=icon]:ml-0 group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:mx-auto">
+                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
+                              isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                            }`} />
+                          </span>
+                          <div className="flex items-center gap-2 flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
+                            <span className="text-sm font-medium tracking-wide truncate">
+                              {t(item.labelKey)}
+                            </span>
+                            {item.badge && (
+                              <Badge
+                                variant="secondary"
+                                className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
+                              >
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </div>
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full group-data-[collapsible=icon]:hidden" />
                           )}
                         </>
                       )}
