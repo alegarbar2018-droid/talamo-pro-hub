@@ -1,14 +1,18 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, Lock } from "lucide-react";
+import { CheckCircle2, Lock, ChevronDown, BookOpen } from "lucide-react";
+import { useState } from "react";
+import { COURSE } from "@/data/course";
 
 export default function AcademyJourneySimple() {
   const { t } = useTranslation('academy');
+  const [expandedLevel, setExpandedLevel] = useState<number | null>(null);
 
   const levels = [
     {
       level: "Fundamentos",
       range: "Nivel 1-2",
+      courseIndices: [0, 1],
       duration: "4-6 semanas",
       topics: ["Conceptos básicos", "Gestión de riesgo", "Psicología del trading"],
       unlocks: "Herramientas básicas",
@@ -16,6 +20,7 @@ export default function AcademyJourneySimple() {
     {
       level: "Intermedio",
       range: "Nivel 3-4",
+      courseIndices: [2, 3],
       duration: "6-8 semanas",
       topics: ["Análisis técnico", "Estrategias avanzadas", "Backtesting"],
       unlocks: "Copy Trading + Señales",
@@ -23,6 +28,7 @@ export default function AcademyJourneySimple() {
     {
       level: "Avanzado",
       range: "Nivel 5-6",
+      courseIndices: [4, 5],
       duration: "8-10 semanas",
       topics: ["Optimización", "Trading algorítmico", "Portfolio management"],
       unlocks: "Señales Premium + Comunidad",
@@ -30,6 +36,7 @@ export default function AcademyJourneySimple() {
     {
       level: "Experto",
       range: "Nivel 7",
+      courseIndices: [6],
       duration: "4-6 semanas",
       topics: ["Market making", "Gestión institucional", "Análisis cuantitativo"],
       unlocks: "Acceso completo",
@@ -87,7 +94,10 @@ export default function AcademyJourneySimple() {
                 <div className="absolute left-6 top-full w-px h-4 bg-gradient-to-b from-primary/30 to-transparent" />
               )}
 
-              <div className="flex items-start gap-4 p-6 bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-xl hover:border-primary/30 transition-all duration-300">
+              <div 
+                className="flex items-start gap-4 p-6 bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-xl hover:border-primary/30 transition-all duration-300 cursor-pointer"
+                onClick={() => setExpandedLevel(expandedLevel === index ? null : index)}
+              >
                 {/* Number indicator */}
                 <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                   <span className="text-xl font-bold text-primary">{index + 1}</span>
@@ -104,6 +114,7 @@ export default function AcademyJourneySimple() {
                     <span className="ml-auto text-xs text-muted-foreground">
                       {level.duration}
                     </span>
+                    <ChevronDown className={`w-5 h-5 text-primary transition-transform duration-300 ${expandedLevel === index ? 'rotate-180' : ''}`} />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
@@ -133,6 +144,53 @@ export default function AcademyJourneySimple() {
                   </div>
                 </div>
               </div>
+
+              {/* Expandable lessons */}
+              <AnimatePresence>
+                {expandedLevel === index && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2 p-6 bg-surface/20 backdrop-blur-xl border border-primary/10 rounded-xl">
+                      <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-primary" />
+                        Lecciones incluidas:
+                      </h4>
+                      <div className="space-y-3">
+                        {level.courseIndices.map((courseIndex) => {
+                          const courseLevel = COURSE[courseIndex];
+                          if (!courseLevel) return null;
+                          
+                          return (
+                            <div key={courseIndex} className="space-y-2">
+                              <div className="font-semibold text-sm text-primary">
+                                {courseLevel.level}
+                              </div>
+                              <ul className="space-y-1.5 ml-4">
+                                {courseLevel.lessons.slice(0, 5).map((lesson, lessonIdx) => (
+                                  <li key={lessonIdx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                    <div className="w-1 h-1 rounded-full bg-primary/50 mt-2 flex-shrink-0" />
+                                    <span>{lesson.title}</span>
+                                  </li>
+                                ))}
+                                {courseLevel.lessons.length > 5 && (
+                                  <li className="text-xs text-muted-foreground/70 ml-3">
+                                    + {courseLevel.lessons.length - 5} lecciones más
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
         </div>
