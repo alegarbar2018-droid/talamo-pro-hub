@@ -98,7 +98,7 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className="px-2 py-4 overflow-x-visible overflow-y-auto">
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
@@ -113,7 +113,7 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center ${open ? 'gap-3 px-3' : 'justify-center px-2'} py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -123,12 +123,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 ${open ? 'w-9 h-9' : 'w-10 h-10'} flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`${open ? 'h-5 w-5' : 'h-6 w-6'} flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -137,7 +137,7 @@ export function DashboardSidebar() {
                               {t(item.labelKey)}
                             </span>
                           )}
-                          {isActive && (
+                          {isActive && open && (
                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
@@ -163,7 +163,7 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center ${open ? 'gap-3 px-3' : 'justify-center px-2'} py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -172,12 +172,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 ${open ? 'w-9 h-9' : 'w-10 h-10'} flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`${open ? 'h-5 w-5' : 'h-6 w-6'} flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -196,7 +196,7 @@ export function DashboardSidebar() {
                               )}
                             </div>
                           )}
-                          {isActive && (
+                          {isActive && open && (
                             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
