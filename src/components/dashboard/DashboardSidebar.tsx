@@ -123,12 +123,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-4 w-4 flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -172,12 +172,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-4 w-4 flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -215,7 +215,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center justify-center p-2 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <Avatar className="h-8 w-8 border-2 border-teal/20 shadow-lg">
+                <Avatar className="h-9 w-9 border-2 border-teal/20 shadow-lg">
                   <AvatarImage src={user?.profile?.avatar_url || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
                     {userInitials}
@@ -257,7 +257,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <Avatar className="h-8 w-8 flex-shrink-0 border-2 border-teal/20 shadow-lg">
+                <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-teal/20 shadow-lg">
                   <AvatarImage src={user?.profile?.avatar_url || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
                     {userInitials}
