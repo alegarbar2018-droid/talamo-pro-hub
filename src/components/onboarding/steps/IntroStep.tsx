@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, Mail, User, Target, ArrowLeft, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { getExnessCreateUrl } from "@/lib/mockApi";
 
 interface IntroStepProps {
   onContinue: () => void;
@@ -14,7 +13,7 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
   const handleStepClick = (stepNumber: string) => {
     if (stepNumber === "1") {
       // Redirect to Exness partner link
-      window.location.href = getExnessCreateUrl();
+      window.location.href = "https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es";
     } else if (stepNumber === "2") {
       // Continue to validation step
       onContinue();
