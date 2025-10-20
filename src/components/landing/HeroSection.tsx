@@ -58,9 +58,6 @@ export const HeroSection = () => {
             transition={{ delay: 0.6, duration: 0.6 }}
             className="mt-12 flex flex-col items-center gap-3"
           >
-            <span className="text-sm text-muted-foreground/80 font-medium tracking-wide">
-              Descubre tu camino
-            </span>
             <button
               onClick={scrollToNextSection}
               className="group relative"
