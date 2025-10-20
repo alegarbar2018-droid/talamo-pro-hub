@@ -7,6 +7,8 @@ import SyllabusDetailed from "@/components/SyllabusDetailed";
 import AcademyHero from "@/components/academy/AcademyHero";
 import AcademyProblems from "@/components/academy/AcademyProblems";
 import AcademyOverview from "@/components/academy/AcademyOverview";
+import AcademyBenefits from "@/components/academy/AcademyBenefits";
+import AcademySocialProof from "@/components/academy/AcademySocialProof";
 
 export default function AcademyInfo() {
   const { trackPageView } = useObservability();
@@ -36,6 +38,12 @@ export default function AcademyInfo() {
 
         {/* Overview: Diferencia + Journey + CTA */}
         <AcademyOverview />
+
+        {/* Qué desbloqueas */}
+        <AcademyBenefits />
+
+        {/* Prueba social */}
+        <AcademySocialProof />
 
         {/* Temario detallado (colapsable) */}
         <SyllabusDetailed />
