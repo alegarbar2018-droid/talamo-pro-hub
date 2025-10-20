@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { GraduationCap, Calculator, TrendingUp, Users, Shield, Sparkles, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Mail, User, Target, ArrowLeft, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface IntroStepProps {
@@ -11,31 +10,24 @@ interface IntroStepProps {
 }
 
 export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => {
-  const features = [
+  const steps = [
     {
-      icon: GraduationCap,
-      title: "Academia estructurada",
-      description: "Educación con métricas de dominio desde cero"
+      icon: Mail,
+      number: "1",
+      title: "Verifica tu cuenta",
+      description: "Confirma tu email y afiliación con Exness para acceder a todas las herramientas"
     },
     {
-      icon: Calculator,
-      title: "Herramientas de cálculo",
-      description: "Sizing, margen, TP/SL, riesgo y más"
+      icon: User,
+      number: "2",
+      title: "Completa tu perfil",
+      description: "Cuéntanos sobre tu experiencia y objetivos en el trading"
     },
     {
-      icon: TrendingUp,
-      title: "Señales verificadas",
-      description: "Con KPIs auditados y tracking de desempeño"
-    },
-    {
-      icon: Users,
-      title: "Copy trading serio",
-      description: "Directorio de traders con métricas transparentes"
-    },
-    {
-      icon: Shield,
-      title: "Comunidad para consistencia",
-      description: "Sin promesas irreales ni upsells agresivos"
+      icon: Target,
+      number: "3",
+      title: "Recibe tu plan",
+      description: "Obtén recomendaciones personalizadas según tu perfil"
     }
   ];
 
@@ -87,77 +79,91 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
         </motion.p>
       </div>
 
-      {/* Features Grid */}
+      {/* Steps Overview */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.6 }}
+        className="space-y-4"
       >
-        <Card className="border-2 border-border/40 bg-gradient-to-br from-surface/90 via-surface/60 to-surface/30 backdrop-blur-2xl shadow-[0_20px_70px_-15px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_80px_-10px_rgba(var(--primary),0.15)] transition-all duration-500">
-          <CardContent className="p-5 sm:p-7">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ 
-                    delay: 0.6 + (0.08 * index), 
-                    duration: 0.4,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{ scale: 1.05, y: -4 }}
-                  className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-background/70 via-background/50 to-background/30 border-2 border-border/30 hover:border-primary/40 hover:bg-background/60 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
-                >
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-300" />
-                    <div className="relative w-12 h-12 bg-gradient-to-br from-primary/25 via-primary/15 to-primary/5 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:shadow-[0_8px_30px_rgb(var(--primary)/0.3)] transition-all duration-300 border border-primary/10">
-                      <feature.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" strokeWidth={2.5} />
+        <div className="text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+            Comienza en 3 simples pasos
+          </h2>
+          <p className="text-muted-foreground">
+            Solo te tomará unos minutos
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:gap-5">
+          {steps.map((stepItem, index) => (
+            <motion.div
+              key={stepItem.number}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ 
+                delay: 0.6 + (0.1 * index), 
+                duration: 0.5
+              }}
+            >
+              <Card className="border-2 border-border/40 bg-gradient-to-br from-surface/90 via-surface/60 to-surface/30 backdrop-blur-2xl shadow-lg hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                <CardContent className="p-5 sm:p-6">
+                  <div className="flex items-start gap-4">
+                    {/* Number Badge */}
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                      <div className="relative w-14 h-14 bg-gradient-to-br from-primary/25 via-primary/15 to-primary/5 rounded-2xl flex items-center justify-center border-2 border-primary/20 group-hover:border-primary/40 transition-all duration-300">
+                        <stepItem.icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" strokeWidth={2.5} />
+                      </div>
                     </div>
+
+                    {/* Content */}
+                    <div className="flex-1 space-y-2 pt-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">
+                          Paso {stepItem.number}
+                        </span>
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+                        {stepItem.title}
+                      </h3>
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                        {stepItem.description}
+                      </p>
+                    </div>
+
+                    {/* Check Icon */}
+                    <CheckCircle2 className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary/50 transition-colors duration-300 flex-shrink-0 mt-1" strokeWidth={2} />
                   </div>
-                  <div className="text-center space-y-1">
-                    <h3 className="font-bold text-foreground text-xs sm:text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
-                      {feature.title}
-                    </h3>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground/80 leading-snug line-clamp-2 hidden sm:block">
-                      {feature.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
 
-      {/* FAQ Accordion */}
+      {/* Info Note */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.5 }}
+        transition={{ delay: 0.9, duration: 0.5 }}
       >
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1" className="border-2 border-border/40 bg-gradient-to-br from-surface/70 to-surface/40 backdrop-blur-xl rounded-2xl px-5 py-1 shadow-lg hover:shadow-xl transition-all duration-300">
-            <AccordionTrigger className="text-base sm:text-lg font-bold hover:text-primary transition-colors duration-300 py-5">
-              <div className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-primary" strokeWidth={2.5} />
-                ¿Por qué verificar afiliación?
+        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-primary/5 to-transparent backdrop-blur-xl">
+          <CardContent className="p-4 sm:p-5">
+            <div className="flex gap-3 items-start">
+              <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">
+                  ¿Por qué verificamos tu afiliación?
+                </p>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Tálamo no cobra membresía. Nuestro modelo se sostiene con rebates que el broker nos paga cuando operas. 
+                  No hay costo extra para ti y alineamos incentivos: solo ganamos si tú operas con estructura.
+                </p>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-sm sm:text-base text-muted-foreground/90 leading-relaxed space-y-4 pt-2 pb-6 px-1">
-              <p className="backdrop-blur-sm bg-background/30 p-4 rounded-xl border border-border/30">
-                <strong className="text-foreground font-bold">Tálamo no cobra membresía.</strong> Nuestro modelo se sostiene con rebates de spread cuando operas con tu cuenta Exness afiliada a Tálamo. Estos rebates los paga el broker, no tú, así que no hay costo extra.
-              </p>
-              <p>
-                Esto alinea nuestros incentivos: solo ganamos si tú operas con estructura a largo plazo. Nuestra prioridad es darte herramientas para ejecución con datos y control de riesgo, no vender promesas irreales.
-              </p>
-              <p className="text-xs sm:text-sm italic text-muted-foreground/70 border-l-4 border-primary/30 pl-4 py-2">
-                Validamos únicamente tu email para confirmar la afiliación. Nunca accedemos a tus fondos ni operamos tu cuenta.
-              </p>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            </div>
+          </CardContent>
+        </Card>
       </motion.div>
 
       {/* CTA Buttons */}
@@ -165,7 +171,7 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
         className="flex gap-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9, duration: 0.5 }}
+        transition={{ delay: 1.0, duration: 0.5 }}
       >
         {canGoBack && onBack && (
           <Button
