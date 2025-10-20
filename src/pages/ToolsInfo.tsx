@@ -83,11 +83,11 @@ export default function ToolsInfo() {
               >
                 <Button 
                   size="lg"
-                  onClick={() => navigate("/access")}
+                  onClick={() => navigate("/onboarding")}
                   className="bg-gradient-primary hover:shadow-glow text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto rounded-2xl group w-full sm:w-auto"
                 >
                   <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  Validar afiliación
+                  Comenzar
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button 
