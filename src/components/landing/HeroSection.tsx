@@ -25,18 +25,6 @@ export const HeroSection = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
         <div className="text-center space-y-6 md:space-y-8">
           
-          {/* Premium badge */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            className="inline-flex items-center gap-3 bg-surface/90 backdrop-blur-xl border-2 border-primary/20 text-primary px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg shadow-primary/10"
-          >
-            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-            {t("exclusive_platform")}
-            <Award className="w-4 h-4 text-primary" />
-          </motion.div>
-          
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
