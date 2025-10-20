@@ -109,17 +109,15 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-[--sidebar-width-icon]`
+                        } group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <span className="shrink-0 grid place-items-center size-9 group-data-[collapsible=icon]:ml-0 group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:mx-auto">
-                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
-                              isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                            }`} />
-                          </span>
+                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
+                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                          }`} />
                           <span className="text-sm font-medium tracking-wide truncate group-data-[collapsible=icon]:hidden">
                             {t(item.labelKey)}
                           </span>
@@ -153,16 +151,14 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-[--sidebar-width-icon]`
+                        } group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <span className="shrink-0 grid place-items-center size-9 group-data-[collapsible=icon]:ml-0 group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:mx-auto">
-                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
-                              isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                            }`} />
-                          </span>
+                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
+                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                          }`} />
                           <div className="flex items-center gap-2 flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                             <span className="text-sm font-medium tracking-wide truncate">
                               {t(item.labelKey)}
