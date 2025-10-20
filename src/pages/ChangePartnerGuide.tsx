@@ -170,6 +170,28 @@ export default function ChangePartnerGuidePage() {
                       {step.description}
                     </p>
                     
+                    {step.number === 4 && (
+                      <div className="mb-6 p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-xl border-2 border-primary/30 shadow-inner">
+                        <div className="flex items-center gap-3 mb-3">
+                          <Copy className="h-5 w-5 text-primary" />
+                          <p className="font-semibold text-foreground">Nuestro Partner ID:</p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 bg-card rounded-lg border-2 border-primary/20">
+                          <code className="text-primary font-mono text-xl md:text-2xl font-bold flex-1 text-center sm:text-left">
+                            {partnerId}
+                          </code>
+                          <Button
+                            onClick={copyPartnerId}
+                            size="default"
+                            className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copiar
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    
                     {step.image && (
                       <div className="rounded-xl border-2 border-border overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-muted/20">
                         <img 
