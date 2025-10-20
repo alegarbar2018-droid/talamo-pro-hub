@@ -101,14 +101,16 @@ export const AdminSidebar: React.FC = () => {
       <SidebarTrigger className="m-2 self-end" />
       
       <SidebarContent>
-        <div className="p-4">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-gradient-to-br from-teal to-teal/60 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">T</span>
+        {open && (
+          <div className="p-4">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 bg-gradient-to-br from-teal to-teal/60 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">T</span>
+              </div>
+              <span className="font-bold text-lg">Tálamo Admin</span>
             </div>
-            {open && <span className="font-bold text-lg">Tálamo Admin</span>}
           </div>
-        </div>
+        )}
 
         {menuItems.map((section) => (
           <SidebarGroup key={section.section} className="px-2">
@@ -129,10 +131,10 @@ export const AdminSidebar: React.FC = () => {
                       <NavLink 
                         to={item.url} 
                         className={({ isActive }) => 
-                          `${getNavClassName({ isActive })} ${!open ? 'w-full flex items-center justify-center' : ''}`
+                          `${getNavClassName({ isActive })} ${!open ? 'justify-center px-0 py-2.5' : 'gap-2 px-3 py-2.5'}`
                         }
                       >
-                        <item.icon className="h-4 w-4" />
+                        <item.icon className="h-5 w-5" />
                         {open && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>

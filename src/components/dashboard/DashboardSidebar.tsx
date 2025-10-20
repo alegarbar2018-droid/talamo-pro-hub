@@ -90,7 +90,7 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className={open ? "px-3 py-4" : "px-2 py-4"}>
+      <SidebarContent className="px-2 py-4">
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
@@ -109,27 +109,17 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'w-full justify-center px-2 py-3' : 'gap-3 px-4 py-3'}`
+                        } ${!open ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'}`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          {!open ? (
-                            <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
-                              isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                            }`} />
-                          ) : (
+                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
+                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                          }`} />
+                          {open && (
                             <>
-                              <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 w-10 h-10 ${
-                                isActive 
-                                  ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
-                                  : "bg-muted/50 group-hover:bg-muted"
-                              }`}>
-                                <item.icon className={`h-5 w-5 ${
-                                  isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                                }`} />
-                              </div>
                               <span className="text-sm font-medium tracking-wide truncate">
                                 {t(item.labelKey)}
                               </span>
@@ -165,26 +155,16 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'w-full justify-center px-2 py-3' : 'gap-3 px-4 py-3'}`
+                        } ${!open ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'}`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          {!open ? (
-                            <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
-                              isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                            }`} />
-                          ) : (
+                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
+                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                          }`} />
+                          {open && (
                             <>
-                              <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 w-10 h-10 ${
-                                isActive 
-                                  ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
-                                  : "bg-muted/50 group-hover:bg-muted"
-                              }`}>
-                                <item.icon className={`h-5 w-5 ${
-                                  isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                                }`} />
-                              </div>
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <span className="text-sm font-medium tracking-wide truncate">
                                   {t(item.labelKey)}
@@ -219,7 +199,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center justify-center p-2 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <Avatar className="h-10 w-10 border-2 border-teal/20 shadow-lg">
+                <Avatar className="h-8 w-8 border-2 border-teal/20 shadow-lg">
                   <AvatarImage src={user?.profile?.avatar_url || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
                     {userInitials}
@@ -261,7 +241,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <Avatar className="h-10 w-10 flex-shrink-0 border-2 border-teal/20 shadow-lg">
+                <Avatar className="h-8 w-8 flex-shrink-0 border-2 border-teal/20 shadow-lg">
                   <AvatarImage src={user?.profile?.avatar_url || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
                     {userInitials}
