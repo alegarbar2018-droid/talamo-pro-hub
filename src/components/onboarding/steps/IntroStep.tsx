@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, Mail, User, Target, ArrowLeft, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { getExnessCreateUrl } from "@/lib/mockApi";
 
 interface IntroStepProps {
   onContinue: () => void;
@@ -10,31 +11,45 @@ interface IntroStepProps {
 }
 
 export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => {
+  const handleStepClick = (stepNumber: string) => {
+    if (stepNumber === "1") {
+      // Redirect to Exness partner link
+      window.location.href = getExnessCreateUrl();
+    } else if (stepNumber === "2") {
+      // Continue to validation step
+      onContinue();
+    }
+  };
+
   const steps = [
     {
       icon: Mail,
       number: "1",
       title: "Crea tu cuenta en Exness",
       description: "Abre una cuenta bajo nuestro link de partner. Si ya tienes cuenta, solicita cambio de partner",
-      highlight: true
+      highlight: true,
+      clickable: true
     },
     {
       icon: CheckCircle2,
       number: "2",
       title: "Valida tu afiliación",
-      description: "Confirmamos que tu cuenta está vinculada a nuestro partner para darte acceso"
+      description: "Confirmamos que tu cuenta está vinculada a nuestro partner para darte acceso",
+      clickable: true
     },
     {
       icon: User,
       number: "3",
       title: "Completa tu perfil",
-      description: "Cuéntanos sobre tu experiencia y objetivos en el trading"
+      description: "Cuéntanos sobre tu experiencia y objetivos en el trading",
+      clickable: false
     },
     {
       icon: Target,
       number: "4",
       title: "Recibe tu plan",
-      description: "Obtén recomendaciones personalizadas y accede al ecosistema completo"
+      description: "Obtén recomendaciones personalizadas y accede al ecosistema completo",
+      clickable: false
     }
   ];
 
@@ -102,7 +117,10 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
               duration: 0.3
             }}
           >
-            <Card className={`h-full border-2 ${stepItem.highlight ? 'border-primary/40 bg-gradient-to-br from-primary/10 to-surface/30' : 'border-border/40 bg-gradient-to-br from-surface/90 to-surface/30'} backdrop-blur-xl shadow-md hover:shadow-lg hover:border-primary/30 transition-all duration-300 group`}>
+            <Card 
+              className={`h-full border-2 ${stepItem.highlight ? 'border-primary/40 bg-gradient-to-br from-primary/10 to-surface/30' : 'border-border/40 bg-gradient-to-br from-surface/90 to-surface/30'} backdrop-blur-xl shadow-md hover:shadow-lg hover:border-primary/30 transition-all duration-300 group ${stepItem.clickable ? 'cursor-pointer hover:scale-[1.02]' : ''}`}
+              onClick={() => stepItem.clickable && handleStepClick(stepItem.number)}
+            >
               <CardContent className="p-4 h-full flex flex-col">
                 {/* Icon & Number */}
                 <div className="flex items-center gap-2 mb-2">
