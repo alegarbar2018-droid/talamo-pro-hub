@@ -114,59 +114,59 @@ export default function ToolsInfo() {
             className="mb-8 md:mb-12"
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="w-full px-4 mb-6 md:mb-8">
-                <div className="bg-surface/50 backdrop-blur-xl border border-primary/20 rounded-2xl p-2 mx-auto max-w-4xl">
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              <div className="w-full px-2 sm:px-4 mb-6 md:mb-8">
+                <div className="bg-surface/50 backdrop-blur-xl border border-primary/20 rounded-2xl p-1.5 sm:p-2 mx-auto max-w-5xl">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-2">
                     <button
                       onClick={() => setActiveTab("calculators")}
-                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                         activeTab === "calculators"
                           ? "bg-gradient-primary text-white shadow-glow"
                           : "text-muted-foreground hover:text-white hover:bg-primary/10"
                       }`}
                     >
-                      <Calculator className="w-4 h-4" />
+                      <Calculator className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="hidden sm:inline">Calculadoras</span>
-                      <span className="sm:hidden">Calc</span>
+                      <span className="sm:hidden truncate">Calculadoras</span>
                     </button>
                     
                     <button
                       onClick={() => setActiveTab("contracts")}
-                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                         activeTab === "contracts"
                           ? "bg-gradient-primary text-white shadow-glow"
                           : "text-muted-foreground hover:text-white hover:bg-primary/10"
                       }`}
                     >
-                      <CandlestickChart className="w-4 h-4" />
+                      <CandlestickChart className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="hidden sm:inline">Contratos</span>
-                      <span className="sm:hidden">Cont</span>
+                      <span className="sm:hidden truncate">Contratos</span>
                     </button>
                     
                     <button
                       onClick={() => setActiveTab("formulas")}
-                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                         activeTab === "formulas"
                           ? "bg-gradient-primary text-white shadow-glow"
                           : "text-muted-foreground hover:text-white hover:bg-primary/10"
                       }`}
                     >
-                      <BookOpen className="w-4 h-4" />
+                      <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="hidden sm:inline">Fórmulas</span>
-                      <span className="sm:hidden">Form</span>
+                      <span className="sm:hidden truncate">Fórmulas</span>
                     </button>
                     
                     <button
                       onClick={() => setActiveTab("features")}
-                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                         activeTab === "features"
                           ? "bg-gradient-primary text-white shadow-glow"
                           : "text-muted-foreground hover:text-white hover:bg-primary/10"
                       }`}
                     >
-                      <Sparkles className="w-4 h-4" />
+                      <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="hidden sm:inline">Extras</span>
-                      <span className="sm:hidden">Ext</span>
+                      <span className="sm:hidden truncate">Extras</span>
                     </button>
                   </div>
                 </div>
