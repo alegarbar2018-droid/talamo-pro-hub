@@ -72,38 +72,40 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="border-r border-line/50 bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl overflow-visible"
+      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl"
     >
       <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
-        <div className="flex items-center gap-3">
-          <div className="relative flex-shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
-            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-base">T</span>
+        <div className="flex items-center gap-2 justify-between w-full">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="relative flex-shrink-0 w-10 h-10">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 transition-opacity" />
+              <div className="relative w-full h-full rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-base">T</span>
+              </div>
             </div>
+            {open && (
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent truncate">
+                  Tálamo
+                </span>
+                <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
+                  Pro Hub
+                </span>
+              </div>
+            )}
           </div>
-          {open && (
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent">
-                Tálamo
-              </span>
-              <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
-                Pro Hub
-              </span>
-            </div>
-          )}
           <SidebarTrigger className="flex-shrink-0 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 overflow-visible">
+      <SidebarContent className="px-3 py-4">
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-2"}>
+          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
             {t("dashboard:modules.title", "Módulos")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 px-1">
+            <SidebarMenu className="space-y-1">
               {navigationItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
@@ -111,7 +113,7 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 w-full ${
+                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -121,22 +123,22 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-4 w-4 transition-all duration-300 ${
+                            <item.icon className={`h-4 w-4 flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
                           {open && (
-                            <span className="text-sm font-medium tracking-wide flex-1 min-w-0 truncate">
+                            <span className="text-sm font-medium tracking-wide truncate">
                               {t(item.labelKey)}
                             </span>
                           )}
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-9 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
                       )}
@@ -150,18 +152,18 @@ export function DashboardSidebar() {
 
         {/* Community Section */}
         <SidebarGroup className="mt-6">
-          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-2"}>
+          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
             {t("nav:community")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 px-1">
+            <SidebarMenu className="space-y-1">
               {communityItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 w-full ${
+                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -170,12 +172,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-4 w-4 transition-all duration-300 ${
+                            <item.icon className={`h-4 w-4 flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -195,7 +197,7 @@ export function DashboardSidebar() {
                             </div>
                           )}
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-9 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
                       )}
@@ -212,16 +214,13 @@ export function DashboardSidebar() {
         {!open ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-full p-2 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal/30 to-cyan/30 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Avatar className="h-9 w-9 relative border-2 border-teal/20 shadow-lg">
-                    <AvatarImage src={user?.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
+              <button className="w-full flex items-center justify-center p-2 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
+                <Avatar className="h-8 w-8 border-2 border-teal/20 shadow-lg">
+                  <AvatarImage src={user?.profile?.avatar_url || undefined} />
+                  <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
+                    {userInitials}
+                  </AvatarFallback>
+                </Avatar>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="end" className="w-64 bg-background/95 backdrop-blur-xl border-line/50">
@@ -258,20 +257,17 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal/30 to-cyan/30 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <Avatar className="h-9 w-9 relative border-2 border-teal/20 shadow-lg">
-                    <AvatarImage src={user?.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
+                <Avatar className="h-8 w-8 flex-shrink-0 border-2 border-teal/20 shadow-lg">
+                  <AvatarImage src={user?.profile?.avatar_url || undefined} />
+                  <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
+                    {userInitials}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 text-left min-w-0">
                   <p className="text-sm font-semibold text-foreground truncate">Usuario</p>
                   <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
-                <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-teal transition-colors" />
+                <ChevronDown className="h-4 w-4 flex-shrink-0 text-muted-foreground group-hover:text-teal transition-colors" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-64 bg-background/95 backdrop-blur-xl border-line/50">
