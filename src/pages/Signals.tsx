@@ -333,14 +333,6 @@ const Signals = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Risk Warning */}
-        <TradingDisclaimer 
-          variant="full"
-          context="signals"
-          showCollapsible={true}
-          className="mb-6"
-        />
-
         {/* Filters */}
         <Card className="border-line bg-surface mb-6">
           <CardHeader className="pb-3">
@@ -492,6 +484,14 @@ const Signals = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Risk Warning */}
+        <TradingDisclaimer 
+          variant="full"
+          context="signals"
+          showCollapsible={true}
+          className="mt-8"
+        />
       </div>
     </div>
   );
