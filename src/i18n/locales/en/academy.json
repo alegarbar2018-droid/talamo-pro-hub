@@ -36,5 +36,18 @@
     "levels_completed": "Levels completed",
     "total_progress": "Total progress",
     "lessons": "lessons"
+  },
+  "syllabus": {
+    "badge": "Training Program",
+    "title": "Detailed Syllabus",
+    "subtitle": "Structured professional trading education program",
+    "search_lessons": "Search lessons...",
+    "levels": "Levels",
+    "lessons": "Lessons",
+    "level": "Level",
+    "lessons_count": "lessons in this level",
+    "objectives": "Learning objectives",
+    "practice": "Practical exercises",
+    "start_academy": "Start Academy"
   }
 }

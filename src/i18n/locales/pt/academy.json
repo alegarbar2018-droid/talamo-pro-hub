@@ -36,5 +36,18 @@
     "levels_completed": "Níveis concluídos",
     "total_progress": "Progresso total",
     "lessons": "lições"
+  },
+  "syllabus": {
+    "badge": "Programa de Formação",
+    "title": "Programa Detalhado",
+    "subtitle": "Programa estruturado de formação profissional em trading",
+    "search_lessons": "Buscar lições...",
+    "levels": "Níveis",
+    "lessons": "Lições",
+    "level": "Nível",
+    "lessons_count": "lições neste nível",
+    "objectives": "Objetivos de aprendizagem",
+    "practice": "Exercícios práticos",
+    "start_academy": "Começar Academia"
   }
 }

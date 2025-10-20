@@ -39,6 +39,19 @@
     "total_progress": "Progreso total",
     "lessons": "lecciones"
   },
+  "syllabus": {
+    "badge": "Programa de Formación",
+    "title": "Temario Detallado",
+    "subtitle": "Programa estructurado de formación profesional en trading",
+    "search_lessons": "Buscar lecciones...",
+    "levels": "Niveles",
+    "lessons": "Lecciones",
+    "level": "Nivel",
+    "lessons_count": "lecciones en este nivel",
+    "objectives": "Objetivos de aprendizaje",
+    "practice": "Ejercicios prácticos",
+    "start_academy": "Comenzar Academia"
+  },
   "simulator": {
     "concept": "Concepto",
     "what_to_look": "¿Qué observar en el gráfico?",
