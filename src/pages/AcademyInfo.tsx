@@ -91,7 +91,7 @@ export default function AcademyInfo() {
                   size="lg"
                   variant="outline"
                   className="text-lg px-8 py-6 border-primary/20 hover:border-primary/40 hover:bg-primary/5"
-                  onClick={() => navigate('/register')}
+                  onClick={() => navigate('/onboarding')}
                 >
                   Crear cuenta gratis
                 </Button>
