@@ -37,8 +37,9 @@ export default function CopyInfo() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-12 px-4 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-background">
-        <div className="container mx-auto max-w-4xl">
+      <section className="relative pt-20 pb-12 px-4 bg-gradient-to-b from-emerald-500/20 via-teal-500/15 to-background overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 via-teal-600/10 to-transparent"></div>
+        <div className="container mx-auto max-w-4xl relative z-10">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
