@@ -74,39 +74,39 @@ export default function AcademyHero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="inline-flex items-center gap-6 px-6 py-3 bg-surface/50 backdrop-blur-xl border border-primary/10 rounded-xl mb-10"
+            className="inline-flex items-center gap-3 sm:gap-6 px-3 sm:px-6 py-2 sm:py-3 bg-surface/50 backdrop-blur-xl border border-primary/10 rounded-xl mb-10"
           >
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <BookOpen className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">{totalLessons}</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Lecciones</div>
+                <div className="text-lg sm:text-xl font-bold text-foreground">{totalLessons}</div>
+                <div className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider">Lecciones</div>
               </div>
             </div>
 
-            <div className="w-px h-10 bg-border" />
+            <div className="w-px h-8 sm:h-10 bg-border" />
 
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Clock className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">{totalHours}h</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Contenido</div>
+                <div className="text-lg sm:text-xl font-bold text-foreground">{totalHours}h</div>
+                <div className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider">Contenido</div>
               </div>
             </div>
 
-            <div className="w-px h-10 bg-border" />
+            <div className="w-px h-8 sm:h-10 bg-border" />
 
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Users className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-foreground">{activeStudents}+</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider">Estudiantes</div>
+                <div className="text-lg sm:text-xl font-bold text-foreground">{activeStudents}+</div>
+                <div className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider">Estudiantes</div>
               </div>
             </div>
           </motion.div>
