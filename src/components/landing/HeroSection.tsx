@@ -55,18 +55,19 @@ export const HeroSection = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="mt-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="absolute top-8 right-8"
           >
             <Button
               onClick={() => navigate("/faq")}
-              variant="outline"
-              className="group border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
             >
-              <HelpCircle className="w-4 h-4 mr-2" />
-              Preguntas Frecuentes
+              <HelpCircle className="w-4 h-4 mr-1.5" />
+              FAQs
             </Button>
           </motion.div>
 
