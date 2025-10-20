@@ -72,19 +72,19 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="border-r border-line/50 bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl"
+      className="border-r border-line/50 bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl overflow-visible"
     >
       <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
-        <div className="flex items-center gap-3 group">
-          <div className="relative">
+        <div className="flex items-center gap-3">
+          <div className="relative flex-shrink-0">
             <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
             <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-base">T</span>
             </div>
           </div>
           {open && (
-            <div className="flex flex-col flex-1">
-              <span className="font-bold text-xl bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent animate-gradient">
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent">
                 Tálamo
               </span>
               <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
@@ -92,18 +92,18 @@ export function DashboardSidebar() {
               </span>
             </div>
           )}
-          <SidebarTrigger className="hover:bg-teal/10 hover:text-teal transition-all rounded-lg p-2" />
+          <SidebarTrigger className="flex-shrink-0 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className="px-2 py-4 overflow-visible">
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-3"}>
+          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-2"}>
             {t("dashboard:modules.title", "Módulos")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="space-y-1 px-1">
               {navigationItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
@@ -111,7 +111,7 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 w-full ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -121,22 +121,22 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
+                            <item.icon className={`h-4 w-4 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
                           {open && (
-                            <span className="text-sm font-medium tracking-wide">
+                            <span className="text-sm font-medium tracking-wide flex-1 min-w-0 truncate">
                               {t(item.labelKey)}
                             </span>
                           )}
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-9 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
                       )}
@@ -150,18 +150,18 @@ export function DashboardSidebar() {
 
         {/* Community Section */}
         <SidebarGroup className="mt-6">
-          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-3"}>
+          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-2"}>
             {t("nav:community")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="space-y-1 px-1">
               {communityItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 w-full ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -170,24 +170,24 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
+                            <item.icon className={`h-4 w-4 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
                           {open && (
-                            <div className="flex items-center justify-between flex-1">
-                              <span className="text-sm font-medium tracking-wide">
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <span className="text-sm font-medium tracking-wide truncate">
                                 {t(item.labelKey)}
                               </span>
                               {item.badge && (
                                 <Badge
                                   variant="secondary"
-                                  className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide"
+                                  className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
                                 >
                                   {item.badge}
                                 </Badge>
@@ -195,7 +195,7 @@ export function DashboardSidebar() {
                             </div>
                           )}
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-9 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
                       )}
