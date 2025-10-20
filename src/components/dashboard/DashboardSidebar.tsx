@@ -72,33 +72,30 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl"
+      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl group-data-[collapsible=icon]:w-20"
     >
       <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
-        <div className="flex items-center gap-2 justify-between w-full">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="relative flex-shrink-0 w-10 h-10">
-              <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 transition-opacity" />
-              <div className="relative w-full h-full rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-base">T</span>
-              </div>
+        <div className="flex items-center gap-3">
+          <div className="relative flex-shrink-0 w-10 h-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 transition-opacity" />
+            <div className="relative w-full h-full rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-base">T</span>
             </div>
-            {open && (
-              <div className="flex flex-col flex-1 min-w-0">
-                <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent truncate">
-                  Tálamo
-                </span>
-                <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
-                  Pro Hub
-                </span>
-              </div>
-            )}
           </div>
-          <SidebarTrigger className="flex-shrink-0 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+          {open && (
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent truncate">
+                Tálamo
+              </span>
+              <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
+                Pro Hub
+              </span>
+            </div>
+          )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 overflow-x-visible overflow-y-auto">
+      <SidebarContent className="px-3 py-4">
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
@@ -113,22 +110,22 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center ${open ? 'gap-3 px-3' : 'justify-center px-2'} py-2.5 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        }`
+                        } ${!open ? 'justify-center px-2' : ''}`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 ${open ? 'w-9 h-9' : 'w-10 h-10'} flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`${open ? 'h-5 w-5' : 'h-6 w-6'} flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -163,21 +160,21 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center ${open ? 'gap-3 px-3' : 'justify-center px-2'} py-2.5 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        }`
+                        } ${!open ? 'justify-center px-2' : ''}`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 ${open ? 'w-9 h-9' : 'w-10 h-10'} flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`${open ? 'h-5 w-5' : 'h-6 w-6'} flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -215,7 +212,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center justify-center p-2 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <Avatar className="h-9 w-9 border-2 border-teal/20 shadow-lg">
+                <Avatar className="h-10 w-10 border-2 border-teal/20 shadow-lg">
                   <AvatarImage src={user?.profile?.avatar_url || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
                     {userInitials}
@@ -257,7 +254,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
-                <Avatar className="h-9 w-9 flex-shrink-0 border-2 border-teal/20 shadow-lg">
+                <Avatar className="h-10 w-10 flex-shrink-0 border-2 border-teal/20 shadow-lg">
                   <AvatarImage src={user?.profile?.avatar_url || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-teal to-cyan text-white text-xs font-semibold">
                     {userInitials}
