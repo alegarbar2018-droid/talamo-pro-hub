@@ -74,11 +74,14 @@ export default function AcademyOverview() {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
               >
-                <Card className="bg-surface/50 backdrop-blur-xl border-primary/20 p-6 group hover:border-primary/40 hover:scale-105 transition-all duration-300 h-full">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-primary/20 group-hover:scale-110 transition-transform flex-shrink-0">
+                <Card className="bg-surface/50 backdrop-blur-2xl border-primary/20 shadow-xl p-6 group hover:border-primary/50 hover:scale-[1.03] hover:shadow-2xl hover:shadow-primary/10 transition-all duration-400 h-full relative overflow-hidden">
+                  {/* Border glow effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-400"></div>
+                  
+                  <div className="flex items-center gap-4 relative">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-primary/20 group-hover:scale-110 group-hover:shadow-lg transition-all duration-400 flex-shrink-0">
                       {diff.icon}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -113,9 +116,9 @@ export default function AcademyOverview() {
         className="relative"
       >
         <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <Card className="bg-gradient-to-br from-surface/80 via-surface/60 to-surface/40 backdrop-blur-xl border-primary/20 p-12">
+          <Card className="bg-gradient-to-br from-surface/80 via-surface/60 to-surface/40 backdrop-blur-2xl border-primary/20 shadow-2xl p-16">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-teal/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-teal/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <BookOpen className="w-8 h-8 text-primary" />
               </div>
               
@@ -127,20 +130,20 @@ export default function AcademyOverview() {
                 {t('overview.cta_description')}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Button 
                   size="lg"
                   onClick={() => navigate("/access")}
-                  className="bg-gradient-primary hover:shadow-glow text-lg px-8 py-6 h-auto rounded-2xl"
+                  className="bg-gradient-primary hover:shadow-glow text-lg px-10 py-7 h-auto rounded-2xl group transition-all duration-400"
                 >
-                  <Zap className="w-5 h-5 mr-2" />
+                  <Zap className="w-5 h-5 mr-2 group-hover:animate-pulse" />
                   {t('overview.cta_primary')}
                 </Button>
                 <Button 
                   size="lg"
                   variant="outline"
                   onClick={scrollToSyllabus}
-                  className="border-2 border-primary/30 bg-surface/50 backdrop-blur-xl hover:bg-primary/10 text-lg px-8 py-6 h-auto rounded-2xl"
+                  className="border-2 border-primary/40 bg-surface/60 backdrop-blur-xl hover:bg-primary/20 hover:border-primary/60 hover:shadow-glow text-lg px-10 py-7 h-auto rounded-2xl transition-all duration-400"
                 >
                   {t('overview.cta_secondary')}
                   <ChevronDown className="w-5 h-5 ml-2" />

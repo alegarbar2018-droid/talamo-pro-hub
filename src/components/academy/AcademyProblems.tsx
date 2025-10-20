@@ -38,8 +38,8 @@ export default function AcademyProblems() {
     >
       {/* Background effect */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 lg:px-8 relative">
@@ -61,9 +61,12 @@ export default function AcademyProblems() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <Card className="bg-surface/30 border-red-500/20 p-8 h-full group hover:border-red-500/40 hover:scale-105 transition-all duration-300">
-                <div className="flex flex-col items-center text-center gap-4">
-                  <div className="group-hover:scale-110 transition-transform">
+              <Card className="bg-surface/40 backdrop-blur-2xl border-red-500/20 shadow-xl p-8 h-full group hover:border-red-500/50 hover:scale-[1.03] hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-400 relative overflow-hidden">
+                {/* Animated border gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-400"></div>
+                
+                <div className="flex flex-col items-center text-center gap-4 relative">
+                  <div className="group-hover:scale-110 transition-transform duration-400 group-hover:animate-pulse">
                     {problem.icon}
                   </div>
                   <h3 className="font-bold text-foreground text-2xl">

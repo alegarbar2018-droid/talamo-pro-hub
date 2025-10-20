@@ -26,7 +26,7 @@ export default function AcademyHero() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 bg-surface/90 backdrop-blur-xl border border-primary/20 text-primary px-6 py-3 rounded-2xl text-sm font-semibold mb-8"
+            className="inline-flex items-center gap-2 bg-surface/90 backdrop-blur-xl border border-primary/20 shadow-lg text-primary px-6 py-3 rounded-2xl text-sm font-semibold mb-8"
           >
             <GraduationCap className="w-4 h-4" />
             {t('hero.badge')}
@@ -66,16 +66,16 @@ export default function AcademyHero() {
             <Button 
               size="lg"
               onClick={() => navigate("/access")}
-              className="bg-gradient-primary hover:shadow-glow text-lg px-8 py-6 h-auto rounded-2xl group"
+              className="bg-gradient-primary hover:shadow-glow text-lg px-8 py-6 h-auto rounded-2xl group transition-all duration-400"
             >
-              <Zap className="w-5 h-5 mr-2" />
+              <Zap className="w-5 h-5 mr-2 group-hover:animate-pulse" />
               {t('hero.cta_primary')}
             </Button>
             <Button 
               size="lg"
               variant="ghost" 
               onClick={scrollToSyllabus}
-              className="text-primary hover:text-primary/80 hover:bg-primary/5 text-base px-6 py-6 h-auto rounded-2xl"
+              className="text-primary hover:text-primary/80 hover:bg-primary/10 text-base px-6 py-6 h-auto rounded-2xl transition-all duration-300"
             >
               {t('hero.cta_secondary')}
               <ChevronDown className="w-4 h-4 ml-2" />
