@@ -42,6 +42,27 @@ export const EmailCaptureStep = ({
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="space-y-8 sm:space-y-10"
     >
+      {/* Back Button */}
+      {canGoBack && onBack && (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
+          <Button
+            type="button"
+            size="lg"
+            variant="ghost"
+            onClick={onBack}
+            disabled={loading}
+            className="h-12 px-4 hover:bg-background/80 backdrop-blur-sm transition-all duration-300"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" strokeWidth={2.5} />
+            <span className="text-sm font-medium">Volver</span>
+          </Button>
+        </motion.div>
+      )}
+
       {/* Header */}
       <div className="text-center space-y-6 sm:space-y-8 relative">
         <div className="absolute inset-0 -z-10 blur-3xl opacity-20">
@@ -112,43 +133,29 @@ export const EmailCaptureStep = ({
                 </motion.div>
               )}
 
-              <div className="flex gap-4">
-                {canGoBack && onBack && (
-                  <Button
-                    type="button"
-                    size="lg"
-                    variant="outline"
-                    onClick={onBack}
-                    disabled={loading}
-                    className="h-16 sm:h-18 px-7 rounded-2xl border-2 border-border/40 hover:border-primary/40 hover:bg-background/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 active:scale-95"
-                  >
-                    <ArrowLeft className="h-5 w-5" strokeWidth={2.5} />
-                  </Button>
+              <Button
+                type="submit"
+                disabled={!localEmail.trim() || loading}
+                className="group relative w-full h-16 sm:h-18 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary/80 text-base sm:text-xl font-bold rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_60px_-15px_rgba(var(--primary),0.5)] active:scale-[0.98] border-2 border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                {loading ? (
+                  <span className="relative flex items-center gap-3">
+                    <Loader2 className="h-5 w-5 animate-spin" strokeWidth={2.5} />
+                    Validando...
+                  </span>
+                ) : (
+                  <span className="relative flex items-center gap-3 text-primary-foreground drop-shadow-sm">
+                    Continuar
+                    <motion.span
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                    >
+                      →
+                    </motion.span>
+                  </span>
                 )}
-                <Button
-                  type="submit"
-                  disabled={!localEmail.trim() || loading}
-                  className="group relative flex-1 h-16 sm:h-18 bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary hover:via-primary/90 hover:to-primary/80 text-base sm:text-xl font-bold rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_60px_-15px_rgba(var(--primary),0.5)] active:scale-[0.98] border-2 border-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                  {loading ? (
-                    <span className="relative flex items-center gap-3">
-                      <Loader2 className="h-5 w-5 animate-spin" strokeWidth={2.5} />
-                      Validando...
-                    </span>
-                  ) : (
-                    <span className="relative flex items-center gap-3 text-primary-foreground drop-shadow-sm">
-                      Continuar
-                      <motion.span
-                        animate={{ x: [0, 4, 0] }}
-                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                      >
-                        →
-                      </motion.span>
-                    </span>
-                  )}
-                </Button>
-              </div>
+              </Button>
             </form>
           </CardContent>
         </Card>

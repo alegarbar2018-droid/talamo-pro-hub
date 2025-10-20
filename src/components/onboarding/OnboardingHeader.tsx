@@ -16,17 +16,6 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
     <header className="border-b border-line bg-surface/95 backdrop-blur-xl sticky top-0 z-50">
       <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Back Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/")}
-            className="text-muted-foreground hover:text-foreground transition-colors p-2 -ml-2"
-          >
-            <ArrowLeft className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Salir</span>
-          </Button>
-
           {/* Logo & Title */}
           <div className="flex items-center gap-2 sm:gap-3">
             <h1 className="text-base sm:text-lg font-semibold gradient-text">Tálamo</h1>
@@ -39,6 +28,16 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
           <div className="text-xs sm:text-sm text-muted-foreground font-medium">
             {stepNumber}/8
           </div>
+
+          {/* Exit Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/")}
+            className="text-muted-foreground hover:text-foreground transition-colors p-2 -mr-2"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
 
         {/* Progress Bar */}
