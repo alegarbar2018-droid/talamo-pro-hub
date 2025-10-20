@@ -16,7 +16,7 @@ const FAQExpanded = () => {
     {
       question: "¿Qué es Tálamo Trading?",
       answer: "Tálamo es un ecosistema profesional de trading 100% gratuito que incluye academia estructurada (146 lecciones), señales verificadas, copy trading, herramientas profesionales, auditoría transparente y comunidad. Todo financiado por comisiones IB de Exness, no vendemos cursos ni membresías premium.",
-      link: { text: "Ver el ecosistema completo", path: "/#modulos" }
+      link: { text: "Ver qué es Tálamo", path: "/#que-es-talamo" }
     },
     {
       question: "¿Cómo funciona el modelo IB?",
@@ -131,8 +131,19 @@ const FAQExpanded = () => {
                           size="sm"
                           onClick={() => {
                             if (faq.link.path.startsWith('/#')) {
-                              const element = document.querySelector(faq.link.path.substring(1));
-                              element?.scrollIntoView({ behavior: 'smooth' });
+                              // Navigate to home page first if not already there
+                              if (window.location.pathname !== '/') {
+                                navigate('/');
+                                // Wait for navigation and then scroll
+                                setTimeout(() => {
+                                  const element = document.querySelector(faq.link.path.substring(1));
+                                  element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }, 100);
+                              } else {
+                                // Already on home page, just scroll
+                                const element = document.querySelector(faq.link.path.substring(1));
+                                element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                              }
                             } else {
                               navigate(faq.link.path);
                             }

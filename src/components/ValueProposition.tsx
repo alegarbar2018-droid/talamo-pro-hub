@@ -48,7 +48,7 @@ export default function ValueProposition() {
   ];
 
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-b from-background via-background/98 to-background">
+    <section id="que-es-talamo" className="py-16 md:py-20 relative overflow-hidden bg-gradient-to-b from-background via-background/98 to-background">
       {/* Decorative gradient orbs */}
       <div className="absolute top-1/4 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 -right-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
