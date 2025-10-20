@@ -4,28 +4,28 @@ import { AlertTriangle, TrendingDown, Users, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function AcademyProblems() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('academy');
   
   const problems = [
     {
       icon: <TrendingDown className="w-24 h-24 text-red-400" />,
-      title: t('academy.problems.problem1_title'),
-      description: t('academy.problems.problem1_desc')
+      title: t('problems.problem1_title'),
+      description: t('problems.problem1_desc')
     },
     {
       icon: <Users className="w-24 h-24 text-orange-400" />,
-      title: t('academy.problems.problem2_title'),
-      description: t('academy.problems.problem2_desc')
+      title: t('problems.problem2_title'),
+      description: t('problems.problem2_desc')
     },
     {
       icon: <DollarSign className="w-24 h-24 text-yellow-400" />,
-      title: t('academy.problems.problem3_title'),
-      description: t('academy.problems.problem3_desc')
+      title: t('problems.problem3_title'),
+      description: t('problems.problem3_desc')
     },
     {
       icon: <AlertTriangle className="w-24 h-24 text-red-500" />,
-      title: t('academy.problems.problem4_title'),
-      description: t('academy.problems.problem4_desc')
+      title: t('problems.problem4_title'),
+      description: t('problems.problem4_desc')
     }
   ];
 
@@ -45,11 +45,11 @@ export default function AcademyProblems() {
       <div className="max-w-6xl mx-auto px-6 lg:px-8 relative">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {t('academy.problems.title')}
+            {t('problems.title')}
           </h2>
           
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            {t('academy.problems.subtitle')}
+            {t('problems.subtitle')}
           </p>
         </div>
 

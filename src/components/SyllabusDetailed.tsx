@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 
 export default function SyllabusDetailed() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeLevel, setActiveLevel] = useState(COURSE[0].id.toString());
+  const [activeLevel, setActiveLevel] = useState("0");
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -154,28 +154,28 @@ export default function SyllabusDetailed() {
             {/* Tabs de niveles */}
             <Tabs value={activeLevel} onValueChange={setActiveLevel} className="space-y-8">
               <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-3 bg-transparent">
-                {COURSE.map((level) => (
+                {COURSE.map((level, levelIndex) => (
                   <TabsTrigger
-                    key={level.id}
-                    value={level.id.toString()}
+                    key={levelIndex}
+                    value={String(levelIndex)}
                     className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow bg-surface/50 backdrop-blur-xl border border-primary/20 hover:border-primary/40 transition-all duration-300"
                   >
                     <span className="text-sm font-semibold">
-                      {t('academy.syllabus.level')} {level.id}
+                      {t('academy.syllabus.level')} {levelIndex + 1}
                     </span>
                   </TabsTrigger>
                 ))}
               </TabsList>
 
-              {filteredCourse.map((level) => (
-                <TabsContent key={level.id} value={level.id.toString()} className="mt-0">
+              {filteredCourse.map((level, levelIndex) => (
+                <TabsContent key={levelIndex} value={String(levelIndex)} className="mt-0">
                   <Card className="bg-surface/30 backdrop-blur-xl border-primary/20">
                     <CardContent className="p-8">
                       {/* Level header */}
                       <div className="mb-8">
                         <div className="flex items-center gap-3 mb-3">
                           <Badge className="bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm px-4 py-1">
-                            {t('academy.syllabus.level')} {level.id}
+                            {t('academy.syllabus.level')} {levelIndex + 1}
                           </Badge>
                           <h3 className="text-2xl font-bold text-foreground">{level.level}</h3>
                         </div>
@@ -189,7 +189,7 @@ export default function SyllabusDetailed() {
                         {level.lessons.map((lesson, lessonIndex) => (
                           <AccordionItem
                             key={lessonIndex}
-                            value={`lesson-${level.id}-${lessonIndex}`}
+                            value={`lesson-${levelIndex}-${lessonIndex}`}
                             className="border border-primary/20 rounded-xl bg-surface/20 backdrop-blur-sm overflow-hidden hover:border-primary/40 transition-all duration-300"
                           >
                             <AccordionTrigger className="text-left px-6 py-4 hover:no-underline hover:bg-surface/30 transition-colors">

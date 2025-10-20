@@ -9,7 +9,7 @@ import AcademyJourney from "./AcademyJourney";
 
 export default function AcademyOverview() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('academy');
 
   const scrollToSyllabus = () => {
     const syllabusElement = document.getElementById('syllabus-section');
@@ -19,27 +19,27 @@ export default function AcademyOverview() {
   const differences = [
     {
       icon: <Shield className="w-6 h-6 text-teal" />,
-      title: t('academy.overview.diff1_title'),
-      description: t('academy.overview.diff1_desc'),
-      badge: t('academy.overview.diff1_badge')
+      title: t('overview.diff1_title'),
+      description: t('overview.diff1_desc'),
+      badge: t('overview.diff1_badge')
     },
     {
       icon: <Target className="w-6 h-6 text-primary" />,
-      title: t('academy.overview.diff2_title'),
-      description: t('academy.overview.diff2_desc'),
-      badge: t('academy.overview.diff2_badge')
+      title: t('overview.diff2_title'),
+      description: t('overview.diff2_desc'),
+      badge: t('overview.diff2_badge')
     },
     {
       icon: <BookOpen className="w-6 h-6 text-accent" />,
-      title: t('academy.overview.diff3_title'),
-      description: t('academy.overview.diff3_desc'),
-      badge: t('academy.overview.diff3_badge')
+      title: t('overview.diff3_title'),
+      description: t('overview.diff3_desc'),
+      badge: t('overview.diff3_badge')
     },
     {
       icon: <BarChart3 className="w-6 h-6 text-teal" />,
-      title: t('academy.overview.diff4_title'),
-      description: t('academy.overview.diff4_desc'),
-      badge: t('academy.overview.diff4_badge')
+      title: t('overview.diff4_title'),
+      description: t('overview.diff4_desc'),
+      badge: t('overview.diff4_badge')
     }
   ];
 
@@ -59,12 +59,12 @@ export default function AcademyOverview() {
                 <Zap className="w-6 h-6 text-primary" />
               </div>
               <h2 className="text-4xl font-bold text-foreground">
-                {t('academy.overview.title')}
+                {t('overview.title')}
               </h2>
             </div>
             
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t('academy.overview.subtitle')}
+              {t('overview.subtitle')}
             </p>
           </div>
 
@@ -120,11 +120,11 @@ export default function AcademyOverview() {
               </div>
               
               <h3 className="text-3xl font-bold text-foreground mb-4">
-                {t('academy.overview.cta_title')}
+                {t('overview.cta_title')}
               </h3>
               
               <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
-                {t('academy.overview.cta_description')}
+                {t('overview.cta_description')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -134,7 +134,7 @@ export default function AcademyOverview() {
                   className="bg-gradient-primary hover:shadow-glow text-lg px-8 py-6 h-auto rounded-2xl"
                 >
                   <Zap className="w-5 h-5 mr-2" />
-                  {t('academy.overview.cta_primary')}
+                  {t('overview.cta_primary')}
                 </Button>
                 <Button 
                   size="lg"
@@ -142,7 +142,7 @@ export default function AcademyOverview() {
                   onClick={scrollToSyllabus}
                   className="border-2 border-primary/30 bg-surface/50 backdrop-blur-xl hover:bg-primary/10 text-lg px-8 py-6 h-auto rounded-2xl"
                 >
-                  {t('academy.overview.cta_secondary')}
+                  {t('overview.cta_secondary')}
                   <ChevronDown className="w-5 h-5 ml-2" />
                 </Button>
               </div>

@@ -10,10 +10,10 @@ import AcademyOverview from "@/components/academy/AcademyOverview";
 
 export default function AcademyInfo() {
   const { trackPageView } = useObservability();
-  const { t } = useTranslation();
+  const { t } = useTranslation('academy');
 
   useEffect(() => {
-    document.title = t('academy.title') + " — " + t('academy.subtitle');
+    document.title = t('title') + " — " + t('subtitle');
     trackPageView("academy-info");
   }, [trackPageView, t]);
 
@@ -49,7 +49,7 @@ export default function AcademyInfo() {
         >
           <div className="max-w-4xl mx-auto bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-2xl p-8">
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">{t('academy.disclaimer.title')}:</strong> {t('academy.disclaimer.text')}
+              <strong className="text-foreground">{t('disclaimer.title')}:</strong> {t('disclaimer.text')}
             </p>
           </div>
         </motion.footer>

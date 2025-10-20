@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 export default function AcademyHero() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('academy');
 
   const scrollToSyllabus = () => {
     const syllabusElement = document.getElementById('syllabus-section');
@@ -29,7 +29,7 @@ export default function AcademyHero() {
             className="inline-flex items-center gap-2 bg-surface/90 backdrop-blur-xl border border-primary/20 text-primary px-6 py-3 rounded-2xl text-sm font-semibold mb-8"
           >
             <GraduationCap className="w-4 h-4" />
-            {t('academy.hero.badge')}
+            {t('hero.badge')}
           </motion.div>
           
           <motion.h1 
@@ -38,14 +38,14 @@ export default function AcademyHero() {
             transition={{ delay: 0.3 }}
             className="text-5xl md:text-7xl font-bold leading-tight mb-8"
           >
-            <span className="text-foreground">{t('academy.hero.title_part1')}</span>
+            <span className="text-foreground">{t('hero.title_part1')}</span>
             <br />
-            <span className="text-red-400">{t('academy.hero.title_part2')}</span>
-            <span className="text-foreground"> {t('academy.hero.title_part3')}</span>
+            <span className="text-red-400">{t('hero.title_part2')}</span>
+            <span className="text-foreground"> {t('hero.title_part3')}</span>
             <br />
-            <span className="text-red-400">{t('academy.hero.title_part4')}</span>
+            <span className="text-red-400">{t('hero.title_part4')}</span>
             <br />
-            <span className="text-primary">{t('academy.hero.title_part5')}</span>
+            <span className="text-primary">{t('hero.title_part5')}</span>
           </motion.h1>
           
           <motion.p 
@@ -54,7 +54,7 @@ export default function AcademyHero() {
             transition={{ delay: 0.4 }}
             className="text-xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed"
           >
-            {t('academy.hero.description')}
+            {t('hero.description')}
           </motion.p>
           
           <motion.div 
@@ -69,7 +69,7 @@ export default function AcademyHero() {
               className="bg-gradient-primary hover:shadow-glow text-lg px-8 py-6 h-auto rounded-2xl group"
             >
               <Zap className="w-5 h-5 mr-2" />
-              {t('academy.hero.cta_primary')}
+              {t('hero.cta_primary')}
             </Button>
             <Button 
               size="lg"
@@ -77,7 +77,7 @@ export default function AcademyHero() {
               onClick={scrollToSyllabus}
               className="text-primary hover:text-primary/80 hover:bg-primary/5 text-base px-6 py-6 h-auto rounded-2xl"
             >
-              {t('academy.hero.cta_secondary')}
+              {t('hero.cta_secondary')}
               <ChevronDown className="w-4 h-4 ml-2" />
             </Button>
           </motion.div>
