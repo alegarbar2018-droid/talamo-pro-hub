@@ -72,7 +72,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl group-data-[collapsible=icon]:w-20"
+      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl group-data-[collapsible=icon]:w-[72px]"
     >
       <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
         <div className="flex items-center gap-3 justify-between">
@@ -90,7 +90,7 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className={open ? "px-3 py-4" : "px-2 py-4"}>
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
@@ -105,22 +105,26 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'justify-center px-2' : ''}`
+                        } ${!open ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'}`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                            !open ? 'w-9 h-9' : 'w-10 h-10'
+                          } ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`flex-shrink-0 transition-all duration-300 ${
+                              !open ? 'h-5 w-5' : 'h-5 w-5'
+                            } ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -155,21 +159,25 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'justify-center px-2' : ''}`
+                        } ${!open ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'}`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 ${
+                            !open ? 'w-9 h-9' : 'w-10 h-10'
+                          } ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-5 w-5 flex-shrink-0 transition-all duration-300 ${
+                            <item.icon className={`flex-shrink-0 transition-all duration-300 ${
+                              !open ? 'h-5 w-5' : 'h-5 w-5'
+                            } ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
