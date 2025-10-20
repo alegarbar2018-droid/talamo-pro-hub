@@ -1,0 +1,46 @@
+{
+  "status": "Próximamente",
+  "title": "Programa de Referidos",
+  "subtitle": "Invita amigos, construye tu red y genera ingresos pasivos como Introducing Broker de Exness",
+  "current_process": "Por ahora, puedes registrarte directamente en el programa IB de Exness. Pronto tendrás un panel integrado aquí.",
+  "benefits": {
+    "network": {
+      "title": "Construye tu Red",
+      "description": "Invita traders y construye una red que genere ingresos recurrentes"
+    },
+    "commissions": {
+      "title": "Comisiones Competitivas",
+      "description": "Gana por cada operación de tus referidos con comisiones competitivas"
+    },
+    "passive": {
+      "title": "Ingreso Pasivo",
+      "description": "Genera ingresos continuos mientras tus referidos operan"
+    },
+    "bonuses": {
+      "title": "Bonos Especiales",
+      "description": "Accede a bonos y promociones exclusivas para IBs"
+    }
+  },
+  "ib_program": {
+    "title": "Programa IB de Exness",
+    "description": "Conviértete en Introducing Broker y empieza a ganar hoy",
+    "how_it_works": "¿Cómo funciona?",
+    "steps": {
+      "1": "Regístrate en el programa IB de Exness",
+      "2": "Obtén tu enlace de referido único",
+      "3": "Comparte con tu red (amigos, seguidores, comunidad)",
+      "4": "Gana comisiones por cada operación de tus referidos"
+    },
+    "cta": "Ir al Programa IB de Exness"
+  },
+  "coming_soon": {
+    "title": "Panel de Referidos (Próximamente)",
+    "description": "Estamos construyendo tu panel integrado que incluirá:",
+    "features": {
+      "dashboard": "Dashboard con métricas en tiempo real",
+      "tracking": "Seguimiento de referidos y comisiones",
+      "payments": "Gestión de pagos y retiros",
+      "materials": "Materiales de marketing y recursos"
+    }
+  }
+}

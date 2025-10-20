@@ -25,6 +25,8 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Academy = lazy(() => import("./pages/Academy"));
 const Signals = lazy(() => import("./pages/Signals"));
 const CopyTrading = lazy(() => import("./pages/CopyTrading"));
+const Community = lazy(() => import("./pages/Community"));
+const Referrals = lazy(() => import("./pages/Referrals"));
 const Tools = lazy(() => import("./pages/Tools"));
 const Journal = lazy(() => import("./pages/Journal"));
 const Audit = lazy(() => import("./pages/Audit"));
@@ -98,20 +100,24 @@ const App: React.FC = () => {
             <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/onboarding" element={<Onboarding />} />
             
-            {/* Protected routes - require onboarding completion */}
-            <Route path="/dashboard" element={<OnboardingGuard><Dashboard /></OnboardingGuard>} />
-            <Route path="/academy" element={<OnboardingGuard><Academy /></OnboardingGuard>} />
-            <Route path="/academy/course/:slug" element={<OnboardingGuard><CourseView /></OnboardingGuard>} />
-            <Route path="/academy/lesson/:lessonId" element={<OnboardingGuard><LessonView /></OnboardingGuard>} />
-            <Route path="/academy/quiz/:quizId" element={<OnboardingGuard><QuizView /></OnboardingGuard>} />
-            <Route path="/signals" element={<OnboardingGuard><Signals /></OnboardingGuard>} />
-            <Route path="/copy-trading" element={<OnboardingGuard><CopyTrading /></OnboardingGuard>} />
+            {/* Protected routes with DashboardLayout */}
+            <Route element={<OnboardingGuard><DashboardLayout /></OnboardingGuard>}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/academy" element={<Academy />} />
+              <Route path="/academy/course/:slug" element={<CourseView />} />
+              <Route path="/academy/lesson/:lessonId" element={<LessonView />} />
+              <Route path="/academy/quiz/:quizId" element={<QuizView />} />
+              <Route path="/signals" element={<Signals />} />
+              <Route path="/copy-trading" element={<CopyTrading />} />
+              <Route path="/tools" element={<Tools />} />
+              <Route path="/journal" element={<Journal />} />
+              <Route path="/audit" element={<Audit />} />
+              <Route path="/audit/:accountId" element={<AuditDetail />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/referrals" element={<Referrals />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
             <Route path="/CopyTrading" element={<Navigate to="/copy-trading" replace />} />
-            <Route path="/tools" element={<OnboardingGuard><Tools /></OnboardingGuard>} />
-            <Route path="/journal" element={<OnboardingGuard><Journal /></OnboardingGuard>} />
-            <Route path="/audit" element={<OnboardingGuard><Audit /></OnboardingGuard>} />
-            <Route path="/audit/:accountId" element={<OnboardingGuard><AuditDetail /></OnboardingGuard>} />
-            <Route path="/settings" element={<OnboardingGuard><Settings /></OnboardingGuard>} />
             <Route path="/access" element={<AccessWizard />} />
             
             {/* Public info pages */}

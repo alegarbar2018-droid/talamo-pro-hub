@@ -1,0 +1,46 @@
+{
+  "status": "Em Breve",
+  "title": "Programa de Indicações",
+  "subtitle": "Convide amigos, construa sua rede e gere renda passiva como Introducing Broker da Exness",
+  "current_process": "Por enquanto, você pode se registrar diretamente no programa IB da Exness. Em breve você terá um painel integrado aqui.",
+  "benefits": {
+    "network": {
+      "title": "Construa Sua Rede",
+      "description": "Convide traders e construa uma rede que gere renda recorrente"
+    },
+    "commissions": {
+      "title": "Comissões Competitivas",
+      "description": "Ganhe em cada operação de seus indicados com comissões competitivas"
+    },
+    "passive": {
+      "title": "Renda Passiva",
+      "description": "Gere renda contínua enquanto seus indicados operam"
+    },
+    "bonuses": {
+      "title": "Bônus Especiais",
+      "description": "Acesse bônus e promoções exclusivas para IBs"
+    }
+  },
+  "ib_program": {
+    "title": "Programa IB da Exness",
+    "description": "Torne-se um Introducing Broker e comece a ganhar hoje",
+    "how_it_works": "Como funciona?",
+    "steps": {
+      "1": "Registre-se no programa IB da Exness",
+      "2": "Obtenha seu link de indicação único",
+      "3": "Compartilhe com sua rede (amigos, seguidores, comunidade)",
+      "4": "Ganhe comissões por cada operação de seus indicados"
+    },
+    "cta": "Ir para o Programa IB da Exness"
+  },
+  "coming_soon": {
+    "title": "Painel de Indicações (Em Breve)",
+    "description": "Estamos construindo seu painel integrado que incluirá:",
+    "features": {
+      "dashboard": "Dashboard com métricas em tempo real",
+      "tracking": "Rastreamento de indicados e comissões",
+      "payments": "Gestão de pagamentos e saques",
+      "materials": "Materiais de marketing e recursos"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "status": "Coming Soon",
+  "title": "Tálamo Community",
+  "subtitle": "Connect with professional traders, share strategies and grow alongside a community committed to responsible trading",
+  "features": {
+    "network": {
+      "title": "Trader Network",
+      "description": "Connect with traders from around the world and learn from their experience"
+    },
+    "discussions": {
+      "title": "Forums & Discussions",
+      "description": "Participate in debates about strategies, market analysis and more"
+    },
+    "strategies": {
+      "title": "Share Strategies",
+      "description": "Share your ideas and learn from other traders' strategies"
+    }
+  },
+  "waitlist": {
+    "title": "Join the Waitlist",
+    "description": "Be among the first to access when we launch the community",
+    "placeholder": "your@email.com",
+    "button": "Join"
+  },
+  "coming_soon": {
+    "title": "Features in Development",
+    "description": "Here's what we're building for you:",
+    "features": {
+      "forums": "Topic forums by level and market",
+      "leaderboard": "Leaderboard and rankings",
+      "events": "Exclusive events and webinars",
+      "mentorship": "Peer-to-peer mentorship program"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "status": "Coming Soon",
+  "title": "Referral Program",
+  "subtitle": "Invite friends, build your network and generate passive income as an Exness Introducing Broker",
+  "current_process": "For now, you can register directly in the Exness IB program. Soon you'll have an integrated panel here.",
+  "benefits": {
+    "network": {
+      "title": "Build Your Network",
+      "description": "Invite traders and build a network that generates recurring income"
+    },
+    "commissions": {
+      "title": "Competitive Commissions",
+      "description": "Earn from each trade of your referrals with competitive commissions"
+    },
+    "passive": {
+      "title": "Passive Income",
+      "description": "Generate continuous income while your referrals trade"
+    },
+    "bonuses": {
+      "title": "Special Bonuses",
+      "description": "Access exclusive bonuses and promotions for IBs"
+    }
+  },
+  "ib_program": {
+    "title": "Exness IB Program",
+    "description": "Become an Introducing Broker and start earning today",
+    "how_it_works": "How it works?",
+    "steps": {
+      "1": "Register in the Exness IB program",
+      "2": "Get your unique referral link",
+      "3": "Share with your network (friends, followers, community)",
+      "4": "Earn commissions for each trade of your referrals"
+    },
+    "cta": "Go to Exness IB Program"
+  },
+  "coming_soon": {
+    "title": "Referral Panel (Coming Soon)",
+    "description": "We're building your integrated panel that will include:",
+    "features": {
+      "dashboard": "Dashboard with real-time metrics",
+      "tracking": "Referral and commission tracking",
+      "payments": "Payment and withdrawal management",
+      "materials": "Marketing materials and resources"
+    }
+  }
+}

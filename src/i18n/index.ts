@@ -21,6 +21,8 @@ import academyES from './locales/es/academy.json';
 import signalsES from './locales/es/signals.json';
 import copyES from './locales/es/copy.json';
 import toolsES from './locales/es/tools.json';
+import communityES from './locales/es/community.json';
+import referralsES from './locales/es/referrals.json';
 
 import commonEN from './locales/en/common.json';
 import navEN from './locales/en/nav.json';
@@ -33,6 +35,8 @@ import academyEN from './locales/en/academy.json';
 import signalsEN from './locales/en/signals.json';
 import copyEN from './locales/en/copy.json';
 import toolsEN from './locales/en/tools.json';
+import communityEN from './locales/en/community.json';
+import referralsEN from './locales/en/referrals.json';
 
 import commonPT from './locales/pt/common.json';
 import navPT from './locales/pt/nav.json';
@@ -45,6 +49,8 @@ import academyPT from './locales/pt/academy.json';
 import signalsPT from './locales/pt/signals.json';
 import copyPT from './locales/pt/copy.json';
 import toolsPT from './locales/pt/tools.json';
+import communityPT from './locales/pt/community.json';
+import referralsPT from './locales/pt/referrals.json';
 
 // Initialize i18next
 i18n
@@ -77,6 +83,8 @@ i18n
         signals: signalsES,
         copy: copyES,
         tools: toolsES,
+        community: communityES,
+        referrals: referralsES,
       },
       en: {
         common: commonEN,
@@ -90,6 +98,8 @@ i18n
         signals: signalsEN,
         copy: copyEN,
         tools: toolsEN,
+        community: communityEN,
+        referrals: referralsEN,
       },
       pt: {
         common: commonPT,
@@ -103,12 +113,14 @@ i18n
         signals: signalsPT,
         copy: copyPT,
         tools: toolsPT,
+        community: communityPT,
+        referrals: referralsPT,
       },
     },
 
     // Namespaces
     defaultNS: 'common',
-    ns: ['common', 'nav', 'landing', 'dashboard', 'admin', 'forms', 'table', 'academy', 'signals', 'copy', 'tools'],
+    ns: ['common', 'nav', 'landing', 'dashboard', 'admin', 'forms', 'table', 'academy', 'signals', 'copy', 'tools', 'community', 'referrals'],
 
     // Interpolation
     interpolation: {

@@ -1,0 +1,35 @@
+{
+  "status": "Em Breve",
+  "title": "Comunidade Tálamo",
+  "subtitle": "Conecte-se com traders profissionais, compartilhe estratégias e cresça junto com uma comunidade comprometida com o trading responsável",
+  "features": {
+    "network": {
+      "title": "Rede de Traders",
+      "description": "Conecte-se com traders de todo o mundo e aprenda com sua experiência"
+    },
+    "discussions": {
+      "title": "Fóruns e Discussões",
+      "description": "Participe de debates sobre estratégias, análise de mercado e mais"
+    },
+    "strategies": {
+      "title": "Compartilhar Estratégias",
+      "description": "Compartilhe suas ideias e aprenda com as estratégias de outros traders"
+    }
+  },
+  "waitlist": {
+    "title": "Entre na Lista de Espera",
+    "description": "Seja um dos primeiros a acessar quando lançarmos a comunidade",
+    "placeholder": "seu@email.com",
+    "button": "Entrar"
+  },
+  "coming_soon": {
+    "title": "Funcionalidades em Desenvolvimento",
+    "description": "Isto é o que estamos construindo para você:",
+    "features": {
+      "forums": "Fóruns temáticos por nível e mercado",
+      "leaderboard": "Tabela de classificação e rankings",
+      "events": "Eventos e webinars exclusivos",
+      "mentorship": "Programa de mentoria entre traders"
+    }
+  }
+}
