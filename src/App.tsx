@@ -128,7 +128,8 @@ const App: React.FC = () => {
             <Route path="/access-wizard" element={<Navigate to="/onboarding" replace />} />
             
             <Route path="/auth/exness" element={<ExnessRedirect />} />
-            <Route path="/guide/change-partner" element={<ChangePartnerGuide />} />
+            <Route path="/change-partner-guide" element={<ChangePartnerGuide />} />
+            <Route path="/guide/change-partner" element={<Navigate to="/change-partner-guide" replace />} />
             <Route path="/admin/*" element={<OnboardingGuard><AdminLayout /></OnboardingGuard>}>
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
