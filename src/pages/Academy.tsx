@@ -216,27 +216,8 @@ const Academy = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead
-        title={seoConfig.title}
-        description={seoConfig.description}
-        keywords={seoConfig.keywords}
-        canonicalPath="/academy"
-        structuredData={structuredData}
-      />
       {/* Hero Section Premium */}
       <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-teal/5 via-surface to-cyan/5">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-teal/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-        
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/dashboard")}
-            className="group mb-6 text-teal hover:bg-teal/10 transition-all"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            {t('academy:back_to_dashboard')}
-          </Button>
 
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
@@ -280,8 +261,6 @@ const Academy = () => {
             )}
           </div>
         </div>
-      </div>
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Level Filter Premium */}
         {courses && courses.length > 0 && (

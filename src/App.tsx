@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ObservabilityProvider } from "@/components/business/ObservabilityProvider";
 import { OnboardingGuard } from "@/components/OnboardingGuard";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Loader2 } from "lucide-react";
 
 // Critical pages - loaded immediately

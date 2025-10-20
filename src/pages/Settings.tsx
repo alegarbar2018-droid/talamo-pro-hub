@@ -22,7 +22,6 @@ import {
   Loader2,
   Upload
 } from 'lucide-react';
-import DashboardNavigation from '@/components/DashboardNavigation';
 
 const Settings = () => {
   const { user, loading: authLoading } = useAuth();
@@ -186,15 +185,6 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/dashboard')}
-          className="mb-6 text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Volver al Dashboard
-        </Button>
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Configuración de Cuenta</h1>
