@@ -12,8 +12,8 @@ interface IntroStepProps {
 export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => {
   const handleStepClick = (stepNumber: string) => {
     if (stepNumber === "1") {
-      // Redirect to Exness partner link
-      window.location.href = "https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es";
+      // Open Exness partner link in new tab
+      window.open("https://one.exnessonelink.com/boarding/sign-up/303589/a/nvle22j1te?lng=es", "_blank", "noopener,noreferrer");
     } else if (stepNumber === "2") {
       // Continue to validation step
       onContinue();
