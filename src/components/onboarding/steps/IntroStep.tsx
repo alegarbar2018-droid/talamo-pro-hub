@@ -14,20 +14,27 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
     {
       icon: Mail,
       number: "1",
-      title: "Verifica tu cuenta",
-      description: "Confirma tu email y afiliación con Exness para acceder a todas las herramientas"
+      title: "Crea tu cuenta en Exness",
+      description: "Abre una cuenta bajo nuestro link de partner. Si ya tienes cuenta, solicita cambio de partner",
+      highlight: true
+    },
+    {
+      icon: CheckCircle2,
+      number: "2",
+      title: "Valida tu afiliación",
+      description: "Confirmamos que tu cuenta está vinculada a nuestro partner para darte acceso"
     },
     {
       icon: User,
-      number: "2",
+      number: "3",
       title: "Completa tu perfil",
       description: "Cuéntanos sobre tu experiencia y objetivos en el trading"
     },
     {
       icon: Target,
-      number: "3",
+      number: "4",
       title: "Recibe tu plan",
-      description: "Obtén recomendaciones personalizadas según tu perfil"
+      description: "Obtén recomendaciones personalizadas y accede al ecosistema completo"
     }
   ];
 
@@ -88,10 +95,10 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
       >
         <div className="text-center mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-            Comienza en 3 simples pasos
+            Comienza en 4 simples pasos
           </h2>
           <p className="text-muted-foreground">
-            Solo te tomará unos minutos
+            Todo el proceso en una sola pantalla
           </p>
         </div>
 
@@ -106,13 +113,13 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
                 duration: 0.5
               }}
             >
-              <Card className="border-2 border-border/40 bg-gradient-to-br from-surface/90 via-surface/60 to-surface/30 backdrop-blur-2xl shadow-lg hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+              <Card className={`border-2 ${stepItem.highlight ? 'border-primary/40 bg-gradient-to-br from-primary/10 via-surface/60 to-surface/30' : 'border-border/40 bg-gradient-to-br from-surface/90 via-surface/60 to-surface/30'} backdrop-blur-2xl shadow-lg hover:shadow-xl hover:border-primary/30 transition-all duration-300 group`}>
                 <CardContent className="p-5 sm:p-6">
                   <div className="flex items-start gap-4">
                     {/* Number Badge */}
                     <div className="relative flex-shrink-0">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300" />
-                      <div className="relative w-14 h-14 bg-gradient-to-br from-primary/25 via-primary/15 to-primary/5 rounded-2xl flex items-center justify-center border-2 border-primary/20 group-hover:border-primary/40 transition-all duration-300">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${stepItem.highlight ? 'from-primary/30 to-primary/10' : 'from-primary/20 to-primary/5'} rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-300`} />
+                      <div className={`relative w-14 h-14 bg-gradient-to-br ${stepItem.highlight ? 'from-primary/35 via-primary/20 to-primary/10' : 'from-primary/25 via-primary/15 to-primary/5'} rounded-2xl flex items-center justify-center border-2 ${stepItem.highlight ? 'border-primary/40' : 'border-primary/20'} group-hover:border-primary/40 transition-all duration-300`}>
                         <stepItem.icon className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-300" strokeWidth={2.5} />
                       </div>
                     </div>
@@ -120,9 +127,14 @@ export const IntroStep = ({ onContinue, onBack, canGoBack }: IntroStepProps) => 
                     {/* Content */}
                     <div className="flex-1 space-y-2 pt-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">
+                        <span className={`text-xs font-bold ${stepItem.highlight ? 'text-primary-foreground bg-primary' : 'text-primary bg-primary/10'} px-2 py-1 rounded-lg`}>
                           Paso {stepItem.number}
                         </span>
+                        {stepItem.highlight && (
+                          <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-lg animate-pulse">
+                            Importante
+                          </span>
+                        )}
                       </div>
                       <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
                         {stepItem.title}
