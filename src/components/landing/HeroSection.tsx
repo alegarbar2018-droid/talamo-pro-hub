@@ -56,16 +56,27 @@ export const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="mt-8"
+            className="mt-12 flex flex-col items-center gap-3"
           >
-            <Button
+            <span className="text-sm text-muted-foreground/80 font-medium tracking-wide">
+              Descubre tu camino
+            </span>
+            <button
               onClick={scrollToNextSection}
-              variant="ghost"
-              size="lg"
-              className="group hover:bg-primary/10 transition-all duration-300"
+              className="group relative"
+              aria-label="Scroll to next section"
             >
-              <ChevronDown className="h-6 w-6 animate-bounce group-hover:text-primary transition-colors" />
-            </Button>
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500 opacity-50 group-hover:opacity-100" />
+              
+              {/* Button container */}
+              <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-background/40 backdrop-blur-sm border border-primary/20 group-hover:border-primary/50 transition-all duration-500 group-hover:scale-110 group-hover:bg-background/60 shadow-lg group-hover:shadow-xl group-hover:shadow-primary/20">
+                <ChevronDown className="h-6 w-6 text-primary animate-bounce group-hover:animate-none group-hover:translate-y-0.5 transition-all duration-300" />
+              </div>
+              
+              {/* Decorative ring */}
+              <div className="absolute inset-0 rounded-full border-2 border-primary/10 scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500" />
+            </button>
           </motion.div>
         </div>
       </div>
