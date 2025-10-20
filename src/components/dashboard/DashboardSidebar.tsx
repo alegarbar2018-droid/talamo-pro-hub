@@ -75,23 +75,26 @@ export function DashboardSidebar() {
       className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl group-data-[collapsible=icon]:w-20"
     >
       <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
-        <div className="flex items-center gap-3">
-          <div className="relative flex-shrink-0 w-10 h-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 transition-opacity" />
-            <div className="relative w-full h-full rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-base">T</span>
+        <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="relative flex-shrink-0 w-10 h-10">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 transition-opacity" />
+              <div className="relative w-full h-full rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-base">T</span>
+              </div>
             </div>
+            {open && (
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent truncate">
+                  Tálamo
+                </span>
+                <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
+                  Pro Hub
+                </span>
+              </div>
+            )}
           </div>
-          {open && (
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent truncate">
-                Tálamo
-              </span>
-              <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
-                Pro Hub
-              </span>
-            </div>
-          )}
+          <SidebarTrigger className="flex-shrink-0 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
         </div>
       </SidebarHeader>
 
