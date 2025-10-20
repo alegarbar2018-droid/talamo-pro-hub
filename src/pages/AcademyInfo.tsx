@@ -6,8 +6,6 @@ import Navigation from "@/components/Navigation";
 import AcademyChecklistDemo from "@/components/public/demos/AcademyChecklistDemo";
 import SyllabusDetailed from "@/components/SyllabusDetailed";
 import AcademyHero from "@/components/academy/AcademyHero";
-import AcademyProblems from "@/components/academy/AcademyProblems";
-import AcademyDifference from "@/components/academy/AcademyDifference";
 import { BookOpen } from "lucide-react";
 export default function AcademyInfo() {
   const {
@@ -31,12 +29,6 @@ export default function AcademyInfo() {
       <main className="relative">
         {/* Hero renovado */}
         <AcademyHero />
-
-        {/* Crítica al mercado */}
-        <AcademyProblems />
-
-        {/* Nuestra diferencia */}
-        
       </main>
     </div>;
 }
