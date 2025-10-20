@@ -3,12 +3,11 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { useObservability } from "@/components/business/ObservabilityProvider";
 import Navigation from "@/components/Navigation";
-import AcademyChecklistDemo from "@/components/public/demos/AcademyChecklistDemo";
 import SyllabusDetailed from "@/components/SyllabusDetailed";
 import AcademyHero from "@/components/academy/AcademyHero";
 import AcademyProblems from "@/components/academy/AcademyProblems";
 import AcademyDifference from "@/components/academy/AcademyDifference";
-import { BookOpen } from "lucide-react";
+import AcademyJourney from "@/components/academy/AcademyJourney";
 
 export default function AcademyInfo() {
   const { trackPageView } = useObservability();
@@ -36,33 +35,31 @@ export default function AcademyInfo() {
         <AcademyProblems />
 
         {/* Nuestra diferencia */}
-        <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-20">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-12">
           <AcademyDifference />
-
-
-          {/* Temario completo */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <SyllabusDetailed />
-          </motion.div>
-
-          {/* Footer */}
-          <motion.footer 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mt-16"
-          >
-            <div className="bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-2xl p-6">
-              <p className="text-sm text-muted-foreground">
-                <b className="text-white">Aviso:</b> Contenido educativo. No es asesoría financiera.
-              </p>
-            </div>
-          </motion.footer>
         </div>
+
+        {/* Ruta de aprendizaje visual */}
+        <AcademyJourney />
+
+        {/* Temario completo detallado */}
+        <SyllabusDetailed />
+
+        {/* Footer */}
+        <motion.footer 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-center py-16 px-6"
+        >
+          <div className="max-w-4xl mx-auto bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-2xl p-8">
+            <p className="text-muted-foreground leading-relaxed">
+              <strong className="text-foreground">Aviso Legal:</strong> Este contenido es únicamente educativo y no constituye asesoría financiera. 
+              El trading conlleva riesgos significativos y puede no ser adecuado para todos. 
+              Operar con apalancamiento puede resultar en la pérdida total de tu capital.
+            </p>
+          </div>
+        </motion.footer>
       </main>
     </div>
   );
