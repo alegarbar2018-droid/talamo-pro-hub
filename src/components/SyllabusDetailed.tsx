@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BookOpen, Target, TrendingUp, ChevronUp, ChevronDown, Search, Clock, PlayCircle } from "lucide-react";
+import { BookOpen, Target, TrendingUp, ChevronDown, Search, Clock } from "lucide-react";
 import { COURSE } from "@/data/course";
 
 export default function SyllabusDetailed() {
@@ -32,21 +32,9 @@ export default function SyllabusDetailed() {
   );
 
   return (
-    <motion.section
-      id="syllabus-section"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="py-24 px-6 relative overflow-hidden"
-    >
-      {/* Premium background effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-primary opacity-8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
-
-      <div className="max-w-7xl mx-auto relative">
-        {/* Header */}
+    <section id="syllabus-section" className="py-32 px-6 relative">
+      <div className="max-w-6xl mx-auto relative">
+        {/* Clean header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -54,201 +42,120 @@ export default function SyllabusDetailed() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <Badge className="bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/40 text-lg px-6 py-2 mb-6">
-            {t('syllabus.badge')}
-          </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
-            {t('syllabus.title')}
+          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
+            Temario completo
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {t('syllabus.subtitle')}
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            {COURSE.length} niveles • {totalLessons} lecciones estructuradas
           </p>
         </motion.div>
 
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Card className="bg-gradient-to-br from-surface/90 to-surface/50 backdrop-blur-2xl border-2 border-primary/30 shadow-2xl hover:shadow-primary/20 hover:scale-[1.02] transition-all duration-400">
-              <CardContent className="p-8 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-primary rounded-2xl mb-4 shadow-lg">
-                  <BookOpen className="w-10 h-10 text-primary-foreground" />
-                </div>
-                <div className="text-5xl font-bold mb-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {COURSE.length}
-                </div>
-                <div className="text-muted-foreground font-medium text-lg">
-                  {t('syllabus.levels')}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Card className="bg-gradient-to-br from-surface/90 to-surface/50 backdrop-blur-2xl border-2 border-primary/30 shadow-2xl hover:shadow-primary/20 hover:scale-[1.02] transition-all duration-400">
-              <CardContent className="p-8 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-primary rounded-2xl mb-4 shadow-lg">
-                  <Target className="w-10 h-10 text-primary-foreground" />
-                </div>
-                <div className="text-5xl font-bold mb-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {totalLessons}
-                </div>
-                <div className="text-muted-foreground font-medium text-lg">
-                  {t('syllabus.lessons')}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Expand/Collapse Button */}
+        {/* Simple expand button */}
         <div className="text-center mb-12">
           <Button
             size="lg"
             variant="outline"
-            onClick={() => {
-              setIsExpanded(!isExpanded);
-              if (!isExpanded) {
-                setTimeout(() => {
-                  document.getElementById('syllabus-section')?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                  });
-                }, 100);
-              }
-            }}
-            className="border-2 border-primary/40 bg-surface/60 backdrop-blur-2xl hover:bg-primary/20 hover:border-primary/60 hover:shadow-glow text-lg px-10 py-7 h-auto rounded-2xl transition-all duration-400 hover:scale-105"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5 px-8 py-6 h-auto text-base rounded-xl transition-all duration-300"
           >
-            {isExpanded ? (
-              <>
-                {t('syllabus.collapse')}
-                <ChevronUp className="w-5 h-5 ml-2" />
-              </>
-            ) : (
-              <>
-                {t('syllabus.expand')}
-                <ChevronDown className="w-5 h-5 ml-2" />
-              </>
-            )}
+            {isExpanded ? "Ocultar temario" : "Ver temario detallado"}
+            <ChevronDown className={`w-5 h-5 ml-2 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
           </Button>
         </div>
 
-        {/* Expandable Content */}
+        {/* Expandable content */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="max-w-7xl mx-auto"
+              transition={{ duration: 0.4 }}
             >
-              {/* Search Bar */}
-              <div className="relative max-w-2xl mx-auto mb-12">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-6 h-6" />
+              {/* Clean search */}
+              <div className="relative max-w-xl mx-auto mb-12">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                 <Input
                   type="text"
-                  placeholder={t('syllabus.search_lessons')}
+                  placeholder="Buscar lecciones..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 h-16 text-lg bg-surface/60 backdrop-blur-2xl border-2 border-primary/30 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-2xl transition-all duration-300"
+                  className="pl-12 h-14 text-base bg-surface/50 border-primary/20 focus:border-primary/40 rounded-xl"
                 />
               </div>
 
-              {/* Tabs */}
-              <Tabs defaultValue="0" className="w-full" value={activeLevel} onValueChange={setActiveLevel}>
-                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 gap-2 bg-surface/60 backdrop-blur-2xl p-2 rounded-2xl border-2 border-primary/30 mb-8">
-                  {COURSE.map((level, originalIndex) => (
+              {/* Simple tabs */}
+              <Tabs value={activeLevel} onValueChange={setActiveLevel} className="space-y-8">
+                <TabsList className="grid grid-cols-4 md:grid-cols-7 gap-2 bg-surface/30 p-1 rounded-xl">
+                  {COURSE.map((_, index) => (
                     <TabsTrigger
-                      key={originalIndex}
-                      value={String(originalIndex)}
-                      className="data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow data-[state=active]:scale-105 bg-surface/60 backdrop-blur-xl border-2 border-primary/30 hover:border-primary/50 hover:bg-surface/80 transition-all duration-400 rounded-xl"
+                      key={index}
+                      value={String(index)}
+                      className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg"
                     >
-                      <span className="text-base font-bold">
-                        {t('syllabus.level')} {originalIndex + 1}
-                      </span>
+                      N{index + 1}
                     </TabsTrigger>
                   ))}
                 </TabsList>
 
-                {/* TabsContent - iteramos sobre COURSE original */}
                 {COURSE.map((level, originalIndex) => {
                   const filteredLessons = filterLessons(level.lessons, searchTerm);
-                  
                   if (filteredLessons.length === 0 && searchTerm) return null;
-                  
+
                   return (
                     <TabsContent key={originalIndex} value={String(originalIndex)} className="mt-0">
-                      <Card className="bg-surface/30 backdrop-blur-xl border-primary/20 shadow-xl">
+                      <Card className="bg-surface/30 border-primary/10">
                         <CardContent className="p-8">
-                          {/* Level header */}
-                          <div className="mb-8">
-                            <div className="flex items-center gap-3 mb-3">
-                              <Badge className="bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm px-4 py-1.5">
-                                {t('syllabus.level')} {originalIndex + 1}
-                              </Badge>
-                              <h3 className="text-2xl font-bold text-foreground">{level.level}</h3>
-                            </div>
+                          {/* Level info */}
+                          <div className="mb-8 pb-6 border-b border-primary/10">
+                            <h3 className="text-3xl font-bold mb-2">{level.level}</h3>
                             <p className="text-muted-foreground">
-                              {filteredLessons.length} {t('syllabus.lessons_count')} • ~{filteredLessons.length * 30} min
+                              {filteredLessons.length} lecciones • ~{filteredLessons.length * 30} minutos
                             </p>
                           </div>
 
-                          {/* Lessons accordion */}
-                          <Accordion type="multiple" className="w-full space-y-4">
+                          {/* Lessons */}
+                          <Accordion type="multiple" className="space-y-3">
                             {filteredLessons.map((lesson, lessonIndex) => (
                               <AccordionItem
                                 key={lessonIndex}
                                 value={`lesson-${originalIndex}-${lessonIndex}`}
-                                className="border-2 border-primary/20 rounded-2xl bg-surface/30 backdrop-blur-sm overflow-hidden hover:border-primary/50 hover:shadow-2xl hover:scale-[1.02] hover:bg-surface/40 transition-all duration-400"
+                                className="border border-primary/10 rounded-xl overflow-hidden hover:border-primary/30 transition-colors duration-300"
                               >
-                                <AccordionTrigger className="text-left px-6 py-5 hover:no-underline hover:bg-surface/50 transition-all duration-300">
-                                  <div className="flex items-center gap-4 w-full pr-4">
-                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-accent/30 border-2 border-primary/40 flex items-center justify-center flex-shrink-0 shadow-lg">
-                                      <BookOpen className="h-8 w-8 text-primary" />
+                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-surface/30">
+                                  <div className="flex items-center gap-4 w-full pr-4 text-left">
+                                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                      <BookOpen className="w-6 h-6 text-primary" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                        <Badge variant="outline" className="text-xs border-primary/40 bg-primary/10">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <Badge variant="outline" className="text-xs">
                                           {originalIndex + 1}.{lessonIndex + 1}
                                         </Badge>
-                                        <Badge className="text-xs bg-accent/20 border border-accent/40">
+                                        <Badge variant="outline" className="text-xs">
                                           <Clock className="w-3 h-3 mr-1" />
-                                          ~30 min
-                                        </Badge>
-                                        <Badge className="text-xs bg-primary/10 border border-primary/30">
-                                          <PlayCircle className="w-3 h-3 mr-1" />
-                                          Video + Lectura
+                                          30 min
                                         </Badge>
                                       </div>
-                                      <h4 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                      <h4 className="font-semibold text-foreground">
                                         {lesson.title}
                                       </h4>
                                     </div>
                                   </div>
                                 </AccordionTrigger>
-                                <AccordionContent className="px-6 pb-6 pt-2">
-                                  <div className="space-y-6">
+                                <AccordionContent className="px-6 pb-4">
+                                  <div className="space-y-4 pt-2">
                                     {/* Objectives */}
-                                    {lesson.objectives && lesson.objectives.length > 0 && (
+                                    {lesson.objectives?.length > 0 && (
                                       <div>
-                                        <h5 className="font-semibold text-base mb-3 flex items-center gap-2 text-foreground">
-                                          <Target className="h-5 w-5 text-primary" />
-                                          {t('syllabus.objectives')}
+                                        <h5 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                                          <Target className="w-4 h-4 text-primary" />
+                                          Objetivos
                                         </h5>
-                                        <ul className="space-y-2 ml-7">
-                                          {lesson.objectives.map((objective, objIdx) => (
-                                            <li key={objIdx} className="flex items-start gap-2 text-muted-foreground">
-                                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                        <ul className="space-y-1.5 ml-6">
+                                          {lesson.objectives.map((objective, idx) => (
+                                            <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                              <span className="w-1 h-1 rounded-full bg-primary mt-2 flex-shrink-0" />
                                               <span>{objective}</span>
                                             </li>
                                           ))}
@@ -257,16 +164,16 @@ export default function SyllabusDetailed() {
                                     )}
 
                                     {/* Practice */}
-                                    {lesson.practice && lesson.practice.length > 0 && (
-                                      <div className="bg-gradient-to-br from-accent/10 to-primary/10 border border-primary/20 rounded-xl p-4">
-                                        <h5 className="font-semibold text-base mb-3 flex items-center gap-2 text-foreground">
-                                          <TrendingUp className="h-5 w-5 text-primary" />
-                                          {t('syllabus.practice')}
+                                    {lesson.practice?.length > 0 && (
+                                      <div>
+                                        <h5 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                                          <TrendingUp className="w-4 h-4 text-primary" />
+                                          Práctica
                                         </h5>
-                                        <ul className="space-y-2 ml-7">
-                                          {lesson.practice.map((item, practiceIdx) => (
-                                            <li key={practiceIdx} className="flex items-start gap-2 text-muted-foreground">
-                                              <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
+                                        <ul className="space-y-1.5 ml-6">
+                                          {lesson.practice.map((item, idx) => (
+                                            <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                                              <span className="w-1 h-1 rounded-full bg-primary mt-2 flex-shrink-0" />
                                               <span>{item}</span>
                                             </li>
                                           ))}
@@ -287,21 +194,7 @@ export default function SyllabusDetailed() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Footer Disclaimer */}
-        <motion.footer 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="text-center py-16 mt-16"
-        >
-          <div className="max-w-4xl mx-auto bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-2xl p-8">
-            <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">{t('disclaimer.title')}:</strong> {t('disclaimer.text')}
-            </p>
-          </div>
-        </motion.footer>
       </div>
-    </motion.section>
+    </section>
   );
 }
