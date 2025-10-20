@@ -120,7 +120,7 @@ export default function AcademyHero() {
           >
             <Button
               size="lg"
-              onClick={() => navigate("/access?intent=academy")}
+              onClick={() => navigate("/onboarding")}
               className="group relative bg-gradient-primary text-primary-foreground hover:opacity-90 px-8 py-5 h-auto text-base font-semibold rounded-xl transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02]"
             >
               <span className="relative z-10 flex items-center gap-2">
