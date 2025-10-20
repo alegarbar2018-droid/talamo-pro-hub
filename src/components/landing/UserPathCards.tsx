@@ -10,7 +10,7 @@ export const UserPathCards = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center py-20 md:py-32 bg-gradient-to-b from-background via-background/95 to-background overflow-hidden">
+    <section id="user-path-section" className="relative min-h-screen flex items-center justify-center py-20 md:py-32 bg-gradient-to-b from-background via-background/95 to-background overflow-hidden">
       {/* Decorative gradient orbs */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse delay-1000" />

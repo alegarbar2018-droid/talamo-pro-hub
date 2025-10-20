@@ -1,9 +1,17 @@
 import { motion } from "framer-motion";
-import { Sparkles, Award } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 export const HeroSection = () => {
   const { t } = useTranslation("landing");
+
+  const scrollToNextSection = () => {
+    const nextSection = document.getElementById('user-path-section');
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <motion.section 
@@ -42,6 +50,22 @@ export const HeroSection = () => {
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               {t("hero_subtitle")}
             </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="mt-8"
+          >
+            <Button
+              onClick={scrollToNextSection}
+              variant="ghost"
+              size="lg"
+              className="group hover:bg-primary/10 transition-all duration-300"
+            >
+              <ChevronDown className="h-6 w-6 animate-bounce group-hover:text-primary transition-colors" />
+            </Button>
           </motion.div>
         </div>
       </div>
