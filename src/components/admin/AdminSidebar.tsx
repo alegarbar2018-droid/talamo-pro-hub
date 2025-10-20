@@ -97,7 +97,7 @@ export const AdminSidebar: React.FC = () => {
   };
 
   return (
-    <Sidebar className={open ? 'w-64' : 'w-16'} collapsible="icon">
+    <Sidebar collapsible="icon">
       <SidebarTrigger className="m-2 self-end" />
       
       <SidebarContent>
@@ -126,7 +126,12 @@ export const AdminSidebar: React.FC = () => {
                   .map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClassName}>
+                      <NavLink 
+                        to={item.url} 
+                        className={({ isActive }) => 
+                          `${getNavClassName({ isActive })} ${!open ? 'w-full flex items-center justify-center' : ''}`
+                        }
+                      >
                         <item.icon className="h-4 w-4" />
                         {open && <span>{item.title}</span>}
                       </NavLink>

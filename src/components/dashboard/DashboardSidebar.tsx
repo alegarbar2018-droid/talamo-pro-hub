@@ -72,7 +72,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl group-data-[collapsible=icon]:w-[72px]"
+      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl"
     >
       <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
         <div className="flex items-center gap-3 justify-between">
@@ -109,32 +109,34 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'}`
+                        } ${!open ? 'w-full justify-center px-2 py-3' : 'gap-3 px-4 py-3'}`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 ${
-                            !open ? 'w-9 h-9' : 'w-10 h-10'
-                          } ${
-                            isActive 
-                              ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
-                              : "bg-muted/50 group-hover:bg-muted"
-                          }`}>
-                            <item.icon className={`flex-shrink-0 transition-all duration-300 ${
-                              !open ? 'h-5 w-5' : 'h-5 w-5'
-                            } ${
+                          {!open ? (
+                            <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
-                          </div>
-                          {open && (
-                            <span className="text-sm font-medium tracking-wide truncate">
-                              {t(item.labelKey)}
-                            </span>
-                          )}
-                          {isActive && open && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                          ) : (
+                            <>
+                              <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 w-10 h-10 ${
+                                isActive 
+                                  ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
+                                  : "bg-muted/50 group-hover:bg-muted"
+                              }`}>
+                                <item.icon className={`h-5 w-5 ${
+                                  isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                                }`} />
+                              </div>
+                              <span className="text-sm font-medium tracking-wide truncate">
+                                {t(item.labelKey)}
+                              </span>
+                              {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                              )}
+                            </>
                           )}
                         </>
                       )}
@@ -163,41 +165,43 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } ${!open ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'}`
+                        } ${!open ? 'w-full justify-center px-2 py-3' : 'gap-3 px-4 py-3'}`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 ${
-                            !open ? 'w-9 h-9' : 'w-10 h-10'
-                          } ${
-                            isActive 
-                              ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
-                              : "bg-muted/50 group-hover:bg-muted"
-                          }`}>
-                            <item.icon className={`flex-shrink-0 transition-all duration-300 ${
-                              !open ? 'h-5 w-5' : 'h-5 w-5'
-                            } ${
+                          {!open ? (
+                            <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
-                          </div>
-                          {open && (
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <span className="text-sm font-medium tracking-wide truncate">
-                                {t(item.labelKey)}
-                              </span>
-                              {item.badge && (
-                                <Badge
-                                  variant="secondary"
-                                  className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
-                                >
-                                  {item.badge}
-                                </Badge>
+                          ) : (
+                            <>
+                              <div className={`flex-shrink-0 flex items-center justify-center rounded-lg transition-all duration-300 w-10 h-10 ${
+                                isActive 
+                                  ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
+                                  : "bg-muted/50 group-hover:bg-muted"
+                              }`}>
+                                <item.icon className={`h-5 w-5 ${
+                                  isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
+                                }`} />
+                              </div>
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-sm font-medium tracking-wide truncate">
+                                  {t(item.labelKey)}
+                                </span>
+                                {item.badge && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
+                                  >
+                                    {item.badge}
+                                  </Badge>
+                                )}
+                              </div>
+                              {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                               )}
-                            </div>
-                          )}
-                          {isActive && open && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            </>
                           )}
                         </>
                       )}
