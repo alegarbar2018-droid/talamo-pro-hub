@@ -789,7 +789,7 @@ const Onboarding = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background">
       <OnboardingHeader stepNumber={getStepNumber()} progress={progress} />
 
-      <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6">
+      <main className="flex-1 py-4 sm:py-12 px-3 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <AnimatePresence mode="wait">
             {renderStep()}
