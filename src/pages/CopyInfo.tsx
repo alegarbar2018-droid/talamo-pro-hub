@@ -37,8 +37,15 @@ export default function CopyInfo() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-12 px-4 bg-gradient-to-b from-emerald-500/20 via-teal-500/15 to-background overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 via-teal-600/10 to-transparent"></div>
+      <section className="relative pt-20 pb-12 px-4 overflow-hidden bg-background">
+        {/* Animated background layers */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/25 via-teal-500/20 to-background"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-full blur-3xl"></div>
+        </div>
+        
         <div className="container mx-auto max-w-4xl relative z-10">
           <Button
             variant="ghost"
