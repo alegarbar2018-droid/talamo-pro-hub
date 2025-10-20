@@ -1,6 +1,5 @@
-import { Shield, TrendingUp, Users, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
+import { GraduationCap, TrendingUp, Copy, Bot, Wrench, LineChart, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -9,24 +8,42 @@ export default function ValueProposition() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const pillars = [
+  const offerings = [
     {
-      icon: Shield,
-      titleKey: 'landing:value_pillar1_title',
-      descKey: 'landing:value_pillar1_desc',
+      icon: GraduationCap,
+      title: "Academia Estructurada",
+      description: "Cursos progresivos desde cero hasta estrategias avanzadas con certificaciones",
       delay: 0.2
     },
     {
       icon: TrendingUp,
-      titleKey: 'landing:value_pillar2_title',
-      descKey: 'landing:value_pillar2_desc',
-      delay: 0.35
+      title: "Señales Verificadas",
+      description: "Análisis profesional con transparencia total y métricas de desempeño",
+      delay: 0.3
     },
     {
-      icon: Users,
-      titleKey: 'landing:value_pillar3_title',
-      descKey: 'landing:value_pillar3_desc',
+      icon: Copy,
+      title: "Copy Trading",
+      description: "Replica estrategias de traders profesionales con control de riesgo",
+      delay: 0.4
+    },
+    {
+      icon: Bot,
+      title: "Expert Advisors",
+      description: "Bots de trading automatizado con estrategias probadas y backtesting",
       delay: 0.5
+    },
+    {
+      icon: Wrench,
+      title: "Herramientas Pro",
+      description: "Calculadoras, journal de trading, análisis de riesgo y especificaciones de contratos",
+      delay: 0.6
+    },
+    {
+      icon: LineChart,
+      title: "Auditoría de Cuenta",
+      description: "Análisis completo de tu desempeño con métricas y recomendaciones",
+      delay: 0.7
     }
   ];
 
@@ -53,28 +70,29 @@ export default function ValueProposition() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4"
           >
             <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Por qué elegirnos</span>
+            <span className="text-sm font-medium text-primary">Conócenos</span>
           </motion.div>
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-            {t('landing:value_title')}
+            ¿Qué es <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Tálamo</span>?
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            {t('landing:value_subtitle')}
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            Tálamo es un ecosistema profesional de trading que combina educación estructurada, 
+            herramientas avanzadas y múltiples métodos de ejecución para traders de todos los niveles.
           </p>
         </motion.div>
 
-        {/* Three pillars */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-6xl mx-auto">
-          {pillars.map((pillar, index) => {
-            const Icon = pillar.icon;
+        {/* What we offer */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 max-w-7xl mx-auto">
+          {offerings.map((offering, index) => {
+            const Icon = offering.icon;
             return (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30, scale: 0.95 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: pillar.delay, duration: 0.6 }}
+                transition={{ delay: offering.delay, duration: 0.6 }}
                 whileHover={{ y: -8, scale: 1.02 }}
                 className="group"
               >
@@ -94,10 +112,10 @@ export default function ValueProposition() {
                     {/* Content */}
                     <div className="space-y-2">
                       <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
-                        {t(pillar.titleKey)}
+                        {offering.title}
                       </h3>
                       <p className="text-muted-foreground leading-relaxed text-sm">
-                        {t(pillar.descKey)}
+                        {offering.description}
                       </p>
                     </div>
                   </div>
@@ -107,32 +125,28 @@ export default function ValueProposition() {
           })}
         </div>
 
-        {/* IB Model Note */}
+        {/* Free access note */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="max-w-3xl mx-auto mb-10"
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="max-w-4xl mx-auto mb-10"
         >
-          <div className="relative bg-gradient-to-br from-muted/40 via-muted/30 to-muted/20 border border-border hover:border-primary/30 rounded-xl p-5 transition-all duration-500 shadow-md hover:shadow-lg overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative flex flex-col md:flex-row items-center justify-center gap-3 text-center md:text-left">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                </div>
+          <div className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-background border-2 border-primary/30 rounded-2xl p-6 md:p-8 transition-all duration-500 shadow-lg hover:shadow-xl overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative text-center space-y-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 mb-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold text-primary">100% Gratis</span>
               </div>
-              <p className="text-muted-foreground flex-1 leading-relaxed text-sm">
-                {t('landing:value_ib_note')}{' '}
-                <a 
-                  href="https://www.investopedia.com/terms/i/introducingbroker.asp" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 font-semibold inline-flex items-center gap-1 hover:gap-2 transition-all duration-300"
-                >
-                  {t('landing:value_ib_learn')} <ExternalLink className="w-4 h-4" />
-                </a>
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+                Acceso completo sin costo
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                Todo el ecosistema es <span className="text-primary font-semibold">completamente gratuito</span> para ti. 
+                Ganamos por spread cuando operas en Exness con nuestra afiliación IB, lo que nos alinea contigo: 
+                si te va bien, operas más; si operas más, nosotros ganamos. Sin cargos ocultos ni membresías.
               </p>
             </div>
           </div>
