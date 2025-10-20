@@ -1,204 +1,45 @@
-import { useState, useEffect, memo } from "react";
+import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "@/contexts/AuthContext";
+import { useDashboardStats } from "@/hooks/useDashboardStats";
+import { useUserCourseProgress } from "@/hooks/useDashboardStats";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  BookOpen, 
-  TrendingUp, 
-  Users, 
-  Calculator, 
-  Trophy, 
-  Eye,
-  ArrowRight,
-  CheckCircle,
-  AlertTriangle,
-  Target,
-  Activity,
-  BarChart3,
-  Settings,
+import { KPICard } from "@/components/dashboard/KPICard";
+import { ModulePreviewCard } from "@/components/dashboard/ModulePreviewCard";
+import { ActivityTimelineItem } from "@/components/dashboard/ActivityTimelineItem";
+import { OnboardingChecklistCard } from "@/components/dashboard/OnboardingChecklistCard";
+import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import {
+  BookOpen,
+  Radio,
+  Copy,
+  Calculator,
   BookMarked,
-  Shield
+  BarChart3,
+  TrendingUp,
+  Award,
+  CheckCircle,
+  Sparkles,
+  Target,
+  Flame,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useTranslation } from "react-i18next";
-import { formatDateTime } from "@/lib/locale";
-import AffiliationGate from "@/components/AffiliationGate";
-import { useDashboardStats } from "@/hooks/useDashboardStats";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-
-// Memoize heavy card components
-const StatCard = memo(({ stat, index }: any) => (
-  <Card 
-    className="group relative overflow-hidden border-line bg-surface backdrop-blur-xl hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 dashboard-card"
-  >
-    <div className="absolute inset-0 bg-gradient-to-br from-teal/5 to-cyan/5 group-hover:from-teal/15 group-hover:to-cyan/15 transition-all duration-500" />
-    
-    <CardContent className="relative z-10 p-6">
-      <div className="flex items-start justify-between mb-4">
-        <div className="p-3 rounded-xl bg-teal/10 group-hover:bg-teal/20 transition-colors">
-          <stat.icon className="h-6 w-6 text-teal group-hover:scale-110 transition-transform" />
-        </div>
-        <Badge variant="secondary" className="text-xs">
-          +12% ↗
-        </Badge>
-      </div>
-      
-      <div>
-        <p className="text-sm text-foreground/70 mb-1">{stat.title}</p>
-        <p className="text-3xl font-bold text-foreground mb-2">{stat.value}</p>
-        <div className="flex items-center gap-2">
-          <div className="h-1 w-full bg-muted/60 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000" style={{width: '65%'}} />
-          </div>
-          <span className="text-xs text-teal font-medium whitespace-nowrap">{stat.trend}</span>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-));
-StatCard.displayName = 'StatCard';
-
-const QuickActionCard = memo(({ action, index }: any) => (
-  <Card 
-    className="group relative overflow-hidden border-line/80 bg-surface hover:border-teal/70 transition-all duration-300 cursor-pointer dashboard-card shadow-sm"
-    onClick={action.action}
-  >
-    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-      <div className="absolute inset-[-2px] bg-gradient-to-br from-teal via-cyan to-teal rounded-lg blur-sm" />
-    </div>
-    
-    <div className="relative bg-surface rounded-lg">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-            <action.icon className="h-6 w-6 text-teal" />
-          </div>
-          {action.badge && (
-            <Badge 
-              variant="secondary" 
-              className="text-xs animate-pulse bg-teal/10 text-teal border-teal/30"
-            >
-              {action.badge}
-            </Badge>
-          )}
-        </div>
-        
-        <CardTitle className="text-lg text-foreground group-hover:text-teal transition-colors font-semibold">
-          {action.title}
-        </CardTitle>
-        <CardDescription className="text-sm text-foreground/60">
-          {action.description}
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        {action.progress !== undefined && (
-          <div className="space-y-2 mb-4">
-            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-teal to-cyan rounded-full transition-all duration-1000"
-                style={{width: `${action.progress}%`}}
-              />
-            </div>
-            <p className="text-xs text-foreground/60 font-medium">
-              {action.progress}% completado
-            </p>
-          </div>
-        )}
-        
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="w-full text-teal hover:bg-teal/10 group-hover:translate-x-1 transition-transform"
-        >
-          Ir 
-          <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-        </Button>
-      </CardContent>
-    </div>
-  </Card>
-));
-QuickActionCard.displayName = 'QuickActionCard';
 
 const Dashboard = () => {
-  const { user, isValidated, signOut, loading } = useAuth();
+  const { t } = useTranslation(["dashboard", "common"]);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(["dashboard", "common"]);
-  
-  // Real data queries
-  const { data: dashboardStats, isLoading: statsLoading } = useDashboardStats();
-  
-  // Fetch published courses count for badge
-  const { data: publishedCoursesCount } = useQuery({
-    queryKey: ['published-courses-count'],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('lms_courses')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'published');
-      return count || 0;
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes
-  });
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
+  const { data: coursesProgress, isLoading: coursesLoading } = useUserCourseProgress();
 
   useEffect(() => {
-    console.log('Dashboard - Auth state changed:', { 
-      loading, 
-      hasUser: !!user, 
-      userEmail: user?.email 
-    });
-
-    // If not authenticated, redirect to login
     if (!loading && !user) {
-      console.log('Dashboard - Redirecting to login, no user found');
       navigate("/login");
-      return;
     }
-
-    // If user is authenticated, allow access to dashboard
-    // Remove validation requirement for now since it's causing issues
   }, [user, loading, navigate]);
 
-  // Show loading skeleton while fetching stats
-  if (loading || statsLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="border-b border-line bg-surface">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <Skeleton className="h-8 w-48" />
-              <Skeleton className="h-10 w-24" />
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Skeleton className="h-12 w-96 mb-8" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-32" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render anything while redirecting
-  if (!user) {
-    return null;
-  }
-
-  // Real data from queries
-  const academyProgress = dashboardStats?.academyProgress || 0;
-  const quizSuccessRate = dashboardStats?.quizSuccessRate || 0;
-  const completedLessons = dashboardStats?.completedLessons || 0;
-
-  // Helper for dynamic greeting
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return t("dashboard:greetings.morning");
@@ -206,293 +47,245 @@ const Dashboard = () => {
     return t("dashboard:greetings.evening");
   };
 
-  const quickActions = [
+  const checklistItems = useMemo(() => [
     {
-      title: t("dashboard:modules.academy.title"),
-      description: t("dashboard:modules.academy.description"),
-      icon: BookOpen,
-      progress: academyProgress,
-      action: () => navigate("/academy"),
-      color: "teal",
-      badge: publishedCoursesCount && publishedCoursesCount > 0 
-        ? `${publishedCoursesCount} ${publishedCoursesCount === 1 ? 'course' : 'courses'}` 
-        : undefined
+      id: "profile",
+      label: t("dashboard:checklist.tasks.profile"),
+      completed: stats?.checklist.profileComplete || false,
     },
     {
-      title: t("dashboard:modules.signals.title"),
-      description: `3 ${t("dashboard:modules.signals.description")}`,
-      icon: TrendingUp,
-      badge: `3 ${t("dashboard:modules.signals.badge")}`,
-      action: () => navigate("/signals"),
-      color: "teal"
+      id: "academy",
+      label: t("dashboard:checklist.tasks.academy"),
+      completed: stats?.completedLessons > 0 || false,
     },
     {
-      title: t("dashboard:modules.copy.title"),
-      description: t("dashboard:modules.copy.description"),
-      icon: Users,
-      badge: t("dashboard:modules.copy.badge"),
-      action: () => navigate("/copy-trading"),
-      color: "success"
+      id: "calculator",
+      label: t("dashboard:checklist.tasks.calculator"),
+      completed: stats?.checklist.calculatorUsed || false,
     },
     {
-      title: t("dashboard:modules.tools.title"),
-      description: t("dashboard:modules.tools.description"),
-      icon: Calculator,
-      action: () => navigate("/tools"),
-      color: "muted"
+      id: "community",
+      label: t("dashboard:checklist.tasks.community"),
+      completed: false,
     },
-    {
-      title: t("dashboard:modules.journal.title"),
-      description: t("dashboard:modules.journal.description"),
-      icon: BookMarked,
-      action: () => navigate("/journal"),
-      color: "muted"
-    },
-    {
-      title: t("dashboard:modules.audit.title"),
-      description: t("dashboard:modules.audit.description"),
-      icon: Shield,
-      action: () => navigate("/audit"),
-      color: "muted"
-    }
-  ];
+  ], [stats, t]);
 
-  // Stats with real data - simplified version
-  const stats = [];
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Skeleton className="h-8 w-8 rounded-full" />
+      </div>
+    );
+  }
 
-  // Recent activity from real events
-  const recentActivities = (dashboardStats?.recentEvents || []).map(event => ({
-    title: (event as any).course_items?.title || 'Unknown',
-    action: event.verb,
-    time: new Date(event.created_at).toLocaleDateString(),
-  }));
+  const academyProgress = coursesProgress && coursesProgress.length > 0
+    ? Math.round(coursesProgress.reduce((acc, cp) => acc + cp.progress, 0) / coursesProgress.length)
+    : 0;
 
-  // Checklist with real completion status
-  const checklistItems = [
-    { 
-      task: t("dashboard:checklist.tasks.profile"), 
-      done: dashboardStats?.checklist.profileComplete || false 
-    },
-    { 
-      task: t("dashboard:checklist.tasks.academy"), 
-      done: dashboardStats?.checklist.academyStarted || false 
-    },
-    { 
-      task: t("dashboard:checklist.tasks.calculator"), 
-      done: dashboardStats?.checklist.calculatorUsed || false 
-    },
-    { 
-      task: t("dashboard:checklist.tasks.community"), 
-      done: dashboardStats?.checklist.communityJoined || false 
-    },
-    { 
-      task: t("dashboard:checklist.tasks.copy_trading"), 
-      done: dashboardStats?.checklist.copyTradingUsed || false 
-    }
-  ];
+  const currentCourse = coursesProgress?.find(cp => cp.progress > 0 && cp.progress < 100);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-line bg-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{t("dashboard:title")}</h1>
-              <p className="text-muted-foreground">{t("dashboard:subtitle")}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-teal text-teal">
-                {isValidated || user.isAffiliated ? t("dashboard:status.validated") : t("dashboard:status.demo")}
-              </Badge>
-              <Button 
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/settings")}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                onClick={signOut}
-              >
-                {t("dashboard:actions.logout")}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section Premium */}
-        <div className="relative mb-8 sm:mb-12 overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-teal/20 via-surface to-cyan/15 p-4 sm:p-6 md:p-8 border border-teal/40 animate-fade-in shadow-lg">
-          <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-teal/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Hero Section with Greeting */}
+        <div className="relative overflow-hidden rounded-2xl border border-line/50 bg-gradient-to-br from-teal/10 via-surface to-cyan/10 p-8">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-teal/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan/20 rounded-full blur-3xl" />
           
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-gradient-to-br from-teal to-cyan flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg ring-4 ring-teal/20">
-              {user.profile?.first_name?.[0]?.toUpperCase() || user.email?.[0].toUpperCase()}
-            </div>
-            
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
-              <p className="text-xs sm:text-sm text-foreground/70 mb-1 font-medium">
-                {getGreeting()}
-              </p>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">
-                {user.profile?.first_name || user.email?.split('@')[0] || 'Trader'}
-              </h1>
-              <div className="flex flex-wrap items-center gap-4">
-                <Badge variant="outline" className="border-teal/70 text-teal bg-teal/10">
-                  {isValidated || user.isAffiliated ? "✓ Cuenta Validada" : "Demo"}
+              <div className="flex items-center gap-3 mb-3">
+                <Badge className="bg-gradient-to-r from-teal to-cyan text-white border-0 shadow-lg">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  {t("dashboard:status.demo")}
                 </Badge>
-                <span className="text-sm text-foreground/70 font-medium">
-                  🔥 {completedLessons} lecciones completadas
-                </span>
+                {stats?.completedLessons > 0 && (
+                  <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400">
+                    <Flame className="h-3 w-3 mr-1" />
+                    {stats.completedLessons} {t("dashboard:modules.academy.completed")}
+                  </Badge>
+                )}
               </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                {getGreeting()}, {user?.email?.split("@")[0]}
+              </h1>
+              <p className="text-muted-foreground">
+                {t("dashboard:progress_summary")}
+              </p>
             </div>
-            
-            <div className="text-right">
-              <p className="text-3xl font-bold text-teal drop-shadow-sm">{academyProgress}%</p>
-              <p className="text-xs text-foreground/60 font-medium">Progreso total</p>
+
+            <div className="flex items-center gap-4">
+              <div className="text-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle cx="40" cy="40" r="32" stroke="currentColor" strokeWidth="4" fill="none" className="text-muted/20" />
+                    <circle
+                      cx="40" cy="40" r="32" stroke="currentColor" strokeWidth="4" fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - academyProgress / 100)}`}
+                      className="text-teal transition-all duration-1000"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg font-bold text-teal">{academyProgress}%</span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">Progreso</p>
+              </div>
             </div>
           </div>
         </div>
 
-
-        {/* Quick Actions con Hover Effects Avanzados */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
-          {quickActions.map((action, index) => (
-            <QuickActionCard key={index} action={action} index={index} />
-          ))}
+        {/* KPIs Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICard
+            title={t("dashboard:stats.trades_week")}
+            value={0}
+            icon={TrendingUp}
+            trend={{ value: 5, label: t("dashboard:stats.trend_vs_week") }}
+          />
+          <KPICard
+            title={t("dashboard:stats.win_rate")}
+            value={`${stats?.quizSuccessRate || 0}%`}
+            icon={Target}
+            trend={{ value: 3, label: t("dashboard:stats.trend_vs_month") }}
+          />
+          <KPICard
+            title={t("dashboard:stats.academy_progress")}
+            value={`${stats?.completedLessons || 0}/${stats?.totalLessons || 0}`}
+            icon={BookOpen}
+          />
+          <KPICard
+            title="Journal Entries"
+            value={0}
+            icon={BookMarked}
+          />
         </div>
 
-        {/* Recent Activity & Checklist Mejorados */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Activity Timeline */}
-          <Card className="border-line bg-surface backdrop-blur-sm dashboard-card shadow-sm">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-foreground flex items-center gap-2 font-semibold">
-                    <Activity className="h-5 w-5 text-teal" />
-                    Actividad Reciente
-                  </CardTitle>
-                  <CardDescription className="text-foreground/60">Tus últimas acciones</CardDescription>
-                </div>
-                <Badge variant="outline" className="text-teal border-teal/70 bg-teal/10">
-                  {recentActivities.length} actividades
-                </Badge>
-              </div>
-            </CardHeader>
-            
-            <CardContent>
-              <div className="relative space-y-4">
-                {recentActivities.length > 0 && (
-                  <div className="absolute left-6 top-4 bottom-4 w-px bg-gradient-to-b from-teal via-cyan to-transparent" />
-                )}
-                
-                {recentActivities.length > 0 ? (
-                  recentActivities.map((activity, index) => (
-                    <div
-                      key={index}
-                      className="relative flex items-start gap-4 p-4 rounded-lg bg-surface/50 border border-line/80 hover:border-teal/50 transition-colors animate-fade-in"
-                      style={{animationDelay: `${index * 100}ms`}}
-                    >
-                      <div className="relative z-10 p-2 rounded-full bg-teal/25 ring-4 ring-surface/50">
-                        <BookOpen className="h-4 w-4 text-teal" />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {activity.title}
-                        </p>
-                        <p className="text-xs text-foreground/60 capitalize font-medium">
-                          {activity.action} • {activity.time}
-                        </p>
-                      </div>
-                      
-                      <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Module Previews - 2 columns */}
+          <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
+            <ModulePreviewCard
+              title={t("dashboard:modules.academy.title")}
+              description={currentCourse?.course_item?.title || t("dashboard:modules.academy.description")}
+              icon={BookOpen}
+              progress={academyProgress}
+              actionLabel="Continuar"
+              actionPath={currentCourse ? `/academy/course/${currentCourse.slug}` : "/academy"}
+              stats={[
+                { label: "Lecciones", value: stats?.completedLessons || 0 },
+                { label: "Quizzes", value: stats?.passedQuizzes || 0 },
+              ]}
+            />
+
+            <ModulePreviewCard
+              title={t("dashboard:modules.signals.title")}
+              description="3 señales activas"
+              icon={Radio}
+              badge="2 nuevas"
+              actionLabel={t("dashboard:actions.view_all")}
+              actionPath="/signals"
+              stats={[
+                { label: "Activas", value: 3 },
+                { label: "Esta semana", value: 12 },
+              ]}
+            />
+
+            <ModulePreviewCard
+              title={t("dashboard:modules.copy.title")}
+              description={t("dashboard:modules.copy.description")}
+              icon={Copy}
+              badge={t("dashboard:modules.copy.badge")}
+              actionLabel="Ver Estrategias"
+              actionPath="/copy-trading"
+              stats={[
+                { label: "Estrategias", value: 8 },
+                { label: "Verificadas", value: 8 },
+              ]}
+            />
+
+            <ModulePreviewCard
+              title={t("dashboard:modules.tools.title")}
+              description={t("dashboard:modules.tools.description")}
+              icon={Calculator}
+              actionLabel="Abrir Calculadoras"
+              actionPath="/tools"
+              stats={[
+                { label: "Herramientas", value: 7 },
+                { label: "Usadas", value: stats?.checklist.calculatorUsed ? 1 : 0 },
+              ]}
+            />
+          </div>
+
+          {/* Sidebar - Recent Activity & Checklist */}
+          <div className="space-y-6">
+            {/* Onboarding Checklist */}
+            {checklistItems.some(item => !item.completed) && (
+              <OnboardingChecklistCard items={checklistItems} />
+            )}
+
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Award className="h-5 w-5 text-teal" />
+                  Actividad Reciente
+                </CardTitle>
+                <CardDescription>Tus últimas acciones en la plataforma</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {stats?.recentEvents && stats.recentEvents.length > 0 ? (
+                    stats.recentEvents.slice(0, 5).map((event: any, idx: number) => (
+                      <ActivityTimelineItem
+                        key={idx}
+                        icon={
+                          event.verb === "completed" ? CheckCircle :
+                          event.verb === "started" ? BookOpen :
+                          TrendingUp
+                        }
+                        title={event.title || "Actividad"}
+                        description={event.description || ""}
+                        time={event.time || "Hace unos momentos"}
+                        type={event.verb === "completed" ? "success" : "info"}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-muted-foreground">
+                        {t("dashboard:empty")}
+                      </p>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-foreground/60 text-center py-8 font-medium">
-                    No hay actividad reciente aún
-                  </p>
-                )}
-              </div>
-              <Button
-                variant="outline"
-                className="w-full mt-4 border-teal/70 text-teal hover:bg-teal/15 font-medium"
-                onClick={() => navigate("/academy")}
-              >
-                Ir a Academia
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Checklist Mejorado */}
-          <Card className="border-line bg-surface backdrop-blur-sm dashboard-card shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-foreground flex items-center gap-2 font-semibold">
-                <Target className="h-5 w-5 text-teal" />
-                {t("dashboard:checklist.title")}
-              </CardTitle>
-              <CardDescription className="text-foreground/60">
-                {t("dashboard:checklist.subtitle")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {checklistItems.map((item, index) => (
-                  <div 
-                    key={index} 
-                    className="group flex items-center gap-3 p-3 rounded-lg bg-surface/50 border border-line/80 hover:border-teal/50 transition-all animate-fade-in"
-                    style={{animationDelay: `${index * 80}ms`}}
-                  >
-                    {item.done ? (
-                      <div className="relative flex items-center justify-center">
-                        <div className="absolute w-6 h-6 bg-success/25 rounded-full animate-pulse" />
-                        <CheckCircle className="h-5 w-5 text-success relative z-10" />
-                      </div>
-                    ) : (
-                      <div className="h-5 w-5 rounded-full border-2 border-line group-hover:border-teal/70 transition-colors" />
-                    )}
-                    <span className={`text-sm flex-1 transition-all font-medium ${item.done ? 'text-foreground/50 line-through' : 'text-foreground group-hover:text-teal'}`}>
-                      {item.task}
-                    </span>
-                    {!item.done && (
-                      <ArrowRight className="h-4 w-4 text-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Risk Warning Premium */}
-        <Card className="relative overflow-hidden border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-orange-500/10 mt-8 dashboard-card shadow-sm">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/15 rounded-full blur-3xl" />
-          
-          <CardContent className="relative z-10 p-6">
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-amber-500/20">
-                <AlertTriangle className="h-6 w-6 text-amber-500" />
-              </div>
-              <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-foreground flex items-center gap-2">
-                  {t("dashboard:risk_warning.title")}
-                  <Badge variant="outline" className="border-amber-500/70 text-amber-500 bg-amber-500/10">
-                    Importante
-                  </Badge>
-                </h3>
-                <p className="text-sm text-foreground/70 leading-relaxed font-medium">
-                  {t("dashboard:risk_warning.text")}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Additional Modules */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <ModulePreviewCard
+            title={t("dashboard:modules.journal.title")}
+            description={t("dashboard:modules.journal.description")}
+            icon={BookMarked}
+            actionLabel="Abrir Journal"
+            actionPath="/journal"
+          />
+
+          <ModulePreviewCard
+            title={t("dashboard:modules.audit.title")}
+            description={t("dashboard:modules.audit.description")}
+            icon={BarChart3}
+            actionLabel="Ver Auditoría"
+            actionPath="/audit"
+          />
+        </div>
+
+        {/* Risk Warning */}
+        <TradingDisclaimer variant="compact" className="mt-8" />
       </div>
     </div>
   );

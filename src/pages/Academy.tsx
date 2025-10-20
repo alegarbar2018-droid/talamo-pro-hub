@@ -216,9 +216,17 @@ const Academy = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section Premium */}
-      <div className="relative overflow-hidden border-b border-line/50 bg-gradient-to-br from-teal/5 via-surface to-cyan/5">
+      <SEOHead
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
+        canonicalPath="/academy"
+        structuredData={structuredData}
+      />
 
+      {/* Hero Section */}
+      <div className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-surface to-cyan/5 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
@@ -261,6 +269,8 @@ const Academy = () => {
             )}
           </div>
         </div>
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Level Filter Premium */}
         {courses && courses.length > 0 && (
