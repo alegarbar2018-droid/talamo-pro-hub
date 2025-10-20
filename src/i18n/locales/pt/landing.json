@@ -24,10 +24,10 @@
   "access_methodology": "Acesse metodologia comprovada, sinais auditados e ferramentas de trading institucional",
   
   "exness_requirement": "Requisito para usar Tálamo",
-  "why_exness_title": "Por que você precisa de uma conta Exness",
-  "why_exness_subtitle": "(e o que você ganha com isso)",
-  "ib_model_title": "Por que Exness especificamente?",
-  "ib_model_explanation": "Tálamo é completamente grátis para você porque somos Introducing Broker (IB) da Exness. Ganhamos uma pequena comissão por spread quando você opera, mas você nunca nos paga nada diretamente. Isso alinha nossos incentivos: só ganhamos se você operar, e você só continuará operando se nossas ferramentas ajudarem você a ter sucesso.",
+  "why_exness_title": "Por que operamos com Exness?",
+  "why_exness_subtitle": "Após avaliar dezenas de corretoras sob critérios técnicos rigorosos, a Exness atendeu todos os requisitos operacionais que exigimos para operar de forma profissional",
+  "ib_model_title": "Modelo de negócio transparente",
+  "ib_model_explanation": "Tálamo é completamente grátis porque somos Introducing Broker (IB) da Exness. Ganhamos uma comissão por spread quando você opera, mas você nunca nos paga nada diretamente. Isso alinha incentivos: só ganhamos se você operar, e você só operará se nossas ferramentas gerarem valor.",
   "ib_model_disclaimer": "Não recebemos nenhum pagamento da Exness para promovê-los. É simplesmente a corretora que escolhemos por suas condições técnicas e API para copy trading.",
   
   "exness_spreads_title": "Spreads desde 0.0 pips",

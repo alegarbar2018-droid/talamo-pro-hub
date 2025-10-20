@@ -24,10 +24,10 @@
   "access_methodology": "Access proven methodology, audited signals and institutional trading tools",
   
   "exness_requirement": "Required to use Tálamo",
-  "why_exness_title": "Why you need an Exness account",
-  "why_exness_subtitle": "(and what you gain from it)",
-  "ib_model_title": "Why Exness specifically?",
-  "ib_model_explanation": "Tálamo is completely free for you because we are an Introducing Broker (IB) of Exness. We earn a small commission per spread when you trade, but you never pay us anything directly. This aligns our incentives: we only earn if you trade, and you'll only keep trading if our tools help you succeed.",
+  "why_exness_title": "Why we operate with Exness?",
+  "why_exness_subtitle": "After evaluating dozens of brokers under strict technical criteria, Exness met all operational requirements we demand for professional trading",
+  "ib_model_title": "Transparent business model",
+  "ib_model_explanation": "Tálamo is completely free because we are an Introducing Broker (IB) of Exness. We earn a commission per spread when you trade, but you never pay us anything directly. This aligns incentives: we only earn if you trade, and you'll only trade if our tools generate value.",
   "ib_model_disclaimer": "We don't receive any payment from Exness to promote them. It's simply the broker we chose for its technical conditions and copy trading API.",
   
   "exness_spreads_title": "Spreads from 0.0 pips",
