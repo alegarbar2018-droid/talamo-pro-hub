@@ -12,7 +12,8 @@ import {
   Zap, Target, CheckCircle, ArrowRight, Users, Calculator, AlertTriangle,
   TrendingUp, DollarSign, Shield, Layers, BookOpen, Copy, Settings,
   BarChart3, PieChart, Activity, Clock, Bookmark, ExternalLink,
-  Info, ChevronRight, Sparkles, Globe, Coins, CandlestickChart
+  Info, ChevronRight, Sparkles, Globe, Coins, CandlestickChart,
+  FileText, LineChart, Brain
 } from "lucide-react";
 
 export default function ToolsInfo() {
@@ -615,6 +616,22 @@ export default function ToolsInfo() {
                 <div className="grid md:grid-cols-2 gap-8">
                   {[
                     {
+                      title: "Trading Journal con IA",
+                      description: "Registra tus operaciones y recibe análisis personalizados con inteligencia artificial",
+                      icon: <Brain className="w-6 h-6" />,
+                      features: ["Análisis automático de patrones", "Recomendaciones personalizadas", "Tracking de emociones"],
+                      action: () => navigate("/journal"),
+                      badge: "Nuevo"
+                    },
+                    {
+                      title: "Auditoría MT4/MT5",
+                      description: "Conecta tu cuenta de trading y obtén análisis detallado de tu historial real",
+                      icon: <LineChart className="w-6 h-6" />,
+                      features: ["Conexión segura MT4/MT5", "Estadísticas avanzadas", "Curva de equity"],
+                      action: () => navigate("/audit"),
+                      badge: "Nuevo"
+                    },
+                    {
                       title: "Presets Inteligentes",
                       description: "Guarda configuraciones por estrategia y símbolo para acceso rápido",
                       icon: <Bookmark className="w-6 h-6" />,
@@ -650,16 +667,23 @@ export default function ToolsInfo() {
                           <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
                             <div className="text-white">{feature.icon}</div>
                           </div>
-                          <div>
-                            <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
-                              {feature.title}
-                            </h3>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
+                                {feature.title}
+                              </h3>
+                              {feature.badge && (
+                                <Badge className="bg-gradient-primary text-white text-xs">
+                                  {feature.badge}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
                         <p className="text-muted-foreground mb-4">
                           {feature.description}
                         </p>
-                        <div className="space-y-2">
+                        <div className="space-y-2 mb-4">
                           {feature.features.map((item) => (
                             <div key={item} className="flex items-center gap-2">
                               <CheckCircle className="w-4 h-4 text-primary" />
@@ -667,6 +691,15 @@ export default function ToolsInfo() {
                             </div>
                           ))}
                         </div>
+                        {feature.action && (
+                          <Button 
+                            onClick={feature.action}
+                            className="w-full bg-gradient-primary hover:shadow-glow"
+                          >
+                            Abrir herramienta
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        )}
                       </Card>
                     </motion.div>
                   ))}
