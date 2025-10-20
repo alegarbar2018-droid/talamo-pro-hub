@@ -4,6 +4,53 @@
   "back_to_dashboard": "Painel",
   "back_to_levels": "Voltar aos níveis",
   "back_to_course": "Voltar",
+  "hero": {
+    "badge": "Academia Sem Enganação",
+    "title_part1": "Chega de",
+    "title_part2": "\"gurus\"",
+    "title_part3": "e",
+    "title_part4": "pirâmides.",
+    "title_part5": "Aqui se opera.",
+    "description": "Educação real com backtests documentados, métricas transparentes e critérios objetivos. Sem teatro nem pressão de vendas.",
+    "cta_primary": "Validar afiliação real",
+    "cta_secondary": "Ver programa ↓"
+  },
+  "problems": {
+    "title": "O problema do mercado",
+    "subtitle": "A indústria está saturada de golpistas que vivem de vender cursos, não de trading.",
+    "problem1_title": "Vendedores de fumaça",
+    "problem1_desc": "Coaches que nunca operaram em real mas vendem 'o sistema que mudou minha vida'.",
+    "problem2_title": "Academias multinível",
+    "problem2_desc": "Pressionam você a convidar amigos. Ganha mais recrutando do que operando.",
+    "problem3_title": "Apps 'mágicos'",
+    "problem3_desc": "Copia sinais automáticos sem entender nada. Spoiler: sempre perde.",
+    "problem4_title": "Promessas vazias",
+    "problem4_desc": "Lamborghinis e retiradas milionárias em 30 dias. Se fosse tão fácil, por que vender?"
+  },
+  "overview": {
+    "title": "Nossa diferença",
+    "subtitle": "Não somos perfeitos, mas somos honestos. Não vendemos sonhos, ensinamos habilidades reais.",
+    "diff1_title": "Transparência real",
+    "diff1_desc": "Contas verificadas, histórico público, resultados auditados.",
+    "diff1_badge": "Sem fumaça",
+    "diff2_title": "Critérios objetivos",
+    "diff2_desc": "Rubricas claras, métricas quantificáveis, bloqueio por segurança.",
+    "diff2_badge": "Mensurável",
+    "diff3_title": "Educação, não vendas",
+    "diff3_desc": "Zero pressão para convidar amigos. Apenas formação estruturada.",
+    "diff3_badge": "Ético",
+    "diff4_title": "Abordagem profissional",
+    "diff4_desc": "Como um negócio real: backtests, diário, gestão de risco.",
+    "diff4_badge": "Sério",
+    "cta_title": "Pronto para começar",
+    "cta_description": "Se completar a formação, terá as ferramentas para operar como um profissional. Ganhar dinheiro depende de você, não de nós.",
+    "cta_primary": "Pronto para começar",
+    "cta_secondary": "Ver programa detalhado ↓"
+  },
+  "disclaimer": {
+    "title": "Aviso Legal",
+    "text": "Este conteúdo é apenas educacional e não constitui consultoria financeira. Trading envolve riscos significativos e pode não ser adequado para todos. Operar com alavancagem pode resultar na perda total do seu capital."
+  },
   "levels": {
     "level": "Nível",
     "completed": "Concluído",
@@ -48,6 +95,10 @@
     "lessons_count": "lições neste nível",
     "objectives": "Objetivos de aprendizagem",
     "practice": "Exercícios práticos",
-    "start_academy": "Começar Academia"
+    "start_academy": "Começar Academia",
+    "expand": "Ver programa completo",
+    "collapse": "Ocultar programa",
+    "cta_description": "Comece sua formação profissional em trading. Valide sua afiliação com Exness e desbloqueie acesso completo.",
+    "cta_button": "Começar agora"
   }
 }

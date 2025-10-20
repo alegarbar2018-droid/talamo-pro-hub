@@ -1,51 +1,46 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
 import { useObservability } from "@/components/business/ObservabilityProvider";
+import { useTranslation } from "react-i18next";
 import Navigation from "@/components/Navigation";
 import SyllabusDetailed from "@/components/SyllabusDetailed";
 import AcademyHero from "@/components/academy/AcademyHero";
 import AcademyProblems from "@/components/academy/AcademyProblems";
-import AcademyDifference from "@/components/academy/AcademyDifference";
-import AcademyJourney from "@/components/academy/AcademyJourney";
+import AcademyOverview from "@/components/academy/AcademyOverview";
 
 export default function AcademyInfo() {
   const { trackPageView } = useObservability();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = "Academia — Información";
+    document.title = t('academy.title') + " — " + t('academy.subtitle');
     trackPageView("academy-info");
-  }, [trackPageView]);
+  }, [trackPageView, t]);
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       <Navigation />
       
       {/* Premium background effects */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-primary opacity-8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
       <main className="relative">
-        {/* Hero renovado */}
+        {/* Hero simplificado */}
         <AcademyHero />
 
-        {/* Crítica al mercado */}
+        {/* Problemas del mercado (scannable) */}
         <AcademyProblems />
 
-        {/* Nuestra diferencia */}
-        <div className="max-w-6xl mx-auto px-6 lg:px-8 pb-12">
-          <AcademyDifference />
-        </div>
+        {/* Overview: Diferencia + Journey + CTA */}
+        <AcademyOverview />
 
-        {/* Ruta de aprendizaje visual */}
-        <AcademyJourney />
-
-        {/* Temario completo detallado */}
+        {/* Temario detallado (colapsable) */}
         <SyllabusDetailed />
 
-        {/* Footer */}
+        {/* Footer con disclaimer legal */}
         <motion.footer 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -54,9 +49,7 @@ export default function AcademyInfo() {
         >
           <div className="max-w-4xl mx-auto bg-surface/30 backdrop-blur-xl border border-primary/10 rounded-2xl p-8">
             <p className="text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Aviso Legal:</strong> Este contenido es únicamente educativo y no constituye asesoría financiera. 
-              El trading conlleva riesgos significativos y puede no ser adecuado para todos. 
-              Operar con apalancamiento puede resultar en la pérdida total de tu capital.
+              <strong className="text-foreground">{t('academy.disclaimer.title')}:</strong> {t('academy.disclaimer.text')}
             </p>
           </div>
         </motion.footer>

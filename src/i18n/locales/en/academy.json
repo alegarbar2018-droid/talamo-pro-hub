@@ -4,6 +4,53 @@
   "back_to_dashboard": "Dashboard",
   "back_to_levels": "Back to levels",
   "back_to_course": "Back",
+  "hero": {
+    "badge": "No-Nonsense Academy",
+    "title_part1": "Stop the",
+    "title_part2": "\"gurus\"",
+    "title_part3": "and",
+    "title_part4": "pyramids.",
+    "title_part5": "Here we trade.",
+    "description": "Real education with documented backtests, transparent metrics, and objective criteria. No theatrics or sales pressure.",
+    "cta_primary": "Validate real affiliation",
+    "cta_secondary": "View syllabus ↓"
+  },
+  "problems": {
+    "title": "The market problem",
+    "subtitle": "The industry is saturated with scammers who live off selling courses, not trading.",
+    "problem1_title": "Smoke sellers",
+    "problem1_desc": "Coaches who never traded real accounts but sell you 'the system that changed my life'.",
+    "problem2_title": "MLM academies",
+    "problem2_desc": "They pressure you to invite friends. You earn more recruiting than trading.",
+    "problem3_title": "'Magic' apps",
+    "problem3_desc": "Copy automatic signals without understanding. Spoiler: you always lose.",
+    "problem4_title": "Empty promises",
+    "problem4_desc": "Lamborghinis and million-dollar withdrawals in 30 days. If it were that easy, why sell it?"
+  },
+  "overview": {
+    "title": "Our difference",
+    "subtitle": "We're not perfect, but we are honest. We don't sell dreams, we teach real skills.",
+    "diff1_title": "Real transparency",
+    "diff1_desc": "Verified accounts, public history, audited results.",
+    "diff1_badge": "No smoke",
+    "diff2_title": "Objective criteria",
+    "diff2_desc": "Clear rubrics, quantifiable metrics, safety gating.",
+    "diff2_badge": "Measurable",
+    "diff3_title": "Education, not sales",
+    "diff3_desc": "Zero pressure to invite friends. Just structured training.",
+    "diff3_badge": "Ethical",
+    "diff4_title": "Professional approach",
+    "diff4_desc": "Like a real business: backtests, journal, risk management.",
+    "diff4_badge": "Serious",
+    "cta_title": "Ready to start",
+    "cta_description": "If you complete the training, you'll have the tools to trade like a professional. Making money depends on you, not us.",
+    "cta_primary": "Ready to start",
+    "cta_secondary": "View detailed syllabus ↓"
+  },
+  "disclaimer": {
+    "title": "Legal Notice",
+    "text": "This content is for educational purposes only and does not constitute financial advice. Trading involves significant risks and may not be suitable for everyone. Leveraged trading can result in total loss of your capital."
+  },
   "levels": {
     "level": "Level",
     "completed": "Completed",
@@ -48,6 +95,10 @@
     "lessons_count": "lessons in this level",
     "objectives": "Learning objectives",
     "practice": "Practical exercises",
-    "start_academy": "Start Academy"
+    "start_academy": "Start Academy",
+    "expand": "View complete syllabus",
+    "collapse": "Hide syllabus",
+    "cta_description": "Begin your professional trading training. Validate your Exness affiliation and unlock full access.",
+    "cta_button": "Start now"
   }
 }

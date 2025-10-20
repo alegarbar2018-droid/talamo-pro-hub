@@ -1,9 +1,56 @@
 {
   "title": "Academia Tálamo",
-  "subtitle": "Formación estructurada de trading profesional",
-  "back_to_dashboard": "Dashboard",
+  "subtitle": "Educación estructurada de trading profesional",
+  "back_to_dashboard": "Panel",
   "back_to_levels": "Volver a niveles",
-  "back_to_course": "Regresar",
+  "back_to_course": "Volver",
+  "hero": {
+    "badge": "Academia Sin Humo",
+    "title_part1": "Basta de",
+    "title_part2": "\"gurus\"",
+    "title_part3": "y",
+    "title_part4": "multiniveles.",
+    "title_part5": "Aquí se opera.",
+    "description": "Educación real con backtests documentados, métricas transparentes y criterios objetivos. Sin teatritos ni presión de ventas.",
+    "cta_primary": "Validar afiliación real",
+    "cta_secondary": "Ver temario ↓"
+  },
+  "problems": {
+    "title": "El problema del mercado",
+    "subtitle": "La industria está saturada de estafadores que viven de vender cursos, no del trading.",
+    "problem1_title": "Vendedores de humo",
+    "problem1_desc": "Coaches que jamás operaron en real pero te venden 'el sistema que cambió mi vida'.",
+    "problem2_title": "Academias multinivel",
+    "problem2_desc": "Te presionan para invitar amigos. Ganas más reclutando que operando.",
+    "problem3_title": "Apps 'mágicas'",
+    "problem3_desc": "Copias señales automáticas sin entender nada. Spoiler: siempre pierdes.",
+    "problem4_title": "Promesas vacías",
+    "problem4_desc": "Lamborghinis y retiros millonarios en 30 días. Si fuera tan fácil, ¿por qué lo venden?"
+  },
+  "overview": {
+    "title": "Nuestra diferencia",
+    "subtitle": "No somos perfectos, pero sí honestos. No vendemos sueños, enseñamos habilidades reales.",
+    "diff1_title": "Transparencia real",
+    "diff1_desc": "Cuentas verificadas, historial público, resultados auditados.",
+    "diff1_badge": "Sin humo",
+    "diff2_title": "Criterios objetivos",
+    "diff2_desc": "Rúbricas claras, métricas cuantificables, gating por seguridad.",
+    "diff2_badge": "Medible",
+    "diff3_title": "Educación, no ventas",
+    "diff3_desc": "Cero presión para invitar amigos. Solo formación estructurada.",
+    "diff3_badge": "Ético",
+    "diff4_title": "Enfoque profesional",
+    "diff4_desc": "Como un negocio real: backtests, journal, gestión de riesgo.",
+    "diff4_badge": "Serio",
+    "cta_title": "Listo para empezar",
+    "cta_description": "Si completas la formación, tendrás las herramientas para operar como un profesional. Ganar dinero depende de ti, no de nosotros.",
+    "cta_primary": "Listo para empezar",
+    "cta_secondary": "Ver temario detallado ↓"
+  },
+  "disclaimer": {
+    "title": "Aviso Legal",
+    "text": "Este contenido es únicamente educativo y no constituye asesoría financiera. El trading conlleva riesgos significativos y puede no ser adecuado para todos. Operar con apalancamiento puede resultar en la pérdida total de tu capital."
+  },
   "levels": {
     "level": "Nivel",
     "completed": "Completado",
@@ -50,7 +97,11 @@
     "lessons_count": "lecciones en este nivel",
     "objectives": "Objetivos de aprendizaje",
     "practice": "Ejercicios prácticos",
-    "start_academy": "Comenzar Academia"
+    "start_academy": "Comenzar Academia",
+    "expand": "Ver temario completo",
+    "collapse": "Ocultar temario",
+    "cta_description": "Comienza tu formación profesional en trading. Valida tu afiliación con Exness y desbloquea acceso completo.",
+    "cta_button": "Comenzar ahora"
   },
   "simulator": {
     "concept": "Concepto",
