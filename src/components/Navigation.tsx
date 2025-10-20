@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, Target, TrendingUp, GraduationCap, Users, Zap } from "lucide-react";
+import { Menu, X, Target, TrendingUp, GraduationCap, Users, Zap, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -60,6 +60,15 @@ const Navigation = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate("/faq")}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              <HelpCircle className="h-3.5 w-3.5 mr-1.5" />
+              FAQs
+            </Button>
             <LanguageSwitcher />
             <Button 
               variant="ghost" 
@@ -121,6 +130,20 @@ const Navigation = () => {
                         </div>
                       </button>
                     ))}
+                    
+                    {/* FAQ Link */}
+                    <button
+                      onClick={() => handleNavigation("/faq")}
+                      className="w-full flex items-center gap-4 p-4 text-left rounded-lg hover:bg-muted/50 transition-all duration-200 group"
+                    >
+                      <div className="w-9 h-9 bg-muted rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-foreground text-sm">FAQs</h3>
+                        <p className="text-xs text-muted-foreground">Preguntas frecuentes</p>
+                      </div>
+                    </button>
                   </div>
 
                   {/* CTA Section */}
