@@ -37,6 +37,7 @@ const AcademyInfo = lazy(() => import("./pages/AcademyInfo"));
 const SignalsInfo = lazy(() => import("./pages/SignalsInfo"));
 const CopyInfo = lazy(() => import("./pages/CopyInfo"));
 const ToolsInfo = lazy(() => import("./pages/ToolsInfo"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 const CourseView = lazy(() => import("./pages/CourseView"));
 const LessonView = lazy(() => import("./pages/LessonView"));
 const QuizView = lazy(() => import("./pages/QuizView"));
@@ -118,6 +119,7 @@ const App: React.FC = () => {
             <Route path="/signals-info" element={<SignalsInfo />} />
             <Route path="/copy-info" element={<CopyInfo />} />
             <Route path="/tools-info" element={<ToolsInfo />} />
+            <Route path="/faq" element={<FAQ />} />
             
             {/* Legacy redirects */}
             <Route path="/auth/validate" element={<Navigate to="/onboarding?step=validate" replace />} />

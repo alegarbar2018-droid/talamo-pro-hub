@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, HelpCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
   const { t } = useTranslation("landing");
+  const navigate = useNavigate();
 
   const scrollToNextSection = () => {
     const nextSection = document.getElementById('user-path-section');
@@ -55,8 +57,24 @@ export const HeroSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="mt-12 flex flex-col items-center gap-3"
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="mt-8"
+          >
+            <Button
+              onClick={() => navigate("/faq")}
+              variant="outline"
+              className="group border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+            >
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Preguntas Frecuentes
+            </Button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.6 }}
+            className="mt-8 flex flex-col items-center gap-3"
           >
             <span className="text-sm text-muted-foreground/80 font-medium tracking-wide">
               Descubre tu camino
