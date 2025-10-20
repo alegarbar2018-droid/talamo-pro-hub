@@ -11,7 +11,7 @@ export default function AcademyJourneySimple() {
   const levels = [
     {
       level: "Fundamentos",
-      range: "Nivel 1-2",
+      range: "Módulo 0 y Nivel 1",
       courseIndices: [0, 1],
       duration: "4-6 semanas",
       topics: ["Conceptos básicos", "Gestión de riesgo", "Psicología del trading"],
@@ -19,27 +19,27 @@ export default function AcademyJourneySimple() {
     },
     {
       level: "Intermedio",
-      range: "Nivel 3-4",
-      courseIndices: [2, 3],
+      range: "Nivel 2",
+      courseIndices: [2],
       duration: "6-8 semanas",
-      topics: ["Análisis técnico", "Estrategias avanzadas", "Backtesting"],
+      topics: ["Estructuras avanzadas", "Gestión de posiciones", "Métricas profesionales"],
       unlocks: "Copy Trading + Señales",
     },
     {
       level: "Avanzado",
-      range: "Nivel 5-6",
-      courseIndices: [4, 5],
+      range: "Nivel 3",
+      courseIndices: [3],
       duration: "8-10 semanas",
-      topics: ["Optimización", "Trading algorítmico", "Portfolio management"],
+      topics: ["Microestructura", "Portfolio management", "Automatización parcial"],
       unlocks: "Señales Premium + Comunidad",
     },
     {
       level: "Experto",
-      range: "Nivel 7",
-      courseIndices: [6],
-      duration: "4-6 semanas",
-      topics: ["Market making", "Gestión institucional", "Análisis cuantitativo"],
-      unlocks: "Acceso completo",
+      range: "Nivel 4",
+      courseIndices: [4],
+      duration: "6-8 semanas",
+      topics: ["Expert Advisors", "Trading algorítmico", "Deploy y monitoreo"],
+      unlocks: "Acceso completo + Publicación EAs",
     },
   ];
 
