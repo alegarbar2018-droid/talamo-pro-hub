@@ -74,35 +74,25 @@ export function DashboardSidebar() {
       collapsible="icon" 
       className="border-r border-line/50 bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl"
     >
-      <SidebarHeader className="border-b border-line/50 p-6 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
-        <div className="flex items-center justify-between">
+      <SidebarHeader className="border-b border-line/50 p-4 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
+        <div className="flex items-center gap-3 group">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-base">T</span>
+            </div>
+          </div>
           {open && (
-            <div className="flex items-center gap-3 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-base">T</span>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-xl bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent animate-gradient">
-                  Tálamo
-                </span>
-                <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
-                  Pro Hub
-                </span>
-              </div>
+            <div className="flex flex-col flex-1">
+              <span className="font-bold text-xl bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent animate-gradient">
+                Tálamo
+              </span>
+              <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
+                Pro Hub
+              </span>
             </div>
           )}
-          {!open && (
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-teal to-cyan rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
-              <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-teal to-cyan flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-base">T</span>
-              </div>
-            </div>
-          )}
-          <SidebarTrigger className="ml-auto hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+          <SidebarTrigger className="hover:bg-teal/10 hover:text-teal transition-all rounded-lg p-2" />
         </div>
       </SidebarHeader>
 
@@ -121,7 +111,7 @@ export function DashboardSidebar() {
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -131,12 +121,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`p-1.5 rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-4 w-4 transition-all duration-300 ${
+                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -146,7 +136,7 @@ export function DashboardSidebar() {
                             </span>
                           )}
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
                       )}
@@ -171,7 +161,7 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
+                        `group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
@@ -180,12 +170,12 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          <div className={`p-1.5 rounded-lg transition-all duration-300 ${
+                          <div className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
                             isActive 
                               ? "bg-gradient-to-br from-teal/20 to-cyan/20" 
                               : "bg-muted/50 group-hover:bg-muted"
                           }`}>
-                            <item.icon className={`h-4 w-4 transition-all duration-300 ${
+                            <item.icon className={`h-5 w-5 transition-all duration-300 ${
                               isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                             }`} />
                           </div>
@@ -205,7 +195,7 @@ export function DashboardSidebar() {
                             </div>
                           )}
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
                           )}
                         </>
                       )}
