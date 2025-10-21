@@ -391,10 +391,11 @@ const LessonView = () => {
       )}>
         <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-2xl shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none" />
-          <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10 relative">
-            <div className="flex items-center gap-5 py-6">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div className="flex items-center gap-3 md:gap-5 py-3 md:py-4 lg:py-6">
               <Button 
                 variant="ghost" 
+                size="sm"
                 onClick={() => {
                   const courseId = lesson.module?.course?.id;
                   if (courseId) {
@@ -403,32 +404,32 @@ const LessonView = () => {
                     navigate('/academy');
                   }
                 }}
-                className="text-teal hover:bg-teal/10 hover:text-teal-ink transition-all rounded-xl group relative overflow-hidden"
+                className="text-teal hover:bg-teal/10 hover:text-teal-ink transition-all rounded-xl group relative overflow-hidden shrink-0"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <ArrowLeft className="h-4 w-4 mr-2 relative z-10 group-hover:-translate-x-1 transition-transform" />
+                <ArrowLeft className="h-4 w-4 mr-1.5 md:mr-2 relative z-10 group-hover:-translate-x-1 transition-transform" />
                 <span className="relative z-10 font-semibold">Regresar</span>
               </Button>
               
-              <div className="h-8 w-px bg-gradient-to-b from-transparent via-line/50 to-transparent" />
+              <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-line/50 to-transparent" />
               
-              <div className="flex-1">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground via-foreground to-teal-ink bg-clip-text text-transparent tracking-tight">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+                  <h1 className="text-base sm:text-lg md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-foreground via-foreground to-teal-ink bg-clip-text text-transparent tracking-tight truncate">
                     {lesson.course_item?.title}
                   </h1>
                   {tocEnabled && showNewBadge && (
-                    <Badge className="bg-gradient-primary text-white border-teal/20 gap-1.5 animate-pulse shadow-glow-subtle px-3 py-1.5 relative overflow-hidden group">
+                    <Badge className="bg-gradient-primary text-white border-teal/20 gap-1 md:gap-1.5 animate-pulse shadow-glow-subtle px-2 md:px-3 py-1 md:py-1.5 relative overflow-hidden group text-xs">
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                      <Sparkles className="h-3.5 w-3.5 relative z-10" />
-                      <span className="font-semibold relative z-10">{t('academy.lesson.new_feature', '¡Nuevo!')}</span>
+                      <Sparkles className="h-3 w-3 md:h-3.5 md:w-3.5 relative z-10" />
+                      <span className="font-semibold relative z-10 hidden sm:inline">{t('academy.lesson.new_feature', '¡Nuevo!')}</span>
                     </Badge>
                   )}
                 </div>
                 {lesson.module?.course?.level && (
-                  <div className="flex items-center gap-2 mt-2.5">
-                    <div className="h-1.5 w-1.5 rounded-full bg-teal/50 animate-pulse" />
-                    <span className="text-sm text-muted-foreground font-medium tracking-wide">
+                  <div className="flex items-center gap-2 mt-1 md:mt-2.5">
+                    <div className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-teal/50 animate-pulse" />
+                    <span className="text-xs md:text-sm text-muted-foreground font-medium tracking-wide">
                       Level {lesson.module.course.level}
                     </span>
                   </div>
@@ -438,7 +439,7 @@ const LessonView = () => {
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10 py-10 space-y-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 lg:py-10 space-y-4 md:space-y-6 lg:space-y-8">
           {/* Cover Image */}
           {coverImageUrl && (
             <div className="rounded-2xl overflow-hidden shadow-lg animate-fade-in ring-1 ring-line/20">

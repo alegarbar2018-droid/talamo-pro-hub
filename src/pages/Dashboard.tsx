@@ -88,56 +88,64 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className={cn(DESIGN_TOKENS.container.wide, DESIGN_TOKENS.spacing.section.full, "space-y-8")}>
+      <div className={cn(DESIGN_TOKENS.container.wide, DESIGN_TOKENS.spacing.section.full, "space-y-4 md:space-y-6 lg:space-y-8")}>
         {/* Hero Section with Greeting */}
         <div className={cn(
           "relative overflow-hidden border border-line/50 bg-gradient-to-br from-teal/10 via-surface to-cyan/10",
           DESIGN_TOKENS.radius.card,
-          DESIGN_TOKENS.spacing.card.spacious
+          "p-4 sm:p-6"
         )}>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-teal/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan/20 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-teal/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 md:w-64 md:h-64 bg-cyan/20 rounded-full blur-3xl" />
           
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <Badge className="bg-gradient-to-r from-teal to-cyan text-white border-0 shadow-lg">
+              <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3 flex-wrap">
+                <Badge className="bg-gradient-to-r from-teal to-cyan text-white border-0 shadow-lg text-xs">
                   <Sparkles className="h-3 w-3 mr-1" />
                   {t("dashboard:status.demo")}
                 </Badge>
                 {stats?.completedLessons > 0 && (
-                  <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400">
+                  <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs">
                     <Flame className="h-3 w-3 mr-1" />
                     {stats.completedLessons} {t("dashboard:modules.academy.completed")}
                   </Badge>
                 )}
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1 md:mb-2">
                 {getGreeting()}, {user?.profile?.first_name || user?.profile?.last_name || "Usuario"}
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm md:text-base text-muted-foreground">
                 {t("dashboard:progress_summary")}
               </p>
             </div>
 
             <div className="flex items-center gap-4">
               <div className="text-center">
-                <div className="relative w-20 h-20">
-                  <svg className="w-20 h-20 transform -rotate-90">
-                    <circle cx="40" cy="40" r="32" stroke="currentColor" strokeWidth="4" fill="none" className="text-muted/20" />
+                <div className="relative w-16 h-16 md:w-20 md:h-20">
+                  <svg className="w-16 h-16 md:w-20 md:h-20 transform -rotate-90">
+                    <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="3" fill="none" className="text-muted/20 md:hidden" />
+                    <circle cx="40" cy="40" r="32" stroke="currentColor" strokeWidth="4" fill="none" className="text-muted/20 hidden md:block" />
+                    <circle
+                      cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="3" fill="none"
+                      strokeDasharray={`${2 * Math.PI * 26}`}
+                      strokeDashoffset={`${2 * Math.PI * 26 * (1 - academyProgress / 100)}`}
+                      className="text-teal transition-all duration-1000 md:hidden"
+                      strokeLinecap="round"
+                    />
                     <circle
                       cx="40" cy="40" r="32" stroke="currentColor" strokeWidth="4" fill="none"
                       strokeDasharray={`${2 * Math.PI * 32}`}
                       strokeDashoffset={`${2 * Math.PI * 32 * (1 - academyProgress / 100)}`}
-                      className="text-teal transition-all duration-1000"
+                      className="text-teal transition-all duration-1000 hidden md:block"
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-lg font-bold text-teal">{academyProgress}%</span>
+                    <span className="text-base md:text-lg font-bold text-teal">{academyProgress}%</span>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2">Progreso</p>
+                <p className="text-xs text-muted-foreground mt-1 md:mt-2">Progreso</p>
               </div>
             </div>
           </div>

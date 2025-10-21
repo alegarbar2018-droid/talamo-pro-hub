@@ -70,12 +70,12 @@ export const PageHero: React.FC<PageHeroProps> = ({
       )} />
 
       <div className={cn(containerClass, 'relative z-10')}>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <div className="flex-1 space-y-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 lg:gap-8">
+          <div className="flex-1 space-y-3 md:space-y-4">
             {/* Badge */}
             {badge && (
               <div className={cn(
-                'inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md',
+                'inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full backdrop-blur-md',
                 theme.badge.bg,
                 theme.badge.border,
                 theme.badge.shadow,
@@ -84,8 +84,8 @@ export const PageHero: React.FC<PageHeroProps> = ({
                 {badge.pulse && (
                   <div className={cn('w-2 h-2 rounded-full animate-pulse', theme.badge.bg)} />
                 )}
-                <badge.icon className={cn('h-4 w-4', theme.badge.text)} />
-                <span className={cn('text-sm font-medium', theme.badge.text)}>
+                <badge.icon className={cn('h-3.5 w-3.5 md:h-4 md:w-4', theme.badge.text)} />
+                <span className={cn('text-xs md:text-sm font-medium', theme.badge.text)}>
                   {badge.text}
                 </span>
               </div>
@@ -103,7 +103,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
               {subtitle && (
                 <p className={cn(
                   DESIGN_TOKENS.typography.hero.subtitle,
-                  'text-muted-foreground mt-2 animate-fade-in'
+                  'text-muted-foreground mt-1 md:mt-2 animate-fade-in'
                 )} style={{ animationDelay: '0.1s' }}>
                   {subtitle}
                   {subtitleHighlight && (
@@ -143,7 +143,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
 
           {/* Stats Cards */}
           {stats && stats.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
               {stats.map((stat, index) => (
                 <Card
                   key={index}
@@ -154,21 +154,21 @@ export const PageHero: React.FC<PageHeroProps> = ({
                     'hover:shadow-xl'
                   )}
                 >
-                  <CardContent className="p-6 text-center">
+                  <CardContent className="p-4 md:p-6 text-center">
                     <div className={cn(
-                      'p-2.5 rounded-xl w-fit mx-auto mb-3 shadow-sm',
+                      'p-2 md:p-2.5 rounded-xl w-fit mx-auto mb-2 md:mb-3 shadow-sm',
                       theme.badge.bg,
                       theme.badge.shadow
                     )}>
-                      <stat.icon className={cn('h-6 w-6', theme.badge.text)} strokeWidth={2.5} />
+                      <stat.icon className={cn('h-5 w-5 md:h-6 md:w-6', theme.badge.text)} strokeWidth={2.5} />
                     </div>
                     <p className={cn(
-                      'text-3xl font-bold mb-1 bg-gradient-to-r bg-clip-text text-transparent',
+                      'text-2xl md:text-3xl font-bold mb-1 bg-gradient-to-r bg-clip-text text-transparent',
                       `from-${theme.primary} to-${theme.secondary}`
                     )}>
                       {stat.value}
                     </p>
-                    <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+                    <p className="text-[10px] md:text-xs font-medium text-muted-foreground tracking-wide uppercase">
                       {stat.label}
                     </p>
                   </CardContent>

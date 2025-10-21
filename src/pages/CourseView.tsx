@@ -65,21 +65,23 @@ const CourseView = () => {
     <div className="min-h-screen bg-background">
       <div className="border-b border-line bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 md:py-4">
             <Button 
               variant="ghost" 
               onClick={() => navigate("/academy")}
-              className="text-teal hover:bg-teal/10"
+              className="text-teal hover:bg-teal/10 shrink-0"
+              size="sm"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Courses
+              <span className="hidden sm:inline">Back to Courses</span>
+              <span className="sm:hidden">Regresar</span>
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{course.title}</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge>Level {course.level}</Badge>
-                {course.tags?.map((tag: string) => (
-                  <Badge key={tag} variant="outline">{tag}</Badge>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground truncate">{course.title}</h1>
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <Badge className="text-xs">Level {course.level}</Badge>
+                {course.tags?.slice(0, 2).map((tag: string) => (
+                  <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
                 ))}
               </div>
             </div>
@@ -87,8 +89,8 @@ const CourseView = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
+        <div className="space-y-4 md:space-y-6">
           {/* Course Progress */}
           {completionStats && completionStats.total > 0 && (
             <Card className="border-teal/20">

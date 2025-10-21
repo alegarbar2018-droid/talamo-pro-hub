@@ -14,9 +14,9 @@ export const DESIGN_TOKENS = {
       full: 'py-8 sm:py-12 lg:py-16'
     },
     hero: {
-      mobile: 'py-12',
-      desktop: 'lg:py-16',
-      full: 'py-12 lg:py-16'
+      mobile: 'py-6',
+      desktop: 'lg:py-12',
+      full: 'py-6 md:py-8 lg:py-12'
     },
     card: {
       base: 'p-4 sm:p-6',
@@ -43,8 +43,8 @@ export const DESIGN_TOKENS = {
   // Tipografía con line-heights
   typography: {
     hero: {
-      h1: 'text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight',
-      subtitle: 'text-base sm:text-lg font-light',
+      h1: 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight',
+      subtitle: 'text-sm sm:text-base md:text-lg font-light',
       lineHeight: 'leading-tight'
     },
     section: {
