@@ -37,6 +37,9 @@
       "ban_title": "Banear Usuario",
       "ban_description": "Seleccionar duración del baneo",
       "unban": "Desbanear Usuario",
+      "reset_password": "Restablecer Contraseña",
+      "reset_password_title": "Enviar Restablecimiento",
+      "reset_password_description": "Enviar email de restablecimiento de contraseña a este usuario",
       "delete": "Eliminar Usuario",
       "delete_title": "¿Estás completamente seguro?",
       "delete_description": "Esto eliminará al usuario de forma suave. No podrá acceder a la plataforma. Esta acción puede ser revertida por un super admin.",
@@ -77,7 +80,9 @@
     "role_update_error": "No se pudo actualizar el rol del usuario",
     "user_banned": "Usuario baneado exitosamente",
     "user_unbanned": "Usuario desbaneado exitosamente",
-    "user_deleted": "Usuario eliminado exitosamente"
+    "user_deleted": "Usuario eliminado exitosamente",
+    "password_reset_sent": "Email de restablecimiento enviado",
+    "password_reset_error": "Error al enviar email de restablecimiento"
   },
   "signals": {
     "title": "Gestión de Señales",
