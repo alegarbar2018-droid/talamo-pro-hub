@@ -108,54 +108,6 @@ export function SteppedContentRenderer({
 
   return (
     <div className="space-y-6">
-      {/* Progress Bar */}
-      <div className="sticky top-0 z-30 bg-surface/95 backdrop-blur-lg border-b border-line/20 p-4 -mx-4 sm:-mx-6 lg:-mx-8">
-        <div className="max-w-5xl mx-auto space-y-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground font-medium">
-              Paso {currentStep + 1} de {steps.length}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={resetLesson}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reiniciar
-            </Button>
-          </div>
-          <Progress value={progress} className="h-2" />
-          
-          {/* Step indicators */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {steps.map((step, index) => (
-              <button
-                key={step.id}
-                data-step-index={index}
-                onClick={() => {
-                  setCurrentStep(index);
-                  setVisitedSteps(prev => new Set([...prev, index]));
-                }}
-                className={cn(
-                  "flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
-                  index === currentStep
-                    ? "bg-teal text-teal-ink"
-                    : visitedSteps.has(index)
-                    ? "bg-teal/20 text-teal hover:bg-teal/30"
-                    : "bg-surface-elevated text-muted-foreground hover:bg-surface-elevated/80"
-                )}
-              >
-                {visitedSteps.has(index) && index !== currentStep && (
-                  <CheckCircle className="h-3 w-3 inline mr-1" />
-                )}
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Step Content */}
       <div className="animate-fade-in">
         {currentStepContent.title && (
