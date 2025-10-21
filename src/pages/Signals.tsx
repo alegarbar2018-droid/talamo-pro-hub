@@ -33,92 +33,91 @@ import { toast } from "@/hooks/use-toast";
 // Memoized signal card for performance
 const SignalCard = memo(
   ({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
-    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all w-full">
-      <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6">
-        <div className="flex flex-col gap-2 sm:gap-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all">
+      <CardHeader>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               {getTypeIcon(signal.type)}
-              <div className="min-w-0 flex-1">
-                <CardTitle className="text-foreground text-sm sm:text-lg leading-tight">
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-foreground">
                   {signal.instrument} - {signal.type}
                 </CardTitle>
-                <CardDescription className="text-muted-foreground text-[11px] sm:text-sm">
+                <CardDescription className="text-muted-foreground">
                   {signal.timeframe} • {signal.author}
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="border-teal text-teal text-[10px] sm:text-xs shrink-0 whitespace-nowrap px-1.5 sm:px-2.5">
+            <Badge variant="outline" className="border-teal text-teal shrink-0">
               RR 1:{parseInt(signal.rr)}
             </Badge>
           </div>
-          <Badge className={`${getStatusColor(signal.status)} w-fit text-[10px] sm:text-xs px-2 py-0.5`}>
+          <Badge className={`${getStatusColor(signal.status)} w-fit`}>
             {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, "_")}`) || signal.status}
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0 px-3 sm:px-6">
-        <div className="space-y-3 sm:space-y-4">
-          {/* Price levels - Always visible */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full">
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-line/50">
-              <span className="text-muted-foreground block text-[10px] sm:text-xs mb-0.5 sm:mb-1">
+      <CardContent>
+        <div className="space-y-4">
+          {/* Price levels */}
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-surface/50 p-2 rounded-lg border border-line/50">
+              <span className="text-muted-foreground block text-xs mb-1">
                 {t("signals:signal.entry")}
               </span>
-              <div className="font-mono font-semibold text-foreground text-[11px] sm:text-sm">
+              <div className="font-mono font-semibold text-foreground text-sm">
                 {signal.entry.toFixed(5)}
               </div>
             </div>
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-destructive/20">
-              <span className="text-muted-foreground block text-[10px] sm:text-xs mb-0.5 sm:mb-1">
+            <div className="bg-surface/50 p-2 rounded-lg border border-destructive/20">
+              <span className="text-muted-foreground block text-xs mb-1">
                 {t("signals:signal.stop_loss")}
               </span>
-              <div className="font-mono font-semibold text-destructive text-[11px] sm:text-sm">{signal.sl.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-destructive text-sm">{signal.sl.toFixed(5)}</div>
             </div>
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-success/20">
-              <span className="text-muted-foreground block text-[10px] sm:text-xs mb-0.5 sm:mb-1">
+            <div className="bg-surface/50 p-2 rounded-lg border border-success/20">
+              <span className="text-muted-foreground block text-xs mb-1">
                 {t("signals:signal.take_profit")}
               </span>
-              <div className="font-mono font-semibold text-success text-[11px] sm:text-sm">{signal.tp.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-success text-sm">{signal.tp.toFixed(5)}</div>
             </div>
           </div>
 
           {/* Metadata */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 text-[11px] sm:text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="truncate">{signal.publishedAt}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-4 w-4" />
+              <span>{signal.publishedAt}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+            <div className="flex items-center gap-1.5">
+              <Target className="h-4 w-4" />
               {t("signals:signal.confidence")}: {signal.confidence}%
             </div>
           </div>
 
           {/* Analysis sections */}
           <div>
-            <h4 className="font-semibold text-foreground mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-teal" />
+            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+              <BarChart3 className="h-4 w-4 text-teal" />
               {t("signals:signal.analysis_logic")}
             </h4>
-            <p className="text-[11px] sm:text-sm text-muted-foreground leading-relaxed break-words">{signal.logic}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{signal.logic}</p>
           </div>
 
           <div>
-            <h4 className="font-semibold text-foreground mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-              <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-warning" />
+            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+              <AlertTriangle className="h-4 w-4 text-warning" />
               {t("signals:signal.invalidation")}
             </h4>
-            <p className="text-[11px] sm:text-sm text-muted-foreground break-words">{signal.invalidation}</p>
+            <p className="text-sm text-muted-foreground">{signal.invalidation}</p>
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-col gap-2 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-line">
+        <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-line">
           <Button
-            className="bg-teal hover:bg-teal/90 text-white w-full text-xs sm:text-sm h-9 sm:h-10"
-            size="sm"
+            className="bg-teal hover:bg-teal/90 text-white w-full"
             onClick={() => {
               const { sl_pips, tp_pips } = calculatePipsFromPrice(
                 signal.entry,
@@ -136,14 +135,13 @@ const SignalCard = memo(
               );
             }}
           >
-            <Calculator className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-            Calcular
+            <Calculator className="h-4 w-4 mr-2" />
+            Calcular en Tools
           </Button>
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
-              size="sm"
-              className="border-line w-full text-xs sm:text-sm h-9 sm:h-10"
+              className="border-line w-full"
               onClick={() => {
                 const jsonPayload = {
                   instrument: signal.instrument,
@@ -162,14 +160,12 @@ const SignalCard = memo(
                 trackInteraction("signal_card", "copy_json", { signal_id: signal.id, instrument: signal.instrument });
               }}
             >
-              <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Copiar JSON</span>
-              <span className="sm:hidden">JSON</span>
+              <Copy className="h-4 w-4 mr-2" />
+              Copiar JSON
             </Button>
             <Button
               variant="outline"
-              size="sm"
-              className="border-teal text-teal hover:bg-teal/10 w-full text-xs sm:text-sm h-9 sm:h-10"
+              className="border-teal text-teal hover:bg-teal/10 w-full"
               onClick={() =>
                 trackInteraction("signal_card", "view_full_analysis", {
                   signal_id: signal.id,
@@ -179,9 +175,8 @@ const SignalCard = memo(
               }
               aria-label={`Ver análisis completo de ${signal.instrument}`}
             >
-              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">{t("signals:signal.view_full_analysis")}</span>
-              <span className="sm:hidden">Análisis</span>
+              <Eye className="h-4 w-4 mr-2" />
+              {t("signals:signal.view_full_analysis")}
             </Button>
           </div>
         </div>
@@ -327,23 +322,23 @@ const Signals = () => {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
-        <Card className="border-line bg-surface mb-4 sm:mb-6">
-          <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6">
-            <CardTitle className="text-foreground flex items-center gap-2 text-sm sm:text-lg">
-              <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-teal" />
+        <Card className="border-line bg-surface mb-6">
+          <CardHeader>
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <Filter className="h-5 w-5 text-teal" />
               {t("signals:filters.title")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="px-3 sm:px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-2 block">
+                <label className="text-sm font-medium text-foreground mb-2 block">
                   {t("signals:filters.market")}
                 </label>
                 <Select value={filters.market} onValueChange={(value) => setFilters({ ...filters, market: value })}>
-                  <SelectTrigger className="bg-input border-line h-9 text-xs sm:text-sm">
+                  <SelectTrigger className="bg-input border-line">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -357,14 +352,14 @@ const Signals = () => {
               </div>
 
               <div>
-                <label className="text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-2 block">
+                <label className="text-sm font-medium text-foreground mb-2 block">
                   {t("signals:filters.timeframe")}
                 </label>
                 <Select
                   value={filters.timeframe}
                   onValueChange={(value) => setFilters({ ...filters, timeframe: value })}
                 >
-                  <SelectTrigger className="bg-input border-line h-9 text-xs sm:text-sm">
+                  <SelectTrigger className="bg-input border-line">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -378,11 +373,11 @@ const Signals = () => {
               </div>
 
               <div>
-                <label className="text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-2 block">
+                <label className="text-sm font-medium text-foreground mb-2 block">
                   {t("signals:filters.min_rr")}
                 </label>
                 <Select value={filters.minRR} onValueChange={(value) => setFilters({ ...filters, minRR: value })}>
-                  <SelectTrigger className="bg-input border-line h-9 text-xs sm:text-sm">
+                  <SelectTrigger className="bg-input border-line">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -398,7 +393,7 @@ const Signals = () => {
         </Card>
 
         {/* Signals Grid */}
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-6">
           {filteredSignals.map((signal) => (
             <SignalCard
               key={signal.id}
