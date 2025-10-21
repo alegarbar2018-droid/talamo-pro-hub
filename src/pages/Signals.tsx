@@ -34,53 +34,53 @@ import { toast } from "@/hooks/use-toast";
 const SignalCard = memo(
   ({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
     <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all w-full">
-      <CardHeader className="pb-3 px-2 sm:px-6">
+      <CardHeader className="pb-3 px-3 sm:px-6">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
               {getTypeIcon(signal.type)}
               <div className="min-w-0 flex-1">
-                <CardTitle className="text-foreground text-sm sm:text-lg truncate">
+                <CardTitle className="text-foreground text-base sm:text-lg">
                   {signal.instrument} - {signal.type}
                 </CardTitle>
-                <CardDescription className="text-muted-foreground text-[10px] sm:text-sm truncate">
+                <CardDescription className="text-muted-foreground text-xs sm:text-sm">
                   {signal.timeframe} • {signal.author}
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="border-teal text-teal text-[10px] sm:text-xs shrink-0 whitespace-nowrap">
+            <Badge variant="outline" className="border-teal text-teal text-xs shrink-0 whitespace-nowrap">
               RR 1:{parseInt(signal.rr)}
             </Badge>
           </div>
-          <Badge className={`${getStatusColor(signal.status)} w-fit text-[10px] sm:text-xs`}>
+          <Badge className={`${getStatusColor(signal.status)} w-fit text-xs`}>
             {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, "_")}`) || signal.status}
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0 px-2 sm:px-6">
+      <CardContent className="pt-0 px-3 sm:px-6">
         <div className="space-y-4">
           {/* Price levels - Always visible */}
-          <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full">
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-line/50">
-              <span className="text-muted-foreground block text-[9px] sm:text-xs mb-0.5 sm:mb-1">
+          <div className="grid grid-cols-3 gap-2 w-full">
+            <div className="bg-surface/50 p-2 rounded-lg border border-line/50">
+              <span className="text-muted-foreground block text-xs mb-1">
                 {t("signals:signal.entry")}
               </span>
-              <div className="font-mono font-semibold text-foreground text-[10px] sm:text-sm">
+              <div className="font-mono font-semibold text-foreground text-sm">
                 {signal.entry.toFixed(5)}
               </div>
             </div>
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-destructive/20">
-              <span className="text-muted-foreground block text-[9px] sm:text-xs mb-0.5 sm:mb-1">
+            <div className="bg-surface/50 p-2 rounded-lg border border-destructive/20">
+              <span className="text-muted-foreground block text-xs mb-1">
                 {t("signals:signal.stop_loss")}
               </span>
-              <div className="font-mono font-semibold text-destructive text-[10px] sm:text-sm">{signal.sl.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-destructive text-sm">{signal.sl.toFixed(5)}</div>
             </div>
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-success/20">
-              <span className="text-muted-foreground block text-[9px] sm:text-xs mb-0.5 sm:mb-1">
+            <div className="bg-surface/50 p-2 rounded-lg border border-success/20">
+              <span className="text-muted-foreground block text-xs mb-1">
                 {t("signals:signal.take_profit")}
               </span>
-              <div className="font-mono font-semibold text-success text-[10px] sm:text-sm">{signal.tp.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-success text-sm">{signal.tp.toFixed(5)}</div>
             </div>
           </div>
 
@@ -299,8 +299,9 @@ const Signals = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden w-full">
-      <SEOHead
+    <div className="min-h-screen bg-background">
+      <div className="overflow-x-hidden w-full">
+        <SEOHead
         title={seoConfig.title}
         description={seoConfig.description}
         keywords={seoConfig.keywords}
@@ -326,17 +327,17 @@ const Signals = () => {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-2 sm:px-4 lg:px-8 py-8 w-full">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
-        <Card className="border-line bg-surface mb-6 w-full">
-          <CardHeader className="pb-3 px-2 sm:px-6">
-            <CardTitle className="text-foreground flex items-center gap-2 text-sm sm:text-lg">
+        <Card className="border-line bg-surface mb-6">
+          <CardHeader className="pb-3 px-3 sm:px-6">
+            <CardTitle className="text-foreground flex items-center gap-2 text-base sm:text-lg">
               <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-teal" />
               {t("signals:filters.title")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="px-2 sm:px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 w-full">
+          <CardContent className="px-3 sm:px-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               <div>
                 <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">
                   {t("signals:filters.market")}
@@ -468,6 +469,7 @@ const Signals = () => {
 
         {/* Risk Warning */}
         <TradingDisclaimer variant="full" context="signals" showCollapsible={true} className="mt-8" />
+      </div>
       </div>
     </div>
   );
