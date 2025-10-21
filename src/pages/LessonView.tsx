@@ -354,8 +354,8 @@ const LessonView = () => {
 
   const getResourceUrl = (resource: any) => {
     if (resource.storage_key) {
-      const cleanKey = resource.storage_key.replace(/^public\//, '');
-      return supabase.storage.from('lms-assets').getPublicUrl(cleanKey).data.publicUrl;
+      // Use the storage_key as is, without removing any prefix
+      return supabase.storage.from('lms-assets').getPublicUrl(resource.storage_key).data.publicUrl;
     }
     return resource.external_url;
   };
