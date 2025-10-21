@@ -90,7 +90,7 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:px-0">
+      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:bg-gradient-to-b group-data-[collapsible=icon]:from-surface/50 group-data-[collapsible=icon]:to-background/50">
         {/* Main Navigation */}
         <SidebarGroup className="group-data-[collapsible=icon]:p-0">
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
@@ -109,20 +109,25 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-4 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
+                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-5 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none group-data-[collapsible=icon]:hover:bg-teal/10 group-data-[collapsible=icon]:relative group-data-[collapsible=icon]:after:absolute group-data-[collapsible=icon]:after:inset-0 group-data-[collapsible=icon]:after:bg-gradient-to-r group-data-[collapsible=icon]:after:from-transparent group-data-[collapsible=icon]:after:via-teal/5 group-data-[collapsible=icon]:after:to-transparent group-data-[collapsible=icon]:after:opacity-0 group-data-[collapsible=icon]:hover:after:opacity-100 group-data-[collapsible=icon]:after:transition-opacity`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className={`flex-shrink-0 h-6 w-6 transition-all duration-300 ${
-                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                          }`} />
+                          <item.icon 
+                            strokeWidth={isActive ? 2.5 : 2}
+                            className={`flex-shrink-0 h-6 w-6 transition-all duration-300 z-10 ${
+                              isActive 
+                                ? "text-teal drop-shadow-[0_0_8px_rgba(20,184,166,0.5)]" 
+                                : "text-muted-foreground group-hover:text-teal group-hover:scale-110"
+                            }`} 
+                          />
                           <span className="text-sm font-medium tracking-wide truncate group-data-[collapsible=icon]:hidden">
                             {t(item.labelKey)}
                           </span>
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full group-data-[collapsible=icon]:hidden" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full shadow-lg shadow-teal/50 group-data-[collapsible=icon]:hidden" />
                           )}
                         </>
                       )}
@@ -151,14 +156,19 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-4 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
+                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-5 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none group-data-[collapsible=icon]:hover:bg-teal/10 group-data-[collapsible=icon]:relative group-data-[collapsible=icon]:after:absolute group-data-[collapsible=icon]:after:inset-0 group-data-[collapsible=icon]:after:bg-gradient-to-r group-data-[collapsible=icon]:after:from-transparent group-data-[collapsible=icon]:after:via-teal/5 group-data-[collapsible=icon]:after:to-transparent group-data-[collapsible=icon]:after:opacity-0 group-data-[collapsible=icon]:hover:after:opacity-100 group-data-[collapsible=icon]:after:transition-opacity`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className={`flex-shrink-0 h-6 w-6 transition-all duration-300 ${
-                            isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
-                          }`} />
+                          <item.icon 
+                            strokeWidth={isActive ? 2.5 : 2}
+                            className={`flex-shrink-0 h-6 w-6 transition-all duration-300 z-10 ${
+                              isActive 
+                                ? "text-teal drop-shadow-[0_0_8px_rgba(20,184,166,0.5)]" 
+                                : "text-muted-foreground group-hover:text-teal group-hover:scale-110"
+                            }`} 
+                          />
                           <div className="flex items-center gap-2 flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                             <span className="text-sm font-medium tracking-wide truncate">
                               {t(item.labelKey)}
@@ -166,14 +176,14 @@ export function DashboardSidebar() {
                             {item.badge && (
                               <Badge
                                 variant="secondary"
-                                className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
+                                className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0 shadow-sm"
                               >
                                 {item.badge}
                               </Badge>
                             )}
                           </div>
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full group-data-[collapsible=icon]:hidden" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full shadow-lg shadow-teal/50 group-data-[collapsible=icon]:hidden" />
                           )}
                         </>
                       )}
