@@ -90,115 +90,135 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:p-0">
+      <SidebarContent className="py-2 group-data-[collapsible=icon]:py-2">
         {/* Main Navigation */}
-        <SidebarGroup className="group-data-[collapsible=icon]:p-0">
-          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
-            {t("dashboard:modules.title", "Módulos")}
-          </SidebarGroupLabel>
+        <SidebarGroup>
+          {open && (
+            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-4">
+              {t("dashboard:modules.title", "Módulos")}
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 group-data-[collapsible=icon]:space-y-0">
-              {navigationItems.map((item, index) => {
-                const isActiveRoute = window.location.pathname === item.path || 
-                  (item.path === "/dashboard" && window.location.pathname === "/dashboard");
-                
-                return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.path}
-                        end={item.path === "/dashboard"}
-                        className="group"
-                      >
-                        {({ isActive }) => (
-                          <div className={`
-                            flex items-center w-full transition-colors duration-200
-                            ${open ? 'gap-3 px-3 py-2.5 rounded-xl' : 'h-12 justify-center'}
-                            ${isActive && open
-                              ? 'bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold' 
-                              : open 
-                                ? 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
-                                : ''
-                            }
-                            ${isActive && !open
-                              ? 'bg-teal/10 border-l-2 border-teal'
-                              : !open
-                                ? 'hover:bg-teal/5 border-l-2 border-transparent hover:border-teal/30'
-                                : ''
-                            }
-                          `}>
-                            <item.icon 
-                              className={`flex-shrink-0 transition-colors duration-200 ${
-                                open ? 'h-5 w-5' : 'h-5 w-5'
-                              } ${
-                                isActive 
-                                  ? 'text-teal' 
-                                  : 'text-muted-foreground group-hover:text-teal'
-                              }`} 
-                            />
-                            {open && (
-                              <>
-                                <span className="text-sm font-medium tracking-wide truncate">
-                                  {t(item.labelKey)}
-                                </span>
-                                {isActive && (
-                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
-                                )}
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+            <SidebarMenu className="space-y-1">
+              {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.path}
+                      end={item.path === "/dashboard"}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {/* MODO COLAPSADO */}
+                          {!open && (
+                            <div className={`
+                              w-12 h-14 mx-auto flex items-center justify-center rounded-lg
+                              transition-colors duration-200
+                              ${isActive 
+                                ? 'bg-teal/15' 
+                                : 'hover:bg-teal/10'
+                              }
+                            `}>
+                              <item.icon 
+                                className={`h-5 w-5 ${
+                                  isActive 
+                                    ? 'text-teal' 
+                                    : 'text-muted-foreground'
+                                }`} 
+                              />
+                            </div>
+                          )}
+
+                          {/* MODO EXPANDIDO */}
+                          {open && (
+                            <div className={`
+                              relative flex items-center gap-3 px-3 py-2.5 rounded-xl w-full
+                              transition-all duration-200
+                              ${isActive
+                                ? 'bg-gradient-to-r from-teal/15 to-cyan/10 text-teal font-semibold border-l-3' 
+                                : 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
+                              }
+                            `}>
+                              {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                              )}
+                              <item.icon 
+                                className={`h-5 w-5 flex-shrink-0 ${
+                                  isActive 
+                                    ? 'text-teal' 
+                                    : 'text-muted-foreground'
+                                }`} 
+                              />
+                              <span className="text-sm font-medium tracking-wide truncate">
+                                {t(item.labelKey)}
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Community Section */}
-        <SidebarGroup className="mt-6 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:mt-0">
-          <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
-            {t("nav:community")}
-          </SidebarGroupLabel>
+        <SidebarGroup className="mt-6">
+          {open && (
+            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-4">
+              {t("nav:community")}
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1 group-data-[collapsible=icon]:space-y-0">
+            <SidebarMenu className="space-y-1">
               {communityItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.path}
-                      className="group"
-                    >
+                    <NavLink to={item.path}>
                       {({ isActive }) => (
-                        <div className={`
-                          flex items-center w-full transition-colors duration-200
-                          ${open ? 'gap-3 px-3 py-2.5 rounded-xl' : 'h-12 justify-center'}
-                          ${isActive && open
-                            ? 'bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold' 
-                            : open 
-                              ? 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
-                              : ''
-                          }
-                          ${isActive && !open
-                            ? 'bg-teal/10 border-l-2 border-teal'
-                            : !open
-                              ? 'hover:bg-teal/5 border-l-2 border-transparent hover:border-teal/30'
-                              : ''
-                          }
-                        `}>
-                          <item.icon 
-                            className={`flex-shrink-0 transition-colors duration-200 ${
-                              open ? 'h-5 w-5' : 'h-5 w-5'
-                            } ${
-                              isActive 
-                                ? 'text-teal' 
-                                : 'text-muted-foreground group-hover:text-teal'
-                            }`} 
-                          />
+                        <>
+                          {/* MODO COLAPSADO */}
+                          {!open && (
+                            <div className={`
+                              w-12 h-14 mx-auto flex items-center justify-center rounded-lg
+                              transition-colors duration-200
+                              ${isActive 
+                                ? 'bg-teal/15' 
+                                : 'hover:bg-teal/10'
+                              }
+                            `}>
+                              <item.icon 
+                                className={`h-5 w-5 ${
+                                  isActive 
+                                    ? 'text-teal' 
+                                    : 'text-muted-foreground'
+                                }`} 
+                              />
+                            </div>
+                          )}
+
+                          {/* MODO EXPANDIDO */}
                           {open && (
-                            <>
+                            <div className={`
+                              relative flex items-center gap-3 px-3 py-2.5 rounded-xl w-full
+                              transition-all duration-200
+                              ${isActive
+                                ? 'bg-gradient-to-r from-teal/15 to-cyan/10 text-teal font-semibold' 
+                                : 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
+                              }
+                            `}>
+                              {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                              )}
+                              <item.icon 
+                                className={`h-5 w-5 flex-shrink-0 ${
+                                  isActive 
+                                    ? 'text-teal' 
+                                    : 'text-muted-foreground'
+                                }`} 
+                              />
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <span className="text-sm font-medium tracking-wide truncate">
                                   {t(item.labelKey)}
@@ -212,12 +232,9 @@ export function DashboardSidebar() {
                                   </Badge>
                                 )}
                               </div>
-                              {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
-                              )}
-                            </>
+                            </div>
                           )}
-                        </div>
+                        </>
                       )}
                     </NavLink>
                   </SidebarMenuButton>
