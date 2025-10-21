@@ -107,7 +107,7 @@ const Dashboard = () => {
                 )}
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                {getGreeting()}, {user?.email?.split("@")[0]}
+                {getGreeting()}, {user?.profile?.first_name || user?.profile?.last_name || "Usuario"}
               </h1>
               <p className="text-muted-foreground">
                 {t("dashboard:progress_summary")}
