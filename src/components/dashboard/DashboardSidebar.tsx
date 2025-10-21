@@ -90,18 +90,18 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
+      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:px-0">
         {/* Main Navigation */}
-        <SidebarGroup>
+        <SidebarGroup className="group-data-[collapsible=icon]:p-0">
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
             {t("dashboard:modules.title", "Módulos")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="space-y-1 group-data-[collapsible=icon]:space-y-0">
               {navigationItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
-                    <NavLink
+                     <NavLink
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
@@ -109,7 +109,7 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center`
+                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-3 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
@@ -135,12 +135,12 @@ export function DashboardSidebar() {
         </SidebarGroup>
 
         {/* Community Section */}
-        <SidebarGroup className="mt-6">
+        <SidebarGroup className="mt-6 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:mt-2">
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
             {t("nav:community")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="space-y-1 group-data-[collapsible=icon]:space-y-0">
               {communityItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
@@ -151,7 +151,7 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center`
+                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-3 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
                       }
                     >
                       {({ isActive }) => (

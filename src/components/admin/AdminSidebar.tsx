@@ -100,7 +100,7 @@ export const AdminSidebar: React.FC = () => {
     <Sidebar collapsible="icon">
       <SidebarTrigger className="m-2 self-end" />
       
-      <SidebarContent>
+      <SidebarContent className="group-data-[collapsible=icon]:px-0">
         <div className="p-4 group-data-[collapsible=icon]:hidden">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 bg-gradient-to-br from-teal to-teal/60 rounded-lg flex items-center justify-center">
@@ -111,7 +111,7 @@ export const AdminSidebar: React.FC = () => {
         </div>
 
         {menuItems.map((section) => (
-          <SidebarGroup key={section.section} className="px-2">
+          <SidebarGroup key={section.section} className="px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-0">
             {open && <SidebarGroupLabel>{section.section}</SidebarGroupLabel>}
             <SidebarGroupContent>
               <SidebarMenu>
@@ -129,7 +129,7 @@ export const AdminSidebar: React.FC = () => {
                       <NavLink 
                         to={item.url} 
                         className={({ isActive }) => 
-                          `flex items-center gap-2 px-3 py-2.5 ${getNavClassName({ isActive })} group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0`
+                          `flex items-center gap-2 px-3 py-2.5 ${getNavClassName({ isActive })} group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-3 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0`
                         }
                       >
                         <item.icon className="h-5 w-5 flex-shrink-0" />
