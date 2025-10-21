@@ -90,91 +90,91 @@ export const DESIGN_TOKENS = {
   }
 } as const;
 
-// Temas por módulo (colores y gradientes)
+// Temas por módulo (colores optimizados para coherencia visual)
 export const MODULE_THEMES = {
   academy: {
     name: 'Academia',
-    primary: 'purple-500',
-    secondary: 'violet-500',
+    primary: 'violet-500',
+    secondary: 'purple-600',
     gradient: {
-      hero: 'bg-gradient-to-br from-purple-950/40 via-background to-violet-950/30',
-      blob1: 'bg-purple-500/20',
-      blob2: 'bg-violet-500/20',
-      border: 'border-purple-500/10'
+      hero: 'bg-gradient-to-br from-violet-950/50 via-background to-purple-950/40',
+      blob1: 'bg-violet-500/25',
+      blob2: 'bg-purple-500/25',
+      border: 'border-violet-500/15'
     },
     badge: {
-      bg: 'bg-purple-500/10',
-      border: 'border-purple-500/20',
-      text: 'text-purple-400',
-      shadow: 'shadow-purple-500/10'
+      bg: 'bg-violet-500/15',
+      border: 'border-violet-500/25',
+      text: 'text-violet-400',
+      shadow: 'shadow-violet-500/15'
     }
   },
   signals: {
     name: 'Señales',
-    primary: 'orange-500',
-    secondary: 'amber-500',
+    primary: 'amber-500',
+    secondary: 'orange-500',
     gradient: {
-      hero: 'bg-gradient-to-br from-orange-950/40 via-background to-amber-950/30',
-      blob1: 'bg-orange-500/20',
-      blob2: 'bg-amber-500/20',
-      border: 'border-orange-500/10'
+      hero: 'bg-gradient-to-br from-amber-950/50 via-background to-orange-950/40',
+      blob1: 'bg-amber-500/25',
+      blob2: 'bg-orange-500/25',
+      border: 'border-amber-500/15'
     },
     badge: {
-      bg: 'bg-orange-500/10',
-      border: 'border-orange-500/20',
-      text: 'text-orange-400',
-      shadow: 'shadow-orange-500/10'
+      bg: 'bg-amber-500/15',
+      border: 'border-amber-500/25',
+      text: 'text-amber-400',
+      shadow: 'shadow-amber-500/15'
     }
   },
   copy: {
     name: 'Copy Trading',
     primary: 'emerald-500',
-    secondary: 'green-500',
+    secondary: 'teal-500',
     gradient: {
-      hero: 'bg-gradient-to-br from-emerald-950/40 via-background to-green-950/30',
-      blob1: 'bg-emerald-500/20',
-      blob2: 'bg-green-500/20',
-      border: 'border-emerald-500/10'
+      hero: 'bg-gradient-to-br from-emerald-950/50 via-background to-teal-950/40',
+      blob1: 'bg-emerald-500/25',
+      blob2: 'bg-teal-500/25',
+      border: 'border-emerald-500/15'
     },
     badge: {
-      bg: 'bg-emerald-500/10',
-      border: 'border-emerald-500/20',
+      bg: 'bg-emerald-500/15',
+      border: 'border-emerald-500/25',
       text: 'text-emerald-400',
-      shadow: 'shadow-emerald-500/10'
+      shadow: 'shadow-emerald-500/15'
     }
   },
   tools: {
     name: 'Herramientas',
-    primary: 'pink-500',
-    secondary: 'rose-500',
+    primary: 'sky-500',
+    secondary: 'blue-500',
     gradient: {
-      hero: 'bg-gradient-to-br from-pink-950/40 via-background to-rose-950/30',
-      blob1: 'bg-pink-500/20',
-      blob2: 'bg-rose-500/20',
-      border: 'border-pink-500/10'
+      hero: 'bg-gradient-to-br from-sky-950/50 via-background to-blue-950/40',
+      blob1: 'bg-sky-500/25',
+      blob2: 'bg-blue-500/25',
+      border: 'border-sky-500/15'
     },
     badge: {
-      bg: 'bg-pink-500/10',
-      border: 'border-pink-500/20',
-      text: 'text-pink-400',
-      shadow: 'shadow-pink-500/10'
+      bg: 'bg-sky-500/15',
+      border: 'border-sky-500/25',
+      text: 'text-sky-400',
+      shadow: 'shadow-sky-500/15'
     }
   },
   journal: {
     name: 'Diario',
-    primary: 'blue-500',
-    secondary: 'cyan-500',
+    primary: 'slate-500',
+    secondary: 'gray-500',
     gradient: {
-      hero: 'bg-gradient-to-br from-blue-950/40 via-background to-cyan-950/30',
-      blob1: 'bg-blue-500/20',
-      blob2: 'bg-cyan-500/20',
-      border: 'border-blue-500/10'
+      hero: 'bg-gradient-to-br from-slate-950/50 via-background to-gray-950/40',
+      blob1: 'bg-slate-500/25',
+      blob2: 'bg-gray-500/25',
+      border: 'border-slate-500/15'
     },
     badge: {
-      bg: 'bg-blue-500/10',
-      border: 'border-blue-500/20',
-      text: 'text-blue-400',
-      shadow: 'shadow-blue-500/10'
+      bg: 'bg-slate-500/15',
+      border: 'border-slate-500/25',
+      text: 'text-slate-300',
+      shadow: 'shadow-slate-500/15'
     }
   },
   audit: {
@@ -182,33 +182,33 @@ export const MODULE_THEMES = {
     primary: 'indigo-500',
     secondary: 'violet-500',
     gradient: {
-      hero: 'bg-gradient-to-br from-indigo-950/40 via-background to-violet-950/30',
-      blob1: 'bg-indigo-500/20',
-      blob2: 'bg-violet-500/20',
-      border: 'border-indigo-500/10'
+      hero: 'bg-gradient-to-br from-indigo-950/50 via-background to-violet-950/40',
+      blob1: 'bg-indigo-500/25',
+      blob2: 'bg-violet-500/25',
+      border: 'border-indigo-500/15'
     },
     badge: {
-      bg: 'bg-indigo-500/10',
-      border: 'border-indigo-500/20',
+      bg: 'bg-indigo-500/15',
+      border: 'border-indigo-500/25',
       text: 'text-indigo-400',
-      shadow: 'shadow-indigo-500/10'
+      shadow: 'shadow-indigo-500/15'
     }
   },
   community: {
     name: 'Comunidad',
-    primary: 'teal-500',
-    secondary: 'cyan-500',
+    primary: 'cyan-500',
+    secondary: 'teal-500',
     gradient: {
-      hero: 'bg-gradient-to-br from-teal-950/40 via-background to-cyan-950/30',
-      blob1: 'bg-teal-500/20',
-      blob2: 'bg-cyan-500/20',
-      border: 'border-teal-500/10'
+      hero: 'bg-gradient-to-br from-cyan-950/50 via-background to-teal-950/40',
+      blob1: 'bg-cyan-500/25',
+      blob2: 'bg-teal-500/25',
+      border: 'border-cyan-500/15'
     },
     badge: {
-      bg: 'bg-teal-500/10',
-      border: 'border-teal-500/20',
-      text: 'text-teal-400',
-      shadow: 'shadow-teal-500/10'
+      bg: 'bg-cyan-500/15',
+      border: 'border-cyan-500/25',
+      text: 'text-cyan-400',
+      shadow: 'shadow-cyan-500/15'
     }
   }
 } as const;
