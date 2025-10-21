@@ -159,7 +159,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "admin_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       affiliation_reports: {
         Row: {
@@ -219,7 +227,15 @@ export type Database = {
           user_id?: string
           verified_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "affiliations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       audit_accounts: {
         Row: {
@@ -270,7 +286,15 @@ export type Database = {
           user_id?: string
           verified_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "audit_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       audit_equity: {
         Row: {
@@ -739,7 +763,15 @@ export type Database = {
           updated_at?: string | null
           win_rate?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "copy_strategies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       copy_strategy_orders: {
         Row: {
@@ -829,6 +861,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "course_items"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1013,7 +1052,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "journal_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       journal_recommendations: {
         Row: {
@@ -1040,7 +1087,15 @@ export type Database = {
           recommendation_type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "journal_recommendations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       lms_answers: {
         Row: {
@@ -1531,7 +1586,15 @@ export type Database = {
           step_number?: number | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       onboarding_tutorials: {
         Row: {
@@ -1633,7 +1696,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -1717,7 +1788,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       referrals: {
         Row: {
@@ -1867,7 +1946,22 @@ export type Database = {
           title?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "signals_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "signals_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       strategies: {
         Row: {
@@ -2050,6 +2144,13 @@ export type Database = {
             referencedRelation: "lms_modules"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       user_roles: {
@@ -2071,7 +2172,15 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       user_validations: {
         Row: {
@@ -2107,11 +2216,34 @@ export type Database = {
           validated_at?: string | null
           validation_source?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_validations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
     }
     Views: {
-      [_ in never]: never
+      v_admin_users: {
+        Row: {
+          admin_role: Database["public"]["Enums"]["admin_role"] | null
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          is_affiliated: boolean | null
+          last_name: string | null
+          partner_id: string | null
+          phone: string | null
+          profile_id: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       calculate_signals_performance: {

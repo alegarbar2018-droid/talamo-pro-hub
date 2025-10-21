@@ -6,152 +6,107 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req) => {
-  console.log('🚀 admin-users-list START');
-  
   // Handle CORS
   if (req.method === 'OPTIONS') {
-    console.log('✅ OPTIONS/CORS');
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== 'POST') {
+    return new Response(
+      JSON.stringify({ ok: false, error: 'method_not_allowed' }),
+      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
-    console.log('📦 Init supabase client');
-    
+    const { q = '', role = 'all', affiliation = 'all', page = 1, perPage = 20, sort = 'created_at', dir = 'desc' } = await req.json().catch(() => ({}));
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
-    console.log('🔧 ENV check:', { 
-      hasUrl: !!supabaseUrl, 
-      hasKey: !!supabaseKey 
-    });
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    const supabase = createClient(supabaseUrl!, supabaseKey!);
-
-    // Get auth header
-    const authHeader = req.headers.get('Authorization');
-    console.log('🔑 Has auth:', !!authHeader);
-
-    if (!authHeader) {
+    if (!supabaseUrl || !supabaseServiceKey) {
       return new Response(
-        JSON.stringify({ ok: false, error: 'No auth header' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Parse body
-    const body = await req.json();
-    console.log('📥 Body:', body);
-
-    const { q = '', role = 'all', affiliation = 'all', page = 1, perPage = 50 } = body;
-
-    // Usar Admin API para listar usuarios
-    console.log('🔍 Listing auth users...');
-    
-    const { data: authData, error: authError } = await supabase.auth.admin.listUsers({
-      page,
-      perPage,
-    });
-
-    console.log('📊 Auth users result:', { 
-      hasData: !!authData, 
-      count: authData?.users?.length,
-      error: authError?.message 
-    });
-
-    if (authError) {
-      console.error('❌ Auth list error:', authError);
-      return new Response(
-        JSON.stringify({ ok: false, error: authError.message }),
+        JSON.stringify({ ok: false, error: 'missing_env_vars' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const users = authData.users || [];
-    console.log(`✅ Got ${users.length} users from auth`);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Enriquecer con datos de admin_users y affiliations
-    const userIds = users.map(u => u.id);
-    
-    const [adminRoles, affiliations] = await Promise.all([
-      supabase.from('admin_users').select('user_id, role').in('user_id', userIds),
-      supabase.from('affiliations').select('user_id, is_affiliated, partner_id').in('user_id', userIds)
-    ]);
+    // Base query a la vista
+    let query = supabase
+      .from('v_admin_users')
+      .select('*', { count: 'exact' });
 
-    console.log('📊 Enrichment:', { 
-      adminRoles: adminRoles.data?.length, 
-      affiliations: affiliations.data?.length 
-    });
+    // Búsqueda (email, nombre)
+    if (q && String(q).trim().length > 0) {
+      const term = String(q).trim();
+      query = query.or(`email.ilike.%${term}%,first_name.ilike.%${term}%,last_name.ilike.%${term}%`);
+    }
 
-    // Mapear roles y affiliations
-    const rolesMap = new Map(adminRoles.data?.map(r => [r.user_id, r.role]) || []);
-    const affiliationsMap = new Map(affiliations.data?.map(a => [a.user_id, a]) || []);
+    // Filtro por rol (ignorar 'all')
+    if (role && role !== 'all') {
+      query = query.eq('admin_role', role);
+    }
 
-    // Formatear respuesta
-    let items = users.map(user => {
-      const userRole = rolesMap.get(user.id) || 'USER';
-      const userAffiliation = affiliationsMap.get(user.id);
-      
-      return {
-        id: user.id,
-        email: user.email,
-        created_at: user.created_at,
-        last_sign_in_at: user.last_sign_in_at,
-        role: userRole,
-        affiliation: userAffiliation?.partner_id || null,
-        is_affiliated: userAffiliation?.is_affiliated || false,
-        banned_until: user.banned_until,
-        email_confirmed_at: user.email_confirmed_at,
-        phone: user.phone,
-        user_metadata: user.user_metadata,
-      };
-    });
+    // Filtro por afiliación (si luego agregas columnas reales en la vista)
+    if (affiliation && affiliation !== 'all') {
+      if (affiliation === 'affiliated') {
+        query = query.eq('is_affiliated', true);
+      }
+      if (affiliation === 'unaffiliated') {
+        query = query.or('is_affiliated.is.null,is_affiliated.eq.false');
+      }
+    }
 
-    // Aplicar filtros
-    if (q) {
-      const lowerQ = q.toLowerCase();
-      items = items.filter(u => 
-        u.email?.toLowerCase().includes(lowerQ) ||
-        u.user_metadata?.first_name?.toLowerCase().includes(lowerQ) ||
-        u.user_metadata?.last_name?.toLowerCase().includes(lowerQ)
+    // Orden
+    const orderCol = ['created_at', 'email', 'admin_role'].includes(String(sort)) ? String(sort) : 'created_at';
+    const ascending = String(dir).toLowerCase() === 'asc';
+    query = query.order(orderCol, { ascending, nullsFirst: false });
+
+    // Paginación (1-based)
+    const from = (Number(page) - 1) * Number(perPage);
+    const to = from + Number(perPage) - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error('admin-users-list error:', error);
+      return new Response(
+        JSON.stringify({ ok: false, error: 'query_failed', details: error.message }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (role !== 'all') {
-      items = items.filter(u => u.role === role);
-    }
-
-    if (affiliation !== 'all') {
-      items = items.filter(u => u.affiliation === affiliation);
-    }
-
-    console.log(`✅ Returning ${items.length} filtered items`);
+    // Mapear a la forma esperada por la UI
+    const items = (data ?? []).map((r: any) => ({
+      id: r.profile_id ?? r.user_id,
+      user_id: r.user_id,
+      email: r.email ?? null,
+      first_name: r.first_name ?? null,
+      last_name: r.last_name ?? null,
+      avatar_url: r.avatar_url ?? null,
+      phone: r.phone ?? null,
+      created_at: r.created_at,
+      admin_users: r.admin_role ? { role: r.admin_role } : null,
+      affiliations: r.is_affiliated == null ? null : { is_affiliated: r.is_affiliated, partner_id: r.partner_id }
+    }));
 
     return new Response(
-      JSON.stringify({
-        ok: true,
-        items,
-        page,
-        perPage,
-        total: items.length
-      }),
-      { 
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      JSON.stringify({ ok: true, items, page, perPage, total: count ?? 0 }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('💥 CATCH ERROR:', error);
+    console.error('admin-users-list catch error:', error);
     return new Response(
       JSON.stringify({ 
         ok: false, 
-        error: error?.message || 'Unknown error',
-        stack: error?.stack 
+        error: 'internal_error',
+        message: error?.message || 'Unknown error'
       }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
