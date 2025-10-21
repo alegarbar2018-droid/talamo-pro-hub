@@ -90,7 +90,7 @@ export function DashboardSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:bg-gradient-to-b group-data-[collapsible=icon]:from-surface/50 group-data-[collapsible=icon]:to-background/50">
+      <SidebarContent className="px-2 py-4 group-data-[collapsible=icon]:p-0">
         {/* Main Navigation */}
         <SidebarGroup className="group-data-[collapsible=icon]:p-0">
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
@@ -98,94 +98,126 @@ export function DashboardSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1 group-data-[collapsible=icon]:space-y-0">
-              {navigationItems.map((item, index) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.path}
-                      end={item.path === "/dashboard"}
-                      className={({ isActive }) =>
-                        `group relative flex items-center gap-3 rounded-xl transition-all duration-300 px-3 py-2.5 ${
-                          isActive
-                            ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
-                            : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-5 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none group-data-[collapsible=icon]:hover:bg-teal/10 group-data-[collapsible=icon]:relative group-data-[collapsible=icon]:after:absolute group-data-[collapsible=icon]:after:inset-0 group-data-[collapsible=icon]:after:bg-gradient-to-r group-data-[collapsible=icon]:after:from-transparent group-data-[collapsible=icon]:after:via-teal/5 group-data-[collapsible=icon]:after:to-transparent group-data-[collapsible=icon]:after:opacity-0 group-data-[collapsible=icon]:hover:after:opacity-100 group-data-[collapsible=icon]:after:transition-opacity`
-                      }
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      {({ isActive }) => (
-                        <>
-                          <item.icon 
-                            strokeWidth={isActive ? 2.5 : 2}
-                            className={`flex-shrink-0 h-6 w-6 transition-all duration-300 z-10 ${
-                              isActive 
-                                ? "text-teal drop-shadow-[0_0_8px_rgba(20,184,166,0.5)]" 
-                                : "text-muted-foreground group-hover:text-teal group-hover:scale-110"
-                            }`} 
-                          />
-                          <span className="text-sm font-medium tracking-wide truncate group-data-[collapsible=icon]:hidden">
-                            {t(item.labelKey)}
-                          </span>
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full shadow-lg shadow-teal/50 group-data-[collapsible=icon]:hidden" />
-                          )}
-                        </>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navigationItems.map((item, index) => {
+                const isActiveRoute = window.location.pathname === item.path || 
+                  (item.path === "/dashboard" && window.location.pathname === "/dashboard");
+                
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.path}
+                        end={item.path === "/dashboard"}
+                        className="group"
+                      >
+                        {({ isActive }) => (
+                          <div className={`
+                            flex items-center w-full transition-colors duration-200
+                            ${open ? 'gap-3 px-3 py-2.5 rounded-xl' : 'h-12 justify-center'}
+                            ${isActive && open
+                              ? 'bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold' 
+                              : open 
+                                ? 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
+                                : ''
+                            }
+                            ${isActive && !open
+                              ? 'bg-teal/10 border-l-2 border-teal'
+                              : !open
+                                ? 'hover:bg-teal/5 border-l-2 border-transparent hover:border-teal/30'
+                                : ''
+                            }
+                          `}>
+                            <item.icon 
+                              className={`flex-shrink-0 transition-colors duration-200 ${
+                                open ? 'h-5 w-5' : 'h-5 w-5'
+                              } ${
+                                isActive 
+                                  ? 'text-teal' 
+                                  : 'text-muted-foreground group-hover:text-teal'
+                              }`} 
+                            />
+                            {open && (
+                              <>
+                                <span className="text-sm font-medium tracking-wide truncate">
+                                  {t(item.labelKey)}
+                                </span>
+                                {isActive && (
+                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                                )}
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Community Section */}
-        <SidebarGroup className="mt-6 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:mt-2">
+        <SidebarGroup className="mt-6 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:mt-0">
           <SidebarGroupLabel className={!open ? "sr-only" : "text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2"}>
             {t("nav:community")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1 group-data-[collapsible=icon]:space-y-0">
-              {communityItems.map((item, index) => (
+              {communityItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.path}
-                      className={({ isActive }) =>
-                        `group relative flex items-center gap-3 rounded-xl transition-all duration-300 px-3 py-2.5 ${
-                          isActive
-                            ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
-                            : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-5 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none group-data-[collapsible=icon]:hover:bg-teal/10 group-data-[collapsible=icon]:relative group-data-[collapsible=icon]:after:absolute group-data-[collapsible=icon]:after:inset-0 group-data-[collapsible=icon]:after:bg-gradient-to-r group-data-[collapsible=icon]:after:from-transparent group-data-[collapsible=icon]:after:via-teal/5 group-data-[collapsible=icon]:after:to-transparent group-data-[collapsible=icon]:after:opacity-0 group-data-[collapsible=icon]:hover:after:opacity-100 group-data-[collapsible=icon]:after:transition-opacity`
-                      }
+                      className="group"
                     >
                       {({ isActive }) => (
-                        <>
+                        <div className={`
+                          flex items-center w-full transition-colors duration-200
+                          ${open ? 'gap-3 px-3 py-2.5 rounded-xl' : 'h-12 justify-center'}
+                          ${isActive && open
+                            ? 'bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold' 
+                            : open 
+                              ? 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
+                              : ''
+                          }
+                          ${isActive && !open
+                            ? 'bg-teal/10 border-l-2 border-teal'
+                            : !open
+                              ? 'hover:bg-teal/5 border-l-2 border-transparent hover:border-teal/30'
+                              : ''
+                          }
+                        `}>
                           <item.icon 
-                            strokeWidth={isActive ? 2.5 : 2}
-                            className={`flex-shrink-0 h-6 w-6 transition-all duration-300 z-10 ${
+                            className={`flex-shrink-0 transition-colors duration-200 ${
+                              open ? 'h-5 w-5' : 'h-5 w-5'
+                            } ${
                               isActive 
-                                ? "text-teal drop-shadow-[0_0_8px_rgba(20,184,166,0.5)]" 
-                                : "text-muted-foreground group-hover:text-teal group-hover:scale-110"
+                                ? 'text-teal' 
+                                : 'text-muted-foreground group-hover:text-teal'
                             }`} 
                           />
-                          <div className="flex items-center gap-2 flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                            <span className="text-sm font-medium tracking-wide truncate">
-                              {t(item.labelKey)}
-                            </span>
-                            {item.badge && (
-                              <Badge
-                                variant="secondary"
-                                className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0 shadow-sm"
-                              >
-                                {item.badge}
-                              </Badge>
-                            )}
-                          </div>
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full shadow-lg shadow-teal/50 group-data-[collapsible=icon]:hidden" />
+                          {open && (
+                            <>
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-sm font-medium tracking-wide truncate">
+                                  {t(item.labelKey)}
+                                </span>
+                                {item.badge && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
+                                  >
+                                    {item.badge}
+                                  </Badge>
+                                )}
+                              </div>
+                              {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-teal to-cyan rounded-r-full" />
+                              )}
+                            </>
                           )}
-                        </>
+                        </div>
                       )}
                     </NavLink>
                   </SidebarMenuButton>
