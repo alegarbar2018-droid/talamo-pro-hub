@@ -202,6 +202,27 @@ const LessonView = () => {
     return () => window.removeEventListener('quiz-completed', handleQuizComplete);
   }, [tocEnabled, markTopicComplete]);
 
+  // Callbacks for SteppedContentRenderer (memoized to prevent re-renders)
+  const handleStepComplete = useCallback((stepIndex: number) => {
+    if (tocEnabled) {
+      markTopicComplete(`topic-step-${stepIndex}`);
+    }
+  }, [tocEnabled, markTopicComplete]);
+
+  const handleProgressChange = useCallback((current: number, total: number) => {
+    setStepProgress({ current, total });
+  }, []);
+
+  const handleStepsChange = useCallback((steps: any[]) => {
+    setLessonSteps(steps);
+  }, []);
+
+  const handleLessonComplete = useCallback(() => {
+    if (!isCompleted) {
+      markComplete.mutate();
+    }
+  }, [isCompleted, markComplete]);
+
   // ============================================
   // END HOOKS SECTION
   // Conditional returns are safe after this point
@@ -468,22 +489,10 @@ const LessonView = () => {
                   <SteppedContentRenderer 
                     content={lesson.content_md}
                     lessonId={lessonId!}
-                    onStepComplete={useCallback((stepIndex: number) => {
-                      if (tocEnabled) {
-                        markTopicComplete(`topic-step-${stepIndex}`);
-                      }
-                    }, [tocEnabled, markTopicComplete])}
-                    onProgressChange={useCallback((current: number, total: number) => {
-                      setStepProgress({ current, total });
-                    }, [])}
-                    onStepsChange={useCallback((steps: any[]) => {
-                      setLessonSteps(steps);
-                    }, [])}
-                    onLessonComplete={useCallback(() => {
-                      if (!isCompleted) {
-                        markComplete.mutate();
-                      }
-                    }, [isCompleted, markComplete])}
+                    onStepComplete={handleStepComplete}
+                    onProgressChange={handleProgressChange}
+                    onStepsChange={handleStepsChange}
+                    onLessonComplete={handleLessonComplete}
                   />
                   {lesson.duration_min && (
                     <div className="mt-6 pt-6 border-t border-line/30 flex items-center gap-2 text-sm text-muted-foreground">
