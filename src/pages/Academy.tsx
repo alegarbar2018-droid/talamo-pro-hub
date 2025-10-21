@@ -225,44 +225,57 @@ const Academy = () => {
       />
 
       {/* Hero Section */}
-      <div className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-surface to-cyan/5 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="relative border-b border-line/30 bg-gradient-to-br from-teal/10 via-surface/95 to-cyan/10 backdrop-blur-xl py-12 overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal/20 to-transparent rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-cyan/20 to-transparent rounded-full blur-3xl opacity-30" />
+        
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20">
-                  <BookOpen className="h-8 w-8 text-teal" />
+              <div className="flex items-center gap-3 mb-6 animate-fade-in">
+                <div className="p-3.5 rounded-2xl bg-gradient-to-br from-teal/30 via-teal/20 to-cyan/30 shadow-lg shadow-teal/20 backdrop-blur-sm border border-teal/20">
+                  <BookOpen className="h-8 w-8 text-teal drop-shadow-sm" strokeWidth={2.5} />
                 </div>
-                <Badge variant="outline" className="border-teal text-teal">
-                  <Sparkles className="h-3 w-3 mr-1" />
+                <Badge 
+                  variant="outline" 
+                  className="border-teal/40 bg-gradient-to-r from-teal/10 to-cyan/10 text-teal font-semibold px-3 py-1.5 shadow-sm backdrop-blur-sm"
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" strokeWidth={2.5} />
                   Academia Profesional
                 </Badge>
               </div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent leading-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 {t('academy:title')}
               </h1>
-              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
+              <p className="text-lg sm:text-xl text-muted-foreground/90 max-w-2xl leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 {t('academy:subtitle')}
               </p>
             </div>
 
             {courses && courses.length > 0 && (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Card className="border-teal/20 bg-surface/80 backdrop-blur-sm">
-                  <CardContent className="p-4 text-center">
-                    <Target className="h-6 w-6 text-teal mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-foreground">{courses.length}</p>
-                    <p className="text-xs text-muted-foreground">Cursos Disponibles</p>
+              <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <Card className="border-teal/20 bg-gradient-to-br from-surface/90 to-surface/60 backdrop-blur-xl shadow-lg shadow-teal/5 hover:shadow-xl hover:shadow-teal/10 transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 text-center">
+                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 w-fit mx-auto mb-3 shadow-sm">
+                      <Target className="h-6 w-6 text-teal" strokeWidth={2.5} />
+                    </div>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent mb-1">
+                      {courses.length}
+                    </p>
+                    <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Cursos Disponibles</p>
                   </CardContent>
                 </Card>
-                <Card className="border-teal/20 bg-surface/80 backdrop-blur-sm">
-                  <CardContent className="p-4 text-center">
-                    <TrendingUp className="h-6 w-6 text-teal mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-foreground">
+                <Card className="border-teal/20 bg-gradient-to-br from-surface/90 to-surface/60 backdrop-blur-xl shadow-lg shadow-cyan/5 hover:shadow-xl hover:shadow-cyan/10 transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 text-center">
+                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 w-fit mx-auto mb-3 shadow-sm">
+                      <TrendingUp className="h-6 w-6 text-cyan" strokeWidth={2.5} />
+                    </div>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent mb-1">
                       {coursesProgress?.reduce((acc, cp) => acc + cp.progress, 0) || 0}%
                     </p>
-                    <p className="text-xs text-muted-foreground">Progreso Promedio</p>
+                    <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Progreso Promedio</p>
                   </CardContent>
                 </Card>
               </div>
