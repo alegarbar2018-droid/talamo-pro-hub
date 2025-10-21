@@ -156,7 +156,7 @@ const Onboarding = () => {
         } else if (is_affiliated) {
         /*
         else if (demo_mode) {
-          setIsDemoMode(false);
+          setIsDemoMode(true);
           setAccountStatus('affiliated');
           setStep('create-password');
           toast({
