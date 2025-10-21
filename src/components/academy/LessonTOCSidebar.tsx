@@ -192,7 +192,7 @@ export function LessonTOCSidebar(props: LessonTOCSidebarProps) {
   return (
     <div
       className={cn(
-        "sticky top-0 h-screen border-r border-line/30 bg-surface/80 backdrop-blur-xl transition-all duration-500 ease-in-out shadow-[var(--shadow-card)]",
+        "h-screen border-r border-line/30 bg-surface/80 backdrop-blur-xl transition-all duration-500 ease-in-out shadow-[var(--shadow-card)] flex flex-col",
         isCollapsed ? "w-16" : "w-80"
       )}
     >
