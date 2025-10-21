@@ -29,10 +29,22 @@
       "affiliation_status": "Status de Afiliação",
       "verified": "Verificado com Exness",
       "not_verified": "Não verificado",
-      "user_progress": "Progresso de Aprendizagem"
+      "user_progress": "Progresso de Aprendizagem",
+      "partner_id": "ID do Parceiro"
     },
+    "identity_section": "Identidade (auth.users)",
+    "profile_section": "Perfil (public.profiles)",
+    "send_invitation": "Enviar email de convite",
+    "confirm_email_immediately": "Confirmar email imediatamente",
+    "force_email_confirm": "Forçar confirmação de email",
+    "email_confirmation_required": "O usuário precisará confirmar o novo endereço de email",
+    "create_desc": "Criar um novo usuário com convite opcional ou senha direta",
     "actions": {
       "title": "Ações Admin",
+      "create": "Criar Usuário",
+      "send_invite": "Enviar Convite",
+      "save_identity": "Salvar Identidade",
+      "save_profile": "Salvar Perfil",
       "ban": "Banir Usuário",
       "ban_title": "Banir Usuário",
       "ban_description": "Selecionar duração do banimento",
@@ -82,7 +94,17 @@
     "user_unbanned": "Usuário desbanido com sucesso",
     "user_deleted": "Usuário excluído com sucesso",
     "password_reset_sent": "Email de redefinição enviado",
-    "password_reset_error": "Erro ao enviar email de redefinição"
+    "password_reset_error": "Erro ao enviar email de redefinição",
+    "user_created": "Usuário criado com sucesso",
+    "user_invited_desc": "Email de convite enviado",
+    "user_created_desc": "Conta de usuário criada",
+    "user_create_error": "Erro ao criar usuário",
+    "identity_updated": "Identidade atualizada",
+    "identity_updated_desc": "A identidade do usuário foi atualizada",
+    "identity_update_error": "Erro ao atualizar identidade",
+    "profile_updated": "Perfil atualizado",
+    "profile_updated_desc": "O perfil do usuário foi atualizado",
+    "profile_update_error": "Erro ao atualizar perfil"
   },
   "signals": {
     "title": "Gestão de Sinais",

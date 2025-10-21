@@ -14,5 +14,19 @@
   "edit": "Editar",
   "delete": "Excluir",
   "create": "Criar",
-  "update": "Atualizar"
+  "update": "Atualizar",
+  "fields": {
+    "email": "Email",
+    "password": "Senha",
+    "first_name": "Nome",
+    "last_name": "Sobrenome",
+    "phone": "Telefone",
+    "avatar_url": "URL do Avatar",
+    "bio": "Biografia",
+    "language": "Idioma"
+  },
+  "errors": {
+    "email_required": "O email é obrigatório",
+    "password_required": "A senha é obrigatória"
+  }
 }
