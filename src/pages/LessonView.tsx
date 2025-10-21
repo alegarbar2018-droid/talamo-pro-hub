@@ -360,9 +360,9 @@ const LessonView = () => {
   // ============================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-[hsl(222_20%_5%)] flex overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-[hsl(222_20%_5%)] flex">
       {/* TOC Sidebar - Always rendered to maintain hook count, but hidden via CSS when disabled */}
-      <div className={tocEnabled ? 'block h-screen overflow-hidden' : 'hidden'}>
+      <div className={tocEnabled ? 'block' : 'hidden'}>
         <LessonTOCSidebar
           topics={lessonSteps.length > 0 ? lessonSteps.map((step, idx) => ({
             id: step.id,
