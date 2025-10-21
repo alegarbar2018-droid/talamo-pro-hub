@@ -33,7 +33,7 @@ import { toast } from "@/hooks/use-toast";
 // Memoized signal card for performance
 const SignalCard = memo(
   ({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
-    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all">
+    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all overflow-x-hidden max-w-full">
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-2">
@@ -66,7 +66,7 @@ const SignalCard = memo(
               <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1">
                 {t("signals:signal.entry")}
               </span>
-              <div className="font-mono font-semibold text-foreground text-xs sm:text-sm">
+              <div className="font-mono font-semibold text-foreground text-xs sm:text-sm break-all">
                 {signal.entry.toFixed(5)}
               </div>
             </div>
@@ -74,13 +74,13 @@ const SignalCard = memo(
               <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1">
                 {t("signals:signal.stop_loss")}
               </span>
-              <div className="font-mono font-semibold text-destructive text-xs sm:text-sm">{signal.sl.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-destructive text-xs sm:text-sm break-all">{signal.sl.toFixed(5)}</div>
             </div>
             <div className="bg-surface/50 p-2 rounded-lg border border-success/20">
               <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1">
                 {t("signals:signal.take_profit")}
               </span>
-              <div className="font-mono font-semibold text-success text-xs sm:text-sm">{signal.tp.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-success text-xs sm:text-sm break-all">{signal.tp.toFixed(5)}</div>
             </div>
           </div>
 
@@ -102,7 +102,7 @@ const SignalCard = memo(
               <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-teal" />
               {t("signals:signal.analysis_logic")}
             </h4>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{signal.logic}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed break-words">{signal.logic}</p>
           </div>
 
           <div>
@@ -110,7 +110,7 @@ const SignalCard = memo(
               <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-warning" />
               {t("signals:signal.invalidation")}
             </h4>
-            <p className="text-xs sm:text-sm text-muted-foreground">{signal.invalidation}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground break-words">{signal.invalidation}</p>
           </div>
         </div>
 
@@ -137,7 +137,7 @@ const SignalCard = memo(
             }}
           >
             <Calculator className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-            Calcular en Tools
+            Calcular
           </Button>
           <div className="grid grid-cols-2 gap-2">
             <Button
@@ -299,7 +299,7 @@ const Signals = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden max-w-full">
       <SEOHead
         title={seoConfig.title}
         description={seoConfig.description}
@@ -326,7 +326,7 @@ const Signals = () => {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden w-full">
         {/* Filters */}
         <Card className="border-line bg-surface mb-6">
           <CardHeader className="pb-3">
