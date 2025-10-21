@@ -363,7 +363,7 @@ const LessonView = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-[hsl(222_20%_5%)]">
       {/* TOC Sidebar - Always rendered to maintain hook count, but hidden via CSS when disabled */}
-      {tocEnabled && (
+      <div className={tocEnabled ? 'block' : 'hidden'}>
         <LessonTOCSidebar
           topics={lessonSteps.length > 0 ? lessonSteps.map((step, idx) => ({
             id: step.id,
@@ -377,11 +377,11 @@ const LessonView = () => {
           onTopicClick={handleTopicClick}
           activeTopicId={activeTopicId}
         />
-      )}
+      </div>
 
       {/* Main Content */}
       <div className={cn(
-        "flex-1 overflow-auto transition-all duration-500",
+        "overflow-auto transition-all duration-500",
         tocEnabled ? "ml-80" : "ml-0"
       )}>
         <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-2xl shadow-lg">
