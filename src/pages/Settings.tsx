@@ -22,6 +22,8 @@ import {
   Loader2,
   Upload
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { DESIGN_TOKENS } from '@/lib/design-tokens';
 
 const Settings = () => {
   const { user, loading: authLoading } = useAuth();
@@ -184,21 +186,21 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className={cn(DESIGN_TOKENS.container.narrow, DESIGN_TOKENS.spacing.section.full)}>
 
-        <div className="mb-8">
+        <div className={cn(DESIGN_TOKENS.spacing.section.mobile)}>
           <h1 className="text-3xl font-bold text-foreground">Configuración de Cuenta</h1>
           <p className="text-muted-foreground mt-2">
             Administra tu perfil y preferencias
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className={cn(DESIGN_TOKENS.spacing.gap.md, "flex flex-col")}>
           {/* Perfil */}
           <Card>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5 text-primary" />
+              <div className={cn("flex items-center", DESIGN_TOKENS.spacing.gap.sm)}>
+                <User className={cn(DESIGN_TOKENS.icon.md, "text-primary")} />
                 <CardTitle>Información Personal</CardTitle>
               </div>
               <CardDescription>

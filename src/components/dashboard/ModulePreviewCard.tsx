@@ -4,6 +4,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { LucideIcon, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { DESIGN_TOKENS } from "@/lib/design-tokens";
 
 interface ModulePreviewCardProps {
   title: string;
@@ -32,11 +34,20 @@ export function ModulePreviewCard({
   const navigate = useNavigate();
 
   return (
-    <Card className="group hover:shadow-glow-subtle hover:-translate-y-1 transition-all duration-300 border-line">
-      <CardHeader>
+    <Card className={cn(
+      "group border-line",
+      DESIGN_TOKENS.shadow.cardHover,
+      DESIGN_TOKENS.transition.card,
+      DESIGN_TOKENS.radius.card
+    )}>
+      <CardHeader className={DESIGN_TOKENS.spacing.card.base}>
         <div className="flex items-start justify-between mb-2">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110 transition-transform duration-300">
-            <Icon className="h-6 w-6 text-teal" />
+          <div className={cn(
+            "p-3 bg-gradient-to-br from-teal/20 to-cyan/20 group-hover:scale-110",
+            DESIGN_TOKENS.radius.button,
+            DESIGN_TOKENS.transition.default
+          )}>
+            <Icon className={cn(DESIGN_TOKENS.icon.lg, "text-teal")} />
           </div>
           {badge && (
             <Badge variant="outline" className="border-teal/30 text-teal bg-teal/10">
@@ -47,7 +58,7 @@ export function ModulePreviewCard({
         <CardTitle className="text-foreground">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className={cn(DESIGN_TOKENS.spacing.card.base, "pt-0 space-y-4")}>
         {progress !== undefined && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
@@ -59,11 +70,11 @@ export function ModulePreviewCard({
         )}
         
         {stats && stats.length > 0 && (
-          <div className="grid grid-cols-2 gap-2">
+          <div className={cn("grid grid-cols-2", DESIGN_TOKENS.spacing.gap.sm)}>
             {stats.map((stat, idx) => (
               <div
                 key={idx}
-                className="p-2 rounded-lg bg-muted/50 text-center"
+                className={cn("p-2 bg-muted/50 text-center", DESIGN_TOKENS.radius.button)}
               >
                 <p className="text-lg font-bold text-foreground">{stat.value}</p>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -74,11 +85,14 @@ export function ModulePreviewCard({
         
         <Button
           variant="outline"
-          className="w-full border-teal text-teal hover:bg-teal hover:text-white group-hover:translate-x-1 transition-all"
+          className={cn(
+            "w-full border-teal text-teal hover:bg-teal hover:text-white group-hover:translate-x-1",
+            DESIGN_TOKENS.transition.default
+          )}
           onClick={() => navigate(actionPath)}
         >
           {actionLabel}
-          <ArrowRight className="h-4 w-4 ml-2" />
+          <ArrowRight className={cn(DESIGN_TOKENS.icon.sm, "ml-2")} />
         </Button>
       </CardContent>
     </Card>

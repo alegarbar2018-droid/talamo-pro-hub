@@ -12,6 +12,8 @@ import { ModulePreviewCard } from "@/components/dashboard/ModulePreviewCard";
 import { ActivityTimelineItem } from "@/components/dashboard/ActivityTimelineItem";
 import { OnboardingChecklistCard } from "@/components/dashboard/OnboardingChecklistCard";
 import TradingDisclaimer from "@/components/ui/trading-disclaimer";
+import { cn } from "@/lib/utils";
+import { DESIGN_TOKENS } from "@/lib/design-tokens";
 import {
   BookOpen,
   Radio,
@@ -86,9 +88,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className={cn(DESIGN_TOKENS.container.wide, DESIGN_TOKENS.spacing.section.full, "space-y-8")}>
         {/* Hero Section with Greeting */}
-        <div className="relative overflow-hidden rounded-2xl border border-line/50 bg-gradient-to-br from-teal/10 via-surface to-cyan/10 p-8">
+        <div className={cn(
+          "relative overflow-hidden border border-line/50 bg-gradient-to-br from-teal/10 via-surface to-cyan/10",
+          DESIGN_TOKENS.radius.card,
+          DESIGN_TOKENS.spacing.card.spacious
+        )}>
           <div className="absolute top-0 right-0 w-64 h-64 bg-teal/20 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan/20 rounded-full blur-3xl" />
           
@@ -138,7 +144,7 @@ const Dashboard = () => {
         </div>
 
         {/* KPIs Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4", DESIGN_TOKENS.spacing.gap.sm)}>
           <KPICard
             title={t("dashboard:stats.trades_week")}
             value={0}
@@ -164,9 +170,9 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className={cn("grid lg:grid-cols-3", DESIGN_TOKENS.spacing.gap.md)}>
           {/* Module Previews - 2 columns */}
-          <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
+          <div className={cn("lg:col-span-2 grid sm:grid-cols-2", DESIGN_TOKENS.spacing.gap.sm)}>
             <ModulePreviewCard
               title={t("dashboard:modules.academy.title")}
               description={currentCourse?.course_item?.title || t("dashboard:modules.academy.description")}
@@ -266,7 +272,7 @@ const Dashboard = () => {
         </div>
 
         {/* Additional Modules */}
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className={cn("grid sm:grid-cols-2", DESIGN_TOKENS.spacing.gap.sm)}>
           <ModulePreviewCard
             title={t("dashboard:modules.journal.title")}
             description={t("dashboard:modules.journal.description")}

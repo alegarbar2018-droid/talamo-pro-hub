@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { X, ArrowLeft } from "lucide-react";
+import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { DESIGN_TOKENS } from "@/lib/design-tokens";
 
 interface OnboardingHeaderProps {
   stepNumber: number;
@@ -14,10 +16,10 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
 
   return (
     <header className="border-b border-line bg-surface/95 backdrop-blur-xl sticky top-0 z-50">
-      <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div className={cn(DESIGN_TOKENS.container.narrow, "px-3 sm:px-6 lg:px-8")}>
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo & Title */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className={cn("flex items-center", DESIGN_TOKENS.spacing.gap.sm)}>
             <h1 className="text-base sm:text-lg font-semibold gradient-text">Tálamo</h1>
             <Badge variant="secondary" className="text-xs px-2 py-1">
               Acceso
@@ -36,7 +38,7 @@ export const OnboardingHeader = ({ stepNumber, progress }: OnboardingHeaderProps
             onClick={() => navigate("/")}
             className="text-muted-foreground hover:text-foreground transition-colors p-2 -mr-2"
           >
-            <X className="h-5 w-5" />
+            <X className={cn(DESIGN_TOKENS.icon.md)} />
           </Button>
         </div>
 

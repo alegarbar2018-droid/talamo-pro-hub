@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DESIGN_TOKENS } from "@/lib/design-tokens";
 
 interface KPICardProps {
   title: string;
@@ -18,11 +19,11 @@ export function KPICard({ title, value, icon: Icon, trend, className }: KPICardP
   const isNegative = trend && trend.value < 0;
 
   return (
-    <Card className={cn("hover:shadow-glow-subtle transition-all duration-300", className)}>
-      <CardContent className="p-6">
+    <Card className={cn(DESIGN_TOKENS.shadow.cardHover, DESIGN_TOKENS.transition.card, className)}>
+      <CardContent className={DESIGN_TOKENS.spacing.card.base}>
         <div className="flex items-center justify-between mb-4">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20">
-            <Icon className="h-5 w-5 text-teal" />
+          <div className={cn("p-3 rounded-xl bg-gradient-to-br from-teal/20 to-cyan/20", DESIGN_TOKENS.radius.button)}>
+            <Icon className={cn(DESIGN_TOKENS.icon.md, "text-teal")} />
           </div>
           {trend && (
             <div
@@ -32,8 +33,8 @@ export function KPICard({ title, value, icon: Icon, trend, className }: KPICardP
                 isNegative && "text-red-500"
               )}
             >
-              {isPositive && <TrendingUp className="h-3 w-3" />}
-              {isNegative && <TrendingDown className="h-3 w-3" />}
+              {isPositive && <TrendingUp className={DESIGN_TOKENS.icon.xs} />}
+              {isNegative && <TrendingDown className={DESIGN_TOKENS.icon.xs} />}
               {Math.abs(trend.value)}%
             </div>
           )}

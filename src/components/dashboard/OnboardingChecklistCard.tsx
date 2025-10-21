@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { DESIGN_TOKENS } from "@/lib/design-tokens";
 
 interface ChecklistItem {
   id: string;
@@ -25,16 +27,16 @@ export function OnboardingChecklistCard({ items, onToggle }: OnboardingChecklist
 
   return (
     <Card className="border-teal/20">
-      <CardHeader>
+      <CardHeader className={DESIGN_TOKENS.spacing.card.base}>
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="h-5 w-5 text-teal" />
+          <CheckCircle2 className={cn(DESIGN_TOKENS.icon.md, "text-teal")} />
           <CardTitle>Primeros Pasos</CardTitle>
         </div>
         <CardDescription>
           Completa estos pasos para aprovechar al máximo la plataforma
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className={cn(DESIGN_TOKENS.spacing.card.base, "pt-0 space-y-4")}>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Progreso</span>
@@ -71,8 +73,4 @@ export function OnboardingChecklistCard({ items, onToggle }: OnboardingChecklist
       </CardContent>
     </Card>
   );
-}
-
-function cn(...classes: (string | undefined | false)[]) {
-  return classes.filter(Boolean).join(" ");
 }
