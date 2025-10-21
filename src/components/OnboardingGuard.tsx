@@ -33,7 +33,7 @@ export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({ children }) =>
   // Solo redirigir si tenemos el perfil cargado y NO está completado
   const onboardingCompleted = user.profile?.onboarding_completed;
   if (onboardingCompleted === false) {
-    return <Navigate to="/onboarding-welcome" replace />;
+    return <Navigate to="/onboarding" replace />;
   }
   
   // Si completó el onboarding o no hay información de onboarding, mostrar el contenido
