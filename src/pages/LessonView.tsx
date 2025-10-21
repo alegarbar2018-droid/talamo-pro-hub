@@ -228,6 +228,46 @@ const LessonView = () => {
     }
   }, [isCompleted, markComplete]);
 
+  const handleTopicClick = useCallback((topicId: string) => {
+    setActiveTopicId(topicId);
+    
+    // Check if it's a step click
+    if (topicId.startsWith('step-')) {
+      const stepIndex = parseInt(topicId.replace('step-', ''), 10);
+      if (!isNaN(stepIndex) && lessonSteps[stepIndex]) {
+        // Trigger step change by simulating clicking the step indicator
+        const stepButton = document.querySelector(`[data-step-index="${stepIndex}"]`) as HTMLButtonElement;
+        if (stepButton) {
+          stepButton.click();
+          return;
+        }
+      }
+    }
+    
+    // First try to get from registered refs
+    let el = getTopicRef(topicId);
+    
+    // Fallback: try to find by data-topic-id attribute
+    if (!el) {
+      el = document.querySelector(`[data-topic-id="${topicId}"]`) as HTMLElement;
+    }
+    
+    // Fallback: for h2 topics, find by id in the rendered markdown
+    if (!el && topicId.startsWith('topic-h2-')) {
+      const h2Elements = document.querySelectorAll('.prose h2');
+      const index = parseInt(topicId.replace('topic-h2-', ''), 10);
+      el = h2Elements[index] as HTMLElement;
+    }
+    
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.add('ring-2', 'ring-teal', 'ring-offset-2');
+      setTimeout(() => {
+        el?.classList.remove('ring-2', 'ring-teal', 'ring-offset-2');
+      }, 2000);
+    }
+  }, [lessonSteps, getTopicRef]);
+
   // ============================================
   // END HOOKS SECTION
   // Conditional returns are safe after this point
@@ -319,46 +359,6 @@ const LessonView = () => {
     }
     return resource.external_url;
   };
-
-  const handleTopicClick = useCallback((topicId: string) => {
-    setActiveTopicId(topicId);
-    
-    // Check if it's a step click
-    if (topicId.startsWith('step-')) {
-      const stepIndex = parseInt(topicId.replace('step-', ''), 10);
-      if (!isNaN(stepIndex) && lessonSteps[stepIndex]) {
-        // Trigger step change by simulating clicking the step indicator
-        const stepButton = document.querySelector(`[data-step-index="${stepIndex}"]`) as HTMLButtonElement;
-        if (stepButton) {
-          stepButton.click();
-          return;
-        }
-      }
-    }
-    
-    // First try to get from registered refs
-    let el = getTopicRef(topicId);
-    
-    // Fallback: try to find by data-topic-id attribute
-    if (!el) {
-      el = document.querySelector(`[data-topic-id="${topicId}"]`) as HTMLElement;
-    }
-    
-    // Fallback: for h2 topics, find by id in the rendered markdown
-    if (!el && topicId.startsWith('topic-h2-')) {
-      const h2Elements = document.querySelectorAll('.prose h2');
-      const index = parseInt(topicId.replace('topic-h2-', ''), 10);
-      el = h2Elements[index] as HTMLElement;
-    }
-    
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      el.classList.add('ring-2', 'ring-teal', 'ring-offset-2');
-      setTimeout(() => {
-        el?.classList.remove('ring-2', 'ring-teal', 'ring-offset-2');
-      }, 2000);
-    }
-  }, [lessonSteps, getTopicRef]);
 
   // ============================================
   // MAIN RENDER
