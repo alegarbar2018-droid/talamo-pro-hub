@@ -1,6 +1,6 @@
 {
   "save": "Guardar",
-  "cancel": "Cancelar", 
+  "cancel": "Cancelar",
   "confirm": "Confirmar",
   "apply": "Aplicar",
   "reset": "Reiniciar",
@@ -14,5 +14,19 @@
   "edit": "Editar",
   "delete": "Eliminar",
   "create": "Crear",
-  "update": "Actualizar"
+  "update": "Actualizar",
+  "fields": {
+    "email": "Email",
+    "password": "Contraseña",
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "phone": "Teléfono",
+    "avatar_url": "URL de Avatar",
+    "bio": "Biografía",
+    "language": "Idioma"
+  },
+  "errors": {
+    "email_required": "El email es obligatorio",
+    "password_required": "La contraseña es obligatoria"
+  }
 }

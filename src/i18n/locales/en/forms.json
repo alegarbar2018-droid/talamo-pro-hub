@@ -14,5 +14,19 @@
   "edit": "Edit",
   "delete": "Delete",
   "create": "Create",
-  "update": "Update"
+  "update": "Update",
+  "fields": {
+    "email": "Email",
+    "password": "Password",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "phone": "Phone",
+    "avatar_url": "Avatar URL",
+    "bio": "Bio",
+    "language": "Language"
+  },
+  "errors": {
+    "email_required": "Email is required",
+    "password_required": "Password is required"
+  }
 }

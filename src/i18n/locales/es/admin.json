@@ -29,10 +29,22 @@
       "affiliation_status": "Estado de Afiliación",
       "verified": "Verificado con Exness",
       "not_verified": "No verificado",
-      "user_progress": "Progreso de Aprendizaje"
+      "user_progress": "Progreso de Aprendizaje",
+      "partner_id": "ID de Partner"
     },
+    "identity_section": "Identidad (auth.users)",
+    "profile_section": "Perfil (public.profiles)",
+    "send_invitation": "Enviar email de invitación",
+    "confirm_email_immediately": "Confirmar email inmediatamente",
+    "force_email_confirm": "Forzar confirmación de email",
+    "email_confirmation_required": "El usuario deberá confirmar la nueva dirección de email",
+    "create_desc": "Crear un nuevo usuario con invitación opcional o contraseña directa",
     "actions": {
       "title": "Acciones Admin",
+      "create": "Crear Usuario",
+      "send_invite": "Enviar Invitación",
+      "save_identity": "Guardar Identidad",
+      "save_profile": "Guardar Perfil",
       "ban": "Banear Usuario",
       "ban_title": "Banear Usuario",
       "ban_description": "Seleccionar duración del baneo",
@@ -82,7 +94,17 @@
     "user_unbanned": "Usuario desbaneado exitosamente",
     "user_deleted": "Usuario eliminado exitosamente",
     "password_reset_sent": "Email de restablecimiento enviado",
-    "password_reset_error": "Error al enviar email de restablecimiento"
+    "password_reset_error": "Error al enviar email de restablecimiento",
+    "user_created": "Usuario creado exitosamente",
+    "user_invited_desc": "Email de invitación enviado",
+    "user_created_desc": "Cuenta de usuario creada",
+    "user_create_error": "Error al crear usuario",
+    "identity_updated": "Identidad actualizada",
+    "identity_updated_desc": "La identidad del usuario ha sido actualizada",
+    "identity_update_error": "Error al actualizar identidad",
+    "profile_updated": "Perfil actualizado",
+    "profile_updated_desc": "El perfil del usuario ha sido actualizado",
+    "profile_update_error": "Error al actualizar perfil"
   },
   "signals": {
     "title": "Gestión de Señales",

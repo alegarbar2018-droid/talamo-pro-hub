@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { UserProgressView } from "@/components/admin/UserProgressView";
+import { CreateUserDialog } from "@/components/admin/CreateUserDialog";
+import { EditUserForms } from "@/components/admin/EditUserForms";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Eye, Edit, UserCheck, UserX, Filter, Trash, Ban, ShieldCheck, Key } from "lucide-react";
+import { Search, Eye, Edit, UserCheck, UserX, Filter, Trash, Ban, ShieldCheck, Key, UserPlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AdminRole, updateAdminUserRole, getCurrentAdminRole } from "@/lib/auth-admin";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,6 +71,7 @@ export const AdminUsers: React.FC = () => {
   const [affiliationFilter, setAffiliationFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
   const [currentAdminRole, setCurrentAdminRole] = useState<string | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -297,7 +300,14 @@ export const AdminUsers: React.FC = () => {
           <h1 className="text-3xl font-bold tracking-tight">{t("admin:users.title")}</h1>
           <p className="text-muted-foreground">{t("admin:users.subtitle")}</p>
         </div>
+        <Button onClick={() => setCreateDialogOpen(true)}>
+          <UserPlus className="mr-2 h-4 w-4" />
+          {t("admin:users.actions.create")}
+        </Button>
       </div>
+
+      {/* Create User Dialog */}
+      <CreateUserDialog open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
 
       {/* Filters */}
       <Card>
@@ -470,11 +480,16 @@ export const AdminUsers: React.FC = () => {
                                       <SelectItem value="ADMIN">{t("admin:users.roles.admin")}</SelectItem>
                                     </SelectContent>
                                   </Select>
-                                </div>
+                                 </div>
 
-                                <Separator className="my-4" />
+                                 <Separator className="my-4" />
 
-                                {/* Admin Actions */}
+                                 {/* Edit Identity & Profile */}
+                                 <EditUserForms user={selectedUser} />
+
+                                 <Separator className="my-4" />
+
+                                 {/* Admin Actions */}
                                 <div className="space-y-2">
                                   <h4 className="text-sm font-semibold mb-2">{t("admin:users.actions.title")}</h4>
 

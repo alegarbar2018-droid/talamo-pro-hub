@@ -29,10 +29,22 @@
       "affiliation_status": "Affiliation Status",
       "verified": "Verified with Exness",
       "not_verified": "Not verified",
-      "user_progress": "Learning Progress"
+      "user_progress": "Learning Progress",
+      "partner_id": "Partner ID"
     },
+    "identity_section": "Identity (auth.users)",
+    "profile_section": "Profile (public.profiles)",
+    "send_invitation": "Send invitation email",
+    "confirm_email_immediately": "Confirm email immediately",
+    "force_email_confirm": "Force email confirmation",
+    "email_confirmation_required": "User will need to confirm new email address",
+    "create_desc": "Create a new user with optional invitation or direct password",
     "actions": {
       "title": "Admin Actions",
+      "create": "Create User",
+      "send_invite": "Send Invitation",
+      "save_identity": "Save Identity",
+      "save_profile": "Save Profile",
       "ban": "Ban User",
       "ban_title": "Ban User",
       "ban_description": "Select ban duration",
@@ -82,7 +94,17 @@
     "user_unbanned": "User unbanned successfully",
     "user_deleted": "User deleted successfully",
     "password_reset_sent": "Password reset email sent",
-    "password_reset_error": "Failed to send reset email"
+    "password_reset_error": "Failed to send reset email",
+    "user_created": "User created successfully",
+    "user_invited_desc": "Invitation email sent",
+    "user_created_desc": "User account created",
+    "user_create_error": "Failed to create user",
+    "identity_updated": "Identity updated",
+    "identity_updated_desc": "User identity has been updated",
+    "identity_update_error": "Failed to update identity",
+    "profile_updated": "Profile updated",
+    "profile_updated_desc": "User profile has been updated",
+    "profile_update_error": "Failed to update profile"
   },
   "signals": {
     "title": "Signals Management",
