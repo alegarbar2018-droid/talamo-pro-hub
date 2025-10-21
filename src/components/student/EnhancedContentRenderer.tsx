@@ -11,34 +11,103 @@ interface EnhancedContentRendererProps {
 
 export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = ({ content }) => {
   const h2Counter = React.useRef(0);
+  const [parseError, setParseError] = React.useState<string | null>(null);
   
   // Reset counter on each render
   React.useEffect(() => {
     h2Counter.current = 0;
+    setParseError(null);
   }, [content]);
   
   const parseContent = (markdown: string) => {
-    const sections: JSX.Element[] = [];
-    let currentIndex = 0;
-    let keyCounter = 0;
+    try {
+      const sections: JSX.Element[] = [];
+      let currentIndex = 0;
+      let keyCounter = 0;
 
-    // Regex para detectar bloques especiales con sintaxis :::type ... :::
-    const blockRegex = /:::(accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?):::/g;
-    
-    let match;
-    const matches: RegExpExecArray[] = [];
-    
-    // Collect all matches first
-    while ((match = blockRegex.exec(markdown)) !== null) {
-      matches.push(match);
-    }
+      // Regex para detectar bloques especiales con sintaxis :::type ... :::
+      const blockRegex = /:::(accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?):::/g;
+      
+      let match;
+      const matches: RegExpExecArray[] = [];
+      
+      // Collect all matches first
+      while ((match = blockRegex.exec(markdown)) !== null) {
+        matches.push(match);
+      }
 
-    // Process matches
-    matches.forEach((match) => {
-      // Add normal markdown before this block
-      if (match.index > currentIndex) {
-        const normalContent = markdown.substring(currentIndex, match.index);
-        if (normalContent.trim()) {
+      // Process matches
+      matches.forEach((match) => {
+        // Add normal markdown before this block
+        if (match.index > currentIndex) {
+          const normalContent = markdown.substring(currentIndex, match.index);
+          if (normalContent.trim()) {
+            sections.push(
+              <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
+                <ReactMarkdown
+                  components={{
+                    h2: ({ children, ...props }) => {
+                      const id = `topic-h2-${h2Counter.current++}`;
+                      return (
+                        <h2 id={id} data-topic-id={id} {...props}>
+                          {children}
+                        </h2>
+                      );
+                    },
+                  }}
+                >
+                  {normalContent}
+                </ReactMarkdown>
+              </div>
+            );
+          }
+        }
+
+        const [, blockType, attributes, blockContent] = match;
+
+        // Render component based on type
+        try {
+          switch (blockType) {
+            case 'accordion':
+              sections.push(renderAccordion(blockContent, keyCounter++));
+              break;
+            case 'tabs':
+              sections.push(renderTabs(blockContent, keyCounter++));
+              break;
+            case 'flipcard':
+              sections.push(renderFlipCard(blockContent, keyCounter++));
+              break;
+            case 'callout':
+              sections.push(renderCallout(attributes, blockContent, keyCounter++));
+              break;
+            case 'trading-sim':
+              // Check if v2 is specified
+              const versionMatch = attributes.match(/v="(\d+)"/);
+              const version = versionMatch?.[1];
+              if (version === '2') {
+                sections.push(renderTradingSimulatorV2(attributes, blockContent, keyCounter++));
+              } else {
+                sections.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
+              }
+              break;
+          }
+        } catch (error) {
+          console.error(`Error rendering ${blockType}:`, error);
+          // Fallback: render as normal markdown if parsing fails
+          sections.push(
+            <div key={`error-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
+              <ReactMarkdown>{match[0]}</ReactMarkdown>
+            </div>
+          );
+        }
+
+        currentIndex = match.index + match[0].length;
+      });
+
+      // Add remaining content
+      if (currentIndex < markdown.length) {
+        const remaining = markdown.substring(currentIndex);
+        if (remaining.trim()) {
           sections.push(
             <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
               <ReactMarkdown
@@ -53,60 +122,18 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
                   },
                 }}
               >
-                {normalContent}
+                {remaining}
               </ReactMarkdown>
             </div>
           );
         }
       }
 
-      const [, blockType, attributes, blockContent] = match;
-
-      // Render component based on type
-      try {
-        switch (blockType) {
-          case 'accordion':
-            sections.push(renderAccordion(blockContent, keyCounter++));
-            break;
-          case 'tabs':
-            sections.push(renderTabs(blockContent, keyCounter++));
-            break;
-          case 'flipcard':
-            sections.push(renderFlipCard(blockContent, keyCounter++));
-            break;
-          case 'callout':
-            sections.push(renderCallout(attributes, blockContent, keyCounter++));
-            break;
-          case 'trading-sim':
-            // Check if v2 is specified
-            const versionMatch = attributes.match(/v="(\d+)"/);
-            const version = versionMatch?.[1];
-            if (version === '2') {
-              sections.push(renderTradingSimulatorV2(attributes, blockContent, keyCounter++));
-            } else {
-              sections.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
-            }
-            break;
-        }
-      } catch (error) {
-        console.error(`Error rendering ${blockType}:`, error);
-        // Fallback: render as normal markdown if parsing fails
-        sections.push(
-          <div key={`error-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
-            <ReactMarkdown>{match[0]}</ReactMarkdown>
-          </div>
-        );
-      }
-
-      currentIndex = match.index + match[0].length;
-    });
-
-    // Add remaining content
-    if (currentIndex < markdown.length) {
-      const remaining = markdown.substring(currentIndex);
-      if (remaining.trim()) {
-        sections.push(
-          <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
+      // If no special blocks found, render as normal markdown
+      if (sections.length === 0) {
+        h2Counter.current = 0; // Reset counter
+        return [
+          <div key="md-default" className="prose prose-sm max-w-none dark:prose-invert">
             <ReactMarkdown
               components={{
                 h2: ({ children, ...props }) => {
@@ -119,37 +146,34 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
                 },
               }}
             >
-              {remaining}
+              {markdown}
             </ReactMarkdown>
           </div>
-        );
+        ];
       }
-    }
 
-    // If no special blocks found, render as normal markdown
-    if (sections.length === 0) {
-      h2Counter.current = 0; // Reset counter
+      return sections;
+    } catch (error) {
+      console.error('Error parsing markdown content:', error);
+      setParseError(error instanceof Error ? error.message : 'Unknown parsing error');
       return [
-        <div key="md-default" className="prose prose-sm max-w-none dark:prose-invert">
-          <ReactMarkdown
-            components={{
-              h2: ({ children, ...props }) => {
-                const id = `topic-h2-${h2Counter.current++}`;
-                return (
-                  <h2 id={id} data-topic-id={id} {...props}>
-                    {children}
-                  </h2>
-                );
-              },
-            }}
-          >
-            {markdown}
-          </ReactMarkdown>
+        <div key="parse-error" className="p-6 border border-red-500/50 rounded-lg bg-red-500/10">
+          <h3 className="text-lg font-semibold text-red-400 mb-2">Content Parsing Error</h3>
+          <p className="text-sm text-red-300 mb-4">
+            This lesson content contains formatting errors and cannot be displayed correctly.
+          </p>
+          <details className="text-xs text-red-200">
+            <summary className="cursor-pointer hover:text-red-100">Technical details</summary>
+            <pre className="mt-2 p-2 bg-black/30 rounded overflow-auto max-h-40">
+              {parseError || String(error)}
+            </pre>
+          </details>
+          <p className="text-sm text-muted-foreground mt-4">
+            Please contact an administrator to fix this lesson content.
+          </p>
         </div>
       ];
     }
-
-    return sections;
   };
 
   const renderAccordion = (content: string, key: number) => {
