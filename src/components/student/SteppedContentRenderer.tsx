@@ -47,7 +47,7 @@ export function SteppedContentRenderer({
         setVisitedSteps(visited);
       }
     }
-  }, [content, lessonId, onStepsChange]);
+  }, [content, lessonId]);
 
   // Save progress to localStorage and notify parent
   useEffect(() => {

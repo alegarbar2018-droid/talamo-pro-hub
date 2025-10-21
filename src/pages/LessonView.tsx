@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -294,7 +294,7 @@ const LessonView = () => {
     return resource.external_url;
   };
 
-  const handleTopicClick = (topicId: string) => {
+  const handleTopicClick = useCallback((topicId: string) => {
     setActiveTopicId(topicId);
     
     // Check if it's a step click
@@ -332,7 +332,7 @@ const LessonView = () => {
         el?.classList.remove('ring-2', 'ring-teal', 'ring-offset-2');
       }, 2000);
     }
-  };
+  }, [lessonSteps, getTopicRef]);
 
   // ============================================
   // MAIN RENDER
@@ -468,22 +468,22 @@ const LessonView = () => {
                   <SteppedContentRenderer 
                     content={lesson.content_md}
                     lessonId={lessonId!}
-                    onStepComplete={(stepIndex) => {
+                    onStepComplete={useCallback((stepIndex: number) => {
                       if (tocEnabled) {
                         markTopicComplete(`topic-step-${stepIndex}`);
                       }
-                    }}
-                    onProgressChange={(current, total) => {
+                    }, [tocEnabled, markTopicComplete])}
+                    onProgressChange={useCallback((current: number, total: number) => {
                       setStepProgress({ current, total });
-                    }}
-                    onStepsChange={(steps) => {
+                    }, [])}
+                    onStepsChange={useCallback((steps: any[]) => {
                       setLessonSteps(steps);
-                    }}
-                    onLessonComplete={() => {
+                    }, [])}
+                    onLessonComplete={useCallback(() => {
                       if (!isCompleted) {
                         markComplete.mutate();
                       }
-                    }}
+                    }, [isCompleted, markComplete])}
                   />
                   {lesson.duration_min && (
                     <div className="mt-6 pt-6 border-t border-line/30 flex items-center gap-2 text-sm text-muted-foreground">
