@@ -35,6 +35,10 @@ const LessonView = () => {
   const tocEnabled = isFeatureEnabled('academy.lesson_toc');
   const [stepProgress, setStepProgress] = useState({ current: 0, total: 0 });
   const [lessonSteps, setLessonSteps] = useState<any[]>([]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const stored = localStorage.getItem('academy_sidebar_collapsed');
+    return stored === 'true';
+  });
   
   // Badge onboarding state
   const [showNewBadge, setShowNewBadge] = useState(() => {
@@ -376,13 +380,14 @@ const LessonView = () => {
           progress={stepProgress.total > 0 ? Math.round((stepProgress.current / stepProgress.total) * 100) : progress}
           onTopicClick={handleTopicClick}
           activeTopicId={activeTopicId}
+          onCollapseChange={setSidebarCollapsed}
         />
       </div>
 
       {/* Main Content */}
       <div className={cn(
         "overflow-auto transition-all duration-500",
-        tocEnabled ? "ml-80" : "ml-0"
+        !tocEnabled ? "ml-0" : sidebarCollapsed ? "ml-16" : "ml-80"
       )}>
         <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-2xl shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none" />

@@ -22,6 +22,7 @@ interface LessonTOCSidebarProps {
   progress: number;
   onTopicClick: (topicId: string) => void;
   activeTopicId?: string;
+  onCollapseChange?: (collapsed: boolean) => void;
 }
 
 const COLLAPSED_KEY = 'academy_sidebar_collapsed';
@@ -165,6 +166,7 @@ export function LessonTOCSidebar(props: LessonTOCSidebarProps) {
     const newValue = !isCollapsed;
     setIsCollapsed(newValue);
     localStorage.setItem(COLLAPSED_KEY, newValue.toString());
+    props.onCollapseChange?.(newValue);
   };
 
   // Mobile: Sheet/Drawer
