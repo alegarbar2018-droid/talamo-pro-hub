@@ -27,33 +27,33 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  LayoutDashboard,
-  BookOpen,
-  Radio,
-  Copy,
-  Calculator,
-  BookMarked,
-  BarChart3,
-  Users,
-  Gift,
+  Sparkles,
+  GraduationCap,
+  Activity,
+  Network,
+  Boxes,
+  NotebookPen,
+  LineChart,
+  UsersRound,
+  Share2,
   Settings,
   LogOut,
   ChevronDown,
 } from "lucide-react";
 
 const navigationItems = [
-  { path: "/dashboard", icon: LayoutDashboard, labelKey: "nav:home" },
-  { path: "/academy", icon: BookOpen, labelKey: "nav:academy" },
-  { path: "/signals", icon: Radio, labelKey: "nav:signals" },
-  { path: "/copy-trading", icon: Copy, labelKey: "nav:copy" },
-  { path: "/tools", icon: Calculator, labelKey: "nav:tools" },
-  { path: "/journal", icon: BookMarked, labelKey: "nav:journal" },
-  { path: "/audit", icon: BarChart3, labelKey: "nav:audit" },
+  { path: "/dashboard", icon: Sparkles, labelKey: "nav:home" },
+  { path: "/academy", icon: GraduationCap, labelKey: "nav:academy" },
+  { path: "/signals", icon: Activity, labelKey: "nav:signals" },
+  { path: "/copy-trading", icon: Network, labelKey: "nav:copy" },
+  { path: "/tools", icon: Boxes, labelKey: "nav:tools" },
+  { path: "/journal", icon: NotebookPen, labelKey: "nav:journal" },
+  { path: "/audit", icon: LineChart, labelKey: "nav:audit" },
 ];
 
 const communityItems = [
-  { path: "/community", icon: Users, labelKey: "nav:community", badge: "soon" },
-  { path: "/referrals", icon: Gift, labelKey: "nav:referrals", badge: "soon" },
+  { path: "/community", icon: UsersRound, labelKey: "nav:community", badge: "soon" },
+  { path: "/referrals", icon: Share2, labelKey: "nav:referrals", badge: "soon" },
 ];
 
 export function DashboardSidebar() {
