@@ -268,12 +268,26 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
       if (!simBlock || simBlock.type !== 'trading-sim') {
         throw new Error('Failed to parse trading-sim block');
       }
+      
+      // Validate hints before rendering
+      if (simBlock.props.hints && !Array.isArray(simBlock.props.hints)) {
+        console.warn('TradingSimulatorV2: Invalid hints format, expected array', simBlock.props.hints);
+        simBlock.props.hints = [];
+      }
+      
       return <TradingSimulatorV2 key={key} {...simBlock.props} />;
     } catch (error) {
+      console.error('Error parsing Trading Simulator v2:', error);
       return (
-        <div key={key} className="p-4 border border-red-500 bg-red-50 dark:bg-red-950 rounded">
-          <p className="font-semibold text-red-700 dark:text-red-400">Error parsing Trading Simulator v2</p>
-          <pre className="text-xs mt-2 text-red-600 dark:text-red-400">{String(error)}</pre>
+        <div key={key} className="p-4 border border-red-500/50 bg-red-500/10 rounded-lg">
+          <p className="font-semibold text-red-400 mb-2">⚠️ Trading Simulator Error</p>
+          <p className="text-sm text-red-300 mb-2">Failed to load this interactive trading scenario.</p>
+          <details className="text-xs text-red-200">
+            <summary className="cursor-pointer hover:text-red-100">Technical details</summary>
+            <pre className="mt-2 p-2 bg-black/30 rounded overflow-auto text-xs">
+{error instanceof Error ? error.message : String(error)}
+            </pre>
+          </details>
         </div>
       );
     }

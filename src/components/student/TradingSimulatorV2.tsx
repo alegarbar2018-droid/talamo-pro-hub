@@ -68,12 +68,23 @@ export const TradingSimulatorV2: React.FC<TradingSimulatorV2Props> = ({
   const isV2 = v === '2';
   const eduContext = context || educationalContext;
   
-  // Normalize hints
+  // Normalize hints with proper validation
   const normalizedHints: Hint[] = React.useMemo(() => {
-    if (!hintsData) return [];
+    // Check if hintsData exists and is an array
+    if (!hintsData || !Array.isArray(hintsData)) {
+      console.warn('TradingSimulatorV2: hints is not an array', hintsData);
+      return [];
+    }
+    
+    // If array is empty, return empty array
+    if (hintsData.length === 0) return [];
+    
+    // If first element is a string, convert string array to Hint objects
     if (typeof hintsData[0] === 'string') {
       return (hintsData as string[]).map((text, idx) => ({ id: `hint-${idx}`, text }));
     }
+    
+    // Otherwise assume it's already an array of Hint objects
     return hintsData as Hint[];
   }, [hintsData]);
 
