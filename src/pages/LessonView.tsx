@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EnhancedContentRenderer } from "@/components/student/EnhancedContentRenderer";
+import { SteppedContentRenderer } from "@/components/student/SteppedContentRenderer";
 import { LessonTOCSidebar } from "@/components/academy/LessonTOCSidebar";
 import { useLessonTopics } from "@/hooks/useLessonTopics";
 import { isFeatureEnabled } from "@/lib/flags";
@@ -444,7 +445,20 @@ const LessonView = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="prose prose-invert max-w-none">
-                  <EnhancedContentRenderer content={lesson.content_md} />
+                  <SteppedContentRenderer 
+                    content={lesson.content_md}
+                    lessonId={lessonId!}
+                    onStepComplete={(stepIndex) => {
+                      if (tocEnabled) {
+                        markTopicComplete(`topic-step-${stepIndex}`);
+                      }
+                    }}
+                    onLessonComplete={() => {
+                      if (!isCompleted) {
+                        markComplete.mutate();
+                      }
+                    }}
+                  />
                   {lesson.duration_min && (
                     <div className="mt-6 pt-6 border-t border-line/30 flex items-center gap-2 text-sm text-muted-foreground">
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

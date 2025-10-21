@@ -105,6 +105,9 @@ function parseBlock(
     case 'meta':
       return parseMeta(content, line);
     
+    case 'step':
+      return parseStep(content, attributes, line);
+    
     case 'accordion':
       return parseAccordion(content, attributes, line);
     
@@ -164,6 +167,19 @@ function parseMeta(content: string, line: number): ParsedBlock {
     type: 'meta',
     content,
     props: meta,
+    line
+  };
+}
+
+function parseStep(content: string, attributes: Record<string, string>, line: number): ParsedBlock {
+  return {
+    type: 'step',
+    content: content.trim(),
+    attributes,
+    props: {
+      title: attributes.title || '',
+      content: content.trim()
+    },
     line
   };
 }

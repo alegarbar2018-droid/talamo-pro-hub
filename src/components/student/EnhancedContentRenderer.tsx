@@ -26,7 +26,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
       let keyCounter = 0;
 
       // Regex para detectar bloques especiales con sintaxis :::type ... :::
-      const blockRegex = /:::(meta|accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?):::/g;
+      const blockRegex = /:::(meta|step|accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?):::/g;
       
       let match;
       const matches: RegExpExecArray[] = [];
@@ -69,7 +69,8 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
         try {
           switch (blockType) {
             case 'meta':
-              // Meta block is metadata only, don't render anything
+            case 'step':
+              // Meta and step blocks are parsed but not rendered here (handled by SteppedContentRenderer)
               break;
             case 'accordion':
               sections.push(renderAccordion(blockContent, keyCounter++));

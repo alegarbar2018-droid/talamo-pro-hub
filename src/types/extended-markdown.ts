@@ -191,12 +191,21 @@ export interface CalloutProps {
   content: string;
 }
 
+// Step content for progressive lessons
+export interface StepContent {
+  id: string;
+  title: string;
+  content: string;
+  index: number;
+}
+
 // ============================================================================
 // BLOCK TYPES
 // ============================================================================
 
 export type BlockType = 
   | 'meta'
+  | 'step'
   | 'accordion'
   | 'tabs'
   | 'flipcard'
