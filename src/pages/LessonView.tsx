@@ -139,7 +139,7 @@ const LessonView = () => {
     },
   });
 
-  // Video progress tracking with 90% threshold
+  // Video progress tracking with 90% threshold (only for direct video files)
   useEffect(() => {
     if (!tocEnabled || !videoRef.current) return;
     
@@ -235,6 +235,39 @@ const LessonView = () => {
   const videoUrl = lesson.video_storage_key
     ? supabase.storage.from('lms').getPublicUrl(lesson.video_storage_key).data.publicUrl
     : lesson.video_external_url;
+
+  // Helper to detect and convert YouTube URLs to embed format
+  const getEmbedUrl = (url: string): { embedUrl: string; provider: 'youtube' | 'vimeo' | 'direct' } | null => {
+    if (!url) return null;
+
+    // YouTube patterns
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeMatch = url.match(youtubeRegex);
+    if (youtubeMatch) {
+      return {
+        embedUrl: `https://www.youtube.com/embed/${youtubeMatch[1]}`,
+        provider: 'youtube'
+      };
+    }
+
+    // Vimeo patterns
+    const vimeoRegex = /vimeo\.com\/(?:video\/)?(\d+)/;
+    const vimeoMatch = url.match(vimeoRegex);
+    if (vimeoMatch) {
+      return {
+        embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`,
+        provider: 'vimeo'
+      };
+    }
+
+    // Direct video file
+    return {
+      embedUrl: url,
+      provider: 'direct'
+    };
+  };
+
+  const videoInfo = videoUrl ? getEmbedUrl(videoUrl) : null;
 
   const coverImageUrl = lesson.cover_image
     ? supabase.storage.from('lms-assets').getPublicUrl(lesson.cover_image).data.publicUrl
@@ -367,18 +400,28 @@ const LessonView = () => {
           )}
 
           {/* Video Player */}
-          {videoUrl && (
+          {videoInfo && (
             <div ref={(el) => tocEnabled && registerTopicRef('topic-video', el)} className="animate-slide-up">
               <Card className="content-card overflow-hidden">
                 <CardContent className="p-0">
-                  <video
-                    ref={videoRef}
-                    controls
-                    className="w-full aspect-video bg-black rounded-t-lg"
-                    src={videoUrl}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
+                  {videoInfo.provider === 'direct' ? (
+                    <video
+                      ref={videoRef}
+                      controls
+                      className="w-full aspect-video bg-black rounded-t-lg"
+                      src={videoInfo.embedUrl}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <iframe
+                      className="w-full aspect-video rounded-t-lg"
+                      src={videoInfo.embedUrl}
+                      title="Lesson Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  )}
                 </CardContent>
               </Card>
             </div>
