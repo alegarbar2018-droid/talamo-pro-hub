@@ -39,6 +39,7 @@ import {
   Settings,
   LogOut,
   ChevronDown,
+  X,
 } from "lucide-react";
 
 const navigationItems = [
@@ -58,7 +59,7 @@ const communityItems = [
 
 export function DashboardSidebar() {
   const { t } = useTranslation(["nav", "dashboard"]);
-  const { open, isMobile } = useSidebar();
+  const { open, isMobile, setOpenMobile } = useSidebar();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -87,7 +88,19 @@ export function DashboardSidebar() {
               </span>
             )}
           </div>
-          <SidebarTrigger className="hidden md:flex flex-shrink-0 h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+          {/* X button visible on mobile */}
+          {isMobile && (
+            <button
+              onClick={() => setOpenMobile(false)}
+              className="flex-shrink-0 h-8 w-8 flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition-all rounded-lg"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+          {/* Collapse toggle visible on desktop */}
+          {!isMobile && (
+            <SidebarTrigger className="flex-shrink-0 h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+          )}
         </div>
       </SidebarHeader>
 
