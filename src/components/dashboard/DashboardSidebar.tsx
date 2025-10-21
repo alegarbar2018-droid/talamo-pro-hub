@@ -71,27 +71,23 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar 
-      collapsible="icon" 
-      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl"
+      collapsible="icon"
+      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl border-r border-line/50"
     >
       <SidebarHeader className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
-        {open ? (
-          <div className="flex items-center justify-between p-4 gap-3">
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent truncate">
-                Tálamo
-              </span>
+        <div className="flex items-center justify-between p-4 gap-3">
+          <div className="flex flex-col flex-1 min-w-0">
+            <span className={`font-bold bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent transition-all ${open ? 'text-lg' : 'text-sm'}`}>
+              {open ? 'Tálamo' : 'T'}
+            </span>
+            {open && (
               <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
                 Pro Hub
               </span>
-            </div>
-            <SidebarTrigger className="flex-shrink-0 h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+            )}
           </div>
-        ) : (
-          <div className="flex items-center justify-center py-4">
-            <SidebarTrigger className="h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
-          </div>
-        )}
+          <SidebarTrigger className="hidden md:flex flex-shrink-0 h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="py-2 group-data-[collapsible=icon]:py-2">
