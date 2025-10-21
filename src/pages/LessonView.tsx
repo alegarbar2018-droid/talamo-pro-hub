@@ -17,6 +17,7 @@ import { LessonTOCSidebar } from "@/components/academy/LessonTOCSidebar";
 import { useLessonTopics } from "@/hooks/useLessonTopics";
 import { isFeatureEnabled } from "@/lib/flags";
 import { updateTopicProgress } from "@/lib/lessonTracking";
+import { cn } from "@/lib/utils";
 
 const LessonView = () => {
   // ============================================
@@ -360,9 +361,9 @@ const LessonView = () => {
   // ============================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-[hsl(222_20%_5%)] flex">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-[hsl(222_20%_5%)]">
       {/* TOC Sidebar - Always rendered to maintain hook count, but hidden via CSS when disabled */}
-      <div className={tocEnabled ? 'block' : 'hidden'}>
+      {tocEnabled && (
         <LessonTOCSidebar
           topics={lessonSteps.length > 0 ? lessonSteps.map((step, idx) => ({
             id: step.id,
@@ -376,10 +377,13 @@ const LessonView = () => {
           onTopicClick={handleTopicClick}
           activeTopicId={activeTopicId}
         />
-      </div>
+      )}
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className={cn(
+        "flex-1 overflow-auto transition-all duration-500",
+        tocEnabled ? "ml-80" : "ml-0"
+      )}>
         <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-2xl shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none" />
           <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-10 relative">
