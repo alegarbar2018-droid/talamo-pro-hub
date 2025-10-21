@@ -278,40 +278,40 @@ const Signals = () => {
         structuredData={structuredData}
       />
       {/* Hero Section */}
-      <div className="relative border-b border-orange-500/20 bg-gradient-to-br from-orange-600 via-orange-500 to-amber-600 backdrop-blur-xl py-12 overflow-hidden">
+      <div className="relative border-b border-orange-500/10 bg-gradient-to-br from-orange-950/40 via-background to-amber-950/30 backdrop-blur-xl py-12 overflow-hidden">
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-amber-400/30 to-transparent rounded-full blur-3xl opacity-40" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-orange-400/30 to-transparent rounded-full blur-3xl opacity-40" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl opacity-30" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-lg">
-              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span className="text-sm font-medium text-white">Señales Verificadas</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 backdrop-blur-md border border-orange-500/20 shadow-sm shadow-orange-500/10">
+              <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
+              <span className="text-sm font-medium text-orange-400">Señales Verificadas</span>
             </div>
             
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-400 via-amber-400 to-orange-300 bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_30px_rgba(251,146,60,0.3)]">
                 {t('signals:title')}
               </h1>
-              <p className="text-base sm:text-lg text-white/90 mt-2 font-light">
+              <p className="text-base sm:text-lg text-muted-foreground mt-2 font-light">
                 {t('signals:subtitle')}{" "}
-                <span className="text-white font-semibold">análisis profesional verificado</span>
+                <span className="text-orange-400 font-semibold">análisis profesional verificado</span>
               </p>
             </div>
             
             <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 shadow-sm">
-                <Activity className="w-4 h-4 text-white" />
-                <span className="text-sm text-white/90">Tiempo Real</span>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-500/10 backdrop-blur-sm border border-orange-500/20 shadow-sm">
+                <Activity className="w-4 h-4 text-orange-400" />
+                <span className="text-sm text-muted-foreground">Tiempo Real</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 shadow-sm">
-                <Target className="w-4 h-4 text-white" />
-                <span className="text-sm text-white/90">R:R Optimizado</span>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-500/10 backdrop-blur-sm border border-orange-500/20 shadow-sm">
+                <Target className="w-4 h-4 text-orange-400" />
+                <span className="text-sm text-muted-foreground">R:R Optimizado</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 shadow-sm">
-                <BarChart3 className="w-4 h-4 text-white" />
-                <span className="text-sm text-white/90">Análisis Verificado</span>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-500/10 backdrop-blur-sm border border-orange-500/20 shadow-sm">
+                <BarChart3 className="w-4 h-4 text-orange-400" />
+                <span className="text-sm text-muted-foreground">Análisis Verificado</span>
               </div>
             </div>
           </div>

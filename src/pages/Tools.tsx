@@ -143,24 +143,24 @@ const Tools = () => {
         structuredData={structuredData}
       />
       {/* Hero Section */}
-      <div className="relative border-b border-pink-500/20 bg-gradient-to-br from-pink-600 via-rose-500 to-pink-600 backdrop-blur-xl py-12 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-rose-400/30 to-transparent rounded-full blur-3xl opacity-40" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-pink-400/30 to-transparent rounded-full blur-3xl opacity-40" />
+      <div className="relative border-b border-pink-500/10 bg-gradient-to-br from-pink-950/40 via-background to-rose-950/30 backdrop-blur-xl py-12 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-rose-500/20 rounded-full blur-3xl opacity-30" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-lg">
-              <Calculator className="h-4 w-4 text-white" />
-              <span className="text-sm font-medium text-white">Herramientas Profesionales</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 backdrop-blur-md border border-pink-500/20 shadow-sm shadow-pink-500/10">
+              <Calculator className="h-4 w-4 text-pink-400" />
+              <span className="text-sm font-medium text-pink-400">Herramientas Profesionales</span>
             </div>
             
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 via-rose-400 to-pink-300 bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_30px_rgba(244,114,182,0.3)]">
                 Herramientas de Trading
               </h1>
-              <p className="text-base sm:text-lg text-white/90 mt-2 font-light">
+              <p className="text-base sm:text-lg text-muted-foreground mt-2 font-light">
                 Suite completa de calculadoras, especificaciones y análisis profesionales para{" "}
-                <span className="text-white font-semibold">optimizar tu gestión de riesgo</span>
+                <span className="text-pink-400 font-semibold">optimizar tu gestión de riesgo</span>
               </p>
             </div>
           </div>

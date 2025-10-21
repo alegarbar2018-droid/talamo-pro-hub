@@ -225,44 +225,44 @@ const Academy = () => {
       />
 
       {/* Hero Section */}
-      <div className="relative border-b border-purple-500/20 bg-gradient-to-br from-purple-600 via-violet-500 to-purple-600 backdrop-blur-xl py-12 overflow-hidden">
+      <div className="relative border-b border-purple-500/10 bg-gradient-to-br from-purple-950/40 via-background to-violet-950/30 backdrop-blur-xl py-12 overflow-hidden">
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-400/30 to-transparent rounded-full blur-3xl opacity-40" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-purple-400/30 to-transparent rounded-full blur-3xl opacity-40" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl opacity-30" />
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex-1">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 text-white leading-tight tracking-tight animate-fade-in">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-violet-400 to-purple-300 bg-clip-text text-transparent leading-tight tracking-tight animate-fade-in drop-shadow-[0_0_30px_rgba(168,85,247,0.3)]">
                 {t('academy:title')}
               </h1>
-              <p className="text-base sm:text-lg text-white/80 max-w-2xl leading-relaxed font-light animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed font-light animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 {t('academy:subtitle')}
               </p>
             </div>
 
             {courses && courses.length > 0 && (
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <Card className="border-white/20 bg-white/10 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <Card className="border-purple-500/20 bg-purple-950/20 backdrop-blur-xl shadow-lg shadow-purple-500/10 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-6 text-center">
-                    <div className="p-2.5 rounded-xl bg-white/20 w-fit mx-auto mb-3 shadow-sm">
-                      <Target className="h-6 w-6 text-white" strokeWidth={2.5} />
+                    <div className="p-2.5 rounded-xl bg-purple-500/20 w-fit mx-auto mb-3 shadow-sm shadow-purple-500/20">
+                      <Target className="h-6 w-6 text-purple-400" strokeWidth={2.5} />
                     </div>
-                    <p className="text-3xl font-bold text-white mb-1">
+                    <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent mb-1">
                       {courses.length}
                     </p>
-                    <p className="text-xs font-medium text-white/80 tracking-wide uppercase">Cursos Disponibles</p>
+                    <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Cursos Disponibles</p>
                   </CardContent>
                 </Card>
-                <Card className="border-white/20 bg-white/10 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <Card className="border-purple-500/20 bg-purple-950/20 backdrop-blur-xl shadow-lg shadow-violet-500/10 hover:shadow-xl hover:shadow-violet-500/20 transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-6 text-center">
-                    <div className="p-2.5 rounded-xl bg-white/20 w-fit mx-auto mb-3 shadow-sm">
-                      <TrendingUp className="h-6 w-6 text-white" strokeWidth={2.5} />
+                    <div className="p-2.5 rounded-xl bg-violet-500/20 w-fit mx-auto mb-3 shadow-sm shadow-violet-500/20">
+                      <TrendingUp className="h-6 w-6 text-violet-400" strokeWidth={2.5} />
                     </div>
-                    <p className="text-3xl font-bold text-white mb-1">
+                    <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text text-transparent mb-1">
                       {coursesProgress?.reduce((acc, cp) => acc + cp.progress, 0) || 0}%
                     </p>
-                    <p className="text-xs font-medium text-white/80 tracking-wide uppercase">Progreso Promedio</p>
+                    <p className="text-xs font-medium text-muted-foreground tracking-wide uppercase">Progreso Promedio</p>
                   </CardContent>
                 </Card>
               </div>
