@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Plus, X, ImagePlus, HelpCircle } from "lucide-react";
+import { Loader2, Plus, X, ImagePlus, HelpCircle, Wand2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 
@@ -56,6 +56,7 @@ export const LessonForm: React.FC<LessonFormProps> = ({
   const [resources, setResources] = useState<Resource[]>([]);
   const [isUploadingContentImage, setIsUploadingContentImage] = useState(false);
   const [showSyntaxGuide, setShowSyntaxGuide] = useState(false);
+  const [isFormattingWithAI, setIsFormattingWithAI] = useState(false);
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Fetch existing resources when editing a lesson
@@ -113,6 +114,45 @@ export const LessonForm: React.FC<LessonFormProps> = ({
 
   const handleRemoveResource = (index: number) => {
     setResources(resources.filter((_, i) => i !== index));
+  };
+
+  const handleFormatWithAI = async () => {
+    const currentContent = form.getValues('content_md');
+    
+    if (!currentContent || currentContent.trim() === '') {
+      toast.error('No hay contenido para formatear');
+      return;
+    }
+
+    setIsFormattingWithAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('format-lesson-content', {
+        body: { content: currentContent }
+      });
+
+      if (error) throw error;
+
+      if (data?.formattedContent) {
+        form.setValue('content_md', data.formattedContent);
+        toast.success('Contenido formateado exitosamente con IA');
+      } else {
+        throw new Error('No se recibió contenido formateado');
+      }
+    } catch (error: any) {
+      console.error('Error formatting with AI:', error);
+      
+      if (error.message?.includes('Rate limit')) {
+        toast.error('Límite de solicitudes excedido. Intenta de nuevo en unos minutos.');
+      } else if (error.message?.includes('Payment required')) {
+        toast.error('Se requiere pago. Agrega créditos a tu workspace de Lovable AI.');
+      } else {
+        toast.error('Error al formatear con IA', {
+          description: error.message
+        });
+      }
+    } finally {
+      setIsFormattingWithAI(false);
+    }
   };
 
   const handleInsertImageInContent = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -451,6 +491,25 @@ export const LessonForm: React.FC<LessonFormProps> = ({
                     <a href="/docs/AI_LESSON_CREATOR_PROMPT.md" target="_blank" rel="noopener noreferrer">
                       🤖 AI Instructions
                     </a>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="default"
+                    size="sm"
+                    onClick={handleFormatWithAI}
+                    disabled={isFormattingWithAI}
+                  >
+                    {isFormattingWithAI ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                        Formateando...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="w-4 h-4 mr-1" />
+                        Formatear con IA
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
