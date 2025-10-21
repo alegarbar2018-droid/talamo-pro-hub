@@ -233,20 +233,7 @@ const Academy = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-6 animate-fade-in">
-                <div className="p-3.5 rounded-2xl bg-gradient-to-br from-teal/30 via-teal/20 to-cyan/30 shadow-lg shadow-teal/20 backdrop-blur-sm border border-teal/20">
-                  <BookOpen className="h-8 w-8 text-teal drop-shadow-sm" strokeWidth={2.5} />
-                </div>
-                <Badge 
-                  variant="outline" 
-                  className="border-teal/40 bg-gradient-to-r from-teal/10 to-cyan/10 text-teal font-semibold px-3 py-1.5 shadow-sm backdrop-blur-sm"
-                >
-                  <Sparkles className="h-3.5 w-3.5 mr-1.5" strokeWidth={2.5} />
-                  Academia Profesional
-                </Badge>
-              </div>
-              
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent leading-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent leading-tight animate-fade-in">
                 {t('academy:title')}
               </h1>
               <p className="text-lg sm:text-xl text-muted-foreground/90 max-w-2xl leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
