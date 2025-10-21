@@ -33,6 +33,7 @@ const LessonView = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const tocEnabled = isFeatureEnabled('academy.lesson_toc');
   const [stepProgress, setStepProgress] = useState({ current: 0, total: 0 });
+  const [lessonSteps, setLessonSteps] = useState<any[]>([]);
   
   // Badge onboarding state
   const [showNewBadge, setShowNewBadge] = useState(() => {
@@ -296,6 +297,19 @@ const LessonView = () => {
   const handleTopicClick = (topicId: string) => {
     setActiveTopicId(topicId);
     
+    // Check if it's a step click
+    if (topicId.startsWith('step-')) {
+      const stepIndex = parseInt(topicId.replace('step-', ''), 10);
+      if (!isNaN(stepIndex) && lessonSteps[stepIndex]) {
+        // Trigger step change by simulating clicking the step indicator
+        const stepButton = document.querySelector(`[data-step-index="${stepIndex}"]`) as HTMLButtonElement;
+        if (stepButton) {
+          stepButton.click();
+          return;
+        }
+      }
+    }
+    
     // First try to get from registered refs
     let el = getTopicRef(topicId);
     
@@ -329,7 +343,12 @@ const LessonView = () => {
       {/* TOC Sidebar - Always rendered to maintain hook count, but hidden via CSS when disabled */}
       <div className={tocEnabled ? 'block' : 'hidden'}>
         <LessonTOCSidebar
-          topics={topics}
+          topics={lessonSteps.length > 0 ? lessonSteps.map((step, idx) => ({
+            id: step.id,
+            title: step.title || `Paso ${idx + 1}`,
+            type: 'content' as const,
+            completed: idx < stepProgress.current
+          })) : topics}
           completedCount={stepProgress.current || completedCount}
           total={stepProgress.total || total}
           progress={stepProgress.total > 0 ? Math.round((stepProgress.current / stepProgress.total) * 100) : progress}
@@ -456,6 +475,9 @@ const LessonView = () => {
                     }}
                     onProgressChange={(current, total) => {
                       setStepProgress({ current, total });
+                    }}
+                    onStepsChange={(steps) => {
+                      setLessonSteps(steps);
                     }}
                     onLessonComplete={() => {
                       if (!isCompleted) {

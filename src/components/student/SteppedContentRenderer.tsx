@@ -12,6 +12,7 @@ interface SteppedContentRendererProps {
   onStepComplete?: (stepIndex: number) => void;
   onLessonComplete?: () => void;
   onProgressChange?: (current: number, total: number) => void;
+  onStepsChange?: (steps: StepContent[]) => void;
 }
 
 export function SteppedContentRenderer({
@@ -19,7 +20,8 @@ export function SteppedContentRenderer({
   lessonId,
   onStepComplete,
   onLessonComplete,
-  onProgressChange
+  onProgressChange,
+  onStepsChange
 }: SteppedContentRendererProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [steps, setSteps] = useState<StepContent[]>([]);
@@ -29,6 +31,7 @@ export function SteppedContentRenderer({
   useEffect(() => {
     const parsedSteps = parseContentIntoSteps(content);
     setSteps(parsedSteps);
+    onStepsChange?.(parsedSteps);
 
     // Load progress from localStorage
     const savedStep = localStorage.getItem(`lesson-${lessonId}-current-step`);
@@ -44,7 +47,7 @@ export function SteppedContentRenderer({
         setVisitedSteps(visited);
       }
     }
-  }, [content, lessonId]);
+  }, [content, lessonId, onStepsChange]);
 
   // Save progress to localStorage and notify parent
   useEffect(() => {
@@ -129,6 +132,7 @@ export function SteppedContentRenderer({
             {steps.map((step, index) => (
               <button
                 key={step.id}
+                data-step-index={index}
                 onClick={() => {
                   setCurrentStep(index);
                   setVisitedSteps(prev => new Set([...prev, index]));
