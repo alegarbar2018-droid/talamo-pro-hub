@@ -77,17 +77,17 @@ export function DashboardSidebar() {
       className="bg-background border-r border-line"
     >
       <SidebarHeader className="border-b border-line bg-background">
-        <div className="flex items-center justify-between p-4 gap-3">
-          <div className="flex flex-col flex-1 min-w-0">
-            <span className={`font-bold bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent transition-all ${showExpanded ? 'text-lg' : 'text-sm'}`}>
-              {showExpanded ? 'Tálamo' : 'T'}
-            </span>
-            {showExpanded && (
+        <div className={`flex items-center p-4 gap-3 ${showExpanded ? 'justify-between' : 'justify-center'}`}>
+          {showExpanded && (
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="font-bold text-lg bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent">
+                Tálamo
+              </span>
               <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
                 Pro Hub
               </span>
-            )}
-          </div>
+            </div>
+          )}
           {/* X button visible on mobile */}
           {isMobile && (
             <button
