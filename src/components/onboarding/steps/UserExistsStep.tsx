@@ -38,11 +38,11 @@ export const UserExistsStep = ({ email, onTryAnotherEmail }: UserExistsStepProps
         </motion.div>
         
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-          ¡Ya tienes cuenta en Tálamo!
+          ¡Ya tienes una cuenta!
         </h2>
         
         <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Este email ya está registrado. Inicia sesión para acceder a tu ecosistema de trading
+          Este email ya está registrado en Tálamo. Por favor, inicia sesión con tu contraseña existente.
         </p>
       </div>
 
