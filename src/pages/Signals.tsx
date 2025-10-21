@@ -33,7 +33,7 @@ import { toast } from "@/hooks/use-toast";
 // Memoized signal card for performance
 const SignalCard = memo(
   ({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
-    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all overflow-x-hidden max-w-full">
+    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all w-full overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-2">
@@ -299,7 +299,7 @@ const Signals = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden max-w-full">
+    <div className="min-h-screen bg-background overflow-x-hidden w-full">
       <SEOHead
         title={seoConfig.title}
         description={seoConfig.description}
@@ -326,7 +326,7 @@ const Signals = () => {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden w-full">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-8 w-full overflow-x-hidden">
         {/* Filters */}
         <Card className="border-line bg-surface mb-6">
           <CardHeader className="pb-3">

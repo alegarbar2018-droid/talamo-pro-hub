@@ -54,7 +54,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
 
   return (
     <div className={cn(
-      'relative border-b backdrop-blur-xl overflow-hidden max-w-full',
+      'relative border-b backdrop-blur-xl overflow-hidden',
       theme.gradient.border,
       theme.gradient.hero,
       DESIGN_TOKENS.spacing.hero.full
@@ -69,8 +69,8 @@ export const PageHero: React.FC<PageHeroProps> = ({
         theme.gradient.blob2
       )} />
 
-      <div className={cn(containerClass, 'relative z-10 overflow-x-hidden max-w-full')}>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 lg:gap-8 overflow-x-hidden max-w-full">
+      <div className={cn(containerClass, 'relative z-10')}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 lg:gap-8">
           <div className="flex-1 space-y-3 md:space-y-4">
             {/* Badge */}
             {badge && (
