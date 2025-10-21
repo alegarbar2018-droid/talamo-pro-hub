@@ -53,25 +53,38 @@ serve(async (req) => {
       );
     }
 
-    // Check admin permission - ADMIN role always has access
-    const { data: currentRole } = await supabase.rpc('get_current_admin_role');
-    
-    if (currentRole !== 'ADMIN') {
-      const { data: hasPermission, error: permError } = await supabase.rpc('has_admin_permission', {
+    // Check admin permission - verify directly in admin_users table
+    const { data: adminUser, error: adminError } = await supabase
+      .from('admin_users')
+      .select('role')
+      .eq('user_id', caller.id)
+      .single();
+
+    if (adminError || !adminUser) {
+      console.error(`[${requestId}] Not an admin user ${caller.id}:`, adminError);
+      return new Response(
+        JSON.stringify({ error: 'Forbidden: Admin privileges required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // ADMIN role has full access, others need specific permission
+    if (adminUser.role !== 'ADMIN') {
+      const { data: hasPermission } = await supabase.rpc('has_admin_permission', {
         _resource: 'users',
         _action: 'create'
       });
 
-      if (permError || !hasPermission) {
-        console.error(`[${requestId}] Permission denied for user ${caller.id}:`, permError);
+      if (!hasPermission) {
+        console.error(`[${requestId}] Permission denied for user ${caller.id}`);
         return new Response(
-          JSON.stringify({ error: 'Forbidden: Admin privileges required' }),
+          JSON.stringify({ error: 'Forbidden: Insufficient permissions' }),
           { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
     }
 
-    console.log(`[${requestId}] Permission check passed for role: ${currentRole}`);
+    console.log(`[${requestId}] Permission check passed for role: ${adminUser.role}`);
 
     // Parse and validate body
     const body = await req.json();
