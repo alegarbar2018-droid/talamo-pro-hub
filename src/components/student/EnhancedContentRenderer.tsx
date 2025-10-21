@@ -43,7 +43,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
           const normalContent = markdown.substring(currentIndex, match.index);
           if (normalContent.trim()) {
             sections.push(
-              <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
+              <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
                 <ReactMarkdown
                   components={{
                     h2: ({ children, ...props }) => {
@@ -95,7 +95,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
           console.error(`Error rendering ${blockType}:`, error);
           // Fallback: render as normal markdown if parsing fails
           sections.push(
-            <div key={`error-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
+            <div key={`error-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
               <ReactMarkdown>{match[0]}</ReactMarkdown>
             </div>
           );
@@ -109,7 +109,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
         const remaining = markdown.substring(currentIndex);
         if (remaining.trim()) {
           sections.push(
-            <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert">
+            <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
               <ReactMarkdown
                 components={{
                   h2: ({ children, ...props }) => {
@@ -133,7 +133,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
       if (sections.length === 0) {
         h2Counter.current = 0; // Reset counter
         return [
-          <div key="md-default" className="prose prose-sm max-w-none dark:prose-invert">
+          <div key="md-default" className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
             <ReactMarkdown
               components={{
                 h2: ({ children, ...props }) => {
