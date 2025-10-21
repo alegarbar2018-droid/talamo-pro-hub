@@ -34,10 +34,9 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
   const { t } = useTranslation(["admin", "forms"]);
   const queryClient = useQueryClient();
 
-  // Identity form state
+  // Identity form state (solo email, phone va en perfil)
   const [identityData, setIdentityData] = useState({
     email: user.email || "",
-    phone: user.phone || "",
     email_confirm: false,
   });
 
@@ -59,7 +58,6 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
         body: {
           userId: user.user_id,
           email: data.email !== user.email ? data.email : undefined,
-          phone: data.phone !== user.phone ? data.phone : undefined,
           email_confirm: data.email_confirm,
         },
       });
@@ -133,8 +131,11 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
   return (
     <div className="space-y-6">
       {/* Identity Form */}
-      <div>
-        <h4 className="font-semibold mb-4">{t("admin:users.identity_section")}</h4>
+      <div className="rounded-lg border bg-card p-4">
+        <div className="mb-4">
+          <h4 className="font-semibold text-base">{t("admin:users.identity_section")}</h4>
+          <p className="text-sm text-muted-foreground mt-1">Datos de autenticación</p>
+        </div>
         <form onSubmit={handleIdentitySubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="identity-email">{t("forms:fields.email")}</Label>
@@ -146,49 +147,43 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="identity-phone">{t("forms:fields.phone")}</Label>
-            <Input
-              id="identity-phone"
-              type="tel"
-              value={identityData.phone}
-              onChange={(e) => setIdentityData({ ...identityData, phone: e.target.value })}
-            />
-          </div>
-
           {emailChanged && (
-            <div className="flex items-center space-x-2 p-3 bg-muted rounded-md">
-              <Switch
-                id="email_confirm"
-                checked={identityData.email_confirm}
-                onCheckedChange={(checked) => setIdentityData({ ...identityData, email_confirm: checked })}
-              />
-              <Label htmlFor="email_confirm" className="text-sm">
-                {t("admin:users.force_email_confirm")}
-              </Label>
-            </div>
+            <>
+              <div className="flex items-center space-x-2 p-3 bg-muted rounded-md">
+                <Switch
+                  id="email_confirm"
+                  checked={identityData.email_confirm}
+                  onCheckedChange={(checked) => setIdentityData({ ...identityData, email_confirm: checked })}
+                />
+                <Label htmlFor="email_confirm" className="text-sm cursor-pointer">
+                  {t("admin:users.force_email_confirm")}
+                </Label>
+              </div>
+
+              {!identityData.email_confirm && (
+                <div className="text-sm text-amber-600 dark:text-amber-500 flex items-start gap-2">
+                  <span>⚠️</span>
+                  <span>{t("admin:users.email_confirmation_required")}</span>
+                </div>
+              )}
+            </>
           )}
 
-          {emailChanged && !identityData.email_confirm && (
-            <p className="text-sm text-muted-foreground">
-              ⚠️ {t("admin:users.email_confirmation_required")}
-            </p>
-          )}
-
-          <Button type="submit" disabled={updateIdentityMutation.isPending}>
+          <Button type="submit" disabled={updateIdentityMutation.isPending} className="w-full sm:w-auto">
             {updateIdentityMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t("admin:users.actions.save_identity")}
           </Button>
         </form>
       </div>
 
-      <Separator />
-
       {/* Profile Form */}
-      <div>
-        <h4 className="font-semibold mb-4">{t("admin:users.profile_section")}</h4>
+      <div className="rounded-lg border bg-card p-4">
+        <div className="mb-4">
+          <h4 className="font-semibold text-base">{t("admin:users.profile_section")}</h4>
+          <p className="text-sm text-muted-foreground mt-1">Información del usuario</p>
+        </div>
         <form onSubmit={handleProfileSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="profile-first-name">{t("forms:fields.first_name")}</Label>
               <Input
@@ -214,6 +209,7 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
               type="tel"
               value={profileData.phone}
               onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+              placeholder="+52 55 1234 5678"
             />
           </div>
 
@@ -234,30 +230,32 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
               id="profile-bio"
               value={profileData.bio}
               onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
+              placeholder="Breve descripción..."
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="profile-language">{t("forms:fields.language")}</Label>
-            <Input
-              id="profile-language"
-              value={profileData.language}
-              onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
-              placeholder="es, en, pt"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="profile-language">{t("forms:fields.language")}</Label>
+              <Input
+                id="profile-language"
+                value={profileData.language}
+                onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
+                placeholder="es"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="profile-affiliation">{t("admin:users.details.partner_id")}</Label>
+              <Input
+                id="profile-affiliation"
+                value={profileData.affiliation}
+                onChange={(e) => setProfileData({ ...profileData, affiliation: e.target.value })}
+                placeholder="Opcional"
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="profile-affiliation">{t("admin:users.details.partner_id")}</Label>
-            <Input
-              id="profile-affiliation"
-              value={profileData.affiliation}
-              onChange={(e) => setProfileData({ ...profileData, affiliation: e.target.value })}
-              placeholder="Optional"
-            />
-          </div>
-
-          <Button type="submit" disabled={updateProfileMutation.isPending}>
+          <Button type="submit" disabled={updateProfileMutation.isPending} className="w-full sm:w-auto">
             {updateProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t("admin:users.actions.save_profile")}
           </Button>
