@@ -21,15 +21,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Users, GraduationCap, TrendingUp, CheckCircle, AlertTriangle, Shield, Loader2, ArrowLeft } from "lucide-react";
+import {
+  Sparkles,
+  Users,
+  GraduationCap,
+  TrendingUp,
+  CheckCircle,
+  AlertTriangle,
+  Shield,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
 
 const Onboarding = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
   const [searchParams] = useSearchParams();
-  const flowOrigin = searchParams.get('flow');
-  
+  const flowOrigin = searchParams.get("flow");
+
   const {
     step,
     setStep,
@@ -58,7 +68,7 @@ const Onboarding = () => {
     goBack,
     canGoBack,
   } = useOnboardingState();
-  
+
   const { saveState, loadState, clearState } = useOnboardingPersistence();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -76,27 +86,27 @@ const Onboarding = () => {
       if (saved.experience) setExperience(saved.experience);
       if (saved.step) setStep(saved.step);
       if (saved.accountStatus) setAccountStatus(saved.accountStatus);
-      
+
       toast({
         title: "Progreso restaurado",
-        description: "Continuamos donde lo dejaste"
+        description: "Continuamos donde lo dejaste",
       });
     }
   }, []);
 
   // Load investor wizard state
   useEffect(() => {
-    if (flowOrigin === 'investor') {
-      const saved = sessionStorage.getItem('investor_wizard_state');
+    if (flowOrigin === "investor") {
+      const saved = sessionStorage.getItem("investor_wizard_state");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
           setWizardState(parsed);
           if (parsed.goal) {
-            setGoal('copiar');
+            setGoal("copiar");
           }
         } catch (e) {
-          console.error('Error parsing wizard state:', e);
+          console.error("Error parsing wizard state:", e);
         }
       }
     }
@@ -111,12 +121,11 @@ const Onboarding = () => {
   const handleEmailValidation = async (emailToValidate: string) => {
     setLoading(true);
     setValidationError("");
-    
+
     try {
-      const { data, error: apiError } = await supabase.functions.invoke(
-        'secure-affiliation-check',
-        { body: { email: emailToValidate } }
-      );
+      const { data, error: apiError } = await supabase.functions.invoke("secure-affiliation-check", {
+        body: { email: emailToValidate },
+      });
 
       if (apiError?.status === 429 || data?.rate_limited) {
         const retryAfter = data?.retry_after || 300;
@@ -125,13 +134,13 @@ const Onboarding = () => {
         return;
       }
 
-      if (apiError?.status === 503 || data?.code === 'UpstreamError') {
+      if (apiError?.status === 503 || data?.code === "UpstreamError") {
         setValidationError("Servicio temporalmente no disponible. Intenta en unos minutos.");
         setLoading(false);
         return;
       }
 
-      if (data?.code === 'BadRequest') {
+      if (data?.code === "BadRequest") {
         setValidationError("Email inválido. Verifica el formato.");
         setLoading(false);
         return;
@@ -142,35 +151,35 @@ const Onboarding = () => {
         const { user_exists, is_affiliated, has_exness_account, uid: responseUid, demo_mode } = data.data;
 
         if (user_exists) {
-          setAccountStatus('exists');
-          setStep('user-exists');
+          setAccountStatus("exists");
+          setStep("user-exists");
         } else if (demo_mode) {
-          setIsDemoMode(true);
-          setAccountStatus('affiliated');
-          setStep('create-password');
+          setIsDemoMode(false);
+          setAccountStatus("affiliated");
+          setStep("create-password");
           toast({
             title: "Modo Demo Activado",
-            description: "Acceso temporal para explorar Tálamo"
+            description: "Acceso temporal para explorar Tálamo",
           });
         } else if (is_affiliated) {
-          setUid(responseUid || '');
-          setAccountStatus('affiliated');
-          setStep('create-password');
+          setUid(responseUid || "");
+          setAccountStatus("affiliated");
+          setStep("create-password");
         } else if (has_exness_account === false) {
-          setAccountStatus('no-exness');
-          setStep('no-exness-account');
+          setAccountStatus("no-exness");
+          setStep("no-exness-account");
         } else {
           // Has Exness but not affiliated
-          setAccountStatus('not-affiliated');
-          setStep('exness-detection');
+          setAccountStatus("not-affiliated");
+          setStep("exness-detection");
         }
       } else {
         // Fallback
-        setAccountStatus('not-affiliated');
-        setStep('exness-detection');
+        setAccountStatus("not-affiliated");
+        setStep("exness-detection");
       }
     } catch (err: any) {
-      console.error('Validation error:', err);
+      console.error("Validation error:", err);
       setValidationError("Error inesperado. Verifica tu conexión.");
     } finally {
       setLoading(false);
@@ -182,7 +191,7 @@ const Onboarding = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    
+
     try {
       if (password !== confirmPassword) {
         setError("Las contraseñas no coinciden");
@@ -204,13 +213,12 @@ const Onboarding = () => {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: { uid }
-        }
+          data: { uid },
+        },
       });
 
       if (signUpError) throw signUpError;
       setStep("welcome");
-      
     } catch (err: any) {
       setError(err.message || "Error al crear cuenta");
     } finally {
@@ -221,41 +229,41 @@ const Onboarding = () => {
   // Complete onboarding
   const handleComplete = async () => {
     setLoading(true);
-    
+
     try {
       // If no user, try to refresh auth state first
       if (!user) {
-        console.warn('No user found, attempting to refresh...');
+        console.warn("No user found, attempting to refresh...");
         await refreshUser();
-        
+
         // If still no user after refresh, navigate based on goal anyway
         if (!user) {
-          console.warn('Still no user after refresh, navigating based on goal');
+          console.warn("Still no user after refresh, navigating based on goal");
           clearState();
-          
-          if (flowOrigin === 'investor' || goal === 'copiar') {
-            navigate('/copy-trading');
-          } else if (goal === 'aprender') {
-            navigate('/academy');
+
+          if (flowOrigin === "investor" || goal === "copiar") {
+            navigate("/copy-trading");
+          } else if (goal === "aprender") {
+            navigate("/academy");
           } else {
-            navigate('/dashboard');
+            navigate("/dashboard");
           }
           return;
         }
       }
-      
-      let recommendedAccount = 'Standard Cent';
-      
-      if (experience === 'ninguna' || experience === 'basica') {
-        recommendedAccount = 'Standard Cent';
-      } else if (experience === 'intermedia') {
-        recommendedAccount = capital === '>10000' ? 'Pro' : 'Standard';
-      } else if (experience === 'avanzada') {
-        recommendedAccount = capital === '>10000' ? 'Zero' : 'Pro';
+
+      let recommendedAccount = "Standard Cent";
+
+      if (experience === "ninguna" || experience === "basica") {
+        recommendedAccount = "Standard Cent";
+      } else if (experience === "intermedia") {
+        recommendedAccount = capital === ">10000" ? "Pro" : "Standard";
+      } else if (experience === "avanzada") {
+        recommendedAccount = capital === ">10000" ? "Zero" : "Pro";
       }
 
       const { error: updateError } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({
           first_name: name,
           goal,
@@ -266,46 +274,46 @@ const Onboarding = () => {
           onboarding_completed: true,
           onboarding_completed_at: new Date().toISOString(),
         })
-        .eq('user_id', user.id);
-      
+        .eq("user_id", user.id);
+
       if (updateError) {
-        console.error('Error updating profile:', updateError);
+        console.error("Error updating profile:", updateError);
         throw updateError;
       }
-      
+
       await refreshUser();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       clearState();
-      
+
       toast({
-        title: '¡Bienvenido a Tálamo!',
-        description: 'Tu perfil está listo',
+        title: "¡Bienvenido a Tálamo!",
+        description: "Tu perfil está listo",
       });
-      
+
       // Navigate based on goal
-      if (flowOrigin === 'investor' || goal === 'copiar') {
-        navigate('/copy-trading');
-      } else if (goal === 'aprender') {
-        navigate('/academy');
+      if (flowOrigin === "investor" || goal === "copiar") {
+        navigate("/copy-trading");
+      } else if (goal === "aprender") {
+        navigate("/academy");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      console.error("Error completing onboarding:", error);
       toast({
-        title: 'Error',
-        description: 'No se pudo completar el proceso',
-        variant: 'destructive'
+        title: "Error",
+        description: "No se pudo completar el proceso",
+        variant: "destructive",
       });
-      
+
       // Even if there's an error, navigate to appropriate page
-      if (flowOrigin === 'investor' || goal === 'copiar') {
-        navigate('/copy-trading');
-      } else if (goal === 'aprender') {
-        navigate('/academy');
+      if (flowOrigin === "investor" || goal === "copiar") {
+        navigate("/copy-trading");
+      } else if (goal === "aprender") {
+        navigate("/academy");
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } finally {
       setLoading(false);
@@ -313,27 +321,29 @@ const Onboarding = () => {
   };
 
   const getAccountRecommendation = () => {
-    if (experience === 'ninguna' || experience === 'basica') {
+    if (experience === "ninguna" || experience === "basica") {
       return {
-        account: 'Standard Cent',
-        reason: 'Perfecta para principiantes. Opera con micro-lotes ($1 = 100 centavos) y practica sin riesgo alto.',
-        nextStep: goal === 'aprender' ? 'Comenzar con la academia' : 'Explorar herramientas básicas'
+        account: "Standard Cent",
+        reason: "Perfecta para principiantes. Opera con micro-lotes ($1 = 100 centavos) y practica sin riesgo alto.",
+        nextStep: goal === "aprender" ? "Comenzar con la academia" : "Explorar herramientas básicas",
       };
-    } else if (experience === 'intermedia') {
+    } else if (experience === "intermedia") {
       return {
-        account: capital === '>10000' ? 'Pro' : 'Standard',
-        reason: capital === '>10000' 
-          ? 'Cuenta Pro: spreads desde 0.1 pips, ideal para tu capital y experiencia.'
-          : 'Cuenta Standard: spreads competitivos y condiciones balanceadas para traders intermedios.',
-        nextStep: goal === 'copiar' ? 'Explorar estrategias de copy trading' : 'Acceder a herramientas avanzadas'
+        account: capital === ">10000" ? "Pro" : "Standard",
+        reason:
+          capital === ">10000"
+            ? "Cuenta Pro: spreads desde 0.1 pips, ideal para tu capital y experiencia."
+            : "Cuenta Standard: spreads competitivos y condiciones balanceadas para traders intermedios.",
+        nextStep: goal === "copiar" ? "Explorar estrategias de copy trading" : "Acceder a herramientas avanzadas",
       };
     } else {
       return {
-        account: capital === '>10000' ? 'Zero' : 'Pro',
-        reason: capital === '>10000'
-          ? 'Cuenta Zero: spreads de 0.0 pips en pares principales, perfecta para scalping y alta frecuencia.'
-          : 'Cuenta Pro: condiciones profesionales con spreads reducidos.',
-        nextStep: 'Acceder a herramientas profesionales'
+        account: capital === ">10000" ? "Zero" : "Pro",
+        reason:
+          capital === ">10000"
+            ? "Cuenta Zero: spreads de 0.0 pips en pares principales, perfecta para scalping y alta frecuencia."
+            : "Cuenta Pro: condiciones profesionales con spreads reducidos.",
+        nextStep: "Acceder a herramientas profesionales",
       };
     }
   };
@@ -342,7 +352,7 @@ const Onboarding = () => {
     const fadeIn = {
       hidden: { opacity: 0, y: 20 },
       visible: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: -20 }
+      exit: { opacity: 0, y: -20 },
     };
 
     switch (step) {
@@ -368,18 +378,14 @@ const Onboarding = () => {
             email={email}
             onTryAnotherEmail={() => {
               setEmail("");
-              setAccountStatus('unknown');
+              setAccountStatus("unknown");
               setStep("email-capture");
             }}
           />
         );
 
       case "no-exness-account":
-        return (
-          <NoExnessAccountStep
-            onAccountCreated={() => setStep("email-capture")}
-          />
-        );
+        return <NoExnessAccountStep onAccountCreated={() => setStep("email-capture")} />;
 
       case "exness-detection":
         return (
@@ -388,25 +394,17 @@ const Onboarding = () => {
             onNoExness={() => setStep("no-exness-flow")}
             onTryAnotherEmail={() => {
               setEmail("");
-              setAccountStatus('unknown');
+              setAccountStatus("unknown");
               setStep("email-capture");
             }}
           />
         );
 
       case "has-exness-flow":
-        return (
-          <HasExnessFlowStep
-            onCompleted={() => setStep("email-capture")}
-          />
-        );
+        return <HasExnessFlowStep onCompleted={() => setStep("email-capture")} />;
 
       case "no-exness-flow":
-        return (
-          <NoExnessFlowStep
-            onAccountCreated={() => setStep("email-capture")}
-          />
-        );
+        return <NoExnessFlowStep onAccountCreated={() => setStep("email-capture")} />;
 
       case "create-password":
         return (
@@ -424,11 +422,9 @@ const Onboarding = () => {
                   <CheckCircle className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
                 </div>
               </div>
-              
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-                Crear tu acceso a Tálamo
-              </h2>
-              
+
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">Crear tu acceso a Tálamo</h2>
+
               <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 Esta contraseña es para tu cuenta de Tálamo, independiente de Exness
               </p>
@@ -449,11 +445,10 @@ const Onboarding = () => {
                   <div className="flex items-start gap-3">
                     <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0 space-y-1">
-                      <h3 className="font-semibold text-foreground text-sm sm:text-base">
-                        Seguridad y privacidad
-                      </h3>
+                      <h3 className="font-semibold text-foreground text-sm sm:text-base">Seguridad y privacidad</h3>
                       <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                        Tu panel de Tálamo es independiente de tu cuenta de trading. Solo validamos tu afiliación para darte acceso gratuito a las herramientas.
+                        Tu panel de Tálamo es independiente de tu cuenta de trading. Solo validamos tu afiliación para
+                        darte acceso gratuito a las herramientas.
                       </p>
                     </div>
                   </div>
@@ -475,7 +470,7 @@ const Onboarding = () => {
                       className="h-14 sm:h-16 px-4 text-base sm:text-lg bg-background/50 border-2 border-border focus:border-primary rounded-xl transition-all duration-300"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword" className="text-sm sm:text-base font-medium">
                       Confirmar contraseña
@@ -495,14 +490,14 @@ const Onboarding = () => {
                   <div className="text-xs sm:text-sm text-muted-foreground bg-background/30 p-4 rounded-lg border border-border/30">
                     La contraseña debe tener al menos 8 caracteres, incluir una mayúscula y un número.
                   </div>
-                  
+
                   {error && (
                     <Alert variant="destructive">
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
-                  
+
                   <div className="flex gap-3">
                     {canGoBack && (
                       <Button
@@ -519,9 +514,9 @@ const Onboarding = () => {
                     <Button
                       type="submit"
                       disabled={
-                        password.length < 8 || 
-                        password !== confirmPassword || 
-                        !/(?=.*[A-Z])(?=.*\d)/.test(password) || 
+                        password.length < 8 ||
+                        password !== confirmPassword ||
+                        !/(?=.*[A-Z])(?=.*\d)/.test(password) ||
                         loading
                       }
                       className="flex-1 h-14 sm:h-16 bg-gradient-primary hover:shadow-glow-primary text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
@@ -563,16 +558,14 @@ const Onboarding = () => {
                   <Sparkles className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
                 </div>
               </motion.div>
-              
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-                ¡Bienvenido a Tálamo!
-              </h1>
-              
+
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">¡Bienvenido a Tálamo!</h1>
+
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
                 Vamos a personalizar tu experiencia en solo 3 pasos
               </p>
             </div>
-            
+
             <Card className="border-border/50 bg-gradient-to-br from-surface/80 via-surface/50 to-surface/30 backdrop-blur-xl shadow-xl">
               <CardContent className="p-6 sm:p-8 space-y-6">
                 <div className="space-y-2">
@@ -585,7 +578,7 @@ const Onboarding = () => {
                     className="h-14 sm:h-16 px-4 text-base sm:text-lg bg-background/50 border-2 border-border focus:border-primary rounded-xl transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex gap-3">
                   {canGoBack && (
                     <Button
@@ -623,17 +616,35 @@ const Onboarding = () => {
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
                 Hola {name}, ¿qué te gustaría hacer?
               </h2>
-              <p className="text-base sm:text-lg text-muted-foreground">
-                Selecciona la opción que más te interese
-              </p>
+              <p className="text-base sm:text-lg text-muted-foreground">Selecciona la opción que más te interese</p>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { value: 'copiar', icon: Users, title: 'Copiar traders exitosos', desc: 'Invierte automáticamente siguiendo estrategias verificadas' },
-                { value: 'aprender', icon: GraduationCap, title: 'Aprender trading', desc: 'Domina el trading desde cero con nuestra academia' },
-                { value: 'operar', icon: TrendingUp, title: 'Operar por mi cuenta', desc: 'Usa herramientas profesionales y señales de trading' },
-                { value: 'mixto', icon: Sparkles, title: 'Todo lo anterior', desc: 'Acceso completo a todas las funcionalidades' }
+                {
+                  value: "copiar",
+                  icon: Users,
+                  title: "Copiar traders exitosos",
+                  desc: "Invierte automáticamente siguiendo estrategias verificadas",
+                },
+                {
+                  value: "aprender",
+                  icon: GraduationCap,
+                  title: "Aprender trading",
+                  desc: "Domina el trading desde cero con nuestra academia",
+                },
+                {
+                  value: "operar",
+                  icon: TrendingUp,
+                  title: "Operar por mi cuenta",
+                  desc: "Usa herramientas profesionales y señales de trading",
+                },
+                {
+                  value: "mixto",
+                  icon: Sparkles,
+                  title: "Todo lo anterior",
+                  desc: "Acceso completo a todas las funcionalidades",
+                },
               ].map((option, index) => (
                 <motion.button
                   key={option.value}
@@ -642,7 +653,7 @@ const Onboarding = () => {
                   transition={{ delay: 0.1 * index, duration: 0.3 }}
                   onClick={() => {
                     setGoal(option.value as any);
-                    setStep('capital');
+                    setStep("capital");
                   }}
                   className="group p-6 sm:p-8 rounded-2xl border-2 border-border/50 bg-gradient-to-br from-surface/80 to-surface/40 hover:border-primary/50 hover:shadow-glow-primary transition-all text-left"
                 >
@@ -650,13 +661,11 @@ const Onboarding = () => {
                   <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {option.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    {option.desc}
-                  </p>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{option.desc}</p>
                 </motion.button>
               ))}
             </div>
-            
+
             {canGoBack && (
               <Button
                 variant="outline"
@@ -694,7 +703,7 @@ const Onboarding = () => {
 
       case "recommendation":
         const recommendation = getAccountRecommendation();
-        
+
         return (
           <motion.div
             key="recommendation"
@@ -715,12 +724,10 @@ const Onboarding = () => {
                   <Sparkles className="h-12 w-12 text-primary" />
                 </div>
               </motion.div>
-              
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-                ¡Tu plan está listo!
-              </h2>
+
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">¡Tu plan está listo!</h2>
             </div>
-              
+
             <Card className="border-2 border-primary/30 bg-gradient-to-br from-surface/90 via-surface/60 to-surface/40 backdrop-blur-xl shadow-glow-primary">
               <CardContent className="p-6 sm:p-8 space-y-6">
                 <div className="text-center space-y-4">
@@ -728,22 +735,14 @@ const Onboarding = () => {
                     <Sparkles className="h-4 w-4 text-primary" />
                     <span className="text-sm font-semibold text-primary">Recomendación personalizada</span>
                   </div>
-                  
-                  <h3 className="text-2xl sm:text-3xl font-bold text-primary">
-                    {recommendation.account}
-                  </h3>
-                  
-                  <p className="text-base sm:text-lg text-foreground/80 leading-relaxed">
-                    {recommendation.reason}
-                  </p>
-                  
+
+                  <h3 className="text-2xl sm:text-3xl font-bold text-primary">{recommendation.account}</h3>
+
+                  <p className="text-base sm:text-lg text-foreground/80 leading-relaxed">{recommendation.reason}</p>
+
                   <div className="pt-6 border-t border-border/50 space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Tu siguiente paso
-                    </p>
-                    <p className="text-lg sm:text-xl font-bold text-foreground">
-                      {recommendation.nextStep}
-                    </p>
+                    <p className="text-sm font-medium text-muted-foreground">Tu siguiente paso</p>
+                    <p className="text-lg sm:text-xl font-bold text-foreground">{recommendation.nextStep}</p>
                   </div>
                 </div>
 
@@ -791,9 +790,7 @@ const Onboarding = () => {
 
       <main className="flex-1 py-4 sm:py-12 px-3 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <AnimatePresence mode="wait">
-            {renderStep()}
-          </AnimatePresence>
+          <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
         </div>
       </main>
 
