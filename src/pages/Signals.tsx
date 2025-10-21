@@ -33,26 +33,26 @@ import { toast } from "@/hooks/use-toast";
 // Memoized signal card for performance
 const SignalCard = memo(
   ({ signal, getStatusColor, getTypeIcon, calculatePipsFromPrice, navigate, trackInteraction, t }: any) => (
-    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all w-full overflow-hidden">
+    <Card className="border-line bg-surface hover:shadow-glow-subtle transition-all w-full">
       <CardHeader className="pb-3 px-2 sm:px-6">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
               {getTypeIcon(signal.type)}
               <div className="min-w-0 flex-1">
-                <CardTitle className="text-foreground text-base sm:text-lg truncate">
+                <CardTitle className="text-foreground text-sm sm:text-lg truncate">
                   {signal.instrument} - {signal.type}
                 </CardTitle>
-                <CardDescription className="text-muted-foreground text-xs sm:text-sm truncate">
+                <CardDescription className="text-muted-foreground text-[10px] sm:text-sm truncate">
                   {signal.timeframe} • {signal.author}
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="border-teal text-teal text-xs shrink-0">
+            <Badge variant="outline" className="border-teal text-teal text-[10px] sm:text-xs shrink-0 whitespace-nowrap">
               RR 1:{parseInt(signal.rr)}
             </Badge>
           </div>
-          <Badge className={`${getStatusColor(signal.status)} w-fit text-xs`}>
+          <Badge className={`${getStatusColor(signal.status)} w-fit text-[10px] sm:text-xs`}>
             {t(`signals:signal.status.${signal.status.toLowerCase().replace(/ /g, "_")}`) || signal.status}
           </Badge>
         </div>
@@ -61,26 +61,26 @@ const SignalCard = memo(
       <CardContent className="pt-0 px-2 sm:px-6">
         <div className="space-y-4">
           {/* Price levels - Always visible */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full">
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-line/50 min-w-0">
-              <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1 truncate">
+          <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full">
+            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-line/50">
+              <span className="text-muted-foreground block text-[9px] sm:text-xs mb-0.5 sm:mb-1">
                 {t("signals:signal.entry")}
               </span>
-              <div className="font-mono font-semibold text-foreground text-[11px] sm:text-sm truncate">
+              <div className="font-mono font-semibold text-foreground text-[10px] sm:text-sm">
                 {signal.entry.toFixed(5)}
               </div>
             </div>
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-destructive/20 min-w-0">
-              <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1 truncate">
+            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-destructive/20">
+              <span className="text-muted-foreground block text-[9px] sm:text-xs mb-0.5 sm:mb-1">
                 {t("signals:signal.stop_loss")}
               </span>
-              <div className="font-mono font-semibold text-destructive text-[11px] sm:text-sm truncate">{signal.sl.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-destructive text-[10px] sm:text-sm">{signal.sl.toFixed(5)}</div>
             </div>
-            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-success/20 min-w-0">
-              <span className="text-muted-foreground block text-[10px] sm:text-xs mb-1 truncate">
+            <div className="bg-surface/50 p-1.5 sm:p-2 rounded-lg border border-success/20">
+              <span className="text-muted-foreground block text-[9px] sm:text-xs mb-0.5 sm:mb-1">
                 {t("signals:signal.take_profit")}
               </span>
-              <div className="font-mono font-semibold text-success text-[11px] sm:text-sm truncate">{signal.tp.toFixed(5)}</div>
+              <div className="font-mono font-semibold text-success text-[10px] sm:text-sm">{signal.tp.toFixed(5)}</div>
             </div>
           </div>
 
@@ -328,15 +328,15 @@ const Signals = () => {
 
       <div className="max-w-6xl mx-auto px-2 sm:px-4 lg:px-8 py-8 w-full">
         {/* Filters */}
-        <Card className="border-line bg-surface mb-6 w-full overflow-hidden">
+        <Card className="border-line bg-surface mb-6 w-full">
           <CardHeader className="pb-3 px-2 sm:px-6">
-            <CardTitle className="text-foreground flex items-center gap-2 text-base sm:text-lg">
+            <CardTitle className="text-foreground flex items-center gap-2 text-sm sm:text-lg">
               <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-teal" />
               {t("signals:filters.title")}
             </CardTitle>
           </CardHeader>
           <CardContent className="px-2 sm:px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 w-full">
               <div>
                 <label className="text-xs sm:text-sm font-medium text-foreground mb-1.5 sm:mb-2 block">
                   {t("signals:filters.market")}
