@@ -291,7 +291,7 @@ const Signals = () => {
             </div>
             
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-400 via-amber-400 to-orange-300 bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_30px_rgba(251,146,60,0.3)]">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
                 {t('signals:title')}
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground mt-2 font-light">

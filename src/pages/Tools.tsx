@@ -155,7 +155,7 @@ const Tools = () => {
             </div>
             
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 via-rose-400 to-pink-300 bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_30px_rgba(244,114,182,0.3)]">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
                 Herramientas de Trading
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground mt-2 font-light">

@@ -40,7 +40,7 @@ const Audit = () => {
             
             {/* Main heading */}
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-r from-slate-300 via-gray-300 to-slate-400 bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-[0_0_30px_rgba(148,163,184,0.2)]">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight tracking-tight">
                 {t("tools:audit.title")}
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground font-light max-w-3xl">
