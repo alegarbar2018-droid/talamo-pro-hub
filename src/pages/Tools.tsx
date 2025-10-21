@@ -98,7 +98,7 @@ const calculators = [
 
 const Tools = () => {
   const { i18n } = useTranslation();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("calculators");
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCalculator, setSelectedCalculator] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -173,12 +173,6 @@ const Tools = () => {
           <div className="flex justify-center mb-8 overflow-x-auto px-4">
             <TabsList className="bg-gradient-to-br from-surface via-surface/95 to-surface/90 backdrop-blur-sm border border-line/50 shadow-lg p-1.5 rounded-xl inline-flex gap-1 flex-nowrap min-w-min">
               <TabsTrigger 
-                value="overview" 
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger 
                 value="calculators" 
                 className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal/20 data-[state=active]:to-teal/10 data-[state=active]:text-teal data-[state=active]:shadow-md rounded-lg px-3 sm:px-4 py-2 font-medium transition-all text-xs sm:text-sm whitespace-nowrap"
               >
@@ -198,17 +192,6 @@ const Tools = () => {
               </TabsTrigger>
             </TabsList>
           </div>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-8">
-            <ToolsOverview
-              onNavigateToCalculators={() => setActiveTab("calculators")}
-              onNavigateToContracts={() => setActiveTab("specifications")}
-              onNavigateToFormulas={() => setActiveTab("formulas")}
-              onNavigateToJournal={() => navigate("/journal")}
-              onNavigateToAudit={() => navigate("/audit")}
-            />
-          </TabsContent>
 
           {/* Calculadoras Tab */}
           <TabsContent value="calculators" className="space-y-12">
