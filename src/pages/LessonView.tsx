@@ -387,12 +387,13 @@ const LessonView = () => {
       {/* Main Content */}
       <div className={cn(
         "overflow-auto transition-all duration-500",
-        !tocEnabled ? "ml-0" : sidebarCollapsed ? "ml-16" : "ml-80"
+        !tocEnabled ? "ml-0" : "ml-0 md:ml-16 lg:ml-80",
+        sidebarCollapsed ? "md:ml-16" : "md:ml-80"
       )}>
-        <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/95 via-surface/90 to-surface/95 backdrop-blur-2xl shadow-lg">
+        <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/98 via-surface/95 to-surface/98 backdrop-blur-xl shadow-md">
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none" />
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <div className="flex items-center gap-3 md:gap-5 py-3 md:py-4 lg:py-6">
+            <div className="flex items-center gap-2 md:gap-3 lg:gap-5 py-2.5 md:py-3 lg:py-4">
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -404,32 +405,32 @@ const LessonView = () => {
                     navigate('/academy');
                   }
                 }}
-                className="text-teal hover:bg-teal/10 hover:text-teal-ink transition-all rounded-xl group relative overflow-hidden shrink-0"
+                className="text-teal hover:bg-teal/10 hover:text-teal-ink transition-all rounded-xl group relative overflow-hidden shrink-0 px-2 md:px-3"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <ArrowLeft className="h-4 w-4 mr-1.5 md:mr-2 relative z-10 group-hover:-translate-x-1 transition-transform" />
-                <span className="relative z-10 font-semibold">Regresar</span>
+                <ArrowLeft className="h-4 w-4 md:mr-1.5 relative z-10 group-hover:-translate-x-1 transition-transform" />
+                <span className="relative z-10 font-semibold hidden sm:inline text-sm">Regresar</span>
               </Button>
               
-              <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-line/50 to-transparent" />
+              <div className="hidden md:block h-6 lg:h-8 w-px bg-gradient-to-b from-transparent via-line/50 to-transparent" />
               
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 md:gap-3 flex-wrap">
-                  <h1 className="text-base sm:text-lg md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-foreground via-foreground to-teal-ink bg-clip-text text-transparent tracking-tight truncate">
+                <div className="flex items-center gap-1.5 md:gap-2 lg:gap-3 flex-wrap">
+                  <h1 className="text-sm sm:text-base md:text-lg lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-foreground via-foreground to-teal-ink bg-clip-text text-transparent tracking-tight truncate">
                     {lesson.course_item?.title}
                   </h1>
                   {tocEnabled && showNewBadge && (
-                    <Badge className="bg-gradient-primary text-white border-teal/20 gap-1 md:gap-1.5 animate-pulse shadow-glow-subtle px-2 md:px-3 py-1 md:py-1.5 relative overflow-hidden group text-xs">
+                    <Badge className="hidden sm:inline-flex bg-gradient-primary text-white border-teal/20 gap-1 md:gap-1.5 animate-pulse shadow-glow-subtle px-2 md:px-3 py-0.5 md:py-1 relative overflow-hidden group text-xs">
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                      <Sparkles className="h-3 w-3 md:h-3.5 md:w-3.5 relative z-10" />
-                      <span className="font-semibold relative z-10 hidden sm:inline">{t('academy.lesson.new_feature', '¡Nuevo!')}</span>
+                      <Sparkles className="h-3 w-3 relative z-10" />
+                      <span className="font-semibold relative z-10">{t('academy.lesson.new_feature', '¡Nuevo!')}</span>
                     </Badge>
                   )}
                 </div>
                 {lesson.module?.course?.level && (
-                  <div className="flex items-center gap-2 mt-1 md:mt-2.5">
+                  <div className="flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1">
                     <div className="h-1 w-1 md:h-1.5 md:w-1.5 rounded-full bg-teal/50 animate-pulse" />
-                    <span className="text-xs md:text-sm text-muted-foreground font-medium tracking-wide">
+                    <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground font-medium tracking-wide">
                       Level {lesson.module.course.level}
                     </span>
                   </div>
@@ -439,14 +440,14 @@ const LessonView = () => {
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 lg:py-10 space-y-4 md:space-y-6 lg:space-y-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 lg:py-6 xl:py-10 space-y-3 md:space-y-4 lg:space-y-6 xl:space-y-8 pb-24 md:pb-8">
           {/* Cover Image */}
           {coverImageUrl && (
-            <div className="rounded-2xl overflow-hidden shadow-lg animate-fade-in ring-1 ring-line/20">
+            <div className="rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden shadow-lg animate-fade-in ring-1 ring-line/20">
               <img 
                 src={coverImageUrl} 
                 alt={lesson.course_item?.title}
-                className="w-full h-72 object-cover hover:scale-105 transition-transform duration-500"
+                className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
           )}
@@ -487,15 +488,15 @@ const LessonView = () => {
               className="animate-slide-up"
             >
               <Card className="content-card">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
-                      <FileText className="h-5 w-5 text-white" />
+                <CardHeader className="pb-3 md:pb-4 px-4 md:px-6">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+                      <FileText className="h-4 w-4 md:h-5 md:w-5 text-white" />
                     </div>
-                    <CardTitle className="text-xl">Lesson Content</CardTitle>
+                    <CardTitle className="text-base md:text-lg lg:text-xl">Lesson Content</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="prose prose-invert max-w-none">
+                <CardContent className="prose prose-invert prose-sm md:prose-base max-w-none px-4 md:px-6">
                   <SteppedContentRenderer 
                     content={lesson.content_md}
                     lessonId={lessonId!}
@@ -513,35 +514,35 @@ const LessonView = () => {
           {resources.length > 0 && (
             <div className="animate-slide-up">
               <Card className="content-card">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
-                      <Download className="h-5 w-5 text-white" />
+                <CardHeader className="pb-3 md:pb-4 px-4 md:px-6">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+                      <Download className="h-4 w-4 md:h-5 md:w-5 text-white" />
                     </div>
-                    <CardTitle className="text-xl">Resources & Materials</CardTitle>
+                    <CardTitle className="text-base md:text-lg lg:text-xl">Resources & Materials</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid gap-3">
+                <CardContent className="px-4 md:px-6">
+                  <div className="grid gap-2 md:gap-3">
                     {resources.map((resource: any, index: number) => (
                       <div 
                         key={resource.id} 
                         ref={(el) => tocEnabled && registerTopicRef(`topic-resource-${resource.id}`, el)}
-                        className="group flex items-center justify-between p-4 border border-line/30 rounded-xl hover:bg-gradient-accent hover:border-teal/30 transition-all duration-300 hover:shadow-md animate-fade-in"
+                        className="group flex items-center justify-between p-3 md:p-4 border border-line/30 rounded-lg md:rounded-xl hover:bg-gradient-accent hover:border-teal/30 transition-all duration-300 hover:shadow-md animate-fade-in"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="h-11 w-11 rounded-lg bg-surface/50 flex items-center justify-center text-teal-ink group-hover:bg-teal/10 group-hover:text-teal transition-all">
+                        <div className="flex items-center gap-2 md:gap-3 lg:gap-4 min-w-0 flex-1">
+                          <div className="h-9 w-9 md:h-11 md:w-11 rounded-lg bg-surface/50 flex items-center justify-center text-teal-ink group-hover:bg-teal/10 group-hover:text-teal transition-all shrink-0">
                             {getResourceIcon(resource.kind)}
                           </div>
-                          <div>
-                            <p className="font-semibold text-foreground group-hover:text-teal-ink transition-colors">{resource.title}</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm md:text-base text-foreground group-hover:text-teal-ink transition-colors truncate">{resource.title}</p>
                             <p className="text-xs text-muted-foreground capitalize mt-0.5">{resource.kind}</p>
                           </div>
                         </div>
                         <Button
                           size="sm"
-                          className="bg-gradient-primary hover:shadow-glow-subtle text-white border-none"
+                          className="bg-gradient-primary hover:shadow-glow-subtle text-white border-none ml-2 shrink-0 text-xs md:text-sm px-3 md:px-4"
                           onClick={() => {
                             const url = getResourceUrl(resource);
                             if (tocEnabled) {
@@ -575,15 +576,15 @@ const LessonView = () => {
           {lesson.quiz_id && (
             <div ref={(el) => tocEnabled && registerTopicRef('topic-quiz', el)} className="animate-slide-up">
               <Card className="content-card">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
-                      <HelpCircle className="h-5 w-5 text-white" />
+                <CardHeader className="pb-3 md:pb-4 px-4 md:px-6">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+                      <HelpCircle className="h-4 w-4 md:h-5 md:w-5 text-white" />
                     </div>
-                    <CardTitle className="text-xl">Quiz</CardTitle>
+                    <CardTitle className="text-base md:text-lg lg:text-xl">Quiz</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 md:px-6">
                   <QuizView 
                     quizId={lesson.quiz_id}
                     lessonId={lessonId}
@@ -605,20 +606,20 @@ const LessonView = () => {
           {/* Mark Complete Button */}
           {session && !isCompleted && (
             <Button
-              className="w-full bg-gradient-primary hover:shadow-glow-intense text-white border-none h-14 text-base font-semibold rounded-xl animate-fade-in"
+              className="w-full bg-gradient-primary hover:shadow-glow-intense text-white border-none h-12 md:h-14 text-sm md:text-base font-semibold rounded-lg md:rounded-xl animate-fade-in"
               onClick={() => markComplete.mutate()}
               disabled={markComplete.isPending}
             >
-              <CheckCircle className="mr-2 h-5 w-5" />
+              <CheckCircle className="mr-2 h-4 w-4 md:h-5 md:w-5" />
               Mark Lesson as Complete
             </Button>
           )}
 
           {/* Completed Badge */}
           {isCompleted && (
-            <div className="flex items-center justify-center gap-3 p-5 bg-gradient-to-r from-success/20 to-success/10 border border-success/30 rounded-xl shadow-lg animate-scale-in">
-              <CheckCircle className="h-6 w-6 text-success" />
-              <span className="text-success font-bold text-lg">Lesson Completed</span>
+            <div className="flex items-center justify-center gap-2 md:gap-3 p-4 md:p-5 bg-gradient-to-r from-success/20 to-success/10 border border-success/30 rounded-lg md:rounded-xl shadow-lg animate-scale-in">
+              <CheckCircle className="h-5 w-5 md:h-6 md:w-6 text-success" />
+              <span className="text-success font-bold text-base md:text-lg">Lesson Completed</span>
             </div>
           )}
         </div>

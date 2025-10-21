@@ -51,41 +51,41 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-surface via-surface to-[hsl(222_20%_5%)]">
       {/* Header */}
-      <div className="sidebar-header p-6 border-b border-line/50">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
-            <FileText className="h-5 w-5 text-white" />
+      <div className="sidebar-header p-4 md:p-6 border-b border-line/50">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+          <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-subtle">
+            <FileText className="h-4 w-4 md:h-5 md:w-5 text-white" />
           </div>
-          <h2 className="text-lg font-bold text-foreground tracking-tight">
+          <h2 className="text-base md:text-lg font-bold text-foreground tracking-tight">
             {t('academy.lesson.toc_title', 'Contenido')}
           </h2>
         </div>
         
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm">
+        <div className="space-y-2 md:space-y-3">
+          <div className="flex items-center justify-between text-xs md:text-sm">
             <span className="text-muted-foreground font-medium">
               {t('academy.lesson.progress', 'Progreso')}
             </span>
-            <span className="font-bold text-teal-ink text-base">
+            <span className="font-bold text-teal-ink text-sm md:text-base">
               {completedCount}/{total}
             </span>
           </div>
-          <div className="relative h-2.5 bg-[hsl(var(--academy-progress-bg))] rounded-full overflow-hidden shadow-inner">
+          <div className="relative h-2 md:h-2.5 bg-[hsl(var(--academy-progress-bg))] rounded-full overflow-hidden shadow-inner">
             <div 
               className="absolute inset-y-0 left-0 bg-gradient-to-r from-teal to-teal-dark rounded-full shadow-glow-subtle transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground font-medium">
+          <p className="text-[10px] md:text-xs text-muted-foreground font-medium">
             {progress}% {t('academy.lesson.completed', 'completado')}
           </p>
         </div>
       </div>
 
       {/* Topic List */}
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 custom-scrollbar">
         <nav aria-label={t('academy.lesson.toc_nav', 'Navegación de lección')}>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5 md:space-y-2">
             {topics.map((topic, index) => {
               const isActive = activeTopicId === topic.id;
               return (
@@ -97,7 +97,7 @@ function SidebarContent({
                     }}
                     aria-current={isActive ? 'true' : undefined}
                     className={cn(
-                      "topic-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm transition-all duration-200 group relative overflow-hidden",
+                      "topic-item w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3.5 rounded-lg md:rounded-xl text-xs md:text-sm transition-all duration-200 group relative overflow-hidden",
                       "hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
                       isActive 
                         ? "bg-gradient-to-r from-teal/20 to-teal/10 text-foreground font-semibold border border-teal/30 shadow-lg shadow-teal/10" 
@@ -113,11 +113,11 @@ function SidebarContent({
                     <div className="flex-shrink-0 relative z-10">
                       {topic.completed ? (
                         <div className="relative">
-                          <CheckCircle2 className="h-5 w-5 text-teal animate-scale-in" />
+                          <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5 text-teal animate-scale-in" />
                           <div className="absolute inset-0 bg-teal/20 rounded-full blur-md" />
                         </div>
                       ) : (
-                        <Circle className="h-5 w-5 text-muted-foreground group-hover:text-teal-ink transition-colors" />
+                        <Circle className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground group-hover:text-teal-ink transition-colors" />
                       )}
                     </div>
 
@@ -141,7 +141,7 @@ function SidebarContent({
 
                     {/* Arrow indicator */}
                     {isActive && (
-                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-teal animate-pulse relative z-10" />
+                      <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0 text-teal animate-pulse relative z-10" />
                     )}
                   </button>
                 </li>
@@ -176,11 +176,12 @@ export function LessonTOCSidebar(props: LessonTOCSidebarProps) {
         <SheetTrigger asChild>
           <Button
             size="lg"
-            className="fixed bottom-6 right-6 z-50 rounded-2xl shadow-2xl bg-gradient-primary hover:shadow-glow-intense text-white gap-2.5 px-7 h-16 font-semibold text-base backdrop-blur-sm border border-teal/20 animate-fade-in"
+            className="fixed bottom-4 right-4 z-50 rounded-xl md:rounded-2xl shadow-2xl bg-gradient-primary hover:shadow-glow-intense text-white gap-2 md:gap-2.5 px-5 md:px-7 h-14 md:h-16 font-semibold text-sm md:text-base backdrop-blur-sm border border-teal/20 animate-fade-in"
             aria-label={t('academy.lesson.toc_toggle', 'Toggle table of contents')}
           >
-            <Menu className="h-5 w-5" />
-            <span>Contenido</span>
+            <Menu className="h-4 w-4 md:h-5 md:w-5" />
+            <span className="hidden sm:inline">Contenido</span>
+            <span className="sm:hidden">TOC</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="h-[85vh] bg-surface/95 backdrop-blur-xl border-t border-teal/20">
