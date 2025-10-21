@@ -31,12 +31,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Eye, Edit, UserCheck, UserX, Filter } from 'lucide-react';
+import { Search, Eye, Edit, UserCheck, UserX, Filter, Trash, Ban, ShieldCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { AdminRole, updateAdminUserRole, getCurrentAdminRole } from '@/lib/auth-admin';
 import { Skeleton } from '@/components/ui/skeleton';
 import { maskSensitiveData, MaskingOptions, checkRateLimit, logSecurityEvent, generateCorrelationId } from '@/lib/admin-security';
 import { checkPermission } from '@/lib/admin-rbac';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 
 interface UserWithProfile {
   id: string;
@@ -72,117 +75,129 @@ export const AdminUsers: React.FC = () => {
     queryFn: getCurrentAdminRole,
   });
 
-  // Fetch users with profiles and admin roles
-  const { data: users, isLoading } = useQuery({
+  // Fetch users with profiles and admin roles using Edge Function
+  const { data: usersData, isLoading } = useQuery({
     queryKey: ['admin-users', searchTerm, roleFilter, affiliationFilter],
     queryFn: async () => {
-      // Check permissions for viewing user data
-      const canViewFullProfiles = await checkPermission('users', 'read');
-      const canViewSensitiveData = await checkPermission('users', 'read_sensitive');
-      
-      if (!canViewFullProfiles) {
-        throw new Error('Insufficient permissions to view user profiles');
-      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
 
-      let query = supabase
-        .from('profiles')
-        .select(`
-          id,
-          user_id,
-          first_name,
-          last_name,
-          avatar_url,
-          email,
-          phone,
-          created_at,
-          admin_users!left(role),
-          affiliations!left(is_affiliated, partner_id)
-        `)
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.functions.invoke('admin-users-list', {
+        body: { 
+          q: searchTerm, 
+          role: roleFilter, 
+          affiliation: affiliationFilter,
+          page: 1,
+          perPage: 100
+        }
+      });
 
-      // Apply filters
-      if (searchTerm) {
-        query = query.or(`first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`);
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
+      if (!data.ok) throw new Error(data.error);
 
-      // Apply data masking based on admin role and permissions
-      const maskingOptions: MaskingOptions = {
-        maskEmail: !canViewSensitiveData && adminRole !== 'ADMIN',
-        maskPhone: !canViewSensitiveData && adminRole !== 'ADMIN',
-        maskName: adminRole === 'SUPPORT' || adminRole === 'ANALYST',
-      };
-
-      const maskedData = data.map(user => maskSensitiveData(user, maskingOptions));
-
-      // Filter by role (apply to original data, not masked)
-      let filteredData = maskedData;
-      if (roleFilter !== 'all') {
-        filteredData = maskedData.filter(user => {
-          const userRole = (user as any).admin_users?.role || 'USER';
-          return userRole === roleFilter;
-        });
-      }
-
-      // Filter by affiliation
-      if (affiliationFilter !== 'all') {
-        filteredData = filteredData.filter(user => {
-          const isAffiliated = (user as any).affiliations?.is_affiliated || false;
-          return affiliationFilter === 'affiliated' ? isAffiliated : !isAffiliated;
-        });
-      }
-
-      return filteredData as any;
+      return data;
     },
   });
+
+  const users = usersData?.items || [];
 
   // Update user role mutation
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: AdminRole }) => {
-      // First check if admin_users record exists
-      const { data: existingAdmin } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('user_id', userId)
-        .single();
-
-      if (existingAdmin) {
-        return updateAdminUserRole(userId, role);
-      } else {
-        // Create new admin_users record
-        const { data, error } = await supabase
-          .from('admin_users')
-          .insert({ user_id: userId, role })
-          .select()
-          .single();
-        
-        if (error) throw error;
-        return data;
-      }
+      const { data, error } = await supabase.functions.invoke('admin-users-assign-role', {
+        body: { userId, role }
+      });
+      if (error) throw error;
+      if (!data.ok) throw new Error(data.error);
+      return data;
     },
-    onSuccess: async (data, variables) => {
+    onSuccess: () => {
       toast({
         title: t('admin:toasts.role_updated'),
         description: t('admin:toasts.role_updated_desc'),
       });
-      
-      // Log the role update for security audit
-      await logSecurityEvent({
-        action: 'user.role_updated',
-        resource: 'admin_users',
-        resource_id: variables.userId,
-        reason: `Role updated to ${variables.role}`,
-        correlation_id: generateCorrelationId()
-      });
-      
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     },
     onError: (error) => {
       toast({
         title: t('admin:toasts.error'),
         description: t('admin:toasts.role_update_error'),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Ban user mutation
+  const banUserMutation = useMutation({
+    mutationFn: async ({ userId, until }: { userId: string; until?: string }) => {
+      const { data, error } = await supabase.functions.invoke('admin-users-ban', {
+        body: { userId, until }
+      });
+      if (error) throw error;
+      if (!data.ok) throw new Error(data.error);
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: t('admin:toasts.user_banned'),
+      });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: (error) => {
+      toast({
+        title: t('admin:toasts.error'),
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Unban user mutation
+  const unbanUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await supabase.functions.invoke('admin-users-unban', {
+        body: { userId }
+      });
+      if (error) throw error;
+      if (!data.ok) throw new Error(data.error);
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: t('admin:toasts.user_unbanned'),
+      });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: (error) => {
+      toast({
+        title: t('admin:toasts.error'),
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Soft delete user mutation
+  const softDeleteMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await supabase.functions.invoke('admin-users-soft-delete', {
+        body: { userId }
+      });
+      if (error) throw error;
+      if (!data.ok) throw new Error(data.error);
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: t('admin:toasts.user_deleted'),
+        variant: 'destructive',
+      });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: (error) => {
+      toast({
+        title: t('admin:toasts.error'),
+        description: error.message,
         variant: 'destructive',
       });
     },
@@ -418,11 +433,115 @@ export const AdminUsers: React.FC = () => {
                                        <SelectItem value="ANALYST">{t('admin:users.roles.analyst')}</SelectItem>
                                        <SelectItem value="ADMIN">{t('admin:users.roles.admin')}</SelectItem>
                                      </SelectContent>
-                                  </Select>
-                                </div>
+                                   </Select>
+                                 </div>
 
-                                 <div>
-                                   <label className="text-sm font-medium">{t('admin:users.details.affiliation_status')}</label>
+                                  <Separator className="my-4" />
+
+                                  {/* Admin Actions */}
+                                  <div className="space-y-2">
+                                    <h4 className="text-sm font-semibold mb-2">{t('admin:users.actions.title')}</h4>
+                                    
+                                    {/* Ban User */}
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="outline" className="w-full justify-start" size="sm">
+                                          <Ban className="h-4 w-4 mr-2" />
+                                          {t('admin:users.actions.ban')}
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent>
+                                        <DialogHeader>
+                                          <DialogTitle>{t('admin:users.actions.ban_title')}</DialogTitle>
+                                          <DialogDescription>
+                                            {t('admin:users.actions.ban_description')}
+                                          </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="grid gap-2">
+                                          <Button 
+                                            onClick={() => {
+                                              const until = new Date(Date.now() + 24*60*60*1000).toISOString();
+                                              banUserMutation.mutate({ userId: selectedUser.user_id, until });
+                                            }}
+                                            disabled={banUserMutation.isPending}
+                                          >
+                                            24 {t('admin:users.actions.hours')}
+                                          </Button>
+                                          <Button 
+                                            onClick={() => {
+                                              const until = new Date(Date.now() + 7*24*60*60*1000).toISOString();
+                                              banUserMutation.mutate({ userId: selectedUser.user_id, until });
+                                            }}
+                                            disabled={banUserMutation.isPending}
+                                          >
+                                            7 {t('admin:users.actions.days')}
+                                          </Button>
+                                          <Button 
+                                            onClick={() => {
+                                              const until = new Date(Date.now() + 30*24*60*60*1000).toISOString();
+                                              banUserMutation.mutate({ userId: selectedUser.user_id, until });
+                                            }}
+                                            disabled={banUserMutation.isPending}
+                                          >
+                                            30 {t('admin:users.actions.days')}
+                                          </Button>
+                                          <Button 
+                                            variant="destructive" 
+                                            onClick={() => banUserMutation.mutate({ userId: selectedUser.user_id })}
+                                            disabled={banUserMutation.isPending}
+                                          >
+                                            {t('admin:users.actions.indefinite')}
+                                          </Button>
+                                        </div>
+                                      </DialogContent>
+                                    </Dialog>
+
+                                    {/* Unban User */}
+                                    <Button
+                                      variant="outline"
+                                      className="w-full justify-start"
+                                      size="sm"
+                                      onClick={() => unbanUserMutation.mutate(selectedUser.user_id)}
+                                      disabled={unbanUserMutation.isPending}
+                                    >
+                                      <ShieldCheck className="h-4 w-4 mr-2" />
+                                      {t('admin:users.actions.unban')}
+                                    </Button>
+
+                                    <Separator className="my-4" />
+
+                                    {/* Soft Delete */}
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="destructive" className="w-full justify-start" size="sm">
+                                          <Trash className="h-4 w-4 mr-2" />
+                                          {t('admin:users.actions.delete')}
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>{t('admin:users.actions.delete_title')}</AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            {t('admin:users.actions.delete_description')}
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>{t('forms:cancel')}</AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={() => softDeleteMutation.mutate(selectedUser.user_id)}
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                          >
+                                            {t('admin:users.actions.confirm_delete')}
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
+
+                                  <Separator className="my-4" />
+
+                                  <div>
+                                    <label className="text-sm font-medium">{t('admin:users.details.affiliation_status')}</label>
                                   <div className="mt-2 p-3 border rounded-lg">
                                     {selectedUser.affiliations?.is_affiliated ? (
                                        <div className="flex items-center space-x-2">

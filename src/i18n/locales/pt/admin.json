@@ -28,7 +28,22 @@
       "admin_role": "Papel Administrativo",
       "affiliation_status": "Status de Afiliação",
       "verified": "Verificado com Exness",
-      "not_verified": "Não verificado"
+      "not_verified": "Não verificado",
+      "user_progress": "Progresso de Aprendizagem"
+    },
+    "actions": {
+      "title": "Ações Admin",
+      "ban": "Banir Usuário",
+      "ban_title": "Banir Usuário",
+      "ban_description": "Selecionar duração do banimento",
+      "unban": "Desbanir Usuário",
+      "delete": "Excluir Usuário",
+      "delete_title": "Tem certeza absoluta?",
+      "delete_description": "Isso excluirá o usuário de forma suave. Ele não poderá acessar a plataforma. Esta ação pode ser revertida por um super admin.",
+      "confirm_delete": "Confirmar Exclusão",
+      "hours": "horas",
+      "days": "dias",
+      "indefinite": "Indefinido"
     }
   },
   "navigation": {
@@ -59,7 +74,10 @@
     "role_updated": "Papel atualizado",
     "role_updated_desc": "O papel do usuário foi atualizado",
     "error": "Erro",
-    "role_update_error": "Não foi possível atualizar o papel do usuário"
+    "role_update_error": "Não foi possível atualizar o papel do usuário",
+    "user_banned": "Usuário banido com sucesso",
+    "user_unbanned": "Usuário desbanido com sucesso",
+    "user_deleted": "Usuário excluído com sucesso"
   },
   "signals": {
     "title": "Gestão de Sinais",

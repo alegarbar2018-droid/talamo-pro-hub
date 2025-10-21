@@ -86,3 +86,21 @@ verify_jwt = false
 
 [functions.signal-ingest]
 verify_jwt = false
+
+[functions.admin-users-list]
+verify_jwt = true
+
+[functions.admin-users-assign-role]
+verify_jwt = true
+
+[functions.admin-users-ban]
+verify_jwt = true
+
+[functions.admin-users-unban]
+verify_jwt = true
+
+[functions.admin-users-soft-delete]
+verify_jwt = true
+
+[functions.admin-users-update-meta]
+verify_jwt = true

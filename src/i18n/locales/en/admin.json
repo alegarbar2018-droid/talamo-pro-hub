@@ -28,7 +28,22 @@
       "admin_role": "Administrative Role",
       "affiliation_status": "Affiliation Status",
       "verified": "Verified with Exness",
-      "not_verified": "Not verified"
+      "not_verified": "Not verified",
+      "user_progress": "Learning Progress"
+    },
+    "actions": {
+      "title": "Admin Actions",
+      "ban": "Ban User",
+      "ban_title": "Ban User",
+      "ban_description": "Select ban duration",
+      "unban": "Unban User",
+      "delete": "Delete User",
+      "delete_title": "Are you absolutely sure?",
+      "delete_description": "This will soft-delete the user. They won't be able to access the platform. This action can be reversed by a super admin.",
+      "confirm_delete": "Confirm Delete",
+      "hours": "hours",
+      "days": "days",
+      "indefinite": "Indefinite"
     }
   },
   "navigation": {
@@ -59,7 +74,10 @@
     "role_updated": "Role updated",
     "role_updated_desc": "User role has been updated",
     "error": "Error",
-    "role_update_error": "Could not update user role"
+    "role_update_error": "Could not update user role",
+    "user_banned": "User banned successfully",
+    "user_unbanned": "User unbanned successfully",
+    "user_deleted": "User deleted successfully"
   },
   "signals": {
     "title": "Signals Management",
