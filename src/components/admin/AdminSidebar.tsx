@@ -129,10 +129,10 @@ export const AdminSidebar: React.FC = () => {
                       <NavLink 
                         to={item.url} 
                         className={({ isActive }) => 
-                          `flex items-center gap-2 px-3 py-2.5 ${getNavClassName({ isActive })} group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-3 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0`
+                          `flex items-center gap-2 px-3 py-2.5 ${getNavClassName({ isActive })} group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-4 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0`
                         }
                       >
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <item.icon className="h-6 w-6 flex-shrink-0" />
                         <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                       </NavLink>
                     </SidebarMenuButton>

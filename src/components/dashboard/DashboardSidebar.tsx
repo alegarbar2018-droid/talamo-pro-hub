@@ -101,7 +101,7 @@ export function DashboardSidebar() {
               {navigationItems.map((item, index) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild>
-                     <NavLink
+                    <NavLink
                       to={item.path}
                       end={item.path === "/dashboard"}
                       className={({ isActive }) =>
@@ -109,13 +109,13 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-3 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
+                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-4 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
                       }
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
+                          <item.icon className={`flex-shrink-0 h-6 w-6 transition-all duration-300 ${
                             isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                           }`} />
                           <span className="text-sm font-medium tracking-wide truncate group-data-[collapsible=icon]:hidden">
@@ -151,12 +151,12 @@ export function DashboardSidebar() {
                           isActive
                             ? "bg-gradient-to-r from-teal/15 via-teal/10 to-cyan/15 text-teal font-semibold shadow-md shadow-teal/10"
                             : "hover:bg-gradient-to-r hover:from-muted/60 hover:to-muted/40 text-muted-foreground hover:text-foreground"
-                        } group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-3 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
+                        } group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:py-4 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-none`
                       }
                     >
                       {({ isActive }) => (
                         <>
-                          <item.icon className={`flex-shrink-0 h-5 w-5 transition-all duration-300 ${
+                          <item.icon className={`flex-shrink-0 h-6 w-6 transition-all duration-300 ${
                             isActive ? "text-teal" : "text-muted-foreground group-hover:text-foreground"
                           }`} />
                           <div className="flex items-center gap-2 flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
