@@ -432,15 +432,27 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel>Lesson Content (Markdown)</FormLabel>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSyntaxGuide(!showSyntaxGuide)}
-                >
-                  <HelpCircle className="w-4 h-4 mr-1" />
-                  Syntax Guide
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSyntaxGuide(!showSyntaxGuide)}
+                  >
+                    <HelpCircle className="w-4 h-4 mr-1" />
+                    Syntax Guide
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    asChild
+                  >
+                    <a href="/docs/AI_LESSON_CREATOR_PROMPT.md" target="_blank" rel="noopener noreferrer">
+                      🤖 AI Instructions
+                    </a>
+                  </Button>
+                </div>
               </div>
 
               {showSyntaxGuide && (
@@ -449,8 +461,11 @@ export const LessonForm: React.FC<LessonFormProps> = ({
                     <div className="space-y-3 text-sm max-h-[500px] overflow-y-auto pr-2">
                       <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
                         <h4 className="font-semibold mb-2 text-primary">✨ Tálamo Extended Markdown v1.1</h4>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground mb-2">
                           Sistema de componentes interactivos para lecciones. <a href="/docs/EXTENDED_MARKDOWN_SYNTAX_v1.1.md" target="_blank" className="underline">Ver documentación completa</a>
+                        </p>
+                        <p className="text-xs bg-gradient-primary/10 p-2 rounded border border-teal/20">
+                          🤖 <strong>Nuevo:</strong> Para generar contenido con IA, usa el botón <span className="font-mono bg-background px-1">AI Instructions</span> arriba. Contiene un prompt completo para que cualquier IA genere lecciones siguiendo este formato.
                         </p>
                       </div>
 
@@ -642,7 +657,7 @@ Siempre valida: estructura + zona + R:R.
               <FormControl>
                 <Textarea
                   ref={contentTextareaRef}
-                  placeholder="# Introduction&#10;&#10;Lesson content here...&#10;&#10;:::callout type=&quot;info&quot;&#10;💡 Use the Syntax Guide above for interactive elements!&#10;:::"
+                  placeholder="# Introduction&#10;&#10;Lesson content here...&#10;&#10;🤖 Tip: Use AI Instructions button above to generate content with ChatGPT, Claude, or any AI.&#10;&#10;:::callout type=&quot;info&quot;&#10;💡 Use the Syntax Guide for interactive elements!&#10;:::"
                   className="min-h-[200px] font-mono text-sm"
                   {...field}
                 />
@@ -677,31 +692,62 @@ Siempre valida: estructura + zona + R:R.
 
         <div className="space-y-4">
           <div>
-            <FormLabel>Video</FormLabel>
-            <div className="grid gap-4 mt-2">
-              <div>
-                <label className="block text-sm mb-2">Upload Video</label>
-                {lesson?.video_storage_key && !lessonVideoFile && (
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Current: {lesson.video_storage_key.split('/').pop()}
-                  </p>
-                )}
-                <Input type="file" accept="video/*" onChange={(e) => setLessonVideoFile(e.target.files?.[0] || null)} />
-              </div>
+            <FormLabel>Video (Optional)</FormLabel>
+            <div className="space-y-4 mt-2">
               <FormField
                 control={form.control}
                 name="video_external_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Or External Video URL</FormLabel>
+                    <FormLabel className="text-sm font-normal">
+                      YouTube/Vimeo URL (Recommended)
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="https://youtube.com/..." {...field} />
+                      <Input 
+                        placeholder="https://www.youtube.com/watch?v=..." 
+                        {...field} 
+                      />
                     </FormControl>
-                    <FormDescription>YouTube, Vimeo, etc.</FormDescription>
+                    <FormDescription className="text-xs">
+                      ✅ Paste any YouTube or Vimeo link. Supported formats:
+                      <ul className="list-disc list-inside mt-1 space-y-0.5">
+                        <li>youtube.com/watch?v=VIDEO_ID</li>
+                        <li>youtu.be/VIDEO_ID</li>
+                        <li>vimeo.com/VIDEO_ID</li>
+                      </ul>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or upload file
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm mb-2">Upload Video File</label>
+                {lesson?.video_storage_key && !lessonVideoFile && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Current: {lesson.video_storage_key.split('/').pop()}
+                  </p>
+                )}
+                <Input 
+                  type="file" 
+                  accept="video/*" 
+                  onChange={(e) => setLessonVideoFile(e.target.files?.[0] || null)} 
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Only if you have a local video file. YouTube links are preferred for better performance.
+                </p>
+              </div>
             </div>
           </div>
 
