@@ -73,9 +73,9 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon"
-      className="bg-background border-r border-line/50"
+      className="bg-background border-r border-line"
     >
-      <SidebarHeader className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
+      <SidebarHeader className="border-b border-line bg-background">
         <div className="flex items-center justify-between p-4 gap-3">
           <div className="flex flex-col flex-1 min-w-0">
             <span className={`font-bold bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent transition-all ${showExpanded ? 'text-lg' : 'text-sm'}`}>
@@ -246,7 +246,7 @@ export function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-line/50 p-3 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5 backdrop-blur-sm">
+      <SidebarFooter className="border-t border-line p-3 bg-background">
         {!showExpanded ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
