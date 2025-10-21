@@ -48,19 +48,25 @@ serve(async (req) => {
       );
     }
 
-    // Check admin permission
-    const { data: hasPermission, error: permError } = await supabase.rpc('has_admin_permission', {
-      _resource: 'users',
-      _action: 'update_identity'
-    });
+    // Check admin permission - ADMIN role always has access
+    const { data: currentRole } = await supabase.rpc('get_current_admin_role');
+    
+    if (currentRole !== 'ADMIN') {
+      const { data: hasPermission, error: permError } = await supabase.rpc('has_admin_permission', {
+        _resource: 'users',
+        _action: 'update_identity'
+      });
 
-    if (permError || !hasPermission) {
-      console.error(`[${requestId}] Permission denied for user ${caller.id}:`, permError);
-      return new Response(
-        JSON.stringify({ error: 'Forbidden: Admin privileges required' }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (permError || !hasPermission) {
+        console.error(`[${requestId}] Permission denied for user ${caller.id}:`, permError);
+        return new Response(
+          JSON.stringify({ error: 'Forbidden: Admin privileges required' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
+
+    console.log(`[${requestId}] Permission check passed for role: ${currentRole}`);
 
     // Parse and validate body
     const body = await req.json();

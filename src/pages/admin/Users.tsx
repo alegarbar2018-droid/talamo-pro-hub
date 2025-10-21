@@ -431,7 +431,7 @@ export const AdminUsers: React.FC = () => {
                             <Eye className="h-4 w-4" />
                           </Button>
                         </SheetTrigger>
-                        <SheetContent>
+                        <SheetContent className="overflow-y-auto max-h-screen">
                           <SheetHeader>
                             <SheetTitle>{t("admin:users.details.title")}</SheetTitle>
                             <SheetDescription>{t("admin:users.details.subtitle")}</SheetDescription>

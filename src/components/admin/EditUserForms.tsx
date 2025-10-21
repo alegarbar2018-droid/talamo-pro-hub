@@ -133,7 +133,7 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
       {/* Identity Form */}
       <div className="rounded-lg border bg-card p-4">
         <div className="mb-4">
-          <h4 className="font-semibold text-base">{t("admin:users.identity_section")}</h4>
+          <h4 className="font-semibold text-base">Identidad</h4>
           <p className="text-sm text-muted-foreground mt-1">Datos de autenticación</p>
         </div>
         <form onSubmit={handleIdentitySubmit} className="space-y-4">
@@ -179,7 +179,7 @@ export const EditUserForms: React.FC<EditUserFormsProps> = ({ user }) => {
       {/* Profile Form */}
       <div className="rounded-lg border bg-card p-4">
         <div className="mb-4">
-          <h4 className="font-semibold text-base">{t("admin:users.profile_section")}</h4>
+          <h4 className="font-semibold text-base">Perfil</h4>
           <p className="text-sm text-muted-foreground mt-1">Información del usuario</p>
         </div>
         <form onSubmit={handleProfileSubmit} className="space-y-4">
