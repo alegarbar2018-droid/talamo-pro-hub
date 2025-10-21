@@ -1882,6 +1882,7 @@ export type Database = {
           instrument: string | null
           invalidation: string | null
           logic: string
+          logic_summary: string | null
           media_urls: string[] | null
           published_at: string | null
           result: string | null
@@ -1907,6 +1908,7 @@ export type Database = {
           instrument?: string | null
           invalidation?: string | null
           logic: string
+          logic_summary?: string | null
           media_urls?: string[] | null
           published_at?: string | null
           result?: string | null
@@ -1932,6 +1934,7 @@ export type Database = {
           instrument?: string | null
           invalidation?: string | null
           logic?: string
+          logic_summary?: string | null
           media_urls?: string[] | null
           published_at?: string | null
           result?: string | null

@@ -102,6 +102,11 @@ Deno.serve(async (req) => {
 
     console.log('Signal created successfully:', signal.id);
 
+    // Synthesize logic asynchronously (don't await to avoid blocking)
+    supabaseClient.functions.invoke('synthesize-signal-logic', {
+      body: { signal_id: signal.id }
+    }).catch(err => console.error('Failed to synthesize signal logic:', err));
+
     return new Response(
       JSON.stringify({ signal }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

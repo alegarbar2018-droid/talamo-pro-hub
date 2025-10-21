@@ -87,6 +87,9 @@ verify_jwt = false
 [functions.signal-ingest]
 verify_jwt = false
 
+[functions.synthesize-signal-logic]
+verify_jwt = false
+
 [functions.admin-users-list]
 verify_jwt = true
 

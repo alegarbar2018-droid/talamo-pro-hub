@@ -302,7 +302,7 @@ Deno.serve(async (req) => {
     const _Digits = payload.symbol.includes("JPY") ? 3 : 5;
 
     // Insert new signal with correct field mapping
-    const { error: insertError } = await supabase.from("signals").insert({
+    const { data: insertedSignal, error: insertError } = await supabase.from("signals").insert({
       // author_id uses DB default (00000000-0000-0000-0000-000000000000)
       instrument: payload.symbol,
       timeframe: payload.timeframe,
@@ -319,7 +319,7 @@ Deno.serve(async (req) => {
       result: "pending",
       source: "automated",
       dedup_key: idempotencyKey,
-    });
+    }).select('id').single();
 
     if (insertError) {
       // Check if it's a unique constraint violation (race condition)
@@ -347,6 +347,13 @@ Deno.serve(async (req) => {
       ip: req.headers.get("x-forwarded-for") || "unknown",
       ua: req.headers.get("user-agent")?.substring(0, 50) || "unknown",
     });
+
+    // Synthesize logic asynchronously (don't await to avoid blocking)
+    if (insertedSignal?.id) {
+      supabase.functions.invoke('synthesize-signal-logic', {
+        body: { signal_id: insertedSignal.id }
+      }).catch(err => console.error('Failed to synthesize signal logic:', err));
+    }
 
     return new Response(JSON.stringify({ ok: true, inserted: true }), {
       status: 200,

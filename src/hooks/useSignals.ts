@@ -50,7 +50,7 @@ const adaptSignal = (row: SignalRow, lang: string): Signal => {
       : '',
     confidence: 85,
     status: (row.result === 'tp_hit' ? 'tp_reached' : row.result === 'sl_hit' ? 'sl_reached' : 'active') as Signal['status'],
-    logic: row.logic,
+    logic: row.logic_summary || row.logic, // Use AI summary if available, fallback to original
     invalidation: row.invalidation,
     author: 'Sistema'
   };
