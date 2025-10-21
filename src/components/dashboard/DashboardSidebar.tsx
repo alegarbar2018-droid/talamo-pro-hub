@@ -73,7 +73,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar 
       collapsible="icon"
-      className="bg-gradient-to-b from-surface/95 via-background/98 to-surface/95 backdrop-blur-xl border-r border-line/50"
+      className="bg-background border-r border-line/50"
     >
       <SidebarHeader className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
         <div className="flex items-center justify-between p-4 gap-3">
