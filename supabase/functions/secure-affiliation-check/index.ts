@@ -345,29 +345,30 @@ Deno.serve(async (req) => {
       }
     }
 
-    // PASO 3: Si está afiliado, verificar si el usuario existe en auth.users
+    // PASO 3: Si está afiliado, verificar si el usuario existe
     if (isAffiliated) {
       try {
-        // Usar admin API para listar usuarios por email
-        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-        
-        if (authError) {
-          console.error('Error checking auth.users:', authError);
-          throw authError;
+        // Consultar public.profiles en lugar de auth.users
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('email', emailLower)
+          .maybeSingle();
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          // PGRST116 es "no rows found", que está bien
+          console.error('Error checking profiles:', profileError);
+          throw profileError;
         }
 
-        // Buscar el usuario por email
-        const existingUser = authUsers.users.find(
-          (user: any) => user.email?.toLowerCase() === emailLower
-        );
+        const userExists = !!profileData;
 
-        const userExists = !!existingUser;
-
-        await logSecurityEvent(supabase, 'auth_users_check_completed', {
+        await logSecurityEvent(supabase, 'user_existence_check_completed', {
           email: '[REDACTED]',
           user_exists: userExists,
           is_affiliated: true,
-          client_id: clientId
+          client_id: clientId,
+          method: 'profiles_table'
         });
 
         return new Response(
@@ -381,16 +382,16 @@ Deno.serve(async (req) => {
           } as ValidationResponse),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
-      } catch (authCheckError) {
-        console.error('Error checking auth.users:', authCheckError);
+      } catch (checkError) {
+        console.error('Error checking user existence:', checkError);
         
-        await logSecurityEvent(supabase, 'auth_users_check_error', {
+        await logSecurityEvent(supabase, 'user_existence_check_error', {
           email: '[REDACTED]',
-          error: authCheckError instanceof Error ? authCheckError.message : 'Unknown error',
+          error: checkError instanceof Error ? checkError.message : 'Unknown error',
           client_id: clientId
         });
 
-        // En caso de error, devolver que no existe para permitir registro
+        // En caso de error, permitir continuar (devolver false)
         return new Response(
           JSON.stringify({
             ok: true,
