@@ -109,6 +109,55 @@
   }
 }
 
+/* ============================================================
+   DESIGN SYSTEM UTILITIES - Sistema de 8pt
+   ============================================================ */
+
+/* Contenedores */
+.container-narrow {
+  @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.container-default {
+  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.container-wide {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Espaciado de secciones */
+.section-spacing {
+  @apply py-8 sm:py-12 lg:py-16;
+}
+
+.hero-spacing {
+  @apply py-12 lg:py-16;
+}
+
+/* Cards base */
+.card-base {
+  @apply p-4 sm:p-6 rounded-xl border border-line bg-surface;
+}
+
+/* Tipografía de hero */
+.hero-title {
+  @apply text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight text-white;
+}
+
+.hero-subtitle {
+  @apply text-base sm:text-lg font-light text-muted-foreground;
+}
+
+/* Transiciones consistentes */
+.transition-default {
+  @apply transition-all duration-300;
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-glow-subtle;
+}
+
 @layer components {
   .gradient-text {
     @apply bg-gradient-primary bg-clip-text text-transparent;

@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Users, MessageSquare, TrendingUp, Sparkles, Mail } from "lucide-react";
 import { toast } from "sonner";
+import { PageHero } from "@/components/layout/PageHero";
 
 const Community = () => {
   const { t } = useTranslation(["community", "common"]);
@@ -22,21 +22,20 @@ const Community = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Hero Section */}
-        <div className="text-center space-y-4">
-          <Badge className="bg-gradient-to-r from-teal/20 to-cyan/20 text-teal border-teal/30">
-            <Sparkles className="h-3 w-3 mr-1" />
-            {t("community:status")}
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
-            {t("community:title")}
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            {t("community:subtitle")}
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <PageHero
+        module="community"
+        title={t("community:title")}
+        subtitle={t("community:subtitle")}
+        badge={{
+          icon: Sparkles,
+          text: t("community:status")
+        }}
+        containerWidth="narrow"
+      />
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-6">
