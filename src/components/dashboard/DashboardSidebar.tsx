@@ -58,7 +58,7 @@ const communityItems = [
 
 export function DashboardSidebar() {
   const { t } = useTranslation(["nav", "dashboard"]);
-  const { open } = useSidebar();
+  const { open, isMobile } = useSidebar();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -68,6 +68,7 @@ export function DashboardSidebar() {
   };
 
   const userInitials = user?.email?.substring(0, 2).toUpperCase() || "U";
+  const showExpanded = isMobile || open;
 
   return (
     <Sidebar 
@@ -77,10 +78,10 @@ export function DashboardSidebar() {
       <SidebarHeader className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5">
         <div className="flex items-center justify-between p-4 gap-3">
           <div className="flex flex-col flex-1 min-w-0">
-            <span className={`font-bold bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent transition-all ${open ? 'text-lg' : 'text-sm'}`}>
-              {open ? 'Tálamo' : 'T'}
+            <span className={`font-bold bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent transition-all ${showExpanded ? 'text-lg' : 'text-sm'}`}>
+              {showExpanded ? 'Tálamo' : 'T'}
             </span>
-            {open && (
+            {showExpanded && (
               <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
                 Pro Hub
               </span>
@@ -93,7 +94,7 @@ export function DashboardSidebar() {
       <SidebarContent className="py-2 group-data-[collapsible=icon]:py-2">
         {/* Main Navigation */}
         <SidebarGroup>
-          {open && (
+          {showExpanded && (
             <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-4">
               {t("dashboard:modules.title", "Módulos")}
             </SidebarGroupLabel>
@@ -109,8 +110,8 @@ export function DashboardSidebar() {
                     >
                       {({ isActive }) => (
                         <>
-                          {/* MODO COLAPSADO */}
-                          {!open && (
+                          {/* MODO COLAPSADO - Solo en desktop */}
+                          {!showExpanded && (
                             <div className={`
                               w-12 h-14 mx-auto flex items-center justify-center rounded-lg
                               transition-colors duration-200
@@ -129,13 +130,13 @@ export function DashboardSidebar() {
                             </div>
                           )}
 
-                          {/* MODO EXPANDIDO */}
-                          {open && (
+                          {/* MODO EXPANDIDO - Móvil siempre, desktop cuando open */}
+                          {showExpanded && (
                             <div className={`
                               relative flex items-center gap-3 px-3 py-2.5 rounded-xl w-full
                               transition-all duration-200
                               ${isActive
-                                ? 'bg-gradient-to-r from-teal/15 to-cyan/10 text-teal font-semibold border-l-3' 
+                                ? 'bg-gradient-to-r from-teal/15 to-cyan/10 text-teal font-semibold' 
                                 : 'hover:bg-muted/60 text-muted-foreground hover:text-foreground'
                               }
                             `}>
@@ -166,7 +167,7 @@ export function DashboardSidebar() {
 
         {/* Community Section */}
         <SidebarGroup className="mt-6">
-          {open && (
+          {showExpanded && (
             <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider mb-2 px-4">
               {t("nav:community")}
             </SidebarGroupLabel>
@@ -179,8 +180,8 @@ export function DashboardSidebar() {
                     <NavLink to={item.path}>
                       {({ isActive }) => (
                         <>
-                          {/* MODO COLAPSADO */}
-                          {!open && (
+                          {/* MODO COLAPSADO - Solo en desktop */}
+                          {!showExpanded && (
                             <div className={`
                               w-12 h-14 mx-auto flex items-center justify-center rounded-lg
                               transition-colors duration-200
@@ -199,8 +200,8 @@ export function DashboardSidebar() {
                             </div>
                           )}
 
-                          {/* MODO EXPANDIDO */}
-                          {open && (
+                          {/* MODO EXPANDIDO - Móvil siempre, desktop cuando open */}
+                          {showExpanded && (
                             <div className={`
                               relative flex items-center gap-3 px-3 py-2.5 rounded-xl w-full
                               transition-all duration-200
@@ -246,7 +247,7 @@ export function DashboardSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-line/50 p-3 bg-gradient-to-br from-teal/5 via-transparent to-cyan/5 backdrop-blur-sm">
-        {!open ? (
+        {!showExpanded ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center justify-center p-2 rounded-xl hover:bg-gradient-to-r hover:from-teal/10 hover:to-cyan/10 transition-all duration-300 group">
