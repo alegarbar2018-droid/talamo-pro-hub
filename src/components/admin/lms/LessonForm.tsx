@@ -125,31 +125,53 @@ export const LessonForm: React.FC<LessonFormProps> = ({
     }
 
     setIsFormattingWithAI(true);
+    const toastId = toast.loading('Formateando contenido con IA...', {
+      description: 'Esto puede tomar unos segundos'
+    });
+    
     try {
+      console.log('Calling format-lesson-content function...');
+      
       const { data, error } = await supabase.functions.invoke('format-lesson-content', {
         body: { content: currentContent }
       });
 
-      if (error) throw error;
+      console.log('Function response:', { data, error });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
       if (data?.formattedContent) {
         form.setValue('content_md', data.formattedContent);
-        toast.success('Contenido formateado exitosamente con IA');
+        toast.success('Contenido formateado exitosamente', { id: toastId });
       } else {
+        console.error('No formatted content in response:', data);
         throw new Error('No se recibió contenido formateado');
       }
     } catch (error: any) {
       console.error('Error formatting with AI:', error);
       
-      if (error.message?.includes('Rate limit')) {
-        toast.error('Límite de solicitudes excedido. Intenta de nuevo en unos minutos.');
-      } else if (error.message?.includes('Payment required')) {
-        toast.error('Se requiere pago. Agrega créditos a tu workspace de Lovable AI.');
-      } else {
-        toast.error('Error al formatear con IA', {
-          description: error.message
-        });
+      let errorMessage = 'Error al formatear con IA';
+      let errorDescription = error.message || 'Error desconocido';
+      
+      if (error.message?.includes('Rate limit') || error.message?.includes('429')) {
+        errorDescription = 'Límite de solicitudes excedido. Intenta de nuevo en unos minutos.';
+      } else if (error.message?.includes('Payment required') || error.message?.includes('402')) {
+        errorDescription = 'Se requiere pago. Agrega créditos a tu workspace de Lovable AI.';
+      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('FunctionsFetchError')) {
+        errorDescription = 'No se pudo conectar con el servidor. Verifica que la función esté desplegada correctamente.';
       }
+      
+      toast.error(errorMessage, {
+        id: toastId,
+        description: errorDescription
+      });
     } finally {
       setIsFormattingWithAI(false);
     }

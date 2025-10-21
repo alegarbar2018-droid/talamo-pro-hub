@@ -11,9 +11,12 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Request received, parsing body...");
     const { content } = await req.json();
+    console.log("Content length:", content?.length || 0);
 
     if (!content || typeof content !== 'string') {
+      console.error("Invalid content received");
       return new Response(
         JSON.stringify({ error: "Content is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -22,10 +25,11 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
+      console.error("LOVABLE_API_KEY not configured");
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    console.log("Formatting lesson content with AI...");
+    console.log("Calling Lovable AI...");
 
     const systemPrompt = `Eres un experto en crear contenido educativo para la plataforma Tálamo, un sistema LMS de trading. Tu tarea es formatear contenido de lecciones usando el Extended Markdown de Tálamo v1.1.
 
@@ -189,6 +193,8 @@ Toma el contenido proporcionado por el usuario y formatealo usando el Extended M
       }),
     });
 
+    console.log("AI response status:", aiResponse.status);
+
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
       console.error("AI API error:", aiResponse.status, errorText);
@@ -211,9 +217,16 @@ Toma el contenido proporcionado por el usuario y formatealo usando el Extended M
     }
 
     const data = await aiResponse.json();
-    const formattedContent = data.choices[0].message.content;
+    console.log("AI response received, extracting content...");
+    
+    const formattedContent = data.choices?.[0]?.message?.content;
+    
+    if (!formattedContent) {
+      console.error("No content in AI response:", JSON.stringify(data));
+      throw new Error("No content returned from AI");
+    }
 
-    console.log("Content formatted successfully");
+    console.log("Content formatted successfully, length:", formattedContent.length);
 
     return new Response(
       JSON.stringify({ formattedContent }),
@@ -223,8 +236,12 @@ Toma el contenido proporcionado por el usuario y formatealo usando el Extended M
     );
   } catch (error) {
     console.error("Error in format-lesson-content function:", error);
+    console.error("Error stack:", error.stack);
     return new Response(
-      JSON.stringify({ error: error.message || "Unknown error" }),
+      JSON.stringify({ 
+        error: error.message || "Unknown error",
+        details: error.stack || ""
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
