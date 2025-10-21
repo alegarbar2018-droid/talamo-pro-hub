@@ -37,6 +37,9 @@
       "ban_title": "Ban User",
       "ban_description": "Select ban duration",
       "unban": "Unban User",
+      "reset_password": "Reset Password",
+      "reset_password_title": "Send Password Reset",
+      "reset_password_description": "Send a password reset email to this user",
       "delete": "Delete User",
       "delete_title": "Are you absolutely sure?",
       "delete_description": "This will soft-delete the user. They won't be able to access the platform. This action can be reversed by a super admin.",
@@ -77,7 +80,9 @@
     "role_update_error": "Could not update user role",
     "user_banned": "User banned successfully",
     "user_unbanned": "User unbanned successfully",
-    "user_deleted": "User deleted successfully"
+    "user_deleted": "User deleted successfully",
+    "password_reset_sent": "Password reset email sent",
+    "password_reset_error": "Failed to send reset email"
   },
   "signals": {
     "title": "Signals Management",

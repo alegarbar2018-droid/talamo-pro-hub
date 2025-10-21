@@ -37,6 +37,9 @@
       "ban_title": "Banir Usuário",
       "ban_description": "Selecionar duração do banimento",
       "unban": "Desbanir Usuário",
+      "reset_password": "Redefinir Senha",
+      "reset_password_title": "Enviar Redefinição",
+      "reset_password_description": "Enviar email de redefinição de senha para este usuário",
       "delete": "Excluir Usuário",
       "delete_title": "Tem certeza absoluta?",
       "delete_description": "Isso excluirá o usuário de forma suave. Ele não poderá acessar a plataforma. Esta ação pode ser revertida por um super admin.",
@@ -77,7 +80,9 @@
     "role_update_error": "Não foi possível atualizar o papel do usuário",
     "user_banned": "Usuário banido com sucesso",
     "user_unbanned": "Usuário desbanido com sucesso",
-    "user_deleted": "Usuário excluído com sucesso"
+    "user_deleted": "Usuário excluído com sucesso",
+    "password_reset_sent": "Email de redefinição enviado",
+    "password_reset_error": "Erro ao enviar email de redefinição"
   },
   "signals": {
     "title": "Gestão de Sinais",

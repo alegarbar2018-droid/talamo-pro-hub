@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Eye, Edit, UserCheck, UserX, Filter, Trash, Ban, ShieldCheck } from 'lucide-react';
+import { Search, Eye, Edit, UserCheck, UserX, Filter, Trash, Ban, ShieldCheck, Key } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { AdminRole, updateAdminUserRole, getCurrentAdminRole } from '@/lib/auth-admin';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -198,6 +198,31 @@ export const AdminUsers: React.FC = () => {
       toast({
         title: t('admin:toasts.error'),
         description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Reset password mutation
+  const resetPasswordMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await supabase.functions.invoke('admin-users-reset-password', {
+        body: { userId }
+      });
+      if (error) throw error;
+      if (!data.ok) throw new Error(data.error);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: t('admin:toasts.password_reset_sent'),
+        description: `Email enviado a ${data.email}`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: t('admin:toasts.error'),
+        description: t('admin:toasts.password_reset_error'),
         variant: 'destructive',
       });
     },
@@ -506,6 +531,18 @@ export const AdminUsers: React.FC = () => {
                                     >
                                       <ShieldCheck className="h-4 w-4 mr-2" />
                                       {t('admin:users.actions.unban')}
+                                    </Button>
+
+                                    {/* Reset Password */}
+                                    <Button
+                                      variant="outline"
+                                      className="w-full justify-start"
+                                      size="sm"
+                                      onClick={() => resetPasswordMutation.mutate(selectedUser.user_id)}
+                                      disabled={resetPasswordMutation.isPending}
+                                    >
+                                      <Key className="h-4 w-4 mr-2" />
+                                      {t('admin:users.actions.reset_password')}
                                     </Button>
 
                                     <Separator className="my-4" />
