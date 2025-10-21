@@ -49,7 +49,7 @@ const SignalCard = memo(
               </div>
             </div>
             <Badge variant="outline" className="border-teal text-teal text-xs shrink-0">
-              RR 1:{parseInt{signal.rr}}
+              RR 1:{parseInt(signal.rr)}
             </Badge>
           </div>
           <Badge className={`${getStatusColor(signal.status)} w-fit text-xs`}>
