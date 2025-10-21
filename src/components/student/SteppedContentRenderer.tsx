@@ -119,10 +119,10 @@ export function SteppedContentRenderer({
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between pt-8 border-t border-line/30 gap-4">
+      <div className="flex items-center justify-between pt-6 border-t border-line/30 gap-4">
         <Button
           variant="outline"
-          size="lg"
+          size="sm"
           onClick={goToPreviousStep}
           disabled={isFirstStep}
           className={cn(
@@ -133,36 +133,31 @@ export function SteppedContentRenderer({
           )}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <ChevronLeft className="h-5 w-5 mr-2 relative z-10 group-hover:-translate-x-1 transition-transform" />
-          <span className="relative z-10 font-semibold">Anterior</span>
+          <ChevronLeft className="h-4 w-4 mr-1.5 relative z-10 group-hover:-translate-x-1 transition-transform" />
+          <span className="relative z-10 font-medium">Anterior</span>
         </Button>
 
         {isLastStep ? (
           <Button
             onClick={goToNextStep}
-            size="lg"
-            className="bg-gradient-primary hover:shadow-glow-intense group relative overflow-hidden px-8"
+            size="sm"
+            className="bg-gradient-primary hover:shadow-glow-intense group relative overflow-hidden px-6"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-            <span className="relative z-10 font-bold">Completar Lección</span>
-            <CheckCircle className="h-5 w-5 ml-2 relative z-10 group-hover:scale-110 transition-transform" />
+            <span className="relative z-10 font-semibold">Completar Lección</span>
+            <CheckCircle className="h-4 w-4 ml-1.5 relative z-10 group-hover:scale-110 transition-transform" />
           </Button>
         ) : (
           <Button
             onClick={goToNextStep}
-            size="lg"
-            className="bg-gradient-to-r from-teal to-teal-dark hover:shadow-glow text-teal-ink group relative overflow-hidden px-8"
+            size="sm"
+            className="bg-gradient-to-r from-teal to-teal-dark hover:shadow-glow text-teal-ink group relative overflow-hidden px-6"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-            <span className="relative z-10 font-bold">Siguiente</span>
-            <ChevronRight className="h-5 w-5 ml-2 relative z-10 group-hover:translate-x-1 transition-transform" />
+            <span className="relative z-10 font-semibold">Siguiente</span>
+            <ChevronRight className="h-4 w-4 ml-1.5 relative z-10 group-hover:translate-x-1 transition-transform" />
           </Button>
         )}
-      </div>
-
-      {/* Keyboard shortcuts hint */}
-      <div className="text-center text-xs text-muted-foreground pt-4">
-        Usa las flechas ← → del teclado para navegar
       </div>
     </div>
   );
