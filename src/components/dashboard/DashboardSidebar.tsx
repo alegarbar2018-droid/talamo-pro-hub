@@ -99,7 +99,7 @@ export function DashboardSidebar() {
           )}
           {/* Collapse toggle visible on desktop */}
           {!isMobile && (
-            <SidebarTrigger className="flex-shrink-0 h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg" />
+            <SidebarTrigger className="flex-shrink-0 h-8 w-8 hover:bg-teal/10 hover:text-teal transition-all rounded-lg flex items-center justify-center" />
           )}
         </div>
       </SidebarHeader>
