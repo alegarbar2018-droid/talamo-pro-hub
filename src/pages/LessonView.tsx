@@ -32,6 +32,7 @@ const LessonView = () => {
   const [activeTopicId, setActiveTopicId] = useState<string>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const tocEnabled = isFeatureEnabled('academy.lesson_toc');
+  const [stepProgress, setStepProgress] = useState({ current: 0, total: 0 });
   
   // Badge onboarding state
   const [showNewBadge, setShowNewBadge] = useState(() => {
@@ -329,9 +330,9 @@ const LessonView = () => {
       <div className={tocEnabled ? 'block' : 'hidden'}>
         <LessonTOCSidebar
           topics={topics}
-          completedCount={completedCount}
-          total={total}
-          progress={progress}
+          completedCount={stepProgress.current || completedCount}
+          total={stepProgress.total || total}
+          progress={stepProgress.total > 0 ? Math.round((stepProgress.current / stepProgress.total) * 100) : progress}
           onTopicClick={handleTopicClick}
           activeTopicId={activeTopicId}
         />
@@ -452,6 +453,9 @@ const LessonView = () => {
                       if (tocEnabled) {
                         markTopicComplete(`topic-step-${stepIndex}`);
                       }
+                    }}
+                    onProgressChange={(current, total) => {
+                      setStepProgress({ current, total });
                     }}
                     onLessonComplete={() => {
                       if (!isCompleted) {
