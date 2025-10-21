@@ -278,36 +278,40 @@ const Signals = () => {
         structuredData={structuredData}
       />
       {/* Hero Section */}
-      <div className="border-b border-line/50 bg-gradient-to-br from-teal/5 via-surface to-cyan/5 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative border-b border-orange-500/20 bg-gradient-to-br from-orange-600 via-orange-500 to-amber-600 backdrop-blur-xl py-12 overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-amber-400/30 to-transparent rounded-full blur-3xl opacity-40" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-orange-400/30 to-transparent rounded-full blur-3xl opacity-40" />
+        
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal/20 via-teal/10 to-transparent border border-teal/30">
-              <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
-              <span className="text-sm font-medium text-teal">Señales Verificadas</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-lg">
+              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-sm font-medium text-white">Señales Verificadas</span>
             </div>
             
             <div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight">
                 {t('signals:title')}
               </h1>
-              <p className="text-base sm:text-lg text-muted-foreground mt-2">
+              <p className="text-base sm:text-lg text-white/90 mt-2 font-light">
                 {t('signals:subtitle')}{" "}
-                <span className="text-teal font-medium">análisis profesional verificado</span>
+                <span className="text-white font-semibold">análisis profesional verificado</span>
               </p>
             </div>
             
             <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
-                <Activity className="w-4 h-4 text-teal" />
-                <span className="text-sm text-muted-foreground">Tiempo Real</span>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 shadow-sm">
+                <Activity className="w-4 h-4 text-white" />
+                <span className="text-sm text-white/90">Tiempo Real</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
-                <Target className="w-4 h-4 text-teal" />
-                <span className="text-sm text-muted-foreground">R:R Optimizado</span>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 shadow-sm">
+                <Target className="w-4 h-4 text-white" />
+                <span className="text-sm text-white/90">R:R Optimizado</span>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface/50 backdrop-blur-sm border border-line/50">
-                <BarChart3 className="w-4 h-4 text-teal" />
-                <span className="text-sm text-muted-foreground">Análisis Verificado</span>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 shadow-sm">
+                <BarChart3 className="w-4 h-4 text-white" />
+                <span className="text-sm text-white/90">Análisis Verificado</span>
               </div>
             </div>
           </div>
