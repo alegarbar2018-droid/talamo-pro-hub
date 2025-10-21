@@ -153,15 +153,18 @@ const Onboarding = () => {
         if (user_exists) {
           setAccountStatus("exists");
           setStep("user-exists");
-        } else if (demo_mode) {
+        } else if (is_affiliated) {
+        /*
+        else if (demo_mode) {
           setIsDemoMode(false);
-          setAccountStatus("affiliated");
-          setStep("create-password");
+          setAccountStatus('affiliated');
+          setStep('create-password');
           toast({
             title: "Modo Demo Activado",
-            description: "Acceso temporal para explorar Tálamo",
+            description: "Acceso temporal para explorar Tálamo"
           });
-        } else if (is_affiliated) {
+        } 
+        */
           setUid(responseUid || "");
           setAccountStatus("affiliated");
           setStep("create-password");
