@@ -1,122 +1,122 @@
 {
   "hero": {
-    "badge": "Programa Exclusivo IB",
-    "title": "Monetiza tu Influencia",
-    "subtitle": "Gana Comisiones Reales",
-    "description": "Conviértete en Agente IB oficial de Exness y recibe el 50% de todas las comisiones generadas por tus referidos. Sin trucos, sin letra pequeña. Ganancias transparentes y directas."
+    "badge": "Programa de Agentes",
+    "title": "Refiere Tálamo",
+    "subtitle": "Gana Compartiendo Valor Real",
+    "description": "Cuando alguien se une a Tálamo con tu link de agente, su cuenta se valida automáticamente y tú recibes el 50% de las comisiones que Exness nos paga. Sin intermediarios, sin letra pequeña."
   },
   "trust": {
-    "partners": "Socios Activos",
-    "earnings": "Comisiones Pagadas",
-    "signups": "Registros Este Mes"
+    "partners": "Agentes Activos",
+    "earnings": "Comisiones Pagadas Este Mes",
+    "signups": "Nuevos Miembros Hoy"
   },
   "problem": {
-    "title": "El Problema con los Programas Tradicionales",
-    "point1": "Comisiones opacas: nunca sabes cuánto te están pagando realmente",
-    "point2": "Condiciones ocultas: requisitos de volumen imposibles de cumplir",
-    "point3": "Pagos retrasados: esperas semanas o meses para ver tu dinero"
+    "title": "El Problema con los Programas de Referidos Tradicionales",
+    "point1": "Promesas vacías sin valor real para quien te sigue",
+    "point2": "Links genéricos que no aportan nada más allá de un clic",
+    "point3": "Comisiones opacas sin transparencia ni reportes verificables"
   },
   "difference": {
-    "title": "Por Qué Nuestro Programa es Diferente",
-    "subtitle": "Transparencia y Valor Real",
+    "title": "Por Qué Este Programa es Diferente",
+    "subtitle": "No es solo un link. Es acceso real a una plataforma premium.",
     "point1": {
-      "title": "50% de Comisión Directa",
-      "description": "No es un porcentaje del spread. Es el 50% de TODO lo que Exness recibe de tus referidos. Si ellos generan $100 en comisiones, tú recibes $50."
+      "title": "Acceso Verificado Instantáneo",
+      "description": "Quien usa tu link se registra en Exness y automáticamente valida su email para entrar a Tálamo. Sin pasos extra, sin esperas."
     },
     "point2": {
-      "title": "Sistema de Exness, No Nuestro",
-      "description": "Tu link de referido viene directamente de Exness. No intermediarios, no riesgo de manipulación. Las comisiones se rastrean y pagan desde su plataforma oficial."
+      "title": "Comisión Transparente y Directa",
+      "description": "Tálamo comparte el 50% de lo que Exness nos paga como IB. Sin intermediarios, sin demoras. Todo rastreado en tiempo real desde los sistemas de Exness."
     },
     "point3": {
-      "title": "Validación en Tiempo Real",
-      "description": "Ve exactamente cuántos referidos se han registrado, cuánto han operado y cuánto has ganado. Todo sincronizado directamente con los sistemas de Exness."
+      "title": "Respaldado por un Partner Oficial",
+      "description": "Tálamo es Introducing Broker oficial de Exness. Esto no es afiliación genérica: es un programa regulado con comisiones verificables."
     }
   },
   "how": {
-    "title": "Cómo Funciona (Sin Complicaciones)",
+    "title": "Cómo Funciona (Con Ejemplo Real)",
     "step1": {
-      "title": "Genera tu Link Único",
-      "description": "Un clic y obtienes tu link de referido oficial de Exness. Este link está conectado a tu perfil de agente IB en su sistema."
+      "title": "Genera tu Link de Agente",
+      "description": "Un clic y obtienes tu link único conectado al sistema de Exness. Este link valida automáticamente a quien se registre con él."
     },
     "step2": {
-      "title": "Comparte con tu Audiencia",
-      "description": "Usa el link donde quieras: redes sociales, blog, comunidad privada. Cuando alguien se registra en Exness a través de tu link, automáticamente se vincula a ti como su IB."
+      "title": "Comparte Tálamo",
+      "description": "Tu referido se registra en Exness con tu link y automáticamente valida su email para acceder a Tálamo. Sin fricción, sin complicaciones."
     },
     "step3": {
-      "title": "Recibe Comisiones Automáticas",
-      "description": "Cada vez que tu referido opera, generas comisiones. Exness las calcula y las deposita directamente en tu cuenta. Tú solo monitorizas y cobras."
+      "title": "Gana por Cada Operación",
+      "description": "Por cada lote que tu referido opere, Exness paga comisión IB a Tálamo. Nosotros te compartimos el 50% de esa comisión. Automático. Transparente."
     },
     "example": {
-      "title": "Ejemplo Real de Ganancias",
-      "setup": "Tu referido abre una cuenta con $1,000",
-      "commission": "Opera 10 lotes estándar en EUR/USD → Exness recibe ~$100 en comisiones",
-      "total": "Total generado por ese referido: $100",
-      "your_cut": "Tu parte (50%): $50",
-      "note": "Y esto es por un solo referido haciendo operaciones normales. Imagina con 10, 50 o 100 referidos activos."
+      "title": "Ejemplo de Cálculo Real",
+      "setup": "Tu referido abre una cuenta Standard y opera 10 lotes de EURUSD en un mes.",
+      "commission": "Comisión base IB de Exness: ~$10 USD por lote (40% del spread típico)",
+      "total": "10 lotes × $10 = $100 USD para Tálamo como IB",
+      "your_cut": "Tu parte (50%): $50 USD",
+      "note": "Este es un cálculo simplificado. Las comisiones varían según tipo de cuenta (Standard 40%, Pro/Zero/Raw 25%), spread y volumen. Exness reporta todo en tiempo real."
     }
   },
   "benefits": {
-    "title": "Beneficios Claros",
+    "title": "Qué Obtienes",
     "benefit1": {
-      "title": "Ingresos Pasivos Reales",
-      "description": "Una vez que alguien se registra con tu link, sigues ganando mientras ellos sigan operando. Sin límite de tiempo."
+      "title": "50% de Comisión Real",
+      "description": "No es 5%. No es 10%. Es el 50% de lo que Tálamo recibe como IB por tus referidos. Transparente desde el primer día."
     },
     "benefit2": {
-      "title": "Sin Cuotas ni Requisitos Escondidos",
-      "description": "No pagas nada por ser agente IB. No hay mínimos de volumen para empezar a ganar. Primer referido = primeras comisiones."
+      "title": "Sin Límites de Ganancias",
+      "description": "No hay techo. Cuantos más referidos activos, más ganas. Escalable sin restricciones ni condiciones ocultas."
     },
     "benefit3": {
-      "title": "Pagos Automáticos y Transparentes",
-      "description": "Exness maneja todo el tracking y los pagos. Tú solo recibes el dinero en tu cuenta sin tener que reclamar nada."
+      "title": "Reportes en Tiempo Real",
+      "description": "Acceso directo a los reportes de Exness. Ves cada operación, cada comisión generada, sin demoras ni filtros."
     },
     "benefit4": {
-      "title": "Escalable sin Esfuerzo Extra",
-      "description": "El mismo link funciona para 1 o para 1,000 referidos. No cambia nada en tu workflow."
+      "title": "Pagos Automáticos",
+      "description": "Exness deposita directamente en tu cuenta de agente. Diario. Automático. No tienes que pedir ni reclamar nada."
     }
   },
   "why": {
     "title": "Por Qué Existe Este Programa",
-    "intro": "Transparencia Total",
-    "point1": "Tálamo NO se queda con nada de tus comisiones. El 100% de lo que Exness te paga como IB va directo a ti.",
-    "point2": "¿Por qué lo hacemos así? Porque nuestro modelo es otro: vendemos membresías premium y herramientas avanzadas. Queremos que ganes dinero con tus referidos para que veas el valor de estar en Tálamo y decidas quedarte.",
-    "point3": "No competimos contigo por las comisiones. Te ayudamos a maximizarlas para que tú mismo valores formar parte de esta comunidad a largo plazo.",
-    "conclusion": "Es una relación win-win real. Tú ganas más, nosotros crecemos juntos."
+    "intro": "No es marketing. Es estrategia alineada.",
+    "point1": "Tálamo crece cuando su comunidad crece. Cada persona que entra y usa las herramientas de forma profesional fortalece el ecosistema completo.",
+    "point2": "Queremos que quienes comparten Tálamo lo hagan porque creen en el proyecto, no porque necesitan un clic más para cumplir una cuota.",
+    "point3": "Por eso compartimos el 50% de las comisiones: si tú creces ayudando a otros a entrar, Tálamo crece contigo. Alineados desde el minuto uno.",
+    "conclusion": "Transparente. Directo. Win-win real."
   },
   "cta": {
-    "title": "Empieza a Ganar Hoy",
-    "description": "Genera tu link de referido y comienza a monetizar tu influencia de forma transparente",
-    "button_create": "Generar Mi Link de Agente IB",
+    "title": "Empieza Ahora",
+    "description": "Un clic. Tu link. Tu oportunidad de crecer compartiendo una plataforma que realmente aporta valor.",
+    "button_create": "Generar Mi Link de Agente",
     "button_copy": "Copiar Mi Link",
     "creating": "Generando...",
     "copied": "¡Link Copiado!",
     "commission": "Tu Comisión",
-    "your_link": "Tu Link de Referido Activo"
+    "your_link": "Tu Link de Agente Activo"
   },
   "faq": {
     "title": "Preguntas Frecuentes",
     "q1": {
-      "question": "¿Qué es un Agente IB y cómo funciona?",
-      "answer": "Un Introducing Broker (IB) es una persona o entidad que refiere clientes a un broker (en este caso, Exness) a cambio de una comisión por cada operación que esos clientes realicen. Tú pones el link, ellos operan, tú ganas. Simple."
+      "question": "¿Necesito ser trader para participar?",
+      "answer": "No. Solo necesitas compartir el link. Tus referidos son quienes operan. Tú ganas por el volumen que ellos generen, sin tener que operar tú mismo."
     },
     "q2": {
-      "question": "¿Tálamo se queda con parte de mis comisiones?",
-      "answer": "No. El 100% de lo que Exness te paga como IB va directo a ti. Nosotros no tocamos ese dinero. Nuestro negocio son las membresías premium, no las comisiones de IB."
+      "question": "¿Cuánto gano exactamente?",
+      "answer": "50% de la comisión IB que Tálamo recibe de Exness por cada operación de tus referidos. La comisión base varía según tipo de cuenta (Standard 40% del spread, Pro/Zero/Raw 25%) y volumen. Exness reporta todo en tiempo real."
     },
     "q3": {
-      "question": "¿Cuánto tiempo tarda en llegar el dinero?",
-      "answer": "Exness procesa las comisiones de IB de forma automática según su calendario de pagos (generalmente semanal o mensual, dependiendo del volumen). El dinero va directamente a tu cuenta de Exness, no pasa por Tálamo."
+      "question": "¿Cómo me pagan?",
+      "answer": "Exness deposita directamente en tu cuenta de agente. Pagos automáticos diarios. No tienes que solicitar ni reclamar nada. El dinero llega solo mientras tus referidos operen."
     },
     "q4": {
-      "question": "¿Necesito experiencia en trading para ser agente IB?",
-      "answer": "No. Solo necesitas tener audiencia o capacidad de compartir tu link. Tus referidos pueden ser traders experimentados o principiantes, no importa. Tú ganas por el volumen que ellos generen."
+      "question": "¿Hay límite de referidos?",
+      "answer": "No. Puedes referir a tantas personas como quieras. El mismo link funciona para 1 o para 1,000 referidos. Sin restricciones, sin cuotas."
     },
     "q5": {
-      "question": "¿Puedo ver cuánto he ganado en tiempo real?",
-      "answer": "Sí. Exness tiene un panel de IB donde puedes ver todas tus estadísticas: referidos activos, volumen operado y comisiones generadas. También puedes sincronizar esos datos con tu dashboard de Tálamo."
+      "question": "¿Qué pasa si mi referido deja de operar?",
+      "answer": "Solo ganas cuando operan. Si dejan de operar, no hay comisión. Si vuelven a operar más adelante, vuelves a ganar. Simple y transparente."
     }
   },
   "errors": {
-    "login": "Necesitas iniciar sesión para crear tu link de agente IB",
-    "create": "Error al crear tu link de agente IB. Por favor, inténtalo de nuevo."
+    "login": "Necesitas iniciar sesión para generar tu link de agente",
+    "create": "Error al crear tu link de agente. Por favor, inténtalo de nuevo."
   }
 }

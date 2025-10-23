@@ -1,122 +1,122 @@
 {
   "hero": {
-    "badge": "Programa IB",
-    "title": "Cresça com Tálamo",
-    "subtitle": "Ganhe compartilhando",
-    "description": "Quando alguém se junta à Exness com seu link de agente, valida automaticamente seu email para acessar o Tálamo, e você recebe 50% de nossas comissões IB."
+    "badge": "Programa de Agentes",
+    "title": "Indique Tálamo",
+    "subtitle": "Ganhe Compartilhando Valor Real",
+    "description": "Quando alguém se junta ao Tálamo com seu link de agente, sua conta é automaticamente validada e você recebe 50% das comissões que a Exness nos paga. Sem intermediários, sem letras miúdas."
   },
   "trust": {
-    "partners": "Parceiros ativos",
-    "earnings": "Pagos este mês",
-    "signups": "Novos referidos hoje"
+    "partners": "Agentes Ativos",
+    "earnings": "Comissões Pagas Este Mês",
+    "signups": "Novos Membros Hoje"
   },
   "problem": {
-    "title": "O problema com referências tradicionais",
+    "title": "O Problema com Programas de Indicação Tradicionais",
     "point1": "Promessas vazias sem valor real para quem te segue",
     "point2": "Links genéricos que não fornecem nada além de um clique",
-    "point3": "Comissões opacas sem transparência ou relatórios"
+    "point3": "Comissões opacas sem transparência ou relatórios verificáveis"
   },
   "difference": {
-    "title": "O que torna este programa diferente",
-    "subtitle": "Não é apenas um link. É acesso real.",
+    "title": "Por Que Este Programa é Diferente",
+    "subtitle": "Não é apenas um link. É acesso real a uma plataforma premium.",
     "point1": {
-      "title": "Acesso verificado instantâneo",
-      "description": "Quem usa seu link se registra na Exness e valida automaticamente seu email para entrar no Tálamo. Sem etapas extras."
+      "title": "Acesso Verificado Instantâneo",
+      "description": "Quem usa seu link se registra na Exness e valida automaticamente seu email para entrar no Tálamo. Sem etapas extras, sem esperas."
     },
     "point2": {
-      "title": "Comissão transparente e direta",
-      "description": "A Exness paga 50% do que o Tálamo recebe como IB. Sem intermediários, sem atrasos. Relatórios em tempo real."
+      "title": "Comissão Transparente e Direta",
+      "description": "Tálamo compartilha 50% do que a Exness nos paga como IB. Sem intermediários, sem atrasos. Tudo rastreado em tempo real pelos sistemas da Exness."
     },
     "point3": {
-      "title": "Respaldado por um parceiro oficial",
+      "title": "Respaldado por um Parceiro Oficial",
       "description": "Tálamo é Introducing Broker oficial da Exness. Isso não é afiliação genérica: é um programa regulamentado com comissões verificáveis."
     }
   },
   "how": {
-    "title": "Como funciona (com exemplo real)",
+    "title": "Como Funciona (Com Exemplo Real)",
     "step1": {
-      "title": "1. Gere seu link",
-      "description": "Um clique. Obtenha seu link único de agente Exness conectado ao Tálamo."
+      "title": "Gere Seu Link de Agente",
+      "description": "Um clique e você obtém seu link único conectado ao sistema da Exness. Este link valida automaticamente quem se registrar com ele."
     },
     "step2": {
-      "title": "2. Compartilhe",
-      "description": "Seu referido se registra na Exness com seu link e valida automaticamente seu email para o Tálamo."
+      "title": "Compartilhe Tálamo",
+      "description": "Seu indicado se registra na Exness com seu link e valida automaticamente seu email para acessar o Tálamo. Sem fricção, sem complicações."
     },
     "step3": {
-      "title": "3. Ganhe por operação",
-      "description": "Para cada lote que seu referido opera, a Exness paga comissão IB. Você recebe 50%."
+      "title": "Ganhe por Operação",
+      "description": "Para cada lote que seu indicado opera, a Exness paga comissão IB ao Tálamo. Nós compartilhamos 50% dessa comissão com você. Automático. Transparente."
     },
     "example": {
-      "title": "Exemplo de cálculo",
-      "setup": "Seu referido abre uma conta Standard e opera 10 lotes de EURUSD em um mês.",
+      "title": "Exemplo de Cálculo Real",
+      "setup": "Seu indicado abre uma conta Standard e opera 10 lotes de EURUSD em um mês.",
       "commission": "Comissão IB base da Exness: ~$10 USD por lote (40% do spread típico)",
-      "total": "10 lotes × $10 = $100 USD para Tálamo",
+      "total": "10 lotes × $10 = $100 USD para Tálamo como IB",
       "your_cut": "Sua parte (50%): $50 USD",
-      "note": "Este é um cálculo simplificado. As comissões variam de acordo com o tipo de conta, spread e volume. A Exness relata tudo em tempo real."
+      "note": "Este é um cálculo simplificado. As comissões variam de acordo com o tipo de conta (Standard 40%, Pro/Zero/Raw 25%), spread e volume. A Exness relata tudo em tempo real."
     }
   },
   "benefits": {
-    "title": "O que você obtém",
+    "title": "O Que Você Obtém",
     "benefit1": {
-      "title": "50% de comissão real",
-      "description": "Não 5%. Não 10%. 50% do que o Tálamo recebe como IB por seus referidos."
+      "title": "50% de Comissão Real",
+      "description": "Não é 5%. Não é 10%. São 50% do que o Tálamo recebe como IB por seus indicados. Transparente desde o primeiro dia."
     },
     "benefit2": {
-      "title": "Sem limites de ganhos",
-      "description": "Sem teto. Quanto mais referidos ativos, mais você ganha. Escalável sem restrições."
+      "title": "Sem Limites de Ganhos",
+      "description": "Sem teto. Quanto mais indicados ativos, mais você ganha. Escalável sem restrições ou condições ocultas."
     },
     "benefit3": {
-      "title": "Relatórios em tempo real",
-      "description": "Acesso direto aos relatórios da Exness. Veja cada operação, cada comissão, sem atrasos."
+      "title": "Relatórios em Tempo Real",
+      "description": "Acesso direto aos relatórios da Exness. Veja cada operação, cada comissão gerada, sem atrasos ou filtros."
     },
     "benefit4": {
-      "title": "Pagamentos automáticos",
-      "description": "A Exness deposita diretamente em sua conta de agente. Diário. Automático. Sem solicitações manuais."
+      "title": "Pagamentos Automáticos",
+      "description": "A Exness deposita diretamente em sua conta de agente. Diário. Automático. Você não precisa solicitar ou reivindicar nada."
     }
   },
   "why": {
-    "title": "Por que este programa existe",
-    "intro": "Não é marketing. É estratégia.",
-    "point1": "O Tálamo cresce quando sua comunidade cresce. Cada pessoa que entra e usa as ferramentas de forma profissional fortalece o ecossistema.",
-    "point2": "Queremos que aqueles que compartilham o Tálamo o façam porque acreditam no projeto, não porque precisam de mais um clique.",
-    "point3": "É por isso que compartilhamos 50% das comissões: se você cresce ajudando outros a entrar, o Tálamo cresce com você.",
-    "conclusion": "Transparente. Direto. Alinhado."
+    "title": "Por Que Este Programa Existe",
+    "intro": "Não é marketing. É estratégia alinhada.",
+    "point1": "O Tálamo cresce quando sua comunidade cresce. Cada pessoa que entra e usa as ferramentas de forma profissional fortalece todo o ecossistema.",
+    "point2": "Queremos que aqueles que compartilham o Tálamo o façam porque acreditam no projeto, não porque precisam de mais um clique para cumprir uma cota.",
+    "point3": "É por isso que compartilhamos 50% das comissões: se você cresce ajudando outros a entrar, o Tálamo cresce com você. Alinhados desde o primeiro minuto.",
+    "conclusion": "Transparente. Direto. Win-win real."
   },
   "cta": {
-    "title": "Comece agora",
-    "description": "Um clique. Seu link. Sua oportunidade de crescer com o Tálamo.",
-    "button_create": "Gerar meu link de agente",
-    "button_copy": "Copiar meu link",
+    "title": "Comece Agora",
+    "description": "Um clique. Seu link. Sua oportunidade de crescer compartilhando uma plataforma que realmente agrega valor.",
+    "button_create": "Gerar Meu Link de Agente",
+    "button_copy": "Copiar Meu Link",
     "creating": "Gerando...",
-    "your_link": "Seu link de agente",
-    "commission": "Comissão",
-    "copied": "Copiado"
+    "copied": "Link Copiado!",
+    "commission": "Sua Comissão",
+    "your_link": "Seu Link de Agente Ativo"
   },
   "faq": {
-    "title": "Perguntas frequentes",
+    "title": "Perguntas Frequentes",
     "q1": {
       "question": "Preciso ser trader para participar?",
-      "answer": "Não. Você só precisa compartilhar o link. Seus referidos são quem opera."
+      "answer": "Não. Você só precisa compartilhar o link. Seus indicados são quem opera. Você ganha pelo volume que eles geram, sem ter que operar você mesmo."
     },
     "q2": {
       "question": "Quanto eu ganho exatamente?",
-      "answer": "50% da comissão IB que o Tálamo recebe da Exness por cada operação de seus referidos. A comissão base varia de acordo com o tipo de conta e spread. A Exness relata tudo em tempo real."
+      "answer": "50% da comissão IB que o Tálamo recebe da Exness por cada operação de seus indicados. A comissão base varia de acordo com o tipo de conta (Standard 40% do spread, Pro/Zero/Raw 25%) e volume. A Exness relata tudo em tempo real."
     },
     "q3": {
       "question": "Como eu recebo?",
-      "answer": "A Exness deposita diretamente em sua conta de agente. Pagamentos automáticos diários. Você não precisa solicitar nada."
+      "answer": "A Exness deposita diretamente em sua conta de agente. Pagamentos automáticos diários. Você não precisa solicitar ou reivindicar nada. O dinheiro chega automaticamente enquanto seus indicados operarem."
     },
     "q4": {
-      "question": "Há limite de referidos?",
-      "answer": "Não. Você pode indicar quantas pessoas quiser."
+      "question": "Há limite de indicações?",
+      "answer": "Não. Você pode indicar quantas pessoas quiser. O mesmo link funciona para 1 ou 1.000 indicados. Sem restrições, sem cotas."
     },
     "q5": {
-      "question": "E se meu referido parar de operar?",
-      "answer": "Você só ganha quando eles operam. Se pararem, sem comissão. Se voltarem a operar, você volta a ganhar."
+      "question": "E se meu indicado parar de operar?",
+      "answer": "Você só ganha quando eles operam. Se pararem de operar, sem comissão. Se voltarem a operar mais tarde, você volta a ganhar. Simples e transparente."
     }
   },
   "errors": {
-    "login": "Você deve fazer login para continuar",
-    "create": "Não foi possível criar o link. Tente novamente."
+    "login": "Você precisa fazer login para gerar seu link de agente",
+    "create": "Erro ao criar seu link de agente. Por favor, tente novamente."
   }
 }
