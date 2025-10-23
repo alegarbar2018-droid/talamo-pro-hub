@@ -169,6 +169,10 @@ Deno.serve(async (req) => {
 
     const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Agent';
     const userEmail = profile.email || user.email;
+    
+    // Add unique identifier to prevent duplicates in Exness
+    const uniqueSuffix = user.id.substring(0, 8);
+    const uniqueAlias = `${userName} ${uniqueSuffix}`;
 
     console.log(`📧 User info: ${userName} (${userEmail})`);
 
@@ -197,8 +201,8 @@ Deno.serve(async (req) => {
     const token = await getExnessToken();
     console.log('✅ Exness token obtained');
 
-    // Step 2: Create agent link
-    const agentLink = await createAgentLink(token, userName, userEmail);
+    // Step 2: Create agent link with unique alias
+    const agentLink = await createAgentLink(token, uniqueAlias, userEmail);
     console.log(`✅ Agent link created: ${agentLink.id}`);
 
     // Step 3: Assign commission (non-blocking)
