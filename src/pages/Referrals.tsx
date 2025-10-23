@@ -133,26 +133,98 @@ export default function Referrals() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center space-y-6"
+          className="text-center space-y-8 relative"
         >
-          <Badge className="bg-gradient-to-r from-teal/20 to-cyan/20 text-teal border-teal/30 px-4 py-2 text-sm">
-            <Sparkles className="h-4 w-4 mr-2" />
-            {agent ? t('referrals:status_active') : t('referrals:status')}
-          </Badge>
+          {/* Decorative glow effect behind badge */}
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-gradient-primary opacity-20 rounded-full blur-3xl"></div>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
-            <span className="text-foreground">{t('referrals:title').split(' ').slice(0, -2).join(' ')} </span>
-            <span className="text-primary">{t('referrals:title').split(' ').slice(-2).join(' ')}</span>
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-32 h-1.5 bg-gradient-primary rounded-full opacity-60 mt-2"></div>
-          </h1>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="relative inline-block"
+          >
+            <Badge className="relative bg-gradient-to-r from-teal via-cyan to-teal bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite] text-white border-0 px-6 py-2.5 text-sm font-semibold shadow-lg shadow-teal/30">
+              {/* Glow effect inside badge */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full"></div>
+              <Sparkles className="h-4 w-4 mr-2 relative z-10 animate-pulse" />
+              <span className="relative z-10">{agent ? t('referrals:status_active') : t('referrals:status')}</span>
+            </Badge>
+          </motion.div>
           
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {t('referrals:subtitle')}
-          </p>
-          
-          <p className="text-base md:text-lg text-muted-foreground/80 max-w-4xl mx-auto leading-relaxed">
-            {t('referrals:hero_description')}
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="space-y-4 relative"
+          >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
+              <div className="relative inline-block">
+                <span className="text-foreground">{t('referrals:title').split(' ').slice(0, -2).join(' ')} </span>
+                <span className="relative inline-block">
+                  <span className="bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent animate-[shimmer_3s_ease-in-out_infinite] bg-[length:200%_100%]">
+                    {t('referrals:title').split(' ').slice(-2).join(' ')}
+                  </span>
+                  {/* Animated underline */}
+                  <motion.div 
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+                    className="absolute -bottom-2 left-0 right-0 h-1.5 bg-gradient-to-r from-teal via-cyan to-teal rounded-full opacity-60"
+                    style={{ transformOrigin: "left" }}
+                  />
+                  {/* Glow under text */}
+                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-full h-8 bg-gradient-to-r from-transparent via-teal/30 to-transparent blur-xl"></div>
+                </span>
+              </div>
+            </h1>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              className="text-xl md:text-2xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium mt-6"
+            >
+              {t('referrals:subtitle')}
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="relative inline-block max-w-4xl mx-auto"
+            >
+              {/* Decorative quotation marks */}
+              <div className="absolute -left-4 -top-2 text-teal/20 text-4xl font-serif">"</div>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed px-8 py-4 rounded-2xl bg-gradient-to-r from-teal/5 via-transparent to-teal/5 border border-teal/10">
+                {t('referrals:hero_description')}
+              </p>
+              <div className="absolute -right-4 -bottom-2 text-teal/20 text-4xl font-serif">"</div>
+            </motion.div>
+          </motion.div>
+
+          {/* Floating particles effect */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 bg-teal/30 rounded-full"
+                style={{
+                  left: `${20 + i * 30}%`,
+                  top: `${30 + i * 20}%`,
+                }}
+                animate={{
+                  y: [-20, 20, -20],
+                  opacity: [0.2, 0.5, 0.2],
+                }}
+                transition={{
+                  duration: 3 + i,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </div>
         </motion.div>
 
         {/* Agent Link Card */}
