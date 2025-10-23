@@ -1,46 +1,48 @@
 {
-  "status": "Em Breve",
-  "title": "Programa de Indicações",
-  "subtitle": "Convide amigos, construa sua rede e gere renda passiva como Introducing Broker da Exness",
-  "current_process": "Por enquanto, você pode se registrar diretamente no programa IB da Exness. Em breve você terá um painel integrado aqui.",
+  "title": "Programa de Agente IB",
+  "subtitle": "Ganhe 50% das comissões IB",
+  "status": "Novo",
+  "status_active": "Ativo",
+  "comingSoon": "Em Breve",
+  "description": "Gere seu link único com um clique e comece a ganhar comissões",
+  "become_agent": "Torne-se um Agente IB",
+  "createLink": "Gerar meu Link de Agente Exness",
+  "creating": "Gerando link...",
+  "yourLink": "Seu Link de Agente",
+  "copyLink": "Copiar Link",
+  "copied": "📋 Copiado",
+  "shareDescription": "Compartilhe este link para ganhar comissões por cada trader que se cadastrar",
+  "commissionShare": "Comissão compartilhada",
+  "success": {
+    "created": "✅ Link criado!",
+    "description": "Seu link de agente Exness foi gerado com sucesso"
+  },
+  "error": {
+    "create": "Não foi possível criar o link. Tente novamente.",
+    "login": "Você deve fazer login para continuar"
+  },
   "benefits": {
-    "network": {
-      "title": "Construa Sua Rede",
-      "description": "Convide traders e construa uma rede que gere renda recorrente"
+    "rewards": {
+      "title": "50% de Comissão",
+      "description": "Ganhe metade das comissões IB que Tálamo recebe da Exness"
     },
-    "commissions": {
-      "title": "Comissões Competitivas",
-      "description": "Ganhe em cada operação de seus indicados com comissões competitivas"
+    "tracking": {
+      "title": "Transparência Total",
+      "description": "Acesse relatórios em tempo real de recompensas e clientes indicados"
+    },
+    "easy": {
+      "title": "Sem Limites",
+      "description": "Sem limite de comissões. Quanto mais indicações, mais você ganha"
     },
     "passive": {
-      "title": "Renda Passiva",
-      "description": "Gere renda contínua enquanto seus indicados operam"
-    },
-    "bonuses": {
-      "title": "Bônus Especiais",
-      "description": "Acesse bônus e promoções exclusivas para IBs"
+      "title": "Pagamentos Diretos",
+      "description": "A Exness paga diretamente para sua conta de agente"
     }
   },
-  "ib_program": {
-    "title": "Programa IB da Exness",
-    "description": "Torne-se um Introducing Broker e comece a ganhar hoje",
-    "how_it_works": "Como funciona?",
-    "steps": {
-      "1": "Registre-se no programa IB da Exness",
-      "2": "Obtenha seu link de indicação único",
-      "3": "Compartilhe com sua rede (amigos, seguidores, comunidade)",
-      "4": "Ganhe comissões por cada operação de seus indicados"
-    },
-    "cta": "Ir para o Programa IB da Exness"
-  },
-  "coming_soon": {
-    "title": "Painel de Indicações (Em Breve)",
-    "description": "Estamos construindo seu painel integrado que incluirá:",
-    "features": {
-      "dashboard": "Dashboard com métricas em tempo real",
-      "tracking": "Rastreamento de indicados e comissões",
-      "payments": "Gestão de pagamentos e saques",
-      "materials": "Materiais de marketing e recursos"
-    }
+  "commission_rates": {
+    "title": "Taxas de Comissão por Tipo de Conta",
+    "description": "Comissões IB base da Exness (você recebe 50%)",
+    "per_lot": "por lote",
+    "note": "As taxas variam de acordo com o par de moedas e condições do mercado"
   }
 }

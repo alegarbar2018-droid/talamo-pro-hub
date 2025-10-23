@@ -1798,6 +1798,62 @@ export type Database = {
           },
         ]
       }
+      referral_agents: {
+        Row: {
+          cap_amount_usd: number
+          commission_share_percentage: number
+          created_at: string
+          email: string
+          exness_agent_link_id: string
+          exness_referral_code: string
+          exness_referral_link: string
+          id: string
+          name: string
+          shared_reports: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cap_amount_usd?: number
+          commission_share_percentage?: number
+          created_at?: string
+          email: string
+          exness_agent_link_id: string
+          exness_referral_code: string
+          exness_referral_link: string
+          id?: string
+          name: string
+          shared_reports?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cap_amount_usd?: number
+          commission_share_percentage?: number
+          created_at?: string
+          email?: string
+          exness_agent_link_id?: string
+          exness_referral_code?: string
+          exness_referral_link?: string
+          id?: string
+          name?: string
+          shared_reports?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_agents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "v_admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       referrals: {
         Row: {
           active: boolean
@@ -2250,7 +2306,7 @@ export type Database = {
     }
     Functions: {
       calculate_signals_performance: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           avg_rr: number
           simulated_return: number
@@ -2268,7 +2324,7 @@ export type Database = {
         }[]
       }
       check_profile_data_exposure: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           description: string
           issue_type: string
@@ -2288,18 +2344,9 @@ export type Database = {
         Args: { course_slug_or_id: string; requesting_user_id?: string }
         Returns: Json
       }
-      get_current_admin_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      get_masked_profile: {
-        Args: { target_user_id: string }
-        Returns: Json
-      }
+      get_current_admin_role: { Args: never; Returns: string }
+      get_current_user_role: { Args: never; Returns: string }
+      get_masked_profile: { Args: { target_user_id: string }; Returns: Json }
       get_next_item: {
         Args: {
           p_course_id: string
@@ -2310,7 +2357,7 @@ export type Database = {
         Returns: Json
       }
       get_onboarding_step_metrics: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           avg_time_spent_seconds: number
           completion_rate: number
@@ -2322,10 +2369,7 @@ export type Database = {
           total_views: number
         }[]
       }
-      get_profile_security_summary: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      get_profile_security_summary: { Args: never; Returns: Json }
       get_recent_profile_access_attempts: {
         Args: { hours_back?: number }
         Returns: {
@@ -2337,7 +2381,7 @@ export type Database = {
         }[]
       }
       get_security_recommendations: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           category: string
           priority: string
@@ -2345,18 +2389,12 @@ export type Database = {
           status: string
         }[]
       }
-      get_sensitive_profile_fields: {
-        Args: Record<PropertyKey, never>
-        Returns: string[]
-      }
+      get_sensitive_profile_fields: { Args: never; Returns: string[] }
       get_sensitive_profile_for_admin: {
         Args: { justification: string; target_user_id: string }
         Returns: Json
       }
-      has_active_mfa_session: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
+      has_active_mfa_session: { Args: { _user_id: string }; Returns: boolean }
       has_admin_permission: {
         Args: { _action: string; _resource: string }
         Returns: boolean
@@ -2368,10 +2406,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: { uid: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { uid: string }; Returns: boolean }
       log_profile_access: {
         Args: {
           access_reason?: string
@@ -2381,10 +2416,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      mark_lesson_complete: {
-        Args: { lesson_id_param: string }
-        Returns: Json
-      }
+      mark_lesson_complete: { Args: { lesson_id_param: string }; Returns: Json }
       requires_mfa_for_operation: {
         Args: { _operation: string }
         Returns: boolean
@@ -2394,23 +2426,17 @@ export type Database = {
         Returns: Json
       }
       security_checklist: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           check_item: string
           recommendation: string
           status: string
         }[]
       }
-      trigger_data_collection: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      user_exists: {
-        Args: { p_email: string }
-        Returns: boolean
-      }
+      trigger_data_collection: { Args: never; Returns: Json }
+      user_exists: { Args: { p_email: string }; Returns: boolean }
       validate_profile_data_integrity: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           check_name: string
           details: string
