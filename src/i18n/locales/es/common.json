@@ -8,5 +8,8 @@
   "open": "Abrir",
   "yes": "Sí",
   "no": "No",
-  "ok": "OK"
+  "ok": "OK",
+  "actions": {
+    "cancel": "Cancelar"
+  }
 }

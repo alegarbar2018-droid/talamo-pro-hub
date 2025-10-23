@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -78,15 +79,67 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Send password reset email
-    const { error: resetError } = await supabase.auth.admin.generateLink({
+    // Generate password reset link
+    const { data: linkData, error: resetError } = await supabase.auth.admin.generateLink({
       type: "recovery",
       email: targetUser.user.email,
     });
 
-    if (resetError) {
+    if (resetError || !linkData?.properties?.action_link) {
       console.error("Error generating reset link:", resetError);
       return new Response(JSON.stringify({ ok: false, error: "reset_failed" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    // Send email using Resend
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY not configured");
+      return new Response(JSON.stringify({ ok: false, error: "email_config_missing" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    const resend = new Resend(resendApiKey);
+    const resetLink = linkData.properties.action_link;
+
+    try {
+      await resend.emails.send({
+        from: "Tálamo <noreply@talamo.app>",
+        to: [targetUser.user.email],
+        subject: "Restablece tu contraseña - Tálamo",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #333;">Restablece tu contraseña</h2>
+            <p>Hola,</p>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en Tálamo.</p>
+            <p>Haz clic en el siguiente botón para crear una nueva contraseña:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" 
+                 style="background-color: #0EA5E9; color: white; padding: 12px 24px; 
+                        text-decoration: none; border-radius: 6px; display: inline-block;">
+                Restablecer Contraseña
+              </a>
+            </div>
+            <p style="color: #666; font-size: 14px;">
+              Si no solicitaste este cambio, puedes ignorar este correo de forma segura.
+              Este enlace expirará en 1 hora.
+            </p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px;">
+              Este es un correo automático, por favor no respondas a este mensaje.
+            </p>
+          </div>
+        `,
+      });
+
+      console.log(`Password reset email sent to ${targetUser.user.email} by admin ${caller.id}`);
+    } catch (emailError) {
+      console.error("Error sending email via Resend:", emailError);
+      return new Response(JSON.stringify({ ok: false, error: "email_send_failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -103,8 +156,6 @@ Deno.serve(async (req) => {
         timestamp: new Date().toISOString()
       }
     });
-
-    console.log(`Password reset sent to ${targetUser.user.email} by admin ${caller.id}`);
 
     return new Response(JSON.stringify({ 
       ok: true, 
