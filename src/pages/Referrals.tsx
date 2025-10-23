@@ -232,22 +232,61 @@ export default function Referrals() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-8"
+          className="space-y-12 relative"
         >
-          <h2 className="text-3xl font-bold text-center">{t('referrals:howItWorks.title')}</h2>
+          <div className="text-center space-y-3">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Badge className="border-0 bg-gradient-to-r from-primary/20 to-primary/10 text-primary px-4 py-1.5">
+                Simple y Efectivo
+              </Badge>
+            </motion.div>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              {t('referrals:howItWorks.title')}
+            </h2>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {(t('referrals:howItWorks.steps', { returnObjects: true }) as any[]).map((step, i) => (
-              <Card key={i} className="relative border-border/50">
-                <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                  {i + 1}
-                </div>
-                <CardHeader className="pt-8">
-                  <CardTitle className="text-base">{step.title}</CardTitle>
-                  <CardDescription className="text-sm">{step.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+          <div className="relative">
+            {/* Connection Line */}
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-y-1/2 z-0"></div>
+            
+            <div className="grid md:grid-cols-3 gap-8 relative z-10">
+              {(t('referrals:howItWorks.steps', { returnObjects: true }) as any[]).map((step, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + i * 0.15 }}
+                >
+                  <Card className="relative border-border/50 bg-gradient-to-br from-background via-surface/30 to-background hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group overflow-hidden">
+                    {/* Glow effect on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Step number badge */}
+                    <div className="absolute -top-4 -left-4 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-primary-foreground font-bold text-xl">{i + 1}</span>
+                    </div>
+                    
+                    <CardHeader className="pt-10 pb-6 relative">
+                      <div className="space-y-3">
+                        <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
+                          {step.title}
+                        </CardTitle>
+                        <CardDescription className="text-sm leading-relaxed">
+                          {step.description}
+                        </CardDescription>
+                      </div>
+                    </CardHeader>
+                    
+                    {/* Bottom accent */}
+                    <div className="h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </motion.section>
 
