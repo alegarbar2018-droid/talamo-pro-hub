@@ -64,10 +64,11 @@ async function createAgentLink(token: string, name: string, email: string): Prom
 }
 
 // STEP 2: Assign 50% commission
-async function assignCommission(token: string, agentLinkId: string): Promise<void> {
+async function assignCommission(token: string, agentLinkId: string): Promise<{ success: boolean; error?: string }> {
   const apiBase = Deno.env.get('PARTNER_API_BASE');
   
   console.log(`💰 Assigning 50% commission to agent ${agentLinkId}...`);
+  console.log(`📍 URL: ${apiBase}/api/v1/referral-agent-links/${agentLinkId}/agreements/`);
   
   const response = await fetch(`${apiBase}/api/v1/referral-agent-links/${agentLinkId}/agreements/`, {
     method: 'POST',
@@ -83,12 +84,16 @@ async function assignCommission(token: string, agentLinkId: string): Promise<voi
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Failed to assign commission: ${response.status} - ${error}`);
+    console.error(`❌ Commission assignment failed: ${response.status}`, error);
+    return { success: false, error: `${response.status}: ${error}` };
   }
+  
+  console.log('✅ Commission assigned successfully');
+  return { success: true };
 }
 
 // STEP 3: Configure shared reports
-async function configureSharedReports(token: string, agentLinkId: string): Promise<void> {
+async function configureSharedReports(token: string, agentLinkId: string): Promise<{ success: boolean; error?: string }> {
   const apiBase = Deno.env.get('PARTNER_API_BASE');
   
   console.log(`📊 Configuring shared reports for agent ${agentLinkId}...`);
@@ -106,8 +111,12 @@ async function configureSharedReports(token: string, agentLinkId: string): Promi
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Failed to configure reports: ${response.status} - ${error}`);
+    console.error(`❌ Reports configuration failed: ${response.status}`, error);
+    return { success: false, error: `${response.status}: ${error}` };
   }
+  
+  console.log('✅ Shared reports configured successfully');
+  return { success: true };
 }
 
 Deno.serve(async (req) => {
@@ -192,15 +201,21 @@ Deno.serve(async (req) => {
     const agentLink = await createAgentLink(token, userName, userEmail);
     console.log(`✅ Agent link created: ${agentLink.id}`);
 
-    // Step 3: Assign commission
-    await assignCommission(token, agentLink.id);
-    console.log('✅ Commission assigned (50%)');
+    // Step 3: Assign commission (non-blocking)
+    const commissionResult = await assignCommission(token, agentLink.id);
+    
+    // Step 4: Configure reports (non-blocking)
+    const reportsResult = await configureSharedReports(token, agentLink.id);
 
-    // Step 4: Configure reports
-    await configureSharedReports(token, agentLink.id);
-    console.log('✅ Shared reports configured');
+    // Step 5: Save to database with warnings if needed
+    const warnings = [];
+    if (!commissionResult.success) {
+      warnings.push(`Commission setup failed: ${commissionResult.error}`);
+    }
+    if (!reportsResult.success) {
+      warnings.push(`Reports setup failed: ${reportsResult.error}`);
+    }
 
-    // Step 5: Save to database
     const { data: newAgent, error: insertError } = await supabase
       .from('referral_agents')
       .insert({
@@ -210,10 +225,10 @@ Deno.serve(async (req) => {
         exness_agent_link_id: agentLink.id,
         exness_referral_code: agentLink.id,
         exness_referral_link: agentLink.referral_link,
-        commission_share_percentage: 50,
+        commission_share_percentage: commissionResult.success ? 50 : 0,
         cap_amount_usd: 0,
-        shared_reports: ['reward_history', 'client_report'],
-        status: 'active'
+        shared_reports: reportsResult.success ? ['reward_history', 'client_report'] : [],
+        status: warnings.length > 0 ? 'pending_setup' : 'active'
       })
       .select()
       .single();
@@ -229,7 +244,10 @@ Deno.serve(async (req) => {
       JSON.stringify({
         success: true,
         agent: newAgent,
-        message: 'Agent link created successfully'
+        message: warnings.length > 0 
+          ? `Agent link created with warnings: ${warnings.join('; ')}`
+          : 'Agent link created successfully',
+        warnings: warnings.length > 0 ? warnings : undefined
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
