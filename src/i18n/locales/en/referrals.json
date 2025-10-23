@@ -64,23 +64,27 @@
   "commissions": {
     "title": "Commission Structure",
     "subtitle": "Transparent and direct",
+    "intro": "Exness pays Tálamo for each trade based on account type:",
     "tiers": [
       {
         "accountType": "Standard / Standard Cent",
         "exnessRate": "40% of spread",
-        "yourShare": "50% of what Tálamo receives",
-        "highlight": true
+        "yourShare": "You get 50%"
       },
       {
-        "accountType": "Pro / Zero / Raw",
+        "accountType": "Pro",
         "exnessRate": "25% of spread",
-        "yourShare": "50% of what Tálamo receives",
-        "highlight": false
+        "yourShare": "You get 50%"
+      },
+      {
+        "accountType": "Zero / Raw Spread",
+        "exnessRate": "~25% fixed commission",
+        "yourShare": "You get 50%"
       }
     ],
     "example": {
       "title": "Quick example",
-      "setup": "Your referral trades 10 lots of EURUSD.",
+      "setup": "Your referral trades 10 lots of EURUSD on Standard account.",
       "commission": "Exness charges ~$10 USD per lot to client → Tálamo receives 40% = $4 USD per lot",
       "total": "10 lots × $4 = $40 USD to Tálamo as IB",
       "your_cut": "Your share (50%): $20 USD",

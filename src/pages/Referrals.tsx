@@ -230,12 +230,34 @@ export default function Referrals() {
           </div>
         </motion.section>
 
-        {/* Commission Example */}
+        {/* Commission Structure */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
+          className="space-y-6"
         >
+          <div className="text-center space-y-2">
+            <h2 className="text-3xl font-bold">{t('referrals:commissions.title')}</h2>
+            <p className="text-muted-foreground">{t('referrals:commissions.intro')}</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {(t('referrals:commissions.tiers', { returnObjects: true }) as any[]).map((tier, i) => (
+              <Card key={i} className="border-border/50 text-center">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-semibold text-muted-foreground">
+                    {tier.accountType}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-xs text-muted-foreground">{tier.exnessRate}</p>
+                  <p className="text-lg font-bold text-primary">{tier.yourShare}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
           <Card className="border-primary/30 bg-primary/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

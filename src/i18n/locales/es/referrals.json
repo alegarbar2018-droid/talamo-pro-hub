@@ -64,23 +64,27 @@
   "commissions": {
     "title": "Estructura de Comisiones",
     "subtitle": "Transparente y directa",
+    "intro": "Exness paga a Tálamo por cada operación según el tipo de cuenta:",
     "tiers": [
       {
         "accountType": "Standard / Standard Cent",
         "exnessRate": "40% del spread",
-        "yourShare": "50% de lo que recibe Tálamo",
-        "highlight": true
+        "yourShare": "Recibes el 50%"
       },
       {
-        "accountType": "Pro / Zero / Raw",
+        "accountType": "Pro",
         "exnessRate": "25% del spread",
-        "yourShare": "50% de lo que recibe Tálamo",
-        "highlight": false
+        "yourShare": "Recibes el 50%"
+      },
+      {
+        "accountType": "Zero / Raw Spread",
+        "exnessRate": "~25% comisión fija",
+        "yourShare": "Recibes el 50%"
       }
     ],
     "example": {
       "title": "Ejemplo rápido",
-      "setup": "Tu referido opera 10 lotes de EURUSD.",
+      "setup": "Tu referido opera 10 lotes de EURUSD en cuenta Standard.",
       "commission": "Exness cobra ~$10 USD por lote al cliente → Tálamo recibe el 40% = $4 USD por lote",
       "total": "10 lotes × $4 = $40 USD para Tálamo como IB",
       "your_cut": "Tu parte (50%): $20 USD",
