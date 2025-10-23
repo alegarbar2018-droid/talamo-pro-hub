@@ -49,9 +49,9 @@
     "example": {
       "title": "Exemplo de Cálculo Real",
       "setup": "Seu indicado abre uma conta Standard e opera 10 lotes de EURUSD em um mês.",
-      "commission": "Comissão IB base da Exness: ~$10 USD por lote (40% do spread típico)",
-      "total": "10 lotes × $10 = $100 USD para Tálamo como IB",
-      "your_cut": "Sua parte (50%): $50 USD",
+      "commission": "Exness cobra ~$10 USD por lote do cliente → Tálamo recebe 40% = $4 USD por lote",
+      "total": "10 lotes × $4 = $40 USD para Tálamo como IB",
+      "your_cut": "Sua parte (50%): $20 USD",
       "note": "Este é um cálculo simplificado. As comissões variam de acordo com o tipo de conta (Standard 40%, Pro/Zero/Raw 25%), spread e volume. A Exness relata tudo em tempo real."
     }
   },
