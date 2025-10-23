@@ -1,119 +1,139 @@
 {
   "hero": {
-    "badge": "Agent Program",
-    "title": "Refer Tálamo",
-    "subtitle": "Earn by Sharing Real Value",
-    "description": "When someone joins Tálamo with your agent link, their account is automatically validated and you receive 50% of the commissions Exness pays us. No middlemen, no fine print."
+    "badge": "Earn by Sharing",
+    "title": "Grow with Tálamo",
+    "subtitle": "When someone registers with Exness using your link, their account is automatically connected to Tálamo. They just need to validate with the same email they used to register, and that's it: instant access. Every time they trade, you earn 50% of our IB commissions, in real-time."
   },
-  "trust": {
-    "partners": "Active Agents",
-    "earnings": "Commissions Paid This Month",
-    "signups": "New Members Today"
-  },
-  "problem": {
-    "title": "The Problem with Traditional Referral Programs",
-    "point1": "Empty promises with no real value for your followers",
-    "point2": "Generic links that provide nothing beyond a click",
-    "point3": "Opaque commissions with no transparency or verifiable reports"
-  },
-  "difference": {
-    "title": "Why This Program is Different",
-    "subtitle": "It's not just a link. It's real access to a premium platform.",
-    "point1": {
-      "title": "Instant Verified Access",
-      "description": "Anyone using your link registers on Exness and automatically validates their email to enter Tálamo. No extra steps, no waiting."
+  "stats": {
+    "activeAgents": {
+      "value": "247",
+      "label": "Active agents"
     },
-    "point2": {
-      "title": "Transparent and Direct Commission",
-      "description": "Tálamo shares 50% of what Exness pays us as IB. No intermediaries, no delays. Everything tracked in real-time from Exness systems."
+    "paidThisMonth": {
+      "value": "$12,840",
+      "label": "Paid this month"
     },
-    "point3": {
-      "title": "Backed by an Official Partner",
-      "description": "Tálamo is an official Exness Introducing Broker. This isn't generic affiliation: it's a regulated program with verifiable commissions."
+    "newReferralsToday": {
+      "value": "18",
+      "label": "New referrals today"
     }
   },
-  "how": {
-    "title": "How It Works (With Real Example)",
-    "step1": {
-      "title": "Generate Your Agent Link",
-      "description": "One click and you get your unique link connected to Exness system. This link automatically validates anyone who registers with it."
-    },
-    "step2": {
-      "title": "Share Tálamo",
-      "description": "Your referral registers on Exness with your link and automatically validates their email to access Tálamo. Frictionless, no complications."
-    },
-    "step3": {
-      "title": "Earn Per Trade",
-      "description": "For each lot your referral trades, Exness pays IB commission to Tálamo. We share 50% of that commission with you. Automatic. Transparent."
-    },
+  "problem": {
+    "title": "The problem with traditional referrals",
+    "items": [
+      "Empty promises with no real value",
+      "Generic links with no benefits",
+      "Opaque commissions, no transparency"
+    ]
+  },
+  "solution": {
+    "title": "Why this program is different",
+    "subtitle": "You're not sharing a link. You're sharing access to Tálamo.",
+    "features": [
+      {
+        "title": "Automatic access",
+        "description": "Your referral registers with Exness using your link and their account is linked to Tálamo instantly. Just validate their email and they're in. No extra steps."
+      },
+      {
+        "title": "Real and direct commissions",
+        "description": "Exness pays Tálamo for each trade, and you receive 50%. Automatic payments, no intermediaries or waiting."
+      },
+      {
+        "title": "Official and transparent program",
+        "description": "Tálamo is an official Exness Introducing Broker. A real, verified program designed to grow together."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "steps": [
+      {
+        "title": "Generate your link",
+        "description": "One click and you get your agent link connected to Tálamo."
+      },
+      {
+        "title": "Share it",
+        "description": "Your referrals register with Exness and get automatic access to Tálamo by validating their email."
+      },
+      {
+        "title": "Earn per trade",
+        "description": "For every lot they trade, you receive 50% of the IB commissions."
+      }
+    ]
+  },
+  "commissions": {
+    "title": "Commission Structure",
+    "subtitle": "Transparent and direct",
+    "tiers": [
+      {
+        "accountType": "Standard / Standard Cent",
+        "exnessRate": "40% of spread",
+        "yourShare": "50% of what Tálamo receives",
+        "highlight": true
+      },
+      {
+        "accountType": "Pro / Zero / Raw",
+        "exnessRate": "25% of spread",
+        "yourShare": "50% of what Tálamo receives",
+        "highlight": false
+      }
+    ],
     "example": {
-      "title": "Real Calculation Example",
-      "setup": "Your referral opens a Standard account and trades 10 lots of EURUSD in a month.",
+      "title": "Quick example",
+      "setup": "Your referral trades 10 lots of EURUSD.",
       "commission": "Exness charges ~$10 USD per lot to client → Tálamo receives 40% = $4 USD per lot",
       "total": "10 lots × $4 = $40 USD to Tálamo as IB",
       "your_cut": "Your share (50%): $20 USD",
-      "note": "This is a simplified calculation. Commissions vary by account type (Standard 40%, Pro/Zero/Raw 25%), spread and volume. Exness reports everything in real-time."
+      "note": "All recorded in real-time."
     }
   },
   "benefits": {
-    "title": "What You Get",
-    "benefit1": {
-      "title": "50% Real Commission",
-      "description": "Not 5%. Not 10%. It's 50% of what Tálamo receives as IB for your referrals. Transparent from day one."
-    },
-    "benefit2": {
-      "title": "No Earning Limits",
-      "description": "No cap. The more active referrals, the more you earn. Scalable without restrictions or hidden conditions."
-    },
-    "benefit3": {
-      "title": "Real-Time Reports",
-      "description": "Direct access to Exness reports. See every trade, every commission generated, no delays or filters."
-    },
-    "benefit4": {
-      "title": "Automatic Payments",
-      "description": "Exness deposits directly into your agent account. Daily. Automatic. You don't have to request or claim anything."
-    }
+    "title": "What you get",
+    "items": [
+      "50% of real commissions",
+      "Automatic daily payments",
+      "Direct reports from Exness",
+      "No limits, no complications"
+    ]
   },
   "why": {
-    "title": "Why This Program Exists",
-    "intro": "It's not marketing. It's aligned strategy.",
-    "point1": "Tálamo grows when its community grows. Every person who enters and uses the tools professionally strengthens the entire ecosystem.",
-    "point2": "We want those who share Tálamo to do so because they believe in the project, not because they need one more click to meet a quota.",
-    "point3": "That's why we share 50% of commissions: if you grow by helping others enter, Tálamo grows with you. Aligned from minute one.",
-    "conclusion": "Transparent. Direct. Real win-win."
+    "title": "Why this program exists",
+    "description": "Tálamo grows when its community grows. By sharing your link, you help others access the platform while participating in their results.",
+    "tagline": "Transparent. Direct. Aligned."
   },
   "cta": {
-    "title": "Start Now",
-    "description": "One click. Your link. Your opportunity to grow by sharing a platform that truly adds value.",
-    "button_create": "Generate My Agent Link",
-    "button_copy": "Copy My Link",
-    "creating": "Generating...",
-    "copied": "Link Copied!",
-    "commission": "Your Commission",
-    "your_link": "Your Active Agent Link"
+    "title": "Start now",
+    "subtitle": "Your link. Your community. Your opportunity.",
+    "linkLabel": "Your agent link",
+    "copyButton": "Copy my link",
+    "commissionLabel": "Commission:",
+    "generating": "Generating...",
+    "error": "Error generating link"
   },
   "faq": {
-    "title": "Frequently Asked Questions",
-    "q1": {
-      "question": "Do I need to be a trader to participate?",
-      "answer": "No. You just need to share the link. Your referrals are the ones who trade. You earn from the volume they generate, without having to trade yourself."
-    },
-    "q2": {
-      "question": "How much do I earn exactly?",
-      "answer": "50% of the IB commission that Tálamo receives from Exness for each trade by your referrals. The base commission varies by account type (Standard 40% of spread, Pro/Zero/Raw 25%) and volume. Exness reports everything in real-time."
-    },
-    "q3": {
-      "question": "How do I get paid?",
-      "answer": "Exness deposits directly into your agent account. Automatic daily payments. You don't have to request or claim anything. The money arrives automatically as long as your referrals trade."
-    },
-    "q4": {
-      "question": "Is there a referral limit?",
-      "answer": "No. You can refer as many people as you want. The same link works for 1 or 1,000 referrals. No restrictions, no quotas."
-    },
-    "q5": {
-      "question": "What if my referral stops trading?",
-      "answer": "You only earn when they trade. If they stop trading, no commission. If they resume trading later, you resume earning. Simple and transparent."
-    }
+    "title": "Frequently asked questions",
+    "items": [
+      {
+        "q": "What exactly am I sharing?",
+        "a": "A link that gives automatic access to Tálamo when registering with Exness."
+      },
+      {
+        "q": "How does automatic access work?",
+        "a": "Your referral uses your link to register with Exness, and by validating their email they get direct access to Tálamo."
+      },
+      {
+        "q": "How much do I earn?",
+        "a": "50% of the IB commissions Tálamo receives from Exness, based on the volume traded by your referrals."
+      },
+      {
+        "q": "How are commissions paid?",
+        "a": "Exness automatically deposits your earnings into your agent account."
+      },
+      {
+        "q": "Is there a limit on referrals or earnings?",
+        "a": "No, as long as your referrals trade, you keep earning."
+      }
+    ]
   },
   "errors": {
     "login": "You need to log in to generate your agent link",
