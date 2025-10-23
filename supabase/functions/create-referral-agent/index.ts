@@ -16,10 +16,10 @@ interface ExnessAgentLinkResponse {
 // Get fresh JWT token from Exness
 async function getExnessToken(): Promise<string> {
   const apiBase = Deno.env.get('PARTNER_API_BASE');
-  const email = Deno.env.get('PARTNER_API_USER');
+  const login = Deno.env.get('PARTNER_API_USER');
   const password = Deno.env.get('PARTNER_API_PASSWORD');
 
-  if (!apiBase || !email || !password) {
+  if (!apiBase || !login || !password) {
     throw new Error('Missing Exness API credentials');
   }
 
@@ -28,7 +28,7 @@ async function getExnessToken(): Promise<string> {
   const response = await fetch(`${apiBase}/api/v2/auth/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ login, password }),
   });
 
   if (!response.ok) {
