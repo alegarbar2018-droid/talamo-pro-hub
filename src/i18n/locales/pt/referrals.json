@@ -1,6 +1,7 @@
 {
   "title": "Programa de Agente IB",
-  "subtitle": "Ganhe 50% das comissões IB",
+  "subtitle": "Compartilhe Tálamo e ganhe enquanto ajuda outros a entrar no ecossistema",
+  "hero_description": "Quando alguém se registrar na Exness com seu link de agente, validará seu e-mail automaticamente para acessar o Tálamo, e você receberá 50% de nossas comissões IB.",
   "status": "Novo",
   "status_active": "Ativo",
   "comingSoon": "Em Breve",
@@ -38,6 +39,38 @@
       "title": "Pagamentos Diretos",
       "description": "A Exness paga diretamente para sua conta de agente"
     }
+  },
+  "how_it_works": {
+    "title": "💬 Como funciona",
+    "intro": "Tálamo é um parceiro oficial (Introducing Broker) da Exness.",
+    "explanation": "Para cada operação realizada pelos clientes que se registram através de nossos links, a Exness nos paga uma comissão (recompensa IB).",
+    "share": "Compartilhamos metade dessa comissão para cada pessoa que se registrar com seu link de agente:",
+    "table": {
+      "account_type": "Tipo de conta Exness",
+      "talamo_commission": "Comissão total do Tálamo",
+      "your_earning": "Seu ganho (50%)",
+      "standard": "Standard / Standard Cent",
+      "standard_commission": "40% do spread",
+      "standard_earning": "20% do spread",
+      "pro": "Pro / Raw / Zero",
+      "pro_commission": "25% do spread",
+      "pro_earning": "12.5% do spread"
+    }
+  },
+  "what_you_earn": {
+    "title": "💸 O que você ganha",
+    "intro": "Cada pessoa que você indicar com seu link:",
+    "benefit_1": "Obtém acesso completo ao Tálamo ao validar seu e-mail com a Exness.",
+    "benefit_2": "Torna-se seu indicado direto, gerando comissões para cada operação que realizar.",
+    "benefit_3": "Você recebe suas recompensas automaticamente, todos os dias.",
+    "outro": "Eles acessam o Tálamo. Você ganha por ajudá-los a fazer isso."
+  },
+  "why_exists": {
+    "title": "🌍 Por que este programa existe",
+    "intro": "Não se trata apenas de um programa de indicações.",
+    "purpose": "Queremos que a comunidade do Tálamo cresça com pessoas comprometidas e que cada membro tenha a oportunidade de se beneficiar do crescimento.",
+    "growth": "Quanto mais você ajudar outros a se juntarem, mais o Tálamo ganha e mais você ganha.",
+    "values": "Transparente, simples e justo."
   },
   "commission_rates": {
     "title": "Taxas de Comissão por Tipo de Conta",

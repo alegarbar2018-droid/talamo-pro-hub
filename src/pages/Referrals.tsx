@@ -129,6 +129,9 @@ export default function Referrals() {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             {t('referrals:subtitle')}
           </p>
+          <p className="text-base text-muted-foreground max-w-3xl mx-auto">
+            {t('referrals:hero_description')}
+          </p>
         </div>
 
         {/* Agent Link Card */}
@@ -241,31 +244,80 @@ export default function Referrals() {
           </Card>
         </div>
 
-        {/* Commission Rates */}
+        {/* How It Works */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('referrals:commission_rates.title')}</CardTitle>
-            <CardDescription>
-              {t('referrals:commission_rates.description')}
-            </CardDescription>
+            <CardTitle className="text-2xl">{t('referrals:how_it_works.title')}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="font-medium">Standard</span>
-                <span className="text-teal font-semibold">$3-5 {t('referrals:commission_rates.per_lot')}</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="font-medium">Pro</span>
-                <span className="text-teal font-semibold">$1.5-2 {t('referrals:commission_rates.per_lot')}</span>
-              </div>
-              <div className="flex justify-between items-center p-3 bg-muted rounded">
-                <span className="font-medium">Raw Spread</span>
-                <span className="text-teal font-semibold">$0.5-1 {t('referrals:commission_rates.per_lot')}</span>
-              </div>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">{t('referrals:how_it_works.intro')}</p>
+            <p className="text-muted-foreground">{t('referrals:how_it_works.explanation')}</p>
+            <p className="text-muted-foreground font-medium">{t('referrals:how_it_works.share')}</p>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-line">
+                    <th className="text-left p-3 font-semibold">{t('referrals:how_it_works.table.account_type')}</th>
+                    <th className="text-left p-3 font-semibold">{t('referrals:how_it_works.table.talamo_commission')}</th>
+                    <th className="text-left p-3 font-semibold text-teal">{t('referrals:how_it_works.table.your_earning')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-line/50">
+                    <td className="p-3">{t('referrals:how_it_works.table.standard')}</td>
+                    <td className="p-3">{t('referrals:how_it_works.table.standard_commission')}</td>
+                    <td className="p-3 text-teal font-semibold">{t('referrals:how_it_works.table.standard_earning')}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3">{t('referrals:how_it_works.table.pro')}</td>
+                    <td className="p-3">{t('referrals:how_it_works.table.pro_commission')}</td>
+                    <td className="p-3 text-teal font-semibold">{t('referrals:how_it_works.table.pro_earning')}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <p className="text-xs text-muted-foreground mt-4">
-              * {t('referrals:commission_rates.note')}
+          </CardContent>
+        </Card>
+
+        {/* What You Earn */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">{t('referrals:what_you_earn.title')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground font-medium">{t('referrals:what_you_earn.intro')}</p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-teal mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground">{t('referrals:what_you_earn.benefit_1')}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-teal mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground">{t('referrals:what_you_earn.benefit_2')}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="h-5 w-5 text-teal mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground">{t('referrals:what_you_earn.benefit_3')}</span>
+              </li>
+            </ul>
+            <p className="text-muted-foreground font-semibold text-center pt-4 border-t border-line">
+              {t('referrals:what_you_earn.outro')}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Why This Program Exists */}
+        <Card className="border-teal/20 bg-gradient-to-br from-teal/5 to-transparent">
+          <CardHeader>
+            <CardTitle className="text-2xl">{t('referrals:why_exists.title')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-muted-foreground font-medium">{t('referrals:why_exists.intro')}</p>
+            <p className="text-muted-foreground">{t('referrals:why_exists.purpose')}</p>
+            <p className="text-muted-foreground">{t('referrals:why_exists.growth')}</p>
+            <p className="text-lg font-semibold text-teal text-center pt-4">
+              {t('referrals:why_exists.values')}
             </p>
           </CardContent>
         </Card>

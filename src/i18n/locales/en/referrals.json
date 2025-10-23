@@ -1,6 +1,7 @@
 {
   "title": "IB Agent Program",
-  "subtitle": "Earn 50% of IB commissions",
+  "subtitle": "Share Tálamo and earn while helping others join the ecosystem",
+  "hero_description": "When someone signs up on Exness with your agent link, they'll automatically validate their email to access Tálamo, and you'll receive 50% of our IB commissions.",
   "status": "New",
   "status_active": "Active",
   "comingSoon": "Coming Soon",
@@ -38,6 +39,38 @@
       "title": "Direct Payments",
       "description": "Exness pays directly to your agent account"
     }
+  },
+  "how_it_works": {
+    "title": "💬 How it works",
+    "intro": "Tálamo is an official Introducing Broker partner of Exness.",
+    "explanation": "For every trade made by clients who sign up through our links, Exness pays us a commission (IB reward).",
+    "share": "We share half of that commission for every person who signs up with your agent link:",
+    "table": {
+      "account_type": "Exness Account Type",
+      "talamo_commission": "Tálamo Total Commission",
+      "your_earning": "Your Earning (50%)",
+      "standard": "Standard / Standard Cent",
+      "standard_commission": "40% of spread",
+      "standard_earning": "20% of spread",
+      "pro": "Pro / Raw / Zero",
+      "pro_commission": "25% of spread",
+      "pro_earning": "12.5% of spread"
+    }
+  },
+  "what_you_earn": {
+    "title": "💸 What you earn",
+    "intro": "Each person you refer with your link:",
+    "benefit_1": "Gets full access to Tálamo by validating their email with Exness.",
+    "benefit_2": "Becomes your direct referral, generating commissions for every trade they make.",
+    "benefit_3": "You receive your rewards automatically, every day.",
+    "outro": "They access Tálamo. You earn for helping them do it."
+  },
+  "why_exists": {
+    "title": "🌍 Why this program exists",
+    "intro": "This is not just a referral program.",
+    "purpose": "We want the Tálamo community to grow with committed people and for every member to have the opportunity to benefit from growth.",
+    "growth": "The more you help others join, the more Tálamo earns, and the more you earn.",
+    "values": "Transparent, simple, and fair."
   },
   "commission_rates": {
     "title": "Commission Rates by Account Type",
