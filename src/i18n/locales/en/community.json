@@ -2,6 +2,20 @@
   "status": "Coming Soon",
   "title": "Tálamo Community",
   "subtitle": "Connect with professional traders, share strategies and grow alongside a community committed to responsible trading",
+  "social": {
+    "title": "Join Our Community",
+    "description": "Connect with traders on our social platforms",
+    "discord": {
+      "title": "Discord Server",
+      "description": "Join real-time conversations, get support, and connect with traders worldwide",
+      "button": "Join Discord"
+    },
+    "telegram": {
+      "title": "Telegram Channel",
+      "description": "Receive instant updates, alerts, and connect with the community",
+      "button": "Join Telegram"
+    }
+  },
   "features": {
     "network": {
       "title": "Trader Network",

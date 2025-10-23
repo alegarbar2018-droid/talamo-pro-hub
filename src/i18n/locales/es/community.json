@@ -2,6 +2,20 @@
   "status": "Próximamente",
   "title": "Comunidad Tálamo",
   "subtitle": "Conéctate con traders profesionales, comparte estrategias y crece junto a una comunidad comprometida con el trading responsable",
+  "social": {
+    "title": "Únete a Nuestra Comunidad",
+    "description": "Conéctate con traders en nuestras plataformas sociales",
+    "discord": {
+      "title": "Servidor de Discord",
+      "description": "Únete a conversaciones en tiempo real, obtén soporte y conecta con traders de todo el mundo",
+      "button": "Unirse a Discord"
+    },
+    "telegram": {
+      "title": "Canal de Telegram",
+      "description": "Recibe actualizaciones instantáneas, alertas y conéctate con la comunidad",
+      "button": "Unirse a Telegram"
+    }
+  },
   "features": {
     "network": {
       "title": "Red de Traders",
