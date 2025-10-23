@@ -53,8 +53,8 @@ const navigationItems = [
 ];
 
 const communityItems = [
-  { path: "/community", icon: UsersRound, labelKey: "nav:community", badge: "soon" },
-  { path: "/referrals", icon: Share2, labelKey: "nav:referrals", badge: "soon" },
+  { path: "/community", icon: UsersRound, labelKey: "nav:community", badge: "Soon" },
+  { path: "/referrals", icon: Share2, labelKey: "nav:referrals", badge: "Soon" },
 ];
 
 export function DashboardSidebar() {
@@ -240,7 +240,7 @@ export function DashboardSidebar() {
                                 {item.badge && (
                                   <Badge
                                     variant="secondary"
-                                    className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold tracking-wide flex-shrink-0"
+                                    className="text-[10px] px-2 py-0.5 bg-gradient-to-r from-teal/10 to-cyan/10 text-teal dark:text-cyan border border-teal/20 font-semibold tracking-wider uppercase flex-shrink-0"
                                   >
                                     {item.badge}
                                   </Badge>
