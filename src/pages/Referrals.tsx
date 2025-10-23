@@ -7,9 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  Gift, Users, DollarSign, TrendingUp, Sparkles, 
-  Copy, CheckCircle2, Loader2, ArrowRight
+  Sparkles, Copy, CheckCircle2, Loader2, ArrowRight, 
+  Shield, TrendingUp, Zap, Users, DollarSign, Clock,
+  ChevronDown, Target, Award
 } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface ReferralAgent {
   id: string;
@@ -27,7 +34,6 @@ export default function Referrals() {
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Load agent data on mount
   useEffect(() => {
     loadAgentData();
   }, []);
@@ -41,7 +47,7 @@ export default function Referrals() {
         .from('referral_agents')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
         setAgent(data);
@@ -61,7 +67,7 @@ export default function Referrals() {
       if (!session) {
         toast({
           title: t('common:error'),
-          description: t('referrals:error.login'),
+          description: t('referrals:errors.login'),
           variant: 'destructive'
         });
         return;
@@ -79,14 +85,14 @@ export default function Referrals() {
       setAgent(newAgent);
 
       toast({
-        title: t('referrals:success.created'),
-        description: t('referrals:success.description'),
+        title: '✅ ' + t('referrals:cta.your_link'),
+        description: t('referrals:cta.description'),
       });
     } catch (error) {
       console.error('Error creating agent:', error);
       toast({
         title: t('common:error'),
-        description: t('referrals:error.create'),
+        description: t('referrals:errors.create'),
         variant: 'destructive'
       });
     } finally {
@@ -100,8 +106,8 @@ export default function Referrals() {
     navigator.clipboard.writeText(agent.exness_referral_link);
     setCopied(true);
     toast({
-      title: t('referrals:copied'),
-      description: t('referrals:shareDescription')
+      title: t('referrals:cta.copied'),
+      description: agent.exness_referral_link
     });
     
     setTimeout(() => setCopied(false), 2000);
@@ -110,365 +116,377 @@ export default function Referrals() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-teal" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Premium background effects */}
+      {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-surface/30 to-background"></div>
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-primary opacity-8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
-      
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--primary-rgb),0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(var(--primary-rgb),0.02)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(185,100,38,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(185,100,38,0.02)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 space-y-16">
-        {/* Hero Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+      <div className="relative container-default space-y-20 py-16">
+        
+        {/* 1. PREMIUM HERO */}
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center space-y-8 relative"
+          transition={{ duration: 0.8 }}
+          className="text-center space-y-8"
         >
-          {/* Decorative glow effect behind badge */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-gradient-primary opacity-20 rounded-full blur-3xl"></div>
-          
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="relative inline-block"
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
           >
-            <Badge className="relative bg-gradient-to-r from-teal via-cyan to-teal bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite] text-white border-0 px-6 py-2.5 text-sm font-semibold shadow-lg shadow-teal/30">
-              {/* Glow effect inside badge */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full"></div>
-              <Sparkles className="h-4 w-4 mr-2 relative z-10 animate-pulse" />
-              <span className="relative z-10">{agent ? t('referrals:status_active') : t('referrals:status')}</span>
+            <Badge className="bg-gradient-to-r from-teal via-cyan to-teal bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite] text-white border-0 px-6 py-2.5 font-semibold shadow-lg">
+              <Sparkles className="h-4 w-4 mr-2 animate-pulse" />
+              {t('referrals:hero.badge')}
             </Badge>
           </motion.div>
-          
+
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="space-y-4 relative"
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="space-y-4"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
-              <div className="relative inline-block">
-                <span className="text-foreground">{t('referrals:title').split(' ').slice(0, -2).join(' ')} </span>
-                <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-teal via-cyan to-teal bg-clip-text text-transparent animate-[shimmer_3s_ease-in-out_infinite] bg-[length:200%_100%]">
-                    {t('referrals:title').split(' ').slice(-2).join(' ')}
-                  </span>
-                  {/* Animated underline */}
-                  <motion.div 
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
-                    className="absolute -bottom-2 left-0 right-0 h-1.5 bg-gradient-to-r from-teal via-cyan to-teal rounded-full opacity-60"
-                    style={{ transformOrigin: "left" }}
-                  />
-                  {/* Glow under text */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-full h-8 bg-gradient-to-r from-transparent via-teal/30 to-transparent blur-xl"></div>
-                </span>
-              </div>
+            <h1 className="hero-title">
+              <span className="text-foreground">{t('referrals:hero.title')}</span>
+              <br />
+              <span className="gradient-text">{t('referrals:hero.subtitle')}</span>
             </h1>
-            
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="text-xl md:text-2xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium mt-6"
-            >
-              {t('referrals:subtitle')}
-            </motion.p>
-            
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="relative inline-block max-w-4xl mx-auto"
-            >
-              {/* Decorative quotation marks */}
-              <div className="absolute -left-4 -top-2 text-teal/20 text-4xl font-serif">"</div>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed px-8 py-4 rounded-2xl bg-gradient-to-r from-teal/5 via-transparent to-teal/5 border border-teal/10">
-                {t('referrals:hero_description')}
-              </p>
-              <div className="absolute -right-4 -bottom-2 text-teal/20 text-4xl font-serif">"</div>
-            </motion.div>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              {t('referrals:hero.description')}
+            </p>
           </motion.div>
+        </motion.section>
 
-          {/* Floating particles effect */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 bg-teal/30 rounded-full"
-                style={{
-                  left: `${20 + i * 30}%`,
-                  top: `${30 + i * 20}%`,
-                }}
-                animate={{
-                  y: [-20, 20, -20],
-                  opacity: [0.2, 0.5, 0.2],
-                }}
-                transition={{
-                  duration: 3 + i,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Agent Link Card */}
-        <motion.div
+        {/* 2. TRUST BAR */}
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {agent ? (
-            <Card className="border-teal/30 bg-gradient-to-br from-teal/10 via-surface/50 to-transparent backdrop-blur-sm shadow-xl shadow-teal/10 overflow-hidden relative">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none"></div>
-              
-              <CardHeader className="relative">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-full bg-teal/20">
-                    <CheckCircle2 className="h-6 w-6 text-teal" />
+          {[
+            { icon: Users, label: t('referrals:trust.partners'), value: '247' },
+            { icon: DollarSign, label: t('referrals:trust.earnings'), value: '$12,840' },
+            { icon: TrendingUp, label: t('referrals:trust.signups'), value: '18' }
+          ].map((stat, i) => (
+            <Card key={i} className="border-border/50 bg-surface/50 backdrop-blur-sm text-center">
+              <CardContent className="pt-6 space-y-2">
+                <stat.icon className="h-8 w-8 text-primary mx-auto" />
+                <p className="text-3xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </motion.section>
+
+        {/* 3. THE PROBLEM */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              {t('referrals:problem.title')}
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              t('referrals:problem.point1'),
+              t('referrals:problem.point2'),
+              t('referrals:problem.point3')
+            ].map((point, i) => (
+              <Card key={i} className="border-destructive/30 bg-destructive/5 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  <p className="text-muted-foreground leading-relaxed">{point}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* 4. THE DIFFERENCE */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              {t('referrals:difference.title')}
+            </h2>
+            <p className="text-xl text-primary font-semibold">
+              {t('referrals:difference.subtitle')}
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: Zap, ...t('referrals:difference.point1', { returnObjects: true }) as any },
+              { icon: Shield, ...t('referrals:difference.point2', { returnObjects: true }) as any },
+              { icon: Award, ...t('referrals:difference.point3', { returnObjects: true }) as any }
+            ].map((item, i) => (
+              <Card key={i} className="border-primary/30 bg-primary/5 backdrop-blur-sm group hover:border-primary/50 transition-all">
+                <CardHeader>
+                  <div className="p-3 rounded-xl bg-primary/20 w-fit mb-3 group-hover:scale-110 transition-transform">
+                    <item.icon className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl">{t('referrals:yourLink')}</CardTitle>
+                  <CardTitle className="text-xl">{item.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    {item.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* 5. HOW IT WORKS */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              {t('referrals:how.title')}
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {[
+              t('referrals:how.step1', { returnObjects: true }) as any,
+              t('referrals:how.step2', { returnObjects: true }) as any,
+              t('referrals:how.step3', { returnObjects: true }) as any
+            ].map((step, i) => (
+              <Card key={i} className="border-border/50 bg-surface/50 backdrop-blur-sm relative">
+                <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                  {i + 1}
                 </div>
-                <CardDescription className="text-base">
-                  {t('referrals:shareDescription')}
-                </CardDescription>
+                <CardHeader className="pt-8">
+                  <CardTitle className="text-lg">{step.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    {step.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+
+          {/* Example Calculation */}
+          <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <Target className="h-6 w-6 text-primary" />
+                {t('referrals:how.example.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3 text-muted-foreground">
+                <p className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-1">•</span>
+                  <span>{t('referrals:how.example.setup')}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-1">•</span>
+                  <span>{t('referrals:how.example.commission')}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-1">•</span>
+                  <span>{t('referrals:how.example.total')}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-1">→</span>
+                  <span className="text-primary font-bold text-lg">{t('referrals:how.example.your_cut')}</span>
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-4">
+                {t('referrals:how.example.note')}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.section>
+
+        {/* 6. BENEFITS */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              {t('referrals:benefits.title')}
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              { icon: DollarSign, ...t('referrals:benefits.benefit1', { returnObjects: true }) as any },
+              { icon: TrendingUp, ...t('referrals:benefits.benefit2', { returnObjects: true }) as any },
+              { icon: Clock, ...t('referrals:benefits.benefit3', { returnObjects: true }) as any },
+              { icon: Zap, ...t('referrals:benefits.benefit4', { returnObjects: true }) as any }
+            ].map((benefit, i) => (
+              <Card key={i} className="border-border/50 bg-surface/50 backdrop-blur-sm group hover:border-primary/30 transition-all">
+                <CardHeader>
+                  <div className="p-3 rounded-xl bg-primary/20 w-fit mb-3 group-hover:scale-110 transition-transform">
+                    <benefit.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">{benefit.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    {benefit.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* 7. WHY IT EXISTS */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.6, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <Card className="border-border/50 bg-gradient-to-br from-surface/80 to-transparent backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-3xl text-center">{t('referrals:why.title')}</CardTitle>
+              <CardDescription className="text-center text-lg text-primary font-semibold">
+                {t('referrals:why.intro')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
+              <p>{t('referrals:why.point1')}</p>
+              <p>{t('referrals:why.point2')}</p>
+              <p>{t('referrals:why.point3')}</p>
+              <p className="text-center text-foreground font-bold text-xl pt-4">
+                {t('referrals:why.conclusion')}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.section>
+
+        {/* 8. CTA FINAL */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.8, duration: 0.6 }}
+          className="space-y-8"
+        >
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+              {t('referrals:cta.title')}
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {t('referrals:cta.description')}
+            </p>
+          </div>
+
+          {agent ? (
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-surface/50 to-transparent backdrop-blur-sm shadow-xl max-w-3xl mx-auto">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <CheckCircle2 className="h-6 w-6 text-primary" />
+                  <CardTitle className="text-2xl">{t('referrals:cta.your_link')}</CardTitle>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-6 relative">
-                <div className="p-5 bg-background/60 backdrop-blur-sm rounded-xl font-mono text-sm break-all border border-teal/20 shadow-inner">
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-background/60 backdrop-blur-sm rounded-xl font-mono text-sm break-all border border-primary/20">
                   {agent.exness_referral_link}
                 </div>
                 <Button 
                   onClick={handleCopyLink} 
                   size="lg"
-                  className="w-full bg-gradient-to-r from-teal to-cyan hover:from-teal/90 hover:to-cyan/90 shadow-lg shadow-teal/20 hover:shadow-xl hover:shadow-teal/30 transition-all duration-300 group"
+                  className="w-full bg-gradient-to-r from-teal to-cyan hover:from-teal/90 hover:to-cyan/90 shadow-lg group"
                 >
                   {copied ? (
                     <>
                       <CheckCircle2 className="h-5 w-5 mr-2" />
-                      {t('referrals:copied')}
+                      {t('referrals:cta.copied')}
                     </>
                   ) : (
                     <>
                       <Copy className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                      {t('referrals:copyLink')}
+                      {t('referrals:cta.button_copy')}
                       <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </Button>
-                <div className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-teal/5 to-transparent rounded-lg border border-teal/10">
-                  <DollarSign className="h-5 w-5 text-teal" />
-                  <p className="text-sm font-semibold text-foreground">
-                    {t('referrals:commissionShare')}: <span className="text-teal text-lg">{agent.commission_share_percentage}%</span>
+                <div className="flex items-center justify-center gap-2 p-4 bg-primary/5 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                  <p className="text-sm font-semibold">
+                    {t('referrals:cta.commission')}: <span className="text-primary text-lg">{agent.commission_share_percentage}%</span>
                   </p>
                 </div>
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-teal/30 bg-gradient-to-br from-teal/10 via-surface/50 to-transparent backdrop-blur-sm shadow-xl shadow-teal/10 overflow-hidden relative">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none"></div>
-              
-              <CardHeader className="relative">
-                <CardTitle className="text-2xl">{t('referrals:become_agent')}</CardTitle>
-                <CardDescription className="text-base">
-                  {t('referrals:description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="relative">
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-surface/50 to-transparent backdrop-blur-sm shadow-xl max-w-3xl mx-auto">
+              <CardContent className="pt-8">
                 <Button 
                   onClick={handleCreateAgentLink}
                   disabled={creating}
                   size="lg"
-                  className="w-full bg-gradient-to-r from-teal to-cyan hover:from-teal/90 hover:to-cyan/90 shadow-lg shadow-teal/20 hover:shadow-xl hover:shadow-teal/30 transition-all duration-300 group"
+                  className="w-full bg-gradient-to-r from-teal to-cyan hover:from-teal/90 hover:to-cyan/90 shadow-lg group text-lg py-6"
                 >
                   {creating ? (
                     <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      {t('referrals:creating')}
+                      <Loader2 className="h-6 w-6 mr-2 animate-spin" />
+                      {t('referrals:cta.creating')}
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                      {t('referrals:createLink')}
-                      <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      <Sparkles className="h-6 w-6 mr-2 group-hover:scale-110 transition-transform" />
+                      {t('referrals:cta.button_create')}
+                      <ArrowRight className="h-6 w-6 ml-2 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </Button>
               </CardContent>
             </Card>
           )}
-        </motion.div>
+        </motion.section>
 
-        {/* Benefits Grid */}
-        <motion.div 
+        {/* 9. FAQ */}
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="grid md:grid-cols-2 gap-6"
+          transition={{ delay: 2, duration: 0.6 }}
+          className="max-w-3xl mx-auto space-y-8"
         >
-          {[
-            { icon: DollarSign, title: t('referrals:benefits.rewards.title'), desc: t('referrals:benefits.rewards.description') },
-            { icon: Users, title: t('referrals:benefits.tracking.title'), desc: t('referrals:benefits.tracking.description') },
-            { icon: TrendingUp, title: t('referrals:benefits.easy.title'), desc: t('referrals:benefits.easy.description') },
-            { icon: Gift, title: t('referrals:benefits.passive.title'), desc: t('referrals:benefits.passive.description') }
-          ].map((benefit, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 + index * 0.1, duration: 0.4 }}
-            >
-              <Card className="border-teal/20 bg-gradient-to-br from-surface/80 to-transparent backdrop-blur-sm hover:border-teal/40 transition-all duration-300 group hover:shadow-lg hover:shadow-teal/10 h-full">
-                <CardHeader>
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-teal/20 to-teal/5 w-fit mb-3 group-hover:scale-110 transition-transform duration-300">
-                    <benefit.icon className="h-8 w-8 text-teal" />
-                  </div>
-                  <CardTitle className="text-xl group-hover:text-teal transition-colors">{benefit.title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
-                    {benefit.desc}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-foreground">{t('referrals:faq.title')}</h2>
+          </div>
+          <Accordion type="single" collapsible className="space-y-4">
+            {['q1', 'q2', 'q3', 'q4', 'q5'].map((key) => {
+              const faq = t(`referrals:faq.${key}`, { returnObjects: true }) as any;
+              return (
+                <AccordionItem key={key} value={key} className="border border-border/50 rounded-xl px-6 bg-surface/50 backdrop-blur-sm">
+                  <AccordionTrigger className="text-left hover:text-primary transition-colors">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </motion.section>
 
-        {/* How It Works */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-        >
-          <Card className="border-teal/20 bg-gradient-to-br from-surface/80 to-transparent backdrop-blur-sm overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-primary opacity-5 rounded-full blur-3xl"></div>
-            
-            <CardHeader className="relative">
-              <CardTitle className="text-3xl">{t('referrals:how_it_works.title')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 relative">
-              <div className="space-y-3">
-                <p className="text-muted-foreground text-lg leading-relaxed">{t('referrals:how_it_works.intro')}</p>
-                <p className="text-muted-foreground leading-relaxed">{t('referrals:how_it_works.explanation')}</p>
-                <p className="text-foreground font-semibold text-lg mt-4">{t('referrals:how_it_works.share')}</p>
-              </div>
-              
-              <div className="overflow-x-auto rounded-xl border border-teal/20 bg-background/40 backdrop-blur-sm">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-teal/20 bg-gradient-to-r from-teal/10 to-transparent">
-                      <th className="text-left p-4 font-bold text-foreground">{t('referrals:how_it_works.table.account_type')}</th>
-                      <th className="text-left p-4 font-bold text-foreground">{t('referrals:how_it_works.table.talamo_commission')}</th>
-                      <th className="text-left p-4 font-bold text-teal">{t('referrals:how_it_works.table.your_earning')}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-teal/10 hover:bg-teal/5 transition-colors">
-                      <td className="p-4 font-medium">{t('referrals:how_it_works.table.standard')}</td>
-                      <td className="p-4 text-muted-foreground">{t('referrals:how_it_works.table.standard_commission')}</td>
-                      <td className="p-4 text-teal font-bold text-lg">{t('referrals:how_it_works.table.standard_earning')}</td>
-                    </tr>
-                    <tr className="hover:bg-teal/5 transition-colors">
-                      <td className="p-4 font-medium">{t('referrals:how_it_works.table.pro')}</td>
-                      <td className="p-4 text-muted-foreground">{t('referrals:how_it_works.table.pro_commission')}</td>
-                      <td className="p-4 text-teal font-bold text-lg">{t('referrals:how_it_works.table.pro_earning')}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* What You Earn */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-        >
-          <Card className="border-teal/20 bg-gradient-to-br from-surface/80 to-transparent backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-3xl flex items-center gap-3">
-                {t('referrals:what_you_earn.title')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-foreground font-semibold text-lg">{t('referrals:what_you_earn.intro')}</p>
-              <ul className="space-y-4">
-                {[
-                  t('referrals:what_you_earn.benefit_1'),
-                  t('referrals:what_you_earn.benefit_2'),
-                  t('referrals:what_you_earn.benefit_3')
-                ].map((benefit, index) => (
-                  <motion.li 
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.7 + index * 0.1, duration: 0.4 }}
-                    className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-r from-teal/5 to-transparent border border-teal/10 hover:border-teal/20 transition-all"
-                  >
-                    <div className="p-1 rounded-full bg-teal/20 mt-0.5">
-                      <CheckCircle2 className="h-5 w-5 text-teal" />
-                    </div>
-                    <span className="text-muted-foreground text-base leading-relaxed">{benefit}</span>
-                  </motion.li>
-                ))}
-              </ul>
-              <div className="pt-6 mt-6 border-t border-teal/20">
-                <p className="text-foreground font-bold text-xl text-center bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
-                  {t('referrals:what_you_earn.outro')}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Why This Program Exists */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-        >
-          <Card className="border-teal/30 bg-gradient-to-br from-teal/10 via-surface/50 to-transparent backdrop-blur-sm shadow-xl shadow-teal/10 overflow-hidden relative">
-            {/* Premium decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-teal to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-glow pointer-events-none"></div>
-            
-            <CardHeader className="relative">
-              <CardTitle className="text-3xl flex items-center gap-3">
-                {t('referrals:why_exists.title')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-5 relative">
-              <div className="space-y-4">
-                <p className="text-foreground font-bold text-lg">{t('referrals:why_exists.intro')}</p>
-                <p className="text-muted-foreground text-base leading-relaxed">{t('referrals:why_exists.purpose')}</p>
-                <p className="text-muted-foreground text-base leading-relaxed">{t('referrals:why_exists.growth')}</p>
-              </div>
-              
-              <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-teal/20 via-teal/10 to-transparent border border-teal/30">
-                <p className="text-2xl font-bold text-center bg-gradient-to-r from-teal to-cyan bg-clip-text text-transparent">
-                  {t('referrals:why_exists.values')}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
       </div>
     </div>
   );

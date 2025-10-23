@@ -1,81 +1,122 @@
 {
-  "title": "IB Agent Program",
-  "subtitle": "Share Tálamo and earn while helping others join the ecosystem",
-  "hero_description": "When someone signs up on Exness with your agent link, they'll automatically validate their email to access Tálamo, and you'll receive 50% of our IB commissions.",
-  "status": "New",
-  "status_active": "Active",
-  "comingSoon": "Coming Soon",
-  "description": "Generate your unique link with one click and start earning commissions",
-  "become_agent": "Become an IB Agent",
-  "createLink": "Generate my Exness Agent Link",
-  "creating": "Generating link...",
-  "yourLink": "Your Agent Link",
-  "copyLink": "Copy Link",
-  "copied": "📋 Copied",
-  "shareDescription": "Share this link to earn commissions for every trader who signs up",
-  "commissionShare": "Commission share",
-  "success": {
-    "created": "✅ Link created!",
-    "description": "Your Exness agent link has been generated successfully"
+  "hero": {
+    "badge": "IB Program",
+    "title": "Grow with Tálamo",
+    "subtitle": "Earn by sharing",
+    "description": "When someone joins Exness with your agent link, they automatically validate their email to access Tálamo, and you receive 50% of our IB commissions."
   },
-  "error": {
-    "create": "Could not create link. Please try again.",
-    "login": "You must log in to continue"
+  "trust": {
+    "partners": "Active partners",
+    "earnings": "Paid this month",
+    "signups": "New referrals today"
+  },
+  "problem": {
+    "title": "The problem with traditional referrals",
+    "point1": "Empty promises with no real value for your followers",
+    "point2": "Generic links that provide nothing beyond a click",
+    "point3": "Opaque commissions without transparency or reports"
+  },
+  "difference": {
+    "title": "What makes this program different",
+    "subtitle": "It's not just a link. It's real access.",
+    "point1": {
+      "title": "Instant verified access",
+      "description": "Anyone using your link registers on Exness and automatically validates their email to enter Tálamo. No extra steps."
+    },
+    "point2": {
+      "title": "Transparent and direct commission",
+      "description": "Exness pays you 50% of what Tálamo receives as IB. No intermediaries, no delays. Real-time reports."
+    },
+    "point3": {
+      "title": "Backed by an official partner",
+      "description": "Tálamo is an official Exness Introducing Broker. This isn't generic affiliation: it's a regulated program with verifiable commissions."
+    }
+  },
+  "how": {
+    "title": "How it works (with real example)",
+    "step1": {
+      "title": "1. Generate your link",
+      "description": "One click. Get your unique Exness agent link connected to Tálamo."
+    },
+    "step2": {
+      "title": "2. Share it",
+      "description": "Your referral registers on Exness with your link and automatically validates their email for Tálamo."
+    },
+    "step3": {
+      "title": "3. Earn per trade",
+      "description": "For each lot your referral trades, Exness pays IB commission. You receive 50%."
+    },
+    "example": {
+      "title": "Calculation example",
+      "setup": "Your referral opens a Standard account and trades 10 lots of EURUSD in a month.",
+      "commission": "Exness base IB commission: ~$10 USD per lot (40% of typical spread)",
+      "total": "10 lots × $10 = $100 USD for Tálamo",
+      "your_cut": "Your share (50%): $50 USD",
+      "note": "This is a simplified calculation. Commissions vary by account type, spread, and volume. Exness reports everything in real-time."
+    }
   },
   "benefits": {
-    "rewards": {
-      "title": "50% Commission",
-      "description": "Earn half of the IB commissions Tálamo receives from Exness"
+    "title": "What you get",
+    "benefit1": {
+      "title": "50% real commission",
+      "description": "Not 5%. Not 10%. 50% of what Tálamo receives as IB for your referrals."
     },
-    "tracking": {
-      "title": "Full Transparency",
-      "description": "Access real-time reports on rewards and referred clients"
+    "benefit2": {
+      "title": "No earning limits",
+      "description": "No cap. The more active referrals, the more you earn. Scalable without restrictions."
     },
-    "easy": {
-      "title": "No Limits",
-      "description": "No commission cap. The more referrals, the more you earn"
+    "benefit3": {
+      "title": "Real-time reports",
+      "description": "Direct access to Exness reports. See every trade, every commission, without delays."
     },
-    "passive": {
-      "title": "Direct Payments",
-      "description": "Exness pays directly to your agent account"
+    "benefit4": {
+      "title": "Automatic payments",
+      "description": "Exness deposits directly into your agent account. Daily. Automatic. No manual requests."
     }
   },
-  "how_it_works": {
-    "title": "💬 How it works",
-    "intro": "Tálamo is an official Introducing Broker partner of Exness.",
-    "explanation": "For every trade made by clients who sign up through our links, Exness pays us a commission (IB reward).",
-    "share": "We share half of that commission for every person who signs up with your agent link:",
-    "table": {
-      "account_type": "Exness Account Type",
-      "talamo_commission": "Tálamo Total Commission",
-      "your_earning": "Your Earning (50%)",
-      "standard": "Standard / Standard Cent",
-      "standard_commission": "40% of spread",
-      "standard_earning": "20% of spread",
-      "pro": "Pro / Raw / Zero",
-      "pro_commission": "25% of spread",
-      "pro_earning": "12.5% of spread"
+  "why": {
+    "title": "Why this program exists",
+    "intro": "It's not marketing. It's strategy.",
+    "point1": "Tálamo grows when its community grows. Every person who enters and uses the tools professionally strengthens the ecosystem.",
+    "point2": "We want those who share Tálamo to do so because they believe in the project, not because they need one more click.",
+    "point3": "That's why we share 50% of commissions: if you grow by helping others enter, Tálamo grows with you.",
+    "conclusion": "Transparent. Direct. Aligned."
+  },
+  "cta": {
+    "title": "Start now",
+    "description": "One click. Your link. Your opportunity to grow with Tálamo.",
+    "button_create": "Generate my agent link",
+    "button_copy": "Copy my link",
+    "creating": "Generating...",
+    "your_link": "Your agent link",
+    "commission": "Commission",
+    "copied": "Copied"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "q1": {
+      "question": "Do I need to be a trader to participate?",
+      "answer": "No. You just need to share the link. Your referrals are the ones who trade."
+    },
+    "q2": {
+      "question": "How much do I earn exactly?",
+      "answer": "50% of the IB commission that Tálamo receives from Exness for each trade by your referrals. The base commission varies by account type and spread. Exness reports everything in real-time."
+    },
+    "q3": {
+      "question": "How do I get paid?",
+      "answer": "Exness deposits directly into your agent account. Automatic daily payments. You don't have to request anything."
+    },
+    "q4": {
+      "question": "Is there a referral limit?",
+      "answer": "No. You can refer as many people as you want."
+    },
+    "q5": {
+      "question": "What if my referral stops trading?",
+      "answer": "You only earn when they trade. If they stop, no commission. If they resume trading, you resume earning."
     }
   },
-  "what_you_earn": {
-    "title": "💸 What you earn",
-    "intro": "Each person you refer with your link:",
-    "benefit_1": "Gets full access to Tálamo by validating their email with Exness.",
-    "benefit_2": "Becomes your direct referral, generating commissions for every trade they make.",
-    "benefit_3": "You receive your rewards automatically, every day.",
-    "outro": "They access Tálamo. You earn for helping them do it."
-  },
-  "why_exists": {
-    "title": "🌍 Why this program exists",
-    "intro": "This is not just a referral program.",
-    "purpose": "We want the Tálamo community to grow with committed people and for every member to have the opportunity to benefit from growth.",
-    "growth": "The more you help others join, the more Tálamo earns, and the more you earn.",
-    "values": "Transparent, simple, and fair."
-  },
-  "commission_rates": {
-    "title": "Commission Rates by Account Type",
-    "description": "Exness base IB commissions (you receive 50%)",
-    "per_lot": "per lot",
-    "note": "Rates vary depending on currency pair and market conditions"
+  "errors": {
+    "login": "You must log in to continue",
+    "create": "Could not create link. Please try again."
   }
 }
