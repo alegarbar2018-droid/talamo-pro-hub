@@ -135,20 +135,41 @@ export default function Referrals() {
         <motion.section 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-6"
+          className="text-center space-y-6 relative"
         >
-          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary px-4 py-2">
-            <Sparkles className="h-4 w-4 mr-2" />
-            {t('referrals:hero.badge')}
-          </Badge>
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+          >
+            <Badge className="border-0 bg-gradient-to-r from-primary via-primary/80 to-primary text-primary-foreground px-5 py-2.5 shadow-lg shadow-primary/20">
+              <Sparkles className="h-4 w-4 mr-2 animate-pulse" />
+              {t('referrals:hero.badge')}
+            </Badge>
+          </motion.div>
 
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-            {t('referrals:hero.title')}
-          </h1>
+          <motion.h1 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl md:text-7xl font-bold tracking-tight"
+          >
+            <span className="relative inline-block">
+              <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-primary via-primary to-primary opacity-40"></span>
+              <span className="relative bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent drop-shadow-sm">
+                {t('referrals:hero.title')}
+              </span>
+            </span>
+          </motion.h1>
           
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+          >
             {t('referrals:hero.subtitle')}
-          </p>
+          </motion.p>
         </motion.section>
 
         {/* Stats */}
