@@ -46,23 +46,43 @@ async function createAgentLink(token: string, name: string, email: string): Prom
   
   console.log(`📝 Creating agent link for ${email}...`);
   
-  const response = await fetch(`${apiBase}/api/v1/referral-agent-links/`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `JWT ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ alias: name, email }),
-  });
+  // Try with original name first, add timestamp if it fails
+  let attempts = 0;
+  let lastError = '';
+  
+  while (attempts < 3) {
+    const alias = attempts === 0 ? name : `${name}-${Date.now()}`;
+    console.log(`Attempt ${attempts + 1}: trying alias "${alias}"`);
+    
+    const response = await fetch(`${apiBase}/api/v1/referral-agent-links/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `JWT ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ alias, email }),
+    });
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to create agent link: ${response.status} - ${error}`);
+    if (response.ok) {
+      const data = await response.json();
+      console.log('📦 Agent link response:', JSON.stringify(data));
+      return data;
+    }
+    
+    const errorText = await response.text();
+    lastError = errorText;
+    
+    // If it's not a duplicate error, throw immediately
+    if (!errorText.includes('already_in_use')) {
+      throw new Error(`Failed to create agent link: ${response.status} - ${errorText}`);
+    }
+    
+    attempts++;
+    // Wait a bit before retry to ensure timestamp changes
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
-
-  const data = await response.json();
-  console.log('📦 Agent link response:', JSON.stringify(data));
-  return data;
+  
+  throw new Error(`Failed to create agent link after ${attempts} attempts: ${lastError}`);
 }
 
 // STEP 2: Assign 50% commission
