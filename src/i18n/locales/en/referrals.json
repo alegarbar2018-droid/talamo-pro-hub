@@ -2,7 +2,7 @@
   "hero": {
     "badge": "Earn by Sharing",
     "title": "Grow with Tálamo",
-    "subtitle": "When someone registers with Exness using your link, their account is automatically connected to Tálamo. They just need to validate with the same email they used to register, and that's it: instant access. Every time they trade, you earn 50% of our IB commissions, in real-time."
+    "subtitle": "Share your link. Your referral registers with Exness and gets automatic access to Tálamo. Every trade generates real commissions split 50/50."
   },
   "stats": {
     "activeAgents": {
@@ -108,7 +108,12 @@
     "copyButton": "Copy my link",
     "commissionLabel": "Commission:",
     "generating": "Generating...",
-    "error": "Error generating link"
+    "error": "Error generating link",
+    "no_link": "You don't have an agent link yet",
+    "button_create": "Generate my link",
+    "description": "Your link is ready to share",
+    "your_link": "Your agent link",
+    "copied": "Copied!"
   },
   "faq": {
     "title": "Frequently asked questions",

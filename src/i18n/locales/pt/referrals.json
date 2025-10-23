@@ -2,7 +2,7 @@
   "hero": {
     "badge": "Ganhe Compartilhando",
     "title": "Cresça com Tálamo",
-    "subtitle": "Quando alguém se registra na Exness usando seu link, sua conta fica automaticamente conectada ao Tálamo. Só precisa validar com o mesmo e-mail que usou para se registrar, e pronto: acesso imediato. Toda vez que operam, você ganha 50% de nossas comissões IB, em tempo real."
+    "subtitle": "Compartilhe seu link. Seu indicado se registra na Exness e obtém acesso automático ao Tálamo. Cada operação gera comissões reais divididas 50/50."
   },
   "stats": {
     "activeAgents": {
@@ -108,7 +108,12 @@
     "copyButton": "Copiar meu link",
     "commissionLabel": "Comissão:",
     "generating": "Gerando...",
-    "error": "Erro ao gerar link"
+    "error": "Erro ao gerar link",
+    "no_link": "Você ainda não tem um link de agente",
+    "button_create": "Gerar meu link",
+    "description": "Seu link está pronto para compartilhar",
+    "your_link": "Seu link de agente",
+    "copied": "Copiado!"
   },
   "faq": {
     "title": "Perguntas frequentes",
