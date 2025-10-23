@@ -18,8 +18,8 @@ const AffiliationGate = ({ user, onValidated }: AffiliationGateProps) => {
     // Simulate affiliation check
     const checkAffiliation = async () => {
       setIsChecking(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (user?.isAffiliated) {
         onValidated();
       } else {
@@ -35,18 +35,18 @@ const AffiliationGate = ({ user, onValidated }: AffiliationGateProps) => {
     {
       title: "Abre una cuenta en Exness",
       description: "Regístrate usando nuestro enlace de partner para validación automática",
-      action: "Ir a Exness"
+      action: "Ir a Exness",
     },
     {
       title: "Completa la verificación",
       description: "Verifica tu identidad y realiza un depósito mínimo según los términos de Exness",
-      action: "Guía de verificación"
+      action: "Guía de verificación",
     },
     {
       title: "Accede a Tálamo",
       description: "Una vez validada la afiliación, tendrás acceso completo a todas las herramientas",
-      action: "Verificar acceso"
-    }
+      action: "Verificar acceso",
+    },
   ];
 
   if (isChecking) {
@@ -77,16 +77,14 @@ const AffiliationGate = ({ user, onValidated }: AffiliationGateProps) => {
           <Alert className="border-warning/20 bg-warning/10">
             <AlertTriangle className="h-4 w-4 text-warning" />
             <AlertDescription className="text-foreground">
-              <strong>Importante:</strong> Tálamo es gratuito. Nuestro modelo de negocio se basa en 
-              spreads del broker cuando operas. Solo ganamos si tú ganas y operas más.
+              <strong>Importante:</strong> Tálamo es gratuito. Nuestro modelo de negocio se basa en spreads del broker
+              cuando operas. Solo ganamos si tú ganas y operas más.
             </AlertDescription>
           </Alert>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              Proceso de Validación (3 pasos simples)
-            </h3>
-            
+            <h3 className="text-lg font-semibold text-foreground">Proceso de Validación (3 pasos simples)</h3>
+
             {steps.map((step, index) => (
               <Card key={index} className="border-line bg-background">
                 <CardHeader className="pb-3">
@@ -98,14 +96,8 @@ const AffiliationGate = ({ user, onValidated }: AffiliationGateProps) => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-muted-foreground mb-3">
-                    {step.description}
-                  </CardDescription>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="border-teal text-teal hover:bg-teal/10"
-                  >
+                  <CardDescription className="text-muted-foreground mb-3">{step.description}</CardDescription>
+                  <Button variant="outline" size="sm" className="border-teal text-teal hover:bg-teal/10">
                     {step.action}
                     <ExternalLink className="h-4 w-4 ml-2" />
                   </Button>
@@ -124,16 +116,12 @@ const AffiliationGate = ({ user, onValidated }: AffiliationGateProps) => {
           </div>
 
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowModal(false)}
-              className="flex-1"
-            >
+            <Button variant="outline" onClick={() => setShowModal(false)} className="flex-1">
               Entiendo, continúar después
             </Button>
-            <Button 
+            <Button
               className="flex-1 bg-gradient-primary hover:shadow-glow"
-              onClick={() => window.open("https://one.exness.link/a/1141465940423171000", "_blank")}
+              onClick={() => window.open("https://one.exness.link/intl/a/", "_blank")}
             >
               Comenzar con Exness
               <ArrowRight className="h-4 w-4 ml-2" />
