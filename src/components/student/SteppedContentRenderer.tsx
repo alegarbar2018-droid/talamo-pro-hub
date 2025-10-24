@@ -202,29 +202,16 @@ function parseContentIntoSteps(content: string): StepContent[] {
       const titleMatch = line.match(/title="([^"]+)"/);
       const title = titleMatch ? titleMatch[1] : `Paso ${stepIndex + 1}`;
 
-      // Collect step content until we find a closing ::: that's NOT part of a nested block
+      // Collect step content until we find another :::step or end of content
       let stepContent = '';
       i++;
-      let nestedBlockCount = 0;
       
       while (i < lines.length) {
         const currentLine = lines[i].trim();
         
-        // Check if this line opens a nested block
-        if (currentLine.startsWith(':::') && !currentLine.match(/^:::\s*$/)) {
-          const blockType = currentLine.match(/^:::(\w+)/);
-          if (blockType && !['step'].includes(blockType[1])) {
-            nestedBlockCount++;
-          }
-        }
-        // Check if this line closes a block
-        else if (currentLine.match(/^:::\s*$/)) {
-          if (nestedBlockCount > 0) {
-            nestedBlockCount--;
-          } else {
-            // This is the closing ::: for our step
-            break;
-          }
+        // If we hit another :::step, stop here
+        if (currentLine.startsWith(':::step')) {
+          break;
         }
         
         stepContent += lines[i] + '\n';
@@ -238,6 +225,9 @@ function parseContentIntoSteps(content: string): StepContent[] {
         index: stepIndex
       });
       stepIndex++;
+      
+      // Don't increment i here since we need to process the next :::step
+      continue;
     }
 
     i++;
