@@ -168,7 +168,7 @@ Contenido del tercer paso con ejercicios...
    ❌ MAL:
    "Hay 3 tipos de cuentas: Standard (spread alto, sin comisión), Raw Spread (spread bajo, con comisión) y Pro (spread variable)."
    
-   ✅ BIEN:
+   ✅ BIEN (ESTE ES EL FORMATO EXACTO QUE DEBES USAR):
    :::tabs
    [label="🌱 Standard"]
    - Spread: desde 0.3 pips
@@ -185,6 +185,8 @@ Contenido del tercer paso con ejercicios...
    - Comisión: Por volumen
    - Ideal para: Institucionales
    :::
+   
+   ⚠️ **NOTA CRÍTICA**: El \`:::\` de cierre va DESPUÉS de todo el contenido de todos los tabs, NO después de cada tab individual.
 
 ⚠️ **TRIGGER para CALLOUTS** (Úsalo en CADA consejo/advertencia):
    - Palabras clave: "importante", "cuidado", "consejo", "tip", "advertencia", "riesgo"
@@ -254,7 +256,7 @@ id: lesson-[topic]-[number]
    - Fórmulas clave (Front: "¿Cómo calcular lote?" | Back: fórmula + ejemplo)
    - Conceptos vs ejemplos (Front: concepto | Back: caso real)
    
-   Sintaxis:
+   Sintaxis EXACTA (SIGUE ESTE FORMATO AL PIE DE LA LETRA):
    \`\`\`
    :::flipcard
    [front]
@@ -265,13 +267,18 @@ id: lesson-[topic]-[number]
    Ejemplo: Si EUR/USD bid=1.0800 y ask=1.0802, el spread es 2 pips.
    :::
    \`\`\`
+   
+   ⚠️ **REGLAS CRÍTICAS:**
+   - NUNCA uses \`:::\` dentro del contenido del flipcard
+   - Usa \`[front]\` y \`[back]\` exactamente así (minúsculas, entre corchetes)
+   - Cierra con un solo \`:::\` al final
 
 📂 **ACCORDION** - Úsalo para:
    - Listas largas de pasos (ej: proceso de verificación KYC)
    - Explicaciones detalladas que pueden abrumar visualmente
    - FAQs o secciones "más información"
    
-   Sintaxis:
+   Sintaxis EXACTA (SIGUE ESTE FORMATO AL PIE DE LA LETRA):
    \`\`\`
    :::accordion
    ## Paso 1: Crea tu Personal Area
@@ -284,13 +291,18 @@ id: lesson-[topic]-[number]
    Decide entre Standard, Standard Cent, Pro, Raw Spread o Zero.
    :::
    \`\`\`
+   
+   ⚠️ **REGLAS CRÍTICAS:**
+   - NUNCA uses \`:::\` dentro del contenido del accordion
+   - Los títulos usan \`##\` (dos #)
+   - Cierra con un solo \`:::\` al final
 
 🗂️ **TABS** - Úsalos para:
    - Comparar opciones (tipos de cuenta, plataformas, estrategias)
    - Mostrar distintos escenarios (long vs short, scalping vs swing)
    - Diferenciar niveles de experiencia
    
-   Sintaxis:
+   Sintaxis EXACTA (SIGUE ESTE FORMATO AL PIE DE LA LETRA):
    \`\`\`
    :::tabs
    [label="Standard Account"]
@@ -304,6 +316,17 @@ id: lesson-[topic]-[number]
    - Para traders avanzados
    :::
    \`\`\`
+   
+   ⚠️ **ERRORES COMUNES QUE DEBES EVITAR:**
+   ❌ MAL: \`[label="X"] ::: contenido :::\`
+   ❌ MAL: \`[label="X"]\ncontenido\n:::\`
+   ✅ BIEN: \`[label="X"]\ncontenido\n\n[label="Y"]\ncontenido\n:::\`
+   
+   **REGLAS CRÍTICAS:**
+   - NUNCA uses \`:::\` dentro del contenido de un tab
+   - SIEMPRE cierra con un solo \`:::\` al final de TODOS los tabs
+   - Los labels deben estar en su propia línea
+   - Cada tab se separa con línea en blanco antes del siguiente \`[label="..."]\`
 
 ⚠️ **CALLOUTS** - Úsalos para:
    - Advertencias de riesgo (type="warning")
@@ -384,6 +407,35 @@ id: lesson-[topic]-[number]
    \`\`\`
 
 7. **Emojis estratégicos** (⚠️ 💡 ✅ ❌ 📊 🎯) en TODOS los callouts y títulos importantes.
+
+8. **⚠️ SINTAXIS CRÍTICA - NUNCA ROMPAS ESTAS REGLAS:**
+   - JAMÁS pongas \`:::\` dentro del contenido de un componente interactivo
+   - Cada bloque \`:::tipo\` se cierra con UN SOLO \`:::\` al final
+   - Para tabs: todos los \`[label="..."]\` van dentro del mismo bloque, separados por línea en blanco
+   - Para accordion: todos los \`## Título\` van dentro del mismo bloque
+   - Para flipcard: solo \`[front]\` y \`[back]\`, nada más
+   
+   ❌ **EJEMPLO INCORRECTO (NUNCA HAGAS ESTO):**
+   \`\`\`
+   :::tabs
+   [label="Tab 1"]
+   contenido
+   :::
+   [label="Tab 2"]
+   contenido
+   :::
+   \`\`\`
+   
+   ✅ **EJEMPLO CORRECTO (SIEMPRE ASÍ):**
+   \`\`\`
+   :::tabs
+   [label="Tab 1"]
+   contenido
+   
+   [label="Tab 2"]
+   contenido
+   :::
+   \`\`\`
 
 ═══════════════════════════════════════════════════════════════════════════════
 😊 GUÍA DE USO DE EMOJIS
