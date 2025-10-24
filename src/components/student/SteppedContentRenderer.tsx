@@ -169,7 +169,30 @@ function parseContentIntoSteps(content: string): StepContent[] {
   const lines = content.split('\n');
   let i = 0;
   let stepIndex = 0;
+  let preambleContent = '';
 
+  // First, collect any content BEFORE the first :::step block
+  while (i < lines.length) {
+    const line = lines[i].trim();
+    if (line.startsWith(':::step')) {
+      break;
+    }
+    preambleContent += lines[i] + '\n';
+    i++;
+  }
+
+  // If there's preamble content, add it as the first step
+  if (preambleContent.trim()) {
+    steps.push({
+      id: `step-${stepIndex}`,
+      title: 'Introducción',
+      content: preambleContent.trim(),
+      index: stepIndex
+    });
+    stepIndex++;
+  }
+
+  // Now process :::step blocks
   while (i < lines.length) {
     const line = lines[i].trim();
 
