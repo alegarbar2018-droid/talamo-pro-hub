@@ -25,8 +25,9 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
       let currentIndex = 0;
       let keyCounter = 0;
 
-      // Regex para detectar bloques especiales con sintaxis :::type ... :::
-      const blockRegex = /:::(meta|step|accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?):::/g;
+      // Regex mejorado para detectar bloques con soporte para anidación
+      // Busca bloques que terminen en "::: " seguido de salto de línea o final de string
+      const blockRegex = /:::(meta|step|accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?)\n:::\s*(?:\n|$)/gm;
       
       let match;
       const matches: RegExpExecArray[] = [];
@@ -181,8 +182,11 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
   };
 
   const renderAccordion = (content: string, key: number) => {
+    // Limpiar cualquier ::: extra que pueda existir en el contenido
+    const cleanedContent = content.replace(/^\s*:::\s*$/gm, '').trim();
+    
     // Parse headers (##) as accordion items
-    const sections = content.split(/(?=^## )/gm).filter(Boolean);
+    const sections = cleanedContent.split(/(?=^## )/gm).filter(Boolean);
     const items = sections.map(section => {
       const lines = section.split('\n');
       const title = lines[0].replace(/^##\s*/, '').trim();
@@ -204,17 +208,21 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
   };
 
   const renderTabs = (content: string, key: number) => {
-    // Parse [label="..."] as tabs
+    // Parse [label="..."] as tabs, limpiando cualquier ::: extra que pueda existir
+    const cleanedContent = content.replace(/^\s*:::\s*$/gm, '').trim();
     const tabRegex = /\[label="([^"]+)"\]\s*([\s\S]*?)(?=\[label=|$)/g;
     const items: any[] = [];
     let tabMatch;
     
-    while ((tabMatch = tabRegex.exec(content)) !== null) {
+    while ((tabMatch = tabRegex.exec(cleanedContent)) !== null) {
+      // Limpiar contenido de cada tab de posibles ::: residuales
+      const tabContent = tabMatch[2].trim().replace(/^\s*:::\s*$/gm, '').trim();
+      
       items.push({
         label: tabMatch[1].trim(),
         content: (
           <div className="prose prose-sm dark:prose-invert">
-            <ReactMarkdown>{tabMatch[2].trim()}</ReactMarkdown>
+            <ReactMarkdown>{tabContent}</ReactMarkdown>
           </div>
         )
       });
