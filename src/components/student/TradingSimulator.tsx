@@ -70,15 +70,15 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
 
   // Prepare chart data
   const getChartData = () => {
-    const historicalData = scenarioData.historical.map((price, idx) => ({
+    const historicalData = (scenarioData.historical || []).map((price, idx) => ({
       index: idx,
       price,
-      label: `T-${scenarioData.historical.length - idx}`,
+      label: `T-${(scenarioData.historical || []).length - idx}`,
     }));
 
     const currentData = {
-      index: scenarioData.historical.length,
-      price: scenarioData.current,
+      index: (scenarioData.historical || []).length,
+      price: scenarioData.current || 0,
       label: 'Now',
     };
 
@@ -86,8 +86,8 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
 
     // Add future data only if action has been taken
     if (isRevealed) {
-      const futureData = scenarioData.future.map((price, idx) => ({
-        index: scenarioData.historical.length + 1 + idx,
+      const futureData = (scenarioData.future || []).map((price, idx) => ({
+        index: (scenarioData.historical || []).length + 1 + idx,
         price,
         label: `T+${idx + 1}`,
       }));
