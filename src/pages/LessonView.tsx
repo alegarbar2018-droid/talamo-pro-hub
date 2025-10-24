@@ -374,7 +374,7 @@ const LessonView = () => {
             title: step.title || `Paso ${idx + 1}`,
             type: 'content' as const,
             completed: idx < stepProgress.current
-          })) : topics}
+          })) : (topics || [])}
           completedCount={stepProgress.current || completedCount}
           total={stepProgress.total || total}
           progress={stepProgress.total > 0 ? Math.round((stepProgress.current / stepProgress.total) * 100) : progress}
