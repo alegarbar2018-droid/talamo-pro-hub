@@ -453,8 +453,7 @@ const LessonView = () => {
       {/* Main Content */}
       <div className={cn(
         "overflow-auto transition-all duration-500",
-        !tocEnabled ? "ml-0" : "ml-0 md:ml-16 lg:ml-80",
-        sidebarCollapsed ? "md:ml-16" : "md:ml-80"
+        !tocEnabled ? "ml-0" : sidebarCollapsed ? "md:ml-16" : "md:ml-80"
       )}>
         <div className="sticky top-0 z-40 border-b border-teal/10 bg-gradient-to-r from-surface/98 via-surface/95 to-surface/98 backdrop-blur-xl shadow-md">
           <div className="absolute inset-0 bg-gradient-to-r from-teal/5 via-transparent to-teal/5 pointer-events-none" />
