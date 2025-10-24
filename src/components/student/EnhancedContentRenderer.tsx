@@ -21,122 +21,153 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
   
   const parseContent = (markdown: string) => {
     try {
-      const sections: JSX.Element[] = [];
-      let currentIndex = 0;
       let keyCounter = 0;
 
-      // Regex mejorado para detectar bloques con soporte para anidación
-      // Busca bloques que terminen en "::: " seguido de salto de línea o final de string
-      const blockRegex = /:::(meta|step|accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n([\s\S]*?)\n:::\s*(?:\n|$)/gm;
-      
-      let match;
-      const matches: RegExpExecArray[] = [];
-      
-      // Collect all matches first
-      while ((match = blockRegex.exec(markdown)) !== null) {
-        matches.push(match);
-      }
+      // Parser mejorado que maneja anidación mediante conteo de niveles
+      const parseNestedBlocks = (content: string): JSX.Element[] => {
+        const elements: JSX.Element[] = [];
+        let i = 0;
 
-      // Process matches
-      matches.forEach((match) => {
-        // Add normal markdown before this block
-        if (match.index > currentIndex) {
-          const normalContent = markdown.substring(currentIndex, match.index);
-          if (normalContent.trim()) {
-            sections.push(
-              <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
-                <ReactMarkdown
-                  components={{
-                    h2: ({ children, ...props }) => {
-                      const id = `topic-h2-${h2Counter.current++}`;
-                      return (
-                        <h2 id={id} data-topic-id={id} {...props}>
-                          {children}
-                        </h2>
-                      );
-                    },
-                  }}
-                >
-                  {normalContent}
-                </ReactMarkdown>
-              </div>
-            );
+        while (i < content.length) {
+          // Buscar inicio de bloque
+          const blockStartMatch = content.slice(i).match(/^:::(meta|step|accordion|tabs|flipcard|callout|trading-sim)([^\n]*)\n/m);
+          
+          if (!blockStartMatch) {
+            // No hay más bloques, procesar el resto como markdown normal
+            const remaining = content.slice(i);
+            if (remaining.trim()) {
+              elements.push(
+                <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
+                  <ReactMarkdown
+                    components={{
+                      h2: ({ children, ...props }) => {
+                        const id = `topic-h2-${h2Counter.current++}`;
+                        return (
+                          <h2 id={id} data-topic-id={id} {...props}>
+                            {children}
+                          </h2>
+                        );
+                      },
+                    }}
+                  >
+                    {remaining}
+                  </ReactMarkdown>
+                </div>
+              );
+            }
+            break;
           }
-        }
 
-        const [, blockType, attributes, blockContent] = match;
+          // Agregar contenido antes del bloque
+          if (blockStartMatch.index! > 0) {
+            const beforeContent = content.slice(i, i + blockStartMatch.index!);
+            if (beforeContent.trim()) {
+              elements.push(
+                <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
+                  <ReactMarkdown
+                    components={{
+                      h2: ({ children, ...props }) => {
+                        const id = `topic-h2-${h2Counter.current++}`;
+                        return (
+                          <h2 id={id} data-topic-id={id} {...props}>
+                            {children}
+                          </h2>
+                        );
+                      },
+                    }}
+                  >
+                    {beforeContent}
+                  </ReactMarkdown>
+                </div>
+              );
+            }
+          }
 
-        // Render component based on type
-        try {
-          switch (blockType) {
-            case 'meta':
-            case 'step':
-              // Meta and step blocks are parsed but not rendered here (handled by SteppedContentRenderer)
+          const blockType = blockStartMatch[1];
+          const attributes = blockStartMatch[2];
+          const blockHeaderLength = blockStartMatch[0].length;
+          
+          // Encontrar el cierre del bloque contando niveles de anidación
+          let nestLevel = 1;
+          let searchIndex = i + blockStartMatch.index! + blockHeaderLength;
+          let blockEndIndex = -1;
+
+          while (searchIndex < content.length && nestLevel > 0) {
+            const nextOpening = content.slice(searchIndex).search(/^:::(meta|step|accordion|tabs|flipcard|callout|trading-sim)/m);
+            const nextClosing = content.slice(searchIndex).search(/^\s*:::\s*$/m);
+
+            if (nextClosing === -1) {
+              // No hay cierre, tomar hasta el final
+              blockEndIndex = content.length;
               break;
-            case 'accordion':
-              sections.push(renderAccordion(blockContent, keyCounter++));
-              break;
-            case 'tabs':
-              sections.push(renderTabs(blockContent, keyCounter++));
-              break;
-            case 'flipcard':
-              sections.push(renderFlipCard(blockContent, keyCounter++));
-              break;
-            case 'callout':
-              sections.push(renderCallout(attributes, blockContent, keyCounter++));
-              break;
-            case 'trading-sim':
-              // Check if v2 is specified
-              const versionMatch = attributes.match(/v="(\d+)"/);
-              const version = versionMatch?.[1];
-              if (version === '2') {
-                sections.push(renderTradingSimulatorV2(attributes, blockContent, keyCounter++));
-              } else {
-                sections.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
+            }
+
+            if (nextOpening !== -1 && nextOpening < nextClosing) {
+              // Hay un bloque anidado
+              nestLevel++;
+              searchIndex += nextOpening + 3; // avanzar después de :::
+            } else {
+              // Encontramos un cierre
+              nestLevel--;
+              if (nestLevel === 0) {
+                blockEndIndex = searchIndex + nextClosing;
+                break;
               }
-              break;
+              searchIndex += nextClosing + 3; // avanzar después de :::
+            }
           }
-        } catch (error) {
-          console.error(`Error rendering ${blockType}:`, error);
-          // Fallback: render as normal markdown if parsing fails
-          sections.push(
-            <div key={`error-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
-              <ReactMarkdown>{match[0]}</ReactMarkdown>
-            </div>
-          );
+
+          if (blockEndIndex === -1) {
+            blockEndIndex = content.length;
+          }
+
+          const blockContent = content.slice(i + blockStartMatch.index! + blockHeaderLength, blockEndIndex).trim();
+
+          // Renderizar el bloque
+          try {
+            switch (blockType) {
+              case 'meta':
+              case 'step':
+                // Meta and step blocks are parsed but not rendered here
+                break;
+              case 'accordion':
+                elements.push(renderAccordion(blockContent, keyCounter++));
+                break;
+              case 'tabs':
+                elements.push(renderTabs(blockContent, keyCounter++));
+                break;
+              case 'flipcard':
+                elements.push(renderFlipCard(blockContent, keyCounter++));
+                break;
+              case 'callout':
+                elements.push(renderCallout(attributes, blockContent, keyCounter++));
+                break;
+              case 'trading-sim':
+                const versionMatch = attributes.match(/v="(\d+)"/);
+                const version = versionMatch?.[1];
+                if (version === '2') {
+                  elements.push(renderTradingSimulatorV2(attributes, blockContent, keyCounter++));
+                } else {
+                  elements.push(renderTradingSimulator(attributes, blockContent, keyCounter++));
+                }
+                break;
+            }
+          } catch (error) {
+            console.error(`Error rendering ${blockType}:`, error);
+          }
+
+          // Avanzar el índice después del bloque (incluyendo el cierre :::)
+          const closingMatch = content.slice(blockEndIndex).match(/^\s*:::\s*/);
+          i = blockEndIndex + (closingMatch ? closingMatch[0].length : 0);
         }
 
-        currentIndex = match.index + match[0].length;
-      });
+        return elements;
+      };
 
-      // Add remaining content
-      if (currentIndex < markdown.length) {
-        const remaining = markdown.substring(currentIndex);
-        if (remaining.trim()) {
-          sections.push(
-            <div key={`md-${keyCounter++}`} className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
-              <ReactMarkdown
-                components={{
-                  h2: ({ children, ...props }) => {
-                    const id = `topic-h2-${h2Counter.current++}`;
-                    return (
-                      <h2 id={id} data-topic-id={id} {...props}>
-                        {children}
-                      </h2>
-                    );
-                  },
-                }}
-              >
-                {remaining}
-              </ReactMarkdown>
-            </div>
-          );
-        }
-      }
-
-      // If no special blocks found, render as normal markdown
-      if (sections.length === 0) {
-        h2Counter.current = 0; // Reset counter
+      const elements = parseNestedBlocks(markdown);
+      
+      if (elements.length === 0) {
+        h2Counter.current = 0;
         return [
           <div key="md-default" className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden">
             <ReactMarkdown
@@ -157,7 +188,7 @@ export const EnhancedContentRenderer: React.FC<EnhancedContentRendererProps> = (
         ];
       }
 
-      return sections;
+      return elements;
     } catch (error) {
       console.error('Error parsing markdown content:', error);
       setParseError(error instanceof Error ? error.message : 'Unknown parsing error');
