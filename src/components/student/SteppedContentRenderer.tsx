@@ -13,6 +13,8 @@ interface SteppedContentRendererProps {
   onLessonComplete?: () => void;
   onProgressChange?: (current: number, total: number) => void;
   onStepsChange?: (steps: StepContent[]) => void;
+  onNextLesson?: () => void;
+  hasNextLesson?: boolean;
 }
 
 export function SteppedContentRenderer({
@@ -21,11 +23,14 @@ export function SteppedContentRenderer({
   onStepComplete,
   onLessonComplete,
   onProgressChange,
-  onStepsChange
+  onStepsChange,
+  onNextLesson,
+  hasNextLesson
 }: SteppedContentRendererProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [steps, setSteps] = useState<StepContent[]>([]);
   const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
+  const [lessonCompleted, setLessonCompleted] = useState(false);
 
   // Parse content into steps
   useEffect(() => {
@@ -65,6 +70,7 @@ export function SteppedContentRenderer({
       onStepComplete?.(currentStep);
     } else {
       // Last step completed
+      setLessonCompleted(true);
       onLessonComplete?.();
     }
   };
@@ -78,6 +84,7 @@ export function SteppedContentRenderer({
   const resetLesson = () => {
     setCurrentStep(0);
     setVisitedSteps(new Set([0]));
+    setLessonCompleted(false);
     localStorage.removeItem(`lesson-${lessonId}-current-step`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -120,24 +127,49 @@ export function SteppedContentRenderer({
 
       {/* Navigation Buttons */}
       <div className="flex items-center justify-between pt-6 border-t border-line/30 gap-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={goToPreviousStep}
-          disabled={isFirstStep}
-          className={cn(
-            "group relative overflow-hidden transition-all duration-300",
-            isFirstStep 
-              ? "opacity-40 cursor-not-allowed" 
-              : "hover:border-teal/50 hover:shadow-lg hover:shadow-teal/10"
-          )}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-teal/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <ChevronLeft className="h-4 w-4 mr-1.5 relative z-10 group-hover:-translate-x-1 transition-transform" />
-          <span className="relative z-10 font-medium">Anterior</span>
-        </Button>
+        {!lessonCompleted && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToPreviousStep}
+            disabled={isFirstStep}
+            className={cn(
+              "group relative overflow-hidden transition-all duration-300",
+              isFirstStep 
+                ? "opacity-40 cursor-not-allowed" 
+                : "hover:border-teal/50 hover:shadow-lg hover:shadow-teal/10"
+            )}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-teal/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ChevronLeft className="h-4 w-4 mr-1.5 relative z-10 group-hover:-translate-x-1 transition-transform" />
+            <span className="relative z-10 font-medium">Anterior</span>
+          </Button>
+        )}
 
-        {isLastStep ? (
+        {lessonCompleted ? (
+          <div className="flex items-center gap-3 w-full">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetLesson}
+              className="group relative overflow-hidden transition-all duration-300 hover:border-teal/50"
+            >
+              <RotateCcw className="h-4 w-4 mr-1.5 group-hover:rotate-180 transition-transform duration-500" />
+              <span className="font-medium">Reiniciar</span>
+            </Button>
+            {hasNextLesson && onNextLesson && (
+              <Button
+                onClick={onNextLesson}
+                size="sm"
+                className="bg-gradient-primary hover:shadow-glow-intense group relative overflow-hidden px-6 flex-1"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                <span className="relative z-10 font-semibold">Siguiente Lección</span>
+                <ChevronRight className="h-4 w-4 ml-1.5 relative z-10 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            )}
+          </div>
+        ) : isLastStep ? (
           <Button
             onClick={goToNextStep}
             size="sm"

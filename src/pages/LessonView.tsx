@@ -98,6 +98,21 @@ const LessonView = () => {
   // TOC Adapter - ALWAYS called, returns empty when flag is off
   const { topics, completedCount, total, progress, markTopicComplete, registerTopicRef, getTopicRef } = useLessonTopics(lesson, resources);
 
+  // Fetch course tree to get next lesson
+  const { data: courseTree } = useQuery({
+    queryKey: ['course-tree', lesson?.module?.course?.id, session?.user?.id],
+    queryFn: async () => {
+      if (!lesson?.module?.course?.id) return null;
+      const { data, error } = await supabase.rpc('get_course_tree', {
+        course_slug_or_id: lesson.module.course.id,
+        requesting_user_id: session?.user?.id || null,
+      });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!lesson?.module?.course?.id,
+  });
+
   // Check if lesson is already completed
   const { data: isCompleted } = useQuery({
     queryKey: ['lesson-completion', lessonId, session?.user?.id],
@@ -227,6 +242,57 @@ const LessonView = () => {
       markComplete.mutate();
     }
   }, [isCompleted, markComplete]);
+
+  // Get next lesson from course tree
+  const getNextLesson = useCallback(() => {
+    if (!courseTree || !lessonId) return null;
+    
+    const modules = (courseTree as any)?.modules || [];
+    let currentModuleIndex = -1;
+    let currentLessonIndex = -1;
+    
+    // Find current lesson position
+    for (let i = 0; i < modules.length; i++) {
+      const lessons = modules[i].lessons || [];
+      for (let j = 0; j < lessons.length; j++) {
+        if (lessons[j].id === lessonId) {
+          currentModuleIndex = i;
+          currentLessonIndex = j;
+          break;
+        }
+      }
+      if (currentModuleIndex !== -1) break;
+    }
+    
+    if (currentModuleIndex === -1) return null;
+    
+    // Try next lesson in same module
+    const currentModule = modules[currentModuleIndex];
+    const lessons = currentModule.lessons || [];
+    if (currentLessonIndex < lessons.length - 1) {
+      return lessons[currentLessonIndex + 1];
+    }
+    
+    // Try first lesson of next module
+    if (currentModuleIndex < modules.length - 1) {
+      const nextModule = modules[currentModuleIndex + 1];
+      const nextLessons = nextModule.lessons || [];
+      if (nextLessons.length > 0) {
+        return nextLessons[0];
+      }
+    }
+    
+    return null;
+  }, [courseTree, lessonId]);
+
+  const nextLesson = getNextLesson();
+
+  const handleNextLesson = useCallback(() => {
+    if (nextLesson) {
+      navigate(`/academy/lesson/${nextLesson.id}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [nextLesson, navigate]);
 
   const handleTopicClick = useCallback((topicId: string) => {
     setActiveTopicId(topicId);
@@ -504,6 +570,8 @@ const LessonView = () => {
                     onProgressChange={handleProgressChange}
                     onStepsChange={handleStepsChange}
                     onLessonComplete={handleLessonComplete}
+                    onNextLesson={handleNextLesson}
+                    hasNextLesson={!!nextLesson}
                   />
                 </CardContent>
               </Card>
