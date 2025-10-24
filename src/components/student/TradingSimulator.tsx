@@ -103,8 +103,11 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
   const calculatePips = () => {
     if (!isRevealed || userAction === 'idle' || userAction === 'skip') return 0;
     
-    const finalPrice = scenarioData.future[scenarioData.future.length - 1];
-    const entryPrice = scenarioData.entry || scenarioData.current;
+    const futureData = scenarioData.future || [];
+    if (futureData.length === 0) return 0;
+    
+    const finalPrice = futureData[futureData.length - 1];
+    const entryPrice = scenarioData.entry || scenarioData.current || 0;
     
     if (userAction === 'buy') {
       return Math.round((finalPrice - entryPrice) * 10000);
@@ -236,7 +239,7 @@ export const TradingSimulator: React.FC<TradingSimulatorProps> = ({
                 
                 {/* Current Time Marker */}
                 <ReferenceLine 
-                  x={scenarioData.historical.length} 
+                  x={(scenarioData.historical || []).length} 
                   stroke="hsl(var(--primary))" 
                   strokeWidth={2}
                   strokeDasharray="3 3"
