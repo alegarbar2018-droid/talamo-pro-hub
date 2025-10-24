@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, CheckCircle, RotateCcw } from 'lucide-react';
 import { EnhancedContentRenderer } from './EnhancedContentRenderer';
 import { StepContent } from '@/types/extended-markdown';
@@ -52,7 +51,7 @@ export function SteppedContentRenderer({
         setVisitedSteps(visited);
       }
     }
-  }, [content, lessonId]);
+  }, [content, lessonId, onStepsChange]);
 
   // Save progress to localStorage and notify parent
   useEffect(() => {
