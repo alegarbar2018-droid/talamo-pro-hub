@@ -1714,6 +1714,8 @@ export type Database = {
           capital_band: string | null
           created_at: string
           email: string | null
+          exness_id: string | null
+          exness_referral_link: string | null
           experience_score: number | null
           first_name: string | null
           goal: string | null
@@ -1722,6 +1724,7 @@ export type Database = {
           language: string | null
           last_name: string | null
           level: string | null
+          link_code: string | null
           notification_preferences: Json | null
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
@@ -1741,6 +1744,8 @@ export type Database = {
           capital_band?: string | null
           created_at?: string
           email?: string | null
+          exness_id?: string | null
+          exness_referral_link?: string | null
           experience_score?: number | null
           first_name?: string | null
           goal?: string | null
@@ -1749,6 +1754,7 @@ export type Database = {
           language?: string | null
           last_name?: string | null
           level?: string | null
+          link_code?: string | null
           notification_preferences?: Json | null
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
@@ -1768,6 +1774,8 @@ export type Database = {
           capital_band?: string | null
           created_at?: string
           email?: string | null
+          exness_id?: string | null
+          exness_referral_link?: string | null
           experience_score?: number | null
           first_name?: string | null
           goal?: string | null
@@ -1776,6 +1784,7 @@ export type Database = {
           language?: string | null
           last_name?: string | null
           level?: string | null
+          link_code?: string | null
           notification_preferences?: Json | null
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
