@@ -104,7 +104,7 @@ async function initTOTPVerification(token: string): Promise<{ verification_uid: 
     },
     body: JSON.stringify({
       operation_type: 'SET_AGENT_COMMISSION',
-      additional_data: { share_perc: 25 },
+      additional_data: { share_perc: 50 },
       verification_method: 'TOTP',
       metadata: {
         browser: 'Chrome',
@@ -186,7 +186,7 @@ async function assignCommission(
       'x-temporary-token': verificationToken,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ share_perc: 25 }),
+    body: JSON.stringify({ share_perc: 50 }),
   });
 
   if (!response.ok) {
