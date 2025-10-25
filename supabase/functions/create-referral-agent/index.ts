@@ -292,22 +292,12 @@ Deno.serve(async (req) => {
       console.error('⚠️ Failed to update profile:', updateProfileError);
     }
 
-    // STEP 3: TOTP Verification (2-step process) - OPTIONAL
-    let verificationToken: string | null = null;
-    let commissionConfigured = false;
-    
-    try {
-      console.log('🔒 Attempting TOTP verification...');
-      const { verification_uid, session_uid } = await initTOTPVerification(token);
-      verificationToken = await completeTOTPVerification(token, verification_uid, session_uid);
-      
-      // STEP 4: Assign commission
-      const commissionResult = await assignCommission(token, verificationToken, agentData.id);
-      commissionConfigured = commissionResult.success;
-    } catch (error) {
-      console.warn('⚠️ TOTP verification failed, continuing without commission setup:', error.message);
-      // Continue without commission - admin can set it up later
-    }
+    // STEP 3: TOTP Verification (2-step process)
+    const { verification_uid, session_uid } = await initTOTPVerification(token);
+    const verificationToken = await completeTOTPVerification(token, verification_uid, session_uid);
+
+    // STEP 4: Assign commission
+    const commissionResult = await assignCommission(token, verificationToken, agentData.id);
 
     // STEP 5: Construct final referral link
     const language = profile.language || 'es';
@@ -326,9 +316,6 @@ Deno.serve(async (req) => {
     }
 
     // STEP 6: Save to referral_agents table
-    const agentStatus = commissionConfigured ? 'active' : 'pending_commission';
-    console.log(`💾 Saving agent with status: ${agentStatus}`);
-    
     const { data: newAgent, error: agentError } = await supabase
       .from('referral_agents')
       .insert({
@@ -338,9 +325,9 @@ Deno.serve(async (req) => {
         exness_agent_link_id: agentData.id,
         exness_referral_code: agentData.link_code,
         exness_referral_link: finalLink,
-        commission_share_percentage: commissionConfigured ? 50 : 0,
+        commission_share_percentage: 50,
         cap_amount_usd: 0,
-        status: agentStatus,
+        status: commissionResult.success ? 'active' : 'pending_setup',
       })
       .select()
       .single();
@@ -356,10 +343,7 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         agent: newAgent,
-        commission_configured: commissionConfigured,
-        message: commissionConfigured 
-          ? 'Agent created with commission configured' 
-          : 'Agent created - commission setup pending (TOTP verification failed)'
+        commission_configured: commissionResult.success
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
