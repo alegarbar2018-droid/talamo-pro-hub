@@ -99,14 +99,16 @@ async function initTOTPVerification(token: string): Promise<{ verification_uid: 
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     },
     body: JSON.stringify({
       operation_type: 'SET_AGENT_COMMISSION',
-      additional_data: { share_perc: 50 },
+      additional_data: { share_perc: 25 },
       verification_method: 'TOTP',
       metadata: {
         browser: 'Chrome',
-        os: 'Linux',
+        os: 'Windows',
         domain: 'my.exnessaffiliates.com',
       },
       session_uid,
@@ -184,7 +186,7 @@ async function assignCommission(
       'x-temporary-token': verificationToken,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ share_perc: 50 }),
+    body: JSON.stringify({ share_perc: 25 }),
   });
 
   if (!response.ok) {
