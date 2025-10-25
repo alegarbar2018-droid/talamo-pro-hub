@@ -1,19 +1,31 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { generateTOTP } from '../_shared/totp.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 interface ExnessAgentLinkResponse {
   id: string;
+  link_code: string;
   referral_link: string;
   alias: string;
   email: string;
+  created: string;
 }
 
-// Get fresh JWT token from Exness
+interface TOTPVerificationResponse {
+  verification_uid: string;
+}
+
+interface TOTPCompleteResponse {
+  verification_token: string;
+}
+
+/**
+ * Step 1: Authenticate with Exness Partner API
+ */
 async function getExnessToken(): Promise<string> {
   const apiBase = Deno.env.get('PARTNER_API_BASE');
   const login = Deno.env.get('PARTNER_API_USER');
@@ -23,9 +35,9 @@ async function getExnessToken(): Promise<string> {
     throw new Error('Missing Exness API credentials');
   }
 
-  console.log('🔑 Authenticating with Exness...');
-
-  const response = await fetch(`${apiBase}/api/v2/auth/`, {
+  console.log('🔐 Authenticating with Exness...');
+  
+  const response = await fetch(`${apiBase}/api/auth/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ login, password }),
@@ -37,107 +49,171 @@ async function getExnessToken(): Promise<string> {
   }
 
   const data = await response.json();
-  return data.token || data.access;
+  console.log('✅ Authenticated successfully');
+  return data.token;
 }
 
-// STEP 1: Create agent link
-async function createAgentLink(token: string, name: string, email: string): Promise<ExnessAgentLinkResponse> {
+/**
+ * Step 2: Create Exness Agent Link
+ */
+async function createAgentLink(
+  token: string,
+  alias: string,
+  email: string
+): Promise<ExnessAgentLinkResponse> {
   const apiBase = Deno.env.get('PARTNER_API_BASE');
-  
-  console.log(`📝 Creating agent link for ${email}...`);
-  
-  // Try with original name first, add timestamp if it fails
-  let attempts = 0;
-  let lastError = '';
-  
-  while (attempts < 3) {
-    const alias = attempts === 0 ? name : `${name}-${Date.now()}`;
-    console.log(`Attempt ${attempts + 1}: trying alias "${alias}"`);
-    
-    const response = await fetch(`${apiBase}/api/v1/referral-agent-links/`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `JWT ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ alias, email }),
-    });
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log('📦 Agent link response:', JSON.stringify(data));
-      return data;
-    }
-    
-    const errorText = await response.text();
-    lastError = errorText;
-    
-    // If it's not a duplicate error, throw immediately
-    if (!errorText.includes('already_in_use')) {
-      throw new Error(`Failed to create agent link: ${response.status} - ${errorText}`);
-    }
-    
-    attempts++;
-    // Wait a bit before retry to ensure timestamp changes
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  
-  throw new Error(`Failed to create agent link after ${attempts} attempts: ${lastError}`);
-}
+  console.log('🔗 Creating agent link for:', email);
 
-// STEP 2: Assign 50% commission
-async function assignCommission(token: string, agentLinkId: string): Promise<{ success: boolean; error?: string }> {
-  const apiBase = Deno.env.get('PARTNER_API_BASE');
-  
-  console.log(`💰 Assigning 50% commission to agent ${agentLinkId}...`);
-  
-  // Remove /api from the endpoint since PARTNER_API_BASE already includes it
-  const url = `${apiBase}/v1/referral-agent-links/${agentLinkId}/agreements/`;
-  console.log(`📍 Commission URL: ${url}`);
-  
-  const response = await fetch(url, {
+  const response = await fetch(`${apiBase}/api/v1/referral-agent-links/`, {
     method: 'POST',
     headers: {
-      'Authorization': `JWT ${token}`,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ alias, email }),
+  });
+
+  const data = await response.json();
+
+  // If alias already in use, continue anyway (as per instructions)
+  if (!response.ok && !JSON.stringify(data).includes('already_in_use')) {
+    throw new Error(`Failed to create agent link: ${response.status} - ${JSON.stringify(data)}`);
+  }
+
+  console.log('✅ Agent link created:', data.id);
+  return data;
+}
+
+/**
+ * Step 3a: Initialize TOTP Verification
+ */
+async function initTOTPVerification(token: string): Promise<{ verification_uid: string; session_uid: string }> {
+  const apiBase = Deno.env.get('PARTNER_API_BASE');
+  const session_uid = crypto.randomUUID();
+
+  console.log('🔒 Initializing TOTP verification...');
+
+  const response = await fetch(`${apiBase}/v4/kyc_back/api/v3/verify/operation/init`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      share_perc: 50,
-      cap_amount_usd: 0,
+      operation_type: 'SET_AGENT_COMMISSION',
+      additional_data: { share_perc: 50 },
+      verification_method: 'TOTP',
+      metadata: {
+        browser: 'Chrome',
+        os: 'Linux',
+        domain: 'my.exnessaffiliates.com',
+      },
+      session_uid,
     }),
   });
 
   if (!response.ok) {
     const error = await response.text();
-    console.error(`❌ Commission assignment failed: ${response.status}`, error);
+    throw new Error(`TOTP init failed: ${response.status} - ${error}`);
+  }
+
+  const data: TOTPVerificationResponse = await response.json();
+  console.log('✅ TOTP verification initialized');
+  return { verification_uid: data.verification_uid, session_uid };
+}
+
+/**
+ * Step 3b: Complete TOTP Verification
+ */
+async function completeTOTPVerification(
+  token: string,
+  verification_uid: string,
+  session_uid: string
+): Promise<string> {
+  const apiBase = Deno.env.get('PARTNER_API_BASE');
+  const totpSecret = Deno.env.get('EXNESS_TOTP_SECRET');
+
+  if (!totpSecret) {
+    throw new Error('EXNESS_TOTP_SECRET not configured');
+  }
+
+  console.log('🔐 Generating TOTP code...');
+  const totpCode = await generateTOTP(totpSecret);
+  console.log('🔐 TOTP code generated');
+
+  const response = await fetch(`${apiBase}/v4/kyc_back/api/v2/verify/operation/complete`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      verification_uid,
+      code: totpCode,
+      session_uid,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`TOTP verification failed: ${response.status} - ${error}`);
+  }
+
+  const data: TOTPCompleteResponse = await response.json();
+  console.log('✅ TOTP verification completed');
+  return data.verification_token;
+}
+
+/**
+ * Step 4: Assign Commission to Agent
+ */
+async function assignCommission(
+  token: string,
+  verificationToken: string,
+  exnessId: string
+): Promise<{ success: boolean; error?: string }> {
+  const apiBase = Deno.env.get('PARTNER_API_BASE');
+
+  console.log('💰 Assigning commission to agent:', exnessId);
+
+  const response = await fetch(`${apiBase}/api/v1/referral-agent-links/${exnessId}/agreements/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'x-temporary-token': verificationToken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ share_perc: 50 }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error('❌ Commission assignment failed:', error);
     return { success: false, error: `${response.status}: ${error}` };
   }
-  
+
   console.log('✅ Commission assigned successfully');
   return { success: true };
 }
 
-// STEP 3: Configure shared reports - SKIP for now (API validation issues)
-async function configureSharedReports(token: string, agentLinkId: string): Promise<{ success: boolean; error?: string }> {
-  console.log(`📊 Skipping reports configuration (needs API documentation clarification)...`);
-  // The API returned validation errors for "reward_history" and "client_report"
-  // Need to verify correct values with Exness documentation
-  return { success: true };
-}
-
+/**
+ * Main Edge Function Handler
+ */
 Deno.serve(async (req) => {
-  // Handle CORS
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('🚀 Starting create-referral-agent function...');
-
-    // Validate authentication
+    // Authenticate user
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
-      throw new Error('Missing authorization header');
+      return new Response(
+        JSON.stringify({ error: 'No authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const supabase = createClient(
@@ -147,128 +223,135 @@ Deno.serve(async (req) => {
     );
 
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
     if (userError || !user) {
-      console.error('❌ Unauthorized:', userError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log(`👤 User authenticated: ${user.id}`);
+    console.log('👤 User authenticated:', user.email);
 
     // Get user profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('first_name, last_name, email')
+      .select('first_name, last_name, email, language, exness_id, link_code')
       .eq('user_id', user.id)
       .single();
 
     if (profileError || !profile) {
-      console.error('❌ Profile not found:', profileError);
       return new Response(
         JSON.stringify({ error: 'Profile not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Agent';
-    const userEmail = profile.email || user.email;
-    
-    // Add unique identifier to prevent duplicates in Exness
-    const uniqueSuffix = user.id.substring(0, 8);
-    const uniqueAlias = `${userName} ${uniqueSuffix}`;
-
-    console.log(`📧 User info: ${userName} (${userEmail})`);
-
     // Check if agent already exists
-    const { data: existingAgent } = await supabase
-      .from('referral_agents')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
+    if (profile.exness_id && profile.link_code) {
+      console.log('ℹ️ Agent already exists, fetching existing data...');
+      
+      const { data: existingAgent } = await supabase
+        .from('referral_agents')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
 
-    if (existingAgent) {
-      console.log('✅ Agent link already exists');
-      return new Response(
-        JSON.stringify({
-          success: true,
-          agent: existingAgent,
-          message: 'Agent link already exists'
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (existingAgent) {
+        return new Response(
+          JSON.stringify({ success: true, agent: existingAgent }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
-    // FLOW: Create agent link with 3 API calls
+    const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
+    const userEmail = profile.email || user.email || '';
+    const emailPrefix = userEmail.split('@')[0];
+    const uniqueAlias = `${userName} ${emailPrefix} ${user.id.substring(0, 8)}`.trim();
 
-    // Step 1: Get Exness token
+    console.log('🚀 Starting agent creation flow...');
+
+    // STEP 1: Get Exness token
     const token = await getExnessToken();
-    console.log('✅ Exness token obtained');
 
-    // Step 2: Create agent link with unique alias
-    const agentLink = await createAgentLink(token, uniqueAlias, userEmail);
-    console.log(`✅ Agent link created: ${agentLink.id}`);
+    // STEP 2: Create agent link
+    const agentData = await createAgentLink(token, uniqueAlias, userEmail);
 
-    // Step 3: Assign commission (non-blocking)
-    const commissionResult = await assignCommission(token, agentLink.id);
-    
-    // Step 4: Configure reports (non-blocking)
-    const reportsResult = await configureSharedReports(token, agentLink.id);
+    // Save exness_id and link_code to profiles
+    const { error: updateProfileError } = await supabase
+      .from('profiles')
+      .update({
+        exness_id: agentData.id,
+        link_code: agentData.link_code,
+      })
+      .eq('user_id', user.id);
 
-    // Step 5: Save to database with warnings if needed
-    const warnings = [];
-    if (!commissionResult.success) {
-      warnings.push(`Commission setup failed: ${commissionResult.error}`);
-    }
-    if (!reportsResult.success) {
-      warnings.push(`Reports setup failed: ${reportsResult.error}`);
+    if (updateProfileError) {
+      console.error('⚠️ Failed to update profile:', updateProfileError);
     }
 
-    const { data: newAgent, error: insertError } = await supabase
+    // STEP 3: TOTP Verification (2-step process)
+    const { verification_uid, session_uid } = await initTOTPVerification(token);
+    const verificationToken = await completeTOTPVerification(token, verification_uid, session_uid);
+
+    // STEP 4: Assign commission
+    const commissionResult = await assignCommission(token, verificationToken, agentData.id);
+
+    // STEP 5: Construct final referral link
+    const language = profile.language || 'es';
+    const finalLink = `https://one.exnessonelink.com/intl/${language}/a/${agentData.link_code}`;
+
+    console.log('🔗 Final referral link:', finalLink);
+
+    // Save final link to profiles
+    const { error: linkUpdateError } = await supabase
+      .from('profiles')
+      .update({ exness_referral_link: finalLink })
+      .eq('user_id', user.id);
+
+    if (linkUpdateError) {
+      console.error('⚠️ Failed to save referral link:', linkUpdateError);
+    }
+
+    // STEP 6: Save to referral_agents table
+    const { data: newAgent, error: agentError } = await supabase
       .from('referral_agents')
       .insert({
         user_id: user.id,
         email: userEmail,
         name: userName,
-        exness_agent_link_id: agentLink.id,
-        exness_referral_code: agentLink.id,
-        exness_referral_link: agentLink.referral_link || `https://one.exness.link/a/?ref=${agentLink.id}`,
-        commission_share_percentage: commissionResult.success ? 50 : 0,
+        exness_agent_link_id: agentData.id,
+        exness_referral_code: agentData.link_code,
+        exness_referral_link: finalLink,
+        commission_share_percentage: 50,
         cap_amount_usd: 0,
-        shared_reports: reportsResult.success ? ['reward_history', 'client_report'] : [],
-        status: warnings.length > 0 ? 'pending_setup' : 'active'
+        status: commissionResult.success ? 'active' : 'pending_setup',
       })
       .select()
       .single();
 
-    if (insertError) {
-      console.error('❌ Database insert error:', insertError);
-      throw insertError;
+    if (agentError) {
+      console.error('❌ Failed to save agent:', agentError);
+      throw agentError;
     }
 
-    console.log('✅ Agent saved to database');
+    console.log('✅ Agent creation completed successfully!');
 
     return new Response(
-      JSON.stringify({
-        success: true,
+      JSON.stringify({ 
+        success: true, 
         agent: newAgent,
-        message: warnings.length > 0 
-          ? `Agent link created with warnings: ${warnings.join('; ')}`
-          : 'Agent link created successfully',
-        warnings: warnings.length > 0 ? warnings : undefined
+        commission_configured: commissionResult.success
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('❌ Error:', error);
-    
+    console.error('❌ Error creating referral agent:', error);
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: error.message || 'Internal server error'
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

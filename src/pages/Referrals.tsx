@@ -39,20 +39,39 @@ export default function Referrals() {
 
   const loadAgentData = async () => {
     try {
+      setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      
+      if (!user) {
+        console.log('No user found');
+        return;
+      }
 
-      const { data, error } = await supabase
-        .from('referral_agents')
-        .select('*')
+      // Load from profiles first to get the final referral link
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('exness_id, link_code, exness_referral_link')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .single();
 
-      if (!error && data) {
-        setAgent(data);
+      // If agent exists, load full data from referral_agents
+      if (profile?.exness_id) {
+        const { data: agentData } = await supabase
+          .from('referral_agents')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (agentData) {
+          // Combine profile data with agent data, prioritizing profile's final link
+          setAgent({
+            ...agentData,
+            exness_referral_link: profile.exness_referral_link || agentData.exness_referral_link
+          });
+        }
       }
     } catch (error) {
-      console.error('Error loading agent:', error);
+      console.error('Error loading agent data:', error);
     } finally {
       setLoading(false);
     }

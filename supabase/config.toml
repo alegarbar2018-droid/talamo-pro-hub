@@ -110,3 +110,9 @@ verify_jwt = true
 
 [functions.format-lesson-content]
 verify_jwt = true
+
+[functions.create-referral-agent]
+verify_jwt = true
+
+[functions.fetch-referral-agents]
+verify_jwt = true

@@ -15,13 +15,21 @@ export const AdminReferrals: React.FC = () => {
   const { data: referrals, isLoading, error } = useQuery({
     queryKey: ['admin-referrals'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('referrals')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      // Call new edge function to fetch agents from Exness API
+      const { data, error } = await supabase.functions.invoke('fetch-referral-agents', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
 
       if (error) throw error;
-      return data;
+      return data.agents || [];
     },
   });
 
@@ -66,32 +74,49 @@ export const AdminReferrals: React.FC = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <CardTitle className="text-lg font-mono">{referral.code}</CardTitle>
+                    <CardTitle className="text-lg">{referral.alias}</CardTitle>
+                    <p className="text-sm text-muted-foreground font-mono">{referral.email}</p>
                   </div>
-                  <Badge variant={referral.active ? 'default' : 'secondary'}>
-                    {referral.active ? t('admin.referrals.active') : t('admin.referrals.inactive')}
+                  <Badge variant={referral.status === 'active' ? 'default' : 'secondary'}>
+                    {referral.status || 'active'}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="flex items-center gap-2">
-                    <MousePointerClick className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">
-                      <span className="font-semibold">{referral.clicks}</span>{' '}
-                      {t('admin.referrals.clicks')}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-sm font-medium min-w-[100px]">Link Code:</span>
+                    <code className="text-sm bg-muted px-2 py-1 rounded">{referral.link_code}</code>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-sm font-medium min-w-[100px]">Agent ID:</span>
+                    <code className="text-sm bg-muted px-2 py-1 rounded">{referral.id}</code>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-sm font-medium min-w-[100px]">Created:</span>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(referral.created).toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">
-                      <span className="font-semibold">{referral.signups}</span>{' '}
-                      {t('admin.referrals.signups')}
-                    </span>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {t('admin.referrals.created')}: {new Date(referral.created_at).toLocaleDateString()}
-                  </div>
+                  {referral.referral_link && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium min-w-[100px]">Link:</span>
+                      <a 
+                        href={referral.referral_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary hover:underline break-all"
+                      >
+                        {referral.referral_link}
+                      </a>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
